@@ -1,0 +1,17 @@
+.vs
+Win64
+Solution
+
+*.vcxproj.filters
+*.vcxproj.user
+*.tlog
+*.pdb
+*.recipe
+*.ilk
+*.log
+*.idb
+*.sln
+*.vcxproj
+*.aps
+*.bin
+*.rc
