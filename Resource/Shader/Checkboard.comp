@@ -1,0 +1,26 @@
+#version 460 core
+
+layout(local_size_x = 32, local_size_y = 32, local_size_z = 1) in;
+
+layout(binding = 0, rgba8) uniform image2D checkboard;
+
+uniform int size; // 2^n => size x size
+uniform vec4 color0;
+uniform vec4 color1;
+
+void main()
+{
+    ivec2 texelCoords = ivec2(gl_GlobalInvocationID.xy);
+    vec4 colorRGBA = vec4(0.0f);
+
+    if((texelCoords.x / size + texelCoords.y / size) % 2 == 0)
+    {
+        colorRGBA = color0;
+    }
+    else
+    {
+        colorRGBA = color1;
+    }
+
+    imageStore(checkboard, texelCoords, colorRGBA);
+}
