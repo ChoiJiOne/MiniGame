@@ -1,0 +1,33 @@
+cmake_minimum_required(VERSION 3.27)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+set(PROJECT_NAME "FileModule")
+
+set(MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+set(MODULE_INCLUDE "${MODULE_PATH}/Inc")
+set(MODULE_SOURCE "${MODULE_PATH}/Src")
+
+file(GLOB_RECURSE MODULE_INCLUDE_FILE "${MODULE_INCLUDE}/*")
+file(GLOB_RECURSE MODULE_SOURCE_FILE "${MODULE_SOURCE}/*")
+
+add_library(${PROJECT_NAME} STATIC ${MODULE_INCLUDE_FILE} ${MODULE_SOURCE_FILE})
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${MODULE_INCLUDE})
+target_link_libraries(${PROJECT_NAME} Shlwapi.lib)
+
+target_compile_definitions(
+    ${PROJECT_NAME} 
+    PUBLIC
+    $<$<CONFIG:Debug>:DEBUG_MODE>
+    $<$<CONFIG:Release>:RELEASE_MODE>
+    $<$<CONFIG:RelWithDebInfo>:DEVELOPMENT_MODE>
+    $<$<CONFIG:MinSizeRel>:SHIPPING_MODE>
+)
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+source_group(Inc FILES ${MODULE_INCLUDE_FILE})
+source_group(Src FILES ${MODULE_SOURCE_FILE})
