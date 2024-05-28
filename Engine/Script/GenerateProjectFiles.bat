@@ -55,7 +55,7 @@ if "%run%" == "on" (
 )
 echo Switch %run% run Visual Studio Solution...
 
-set solutionPath=%~dp0..\Solution
+set solutionPath=%~dp0..\..\Solution
 
 if not exist %solutionPath% (
     mkdir %solutionPath%
