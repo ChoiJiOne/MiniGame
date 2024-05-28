@@ -10,4 +10,4 @@ add_subdirectory(miniaudio)
 add_subdirectory(Remotery)
 add_subdirectory(stb)
 
-set_target_properties(cgltf glad imgui jsoncpp lua miniaudio Remotery stb PROPERTIES FOLDER "ThirdParty")
+set_target_properties(cgltf glad imgui jsoncpp lua miniaudio Remotery stb PROPERTIES FOLDER "Engine/ThirdParty")
