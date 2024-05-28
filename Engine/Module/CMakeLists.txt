@@ -9,4 +9,4 @@ add_subdirectory(MathModule)
 add_subdirectory(PlatformModule)
 add_subdirectory(RenderModule)
 
-set_target_properties(AnimationModule AudioModule CrashModule FileModule GameModule MathModule PlatformModule RenderModule PROPERTIES FOLDER "Module")
+set_target_properties(AnimationModule AudioModule CrashModule FileModule GameModule MathModule PlatformModule RenderModule PROPERTIES FOLDER "Engine/Module")
