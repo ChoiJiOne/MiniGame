@@ -14,7 +14,7 @@ if %ERRORLEVEL% EQU 0 (
     GOTO:EOF
 )
 
-set solutionPath=%~dp0..\Solution
+set solutionPath=%~dp0..\..\Solution
 
 @REM 프로젝트가 존재하지 않으면 프로젝트를 생성합니다.
 if not exist %solutionPath% (
