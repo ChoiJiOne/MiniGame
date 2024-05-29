@@ -8,7 +8,7 @@ Camera::Camera()
 {
 	yaw_ = MathModule::ToRadian(-90.0f);
 	pitch_ = MathModule::ToRadian(-30.0f);
-	eyePosition_ = Vec3f(0.0f, 5.0f, 10.0f);
+	eyePosition_ = Vec3f(0.0f, 2.0f, 2.0f);
 	UpdateState();
 
 	int32_t screenWidth = 0;
