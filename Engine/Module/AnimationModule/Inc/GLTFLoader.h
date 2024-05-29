@@ -127,6 +127,16 @@ public:
 	static std::vector<MeshData> LoadStaticMeshData(cgltf_data* data);
 
 
+	/**
+	 * @brief GLTF 데이터로부터 Transform 정보를 얻습니다.
+	 * 
+	 * @param data GLTF 데이터입니다.
+	 * 
+	 * @return GLTF로부터 추출된 트랜스폼 목록을 반환합니다.
+	 */
+	static std::vector<Transform> LoadTransformData(cgltf_data* data);
+
+
 private:
 	/**
 	 * @brief GLTF 노드로부터 로컬 트랜스폼을 얻습니다.

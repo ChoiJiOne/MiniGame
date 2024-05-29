@@ -316,6 +316,26 @@ std::vector<GLTFLoader::MeshData> GLTFLoader::LoadStaticMeshData(cgltf_data* dat
 	return meshes;
 }
 
+std::vector<Transform> GLTFLoader::LoadTransformData(cgltf_data* data)
+{
+	std::vector<Transform> transforms;
+	cgltf_node* nodes = data->nodes;
+	uint32_t numNodes = static_cast<uint32_t>(data->nodes_count);
+
+	for (uint32_t index = 0; index < numNodes; ++index)
+	{
+		cgltf_node* node = &(nodes[index]);
+		if (!node->mesh)
+		{
+			continue;
+		}
+
+		transforms.push_back(GetLocalTransform(node));
+	}
+
+	return transforms;
+}
+
 Transform GLTFLoader::GetLocalTransform(cgltf_node* node)
 {
 	Transform transform;
