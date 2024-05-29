@@ -7,6 +7,7 @@
 
 #include "CrashModule.h"
 #include "GameModule.h"
+#include "GeometryRenderer3D.h"
 #include "PlatformModule.h"
 #include "RenderModule.h"
 
@@ -25,6 +26,8 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	RenderModule::Init(PlatformModule::GetWindowHandle());
 	GameModule::Init();
 
+	GeometryRenderer3D* geometryRenderer = RenderModule::CreateResource<GeometryRenderer3D>();
+
 	PlatformModule::SetEndLoopCallback([&]() { RenderModule::Uninit(); });
 
 	Camera* camera = GameModule::CreateEntity<Camera>();
@@ -34,7 +37,13 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 		{
 			camera->Tick(deltaSeconds);
 
+			geometryRenderer->SetView(camera->GetView());
+			geometryRenderer->SetProjection(camera->GetProjection());
+
 			RenderModule::BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
+
+			geometryRenderer->DrawGrid3D(Vec3f(100.0f, 100.0f, 100.0f), 1.0f);
+
 			RenderModule::EndFrame();
 		}
 	);
