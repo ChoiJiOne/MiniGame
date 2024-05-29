@@ -69,6 +69,8 @@ Character::Character()
 
 	crossFadeController_.SetSkeleton(skeleton_);
 	crossFadeController_.Play(&clips_[idleClip_]);
+
+	moveSpeed_ = 5.0f;
 }
 
 Character::~Character()
@@ -88,6 +90,13 @@ void Character::Tick(float deltaSeconds)
 	rotateRadian = (direction.x > 0.0f) ? rotateRadian : TwoPi - rotateRadian;
 
 	transform_.rotate = Quat::AxisRadian(Vec3f(0.0f, 1.0f, 0.0f), rotateRadian);
+
+	if (currentStatus_ == EStatus::RUN)
+	{
+		float sin = MathModule::Sin(rotateRadian);
+		float cos = MathModule::Cos(rotateRadian);
+		transform_.position += Vec3f(deltaSeconds * moveSpeed_ * sin, 0.0f, deltaSeconds * moveSpeed_ * cos);
+	}
 
 	static std::array<EKey, 4> keys =
 	{

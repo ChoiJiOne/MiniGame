@@ -172,4 +172,10 @@ private:
 	 * @brief 캐릭터의 현재 상태입니다.
 	 */
 	EStatus currentStatus_ = EStatus::IDLE;
+
+
+	/**
+	 * @brief 캐릭터의 이동 속도입니다.
+	 */
+	float moveSpeed_ = 0.0f;
 };
