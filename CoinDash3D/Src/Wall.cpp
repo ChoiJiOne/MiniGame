@@ -42,8 +42,8 @@ Wall::Wall()
 		material = RenderModule::CreateResource<Checkboard>(
 			Checkboard::ESize::Size_1024x1024,
 			Checkboard::ESize::Size_32x32,
-			Vec4f(1.0f, 1.0f, 1.0f, 1.0f),
-			Vec4f(1.0f, 0.0f, 0.0f, 1.0f)
+			Vec4f(0.3f, 0.3f, 0.3f, 1.0f),
+			Vec4f(0.3f, 0.3f, 0.3f, 1.0f)
 		);
 	}
 
