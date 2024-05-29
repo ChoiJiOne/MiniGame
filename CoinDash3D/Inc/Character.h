@@ -14,6 +14,18 @@ class Character : public IEntity
 {
 public:
 	/**
+	 * @brief 캐릭터의 상태입니다.
+	 */
+	enum class EStatus
+	{
+		IDLE = 0x00, // 대기중
+		RUN  = 0x01, // 달리는 중
+		DONE = 0x02, // 끝난 상태
+	};
+
+
+public:
+	/**
 	 * @brief 캐릭터 엔티티의 생성자입니다.
 	 */
 	Character();
@@ -110,4 +122,10 @@ private:
 	 * @brief 클립의 부드러운 전환을 위한 크로스 페이드 컨트롤러입니다.
 	 */
 	CrossFadeController crossFadeController_;
+
+
+	/**
+	 * @brief 캐릭터의 현재 상태입니다.
+	 */
+	EStatus currentStatus_ = EStatus::IDLE;
 };
