@@ -1,3 +1,5 @@
+#include <array>
+
 #include <cgltf.h>
 
 #include "GLTFLoader.h"
@@ -57,13 +59,16 @@ Character::Character()
 	{
 		if (clips_[index].GetName() == "IDLE")
 		{
-			currentClip_ = index;
-			break;
+			idleClip_ = index;
+		}
+		else if (clips_[index].GetName() == "RUN")
+		{
+			runClip_ = index;
 		}
 	}
 
 	crossFadeController_.SetSkeleton(skeleton_);
-	crossFadeController_.Play(&clips_[currentClip_]);
+	crossFadeController_.Play(&clips_[idleClip_]);
 }
 
 Character::~Character()
@@ -78,24 +83,49 @@ void Character::Tick(float deltaSeconds)
 {
 	crossFadeController_.Update(deltaSeconds);
 
-	if (InputController::GetKeyPressState(EKey::KEY_LEFT) == EPressState::PRESSED)
+	Vec3f direction = GetMoveDirection();
+	float rotateRadian = Vec3f::Radian(direction, Vec3f(0.0f, 0.0f, 1.0f));
+	rotateRadian = (direction.x > 0.0f) ? rotateRadian : TwoPi - rotateRadian;
+
+	transform_.rotate = Quat::AxisRadian(Vec3f(0.0f, 1.0f, 0.0f), rotateRadian);
+
+	static std::array<EKey, 4> keys =
 	{
-		transform_.rotate = Quat::AxisRadian(Vec3f(0.0f, 1.0f, 0.0f), MathModule::ToRadian(-90.0f));
+		EKey::KEY_LEFT,
+		EKey::KEY_RIGHT,
+		EKey::KEY_UP,
+		EKey::KEY_DOWN,
+	};
+
+	// 하나라도, Press면 달리기 수행
+	for (const auto& key : keys)
+	{
+		EPressState state = InputController::GetKeyPressState(key);
+
+		if (state == EPressState::PRESSED)
+		{
+			currentStatus_ = EStatus::RUN;
+			crossFadeController_.FadeTo(&clips_[runClip_], 0.5f);
+		}
 	}
 
-	if (InputController::GetKeyPressState(EKey::KEY_RIGHT) == EPressState::PRESSED)
+	// 모두 Released면 대기 수행
+	bool bChangeClip = true;
+	for (const auto& key : keys)
 	{
-		transform_.rotate = Quat::AxisRadian(Vec3f(0.0f, 1.0f, 0.0f), MathModule::ToRadian(+90.0f));
+		EPressState state = InputController::GetKeyPressState(key);
+
+		if (state != EPressState::RELEASED && state != EPressState::NONE) // 모두 Released면 대기 수행
+		{
+			bChangeClip = false;
+			break;
+		}
 	}
 
-	if (InputController::GetKeyPressState(EKey::KEY_UP) == EPressState::PRESSED)
+	if (bChangeClip)
 	{
-		transform_.rotate = Quat::AxisRadian(Vec3f(0.0f, 1.0f, 0.0f), MathModule::ToRadian(-180.0f));
-	}
-
-	if (InputController::GetKeyPressState(EKey::KEY_DOWN) == EPressState::PRESSED)
-	{
-		transform_.rotate = Quat::AxisRadian(Vec3f(0.0f, 1.0f, 0.0f), MathModule::ToRadian(+0.0f));
+		currentStatus_ = EStatus::IDLE;
+		crossFadeController_.FadeTo(&clips_[idleClip_], 0.5f);
 	}
 
 	sphere_.center = transform_.position + Vec3f(0.0f, 0.7f, 0.0f);
@@ -107,4 +137,49 @@ void Character::Release()
 	{
 		bIsInitialized_ = false;
 	}
+}
+
+Vec3f Character::GetMoveDirection()
+{
+	Vec3f direction;
+	bool bIsUpdate = false;
+
+	if (InputController::GetKeyPressState(EKey::KEY_LEFT) == EPressState::HELD)
+	{
+		bIsUpdate = true;
+		direction += Vec3f(-1.0f, 0.0f, 0.0f);
+	}
+
+	if (InputController::GetKeyPressState(EKey::KEY_RIGHT) == EPressState::HELD)
+	{
+		bIsUpdate = true;
+		direction += Vec3f(+1.0f, 0.0f, 0.0f);
+	}
+
+	if (InputController::GetKeyPressState(EKey::KEY_UP) == EPressState::HELD)
+	{
+		bIsUpdate = true;
+		direction += Vec3f(0.0f, 0.0f, -1.0f);
+	}
+
+	if (InputController::GetKeyPressState(EKey::KEY_DOWN) == EPressState::HELD)
+	{
+		bIsUpdate = true;
+		direction += Vec3f(0.0f, 0.0f, +1.0f);
+	}
+
+	if (bIsUpdate && direction != Vec3f(0.0f, 0.0f, 0.0f))
+	{
+		direction = Vec3f::Normalize(direction);
+	}
+	else
+	{
+		float rotate = Quat::Radian(transform_.rotate);
+
+		direction.x = MathModule::Sin(rotate);
+		direction.y = 0.0f;
+		direction.z = MathModule::Cos(rotate);
+	}
+
+	return direction;
 }

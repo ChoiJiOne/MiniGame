@@ -100,6 +100,15 @@ public:
 
 private:
 	/**
+	 * @brief 캐릭터의 이동 방향을 얻습니다.
+	 * 
+	 * @return 캐릭터의 이동 방향을 반환합니다.
+	 */
+	Vec3f GetMoveDirection();
+
+
+private:
+	/**
 	 * @brief 카메라 엔티티입니다.
 	 */
 	Camera* camera_ = nullptr;
@@ -130,9 +139,15 @@ private:
 
 
 	/**
-	 * @brief 현재 애니메이션 클립 인덱스입니다.
+	 * @brief 대기 애니메이션 클립 인덱스입니다.
 	 */
-	uint32_t currentClip_ = 0;
+	uint32_t idleClip_ = 0;
+
+
+	/**
+	 * @brief 달리기 애니메이션 클립 인덱스입니다.
+	 */
+	uint32_t runClip_ = 0;
 
 
 	/**
