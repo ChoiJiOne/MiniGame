@@ -87,10 +87,10 @@ void Character::Tick(float deltaSeconds)
 
 	static std::array<EKey, 4> keys =
 	{
-		EKey::KEY_LEFT,
-		EKey::KEY_RIGHT,
-		EKey::KEY_UP,
-		EKey::KEY_DOWN,
+		EKey::KEY_A,
+		EKey::KEY_D,
+		EKey::KEY_W,
+		EKey::KEY_S,
 	};
 
 	// 하나라도, Press면 달리기 수행
@@ -153,25 +153,25 @@ Vec3f Character::GetMoveDirection()
 	Vec3f direction;
 	bool bIsUpdate = false;
 
-	if (InputController::GetKeyPressState(EKey::KEY_LEFT) == EPressState::HELD)
+	if (InputController::GetKeyPressState(EKey::KEY_A) == EPressState::HELD)
 	{
 		bIsUpdate = true;
 		direction += Vec3f(-1.0f, 0.0f, 0.0f);
 	}
 
-	if (InputController::GetKeyPressState(EKey::KEY_RIGHT) == EPressState::HELD)
+	if (InputController::GetKeyPressState(EKey::KEY_D) == EPressState::HELD)
 	{
 		bIsUpdate = true;
 		direction += Vec3f(+1.0f, 0.0f, 0.0f);
 	}
 
-	if (InputController::GetKeyPressState(EKey::KEY_UP) == EPressState::HELD)
+	if (InputController::GetKeyPressState(EKey::KEY_W) == EPressState::HELD)
 	{
 		bIsUpdate = true;
 		direction += Vec3f(0.0f, 0.0f, -1.0f);
 	}
 
-	if (InputController::GetKeyPressState(EKey::KEY_DOWN) == EPressState::HELD)
+	if (InputController::GetKeyPressState(EKey::KEY_S) == EPressState::HELD)
 	{
 		bIsUpdate = true;
 		direction += Vec3f(0.0f, 0.0f, +1.0f);
