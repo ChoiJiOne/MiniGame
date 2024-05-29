@@ -16,6 +16,7 @@
 #include "StaticMesh.h"
 
 #include "Camera.h"
+#include "Floor.h"
 #include "Wall.h"
 
 int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR pCmdLine, _In_ int32_t nCmdShow)
@@ -37,6 +38,7 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	PlatformModule::SetEndLoopCallback([&]() { RenderModule::Uninit(); });
 
 	Camera* camera = GameModule::CreateEntity<Camera>();
+	Floor* floor = GameModule::CreateEntity<Floor>();
 	Wall* wall = GameModule::CreateEntity<Wall>();
 
 	PlatformModule::RunLoop(
@@ -54,13 +56,22 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 
 			geometryRenderer->DrawGrid3D(Vec3f(100.0f, 100.0f, 100.0f), 1.0f);
 			
-			std::vector<StaticMesh*>& meshes = wall->GetMeshes();
-			std::vector<Transform>& transforms = wall->GetTransforms();
-			ITexture2D* material = wall->GetMaterial();
+			std::vector<StaticMesh*>& meshes1 = wall->GetMeshes();
+			std::vector<Transform>& transforms1 = wall->GetTransforms();
+			ITexture2D* material1 = wall->GetMaterial();
 
-			for (uint32_t index = 0; index < meshes.size(); ++index)
+			for (uint32_t index = 0; index < meshes1.size(); ++index)
 			{
-				meshRenderer->DrawStaticMesh3D(Transform::ToMat(transforms[index]), meshes[index], material);
+				meshRenderer->DrawStaticMesh3D(Transform::ToMat(transforms1[index]), meshes1[index], material1);
+			}
+
+			std::vector<StaticMesh*>& meshes2 = floor->GetMeshes();
+			std::vector<Transform>& transforms2= floor->GetTransforms();
+			ITexture2D* material2 = floor->GetMaterial();
+
+			for (uint32_t index = 0; index < meshes2.size(); ++index)
+			{
+				meshRenderer->DrawStaticMesh3D(Transform::ToMat(transforms2[index]), meshes2[index], material2);
 			}
 
 			RenderModule::EndFrame();
