@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CrossFadeController.h"
+#include "Collision.h"
 #include "IEntity.h"
 #include "ITexture2D.h"
 #include "Skeleton.h"
@@ -74,6 +75,14 @@ public:
 
 
 	/**
+	 * @brief 캐릭터의 경계 영역을 얻습니다.
+	 * 
+	 * @return 캐릭터의 경계 영역 참조자를 반환합니다.
+	 */
+	Sphere& GetSphere() { return sphere_; }
+
+
+	/**
 	 * @brief 캐릭터의 크로스 페이드 컨트롤러를 얻습니다.
 	 *
 	 * @return 캐릭터의 크로스 페이드 컨트롤러 참조자를 반환합니다.
@@ -98,6 +107,12 @@ private:
 	 * @brief 캐릭터의 메터리얼입니다.
 	 */
 	ITexture2D* material_ = nullptr;
+
+
+	/**
+	 * @brief 캐릭터의 경계 영역입니다.
+	 */
+	Sphere sphere_;
 
 
 	/**
