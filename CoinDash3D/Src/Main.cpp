@@ -39,10 +39,10 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 
 	PlatformModule::SetEndLoopCallback([&]() { RenderModule::Uninit(); });
 
-	Character* character = GameModule::CreateEntity<Character>();
-	Camera* camera = GameModule::CreateEntity<Camera>(character);
 	Floor* floor = GameModule::CreateEntity<Floor>();
 	Wall* wall = GameModule::CreateEntity<Wall>();
+	Character* character = GameModule::CreateEntity<Character>(wall);
+	Camera* camera = GameModule::CreateEntity<Camera>(character);
 	Coin* coin = GameModule::CreateEntity<Coin>();
 
 	PlatformModule::RunLoop(
