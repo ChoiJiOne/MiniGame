@@ -7,6 +7,8 @@
 #include "Skeleton.h"
 #include "SkinnedMesh.h"
 
+class Wall;
+
 
 /**
  * @brief 캐릭터 엔티티입니다.
@@ -28,8 +30,10 @@ public:
 public:
 	/**
 	 * @brief 캐릭터 엔티티의 생성자입니다.
+	 * 
+	 * @param 캐릭터의 움직임을 제한할 벽 엔티티입니다.
 	 */
-	Character();
+	Character(Wall* wall);
 
 
 	/**
@@ -178,4 +182,10 @@ private:
 	 * @brief 캐릭터의 이동 속도입니다.
 	 */
 	float moveSpeed_ = 0.0f;
+
+
+	/**
+	 * @brief 캐릭터의 움직임을 제한할 벽 엔티티입니다.
+	 */
+	Wall* wall_ = nullptr;
 };

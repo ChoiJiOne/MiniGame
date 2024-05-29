@@ -9,8 +9,10 @@
 
 #include "Camera.h"
 #include "Character.h"
+#include "Wall.h"
 
-Character::Character()
+Character::Character(Wall* wall)
+	: wall_(wall)
 {
 	static bool bIsInitMesh = false;
 	if (!bIsInitMesh)
@@ -52,7 +54,7 @@ Character::Character()
 	}
 
 	material_ = material;
-	sphere_ = Sphere(transform_.position + Vec3f(0.0f, 0.7f, 0.0f), 0.4f);
+	sphere_ = Sphere(transform_.position + Vec3f(0.0f, 0.7f, 0.0f), 0.3f);
 	transform_ = Transform();
 	
 	for (uint32_t index = 0; index < clips_.size(); ++index)
@@ -133,12 +135,33 @@ void Character::Tick(float deltaSeconds)
 
 	if (currentStatus_ == EStatus::RUN)
 	{
+		Vec3f position = transform_.position;
+
 		float sin = MathModule::Sin(rotateRadian);
 		float cos = MathModule::Cos(rotateRadian);
-		transform_.position += Vec3f(deltaSeconds * moveSpeed_ * sin, 0.0f, deltaSeconds * moveSpeed_ * cos);
-	}
+		
+		position += Vec3f(deltaSeconds * moveSpeed_ * sin, 0.0f, deltaSeconds * moveSpeed_ * cos);
+		sphere_.center = position + Vec3f(0.0f, 0.7f, 0.0f);
 
-	sphere_.center = transform_.position + Vec3f(0.0f, 0.7f, 0.0f);
+		const std::vector<AABB>& aabbs = wall_->GetBoundingBoxes();
+		bool bIsCollision = false;
+		for (const auto& aabb : aabbs)
+		{
+			if (Collision::SphereToAABB(sphere_, aabb))
+			{
+				bIsCollision = true;
+				break;
+			}
+		}
+
+		if (bIsCollision)
+		{
+			position = transform_.position;
+			sphere_.center = position + Vec3f(0.0f, 0.7f, 0.0f);
+		}
+
+		transform_.position = position;
+	}
 }
 
 void Character::Release()
