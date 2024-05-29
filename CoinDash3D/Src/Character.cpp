@@ -50,6 +50,7 @@ Character::Character()
 
 	material_ = material;
 	sphere_ = Sphere(Vec3f(0.0f, 0.7f, 0.0f), 0.5f);
+	transform_ = Transform();
 	
 	for (uint32_t index = 0; index < clips_.size(); ++index)
 	{

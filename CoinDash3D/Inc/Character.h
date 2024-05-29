@@ -83,6 +83,14 @@ public:
 
 
 	/**
+	 * @brief 캐릭터의 트랜스폼을 얻습니다.
+	 * 
+	 * @return 캐릭터의 트랜스폼 참조자를 반환합니다.
+	 */
+	Transform& GetTransform() { return transform_; }
+
+
+	/**
 	 * @brief 캐릭터의 크로스 페이드 컨트롤러를 얻습니다.
 	 *
 	 * @return 캐릭터의 크로스 페이드 컨트롤러 참조자를 반환합니다.
@@ -113,6 +121,12 @@ private:
 	 * @brief 캐릭터의 경계 영역입니다.
 	 */
 	Sphere sphere_;
+
+
+	/**
+	 * @brief 캐릭터의 트랜스폼입니다.
+	 */
+	Transform transform_;
 
 
 	/**
