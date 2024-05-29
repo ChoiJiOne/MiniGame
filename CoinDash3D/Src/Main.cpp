@@ -38,17 +38,17 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 
 	PlatformModule::SetEndLoopCallback([&]() { RenderModule::Uninit(); });
 
-	Camera* camera = GameModule::CreateEntity<Camera>();
 	Character* character = GameModule::CreateEntity<Character>();
+	Camera* camera = GameModule::CreateEntity<Camera>(character);
 	Floor* floor = GameModule::CreateEntity<Floor>();
 	Wall* wall = GameModule::CreateEntity<Wall>();
 
 	PlatformModule::RunLoop(
 		[&](float deltaSeconds) 
 		{
-			camera->Tick(deltaSeconds);
 			wall->Tick(deltaSeconds);
 			character->Tick(deltaSeconds);
+			camera->Tick(deltaSeconds);
 
 			geometryRenderer->SetView(camera->GetView());
 			geometryRenderer->SetProjection(camera->GetProjection());
