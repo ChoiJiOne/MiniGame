@@ -1,6 +1,7 @@
 #include <cgltf.h>
 
 #include "GLTFLoader.h"
+#include "InputController.h"
 #include "RenderModule.h"
 #include "Texture2D.h"
 
@@ -76,6 +77,26 @@ Character::~Character()
 void Character::Tick(float deltaSeconds)
 {
 	crossFadeController_.Update(deltaSeconds);
+
+	if (InputController::GetKeyPressState(EKey::KEY_LEFT) == EPressState::PRESSED)
+	{
+		transform_.rotate = Quat::AxisRadian(Vec3f(0.0f, 1.0f, 0.0f), MathModule::ToRadian(-90.0f));
+	}
+
+	if (InputController::GetKeyPressState(EKey::KEY_RIGHT) == EPressState::PRESSED)
+	{
+		transform_.rotate = Quat::AxisRadian(Vec3f(0.0f, 1.0f, 0.0f), MathModule::ToRadian(+90.0f));
+	}
+
+	if (InputController::GetKeyPressState(EKey::KEY_UP) == EPressState::PRESSED)
+	{
+		transform_.rotate = Quat::AxisRadian(Vec3f(0.0f, 1.0f, 0.0f), MathModule::ToRadian(-180.0f));
+	}
+
+	if (InputController::GetKeyPressState(EKey::KEY_DOWN) == EPressState::PRESSED)
+	{
+		transform_.rotate = Quat::AxisRadian(Vec3f(0.0f, 1.0f, 0.0f), MathModule::ToRadian(+0.0f));
+	}
 }
 
 void Character::Release()
