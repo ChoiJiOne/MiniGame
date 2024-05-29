@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v3.6.28",
+		"generator":"Khronos glTF Blender I/O v3.6.27",
 		"version":"2.0"
 	},
 	"scene":0,
@@ -18,12 +18,12 @@
 			"name":"Floor",
 			"scale":[
 				10.5,
-				0.5,
+				10.5,
 				10.5
 			],
 			"translation":[
 				0,
-				-0.5,
+				-10.5,
 				0
 			]
 		}
