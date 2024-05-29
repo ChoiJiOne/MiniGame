@@ -97,6 +97,8 @@ void Character::Tick(float deltaSeconds)
 	{
 		transform_.rotate = Quat::AxisRadian(Vec3f(0.0f, 1.0f, 0.0f), MathModule::ToRadian(+0.0f));
 	}
+
+	sphere_.center = transform_.position + Vec3f(0.0f, 0.7f, 0.0f);
 }
 
 void Character::Release()
