@@ -85,19 +85,6 @@ void Character::Tick(float deltaSeconds)
 {
 	crossFadeController_.Update(deltaSeconds);
 
-	Vec3f direction = GetMoveDirection();
-	float rotateRadian = Vec3f::Radian(direction, Vec3f(0.0f, 0.0f, 1.0f));
-	rotateRadian = (direction.x > 0.0f) ? rotateRadian : TwoPi - rotateRadian;
-
-	transform_.rotate = Quat::AxisRadian(Vec3f(0.0f, 1.0f, 0.0f), rotateRadian);
-
-	if (currentStatus_ == EStatus::RUN)
-	{
-		float sin = MathModule::Sin(rotateRadian);
-		float cos = MathModule::Cos(rotateRadian);
-		transform_.position += Vec3f(deltaSeconds * moveSpeed_ * sin, 0.0f, deltaSeconds * moveSpeed_ * cos);
-	}
-
 	static std::array<EKey, 4> keys =
 	{
 		EKey::KEY_LEFT,
@@ -135,6 +122,19 @@ void Character::Tick(float deltaSeconds)
 	{
 		currentStatus_ = EStatus::IDLE;
 		crossFadeController_.FadeTo(&clips_[idleClip_], 0.5f);
+	}
+
+	Vec3f direction = GetMoveDirection();
+	float rotateRadian = Vec3f::Radian(direction, Vec3f(0.0f, 0.0f, 1.0f));
+	rotateRadian = (direction.x > 0.0f) ? rotateRadian : TwoPi - rotateRadian;
+
+	transform_.rotate = Quat::AxisRadian(Vec3f(0.0f, 1.0f, 0.0f), rotateRadian);
+
+	if (currentStatus_ == EStatus::RUN)
+	{
+		float sin = MathModule::Sin(rotateRadian);
+		float cos = MathModule::Cos(rotateRadian);
+		transform_.position += Vec3f(deltaSeconds * moveSpeed_ * sin, 0.0f, deltaSeconds * moveSpeed_ * cos);
 	}
 
 	sphere_.center = transform_.position + Vec3f(0.0f, 0.7f, 0.0f);
@@ -179,6 +179,7 @@ Vec3f Character::GetMoveDirection()
 
 	if (bIsUpdate && direction != Vec3f(0.0f, 0.0f, 0.0f))
 	{
+		currentStatus_ = EStatus::RUN;
 		direction = Vec3f::Normalize(direction);
 	}
 	else
