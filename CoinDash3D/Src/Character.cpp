@@ -114,7 +114,7 @@ void Character::Tick(float deltaSeconds)
 		if (state == EPressState::PRESSED)
 		{
 			currentStatus_ = EStatus::RUN;
-			crossFadeController_.FadeTo(&clips_[runClip_], 0.5f);
+			crossFadeController_.FadeTo(&clips_[runClip_], 0.2f);
 		}
 	}
 
