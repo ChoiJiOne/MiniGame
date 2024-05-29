@@ -83,8 +83,10 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 				mesh->Skin(&character->GetCrossFadeController().GetSkeleton(), &character->GetCrossFadeController().GetCurrentPose());
 				const std::vector<Mat4x4>& bindPose = mesh->GetPosePalette();
 				const std::vector<Mat4x4>& invBindPose = character->GetCrossFadeController().GetSkeleton().GetInvBindPose();
-				meshRenderer->DrawSkinnedMesh3D(Mat4x4::Identity(), mesh, bindPose, invBindPose, character->GetMaterial());
+				meshRenderer->DrawSkinnedMesh3D(Transform::ToMat(character->GetTransform()), mesh, bindPose, invBindPose, character->GetMaterial());
 			}
+
+			geometryRenderer->DrawSphere3D(Mat4x4::Translation(character->GetSphere().center), character->GetSphere().radius, Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
 
 			RenderModule::EndFrame();
 		}
