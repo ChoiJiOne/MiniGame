@@ -16,6 +16,7 @@
 #include "StaticMesh.h"
 
 #include "Camera.h"
+#include "Character.h"
 #include "Floor.h"
 #include "Wall.h"
 
@@ -38,6 +39,7 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	PlatformModule::SetEndLoopCallback([&]() { RenderModule::Uninit(); });
 
 	Camera* camera = GameModule::CreateEntity<Camera>();
+	Character* character = GameModule::CreateEntity<Character>();
 	Floor* floor = GameModule::CreateEntity<Floor>();
 	Wall* wall = GameModule::CreateEntity<Wall>();
 
@@ -46,6 +48,7 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 		{
 			camera->Tick(deltaSeconds);
 			wall->Tick(deltaSeconds);
+			character->Tick(deltaSeconds);
 
 			geometryRenderer->SetView(camera->GetView());
 			geometryRenderer->SetProjection(camera->GetProjection());
@@ -72,6 +75,15 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 			for (uint32_t index = 0; index < meshes2.size(); ++index)
 			{
 				meshRenderer->DrawStaticMesh3D(Transform::ToMat(transforms2[index]), meshes2[index], material2);
+			}
+
+			std::vector<SkinnedMesh*>& meshes = character->GetMeshes();
+			for (const auto& mesh : meshes)
+			{
+				mesh->Skin(&character->GetCrossFadeController().GetSkeleton(), &character->GetCrossFadeController().GetCurrentPose());
+				const std::vector<Mat4x4>& bindPose = mesh->GetPosePalette();
+				const std::vector<Mat4x4>& invBindPose = character->GetCrossFadeController().GetSkeleton().GetInvBindPose();
+				meshRenderer->DrawSkinnedMesh3D(Mat4x4::Identity(), mesh, bindPose, invBindPose, character->GetMaterial());
 			}
 
 			RenderModule::EndFrame();
