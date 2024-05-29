@@ -52,19 +52,19 @@ public:
 
 
 	/**
-	 * @brief 코인 엔티티의 정적 메시 목록을 얻습니다.
+	 * @brief 코인 엔티티의 정적 메시를 얻습니다.
 	 *
-	 * @return 코인 엔티티의 정적 메시 목록 참조자를 반환합니다.
+	 * @return 코인 엔티티의 정적 메시를 반환합니다.
 	 */
-	std::vector<StaticMesh*>& GetMeshes() { return meshes_; }
+	StaticMesh* GetMesh() { return mesh_; }
 
 
 	/**
-	 * @brief 코인 엔티티의 트랜스폼 목록을 얻습니다.
+	 * @brief 코인 엔티티의 트랜스폼을 얻습니다.
 	 *
-	 * @return 코인 엔티티의 트랜스폼 목록 참조자를 반환합니다.
+	 * @return 코인 엔티티의 트랜스폼 참조자를 반환합니다.
 	 */
-	std::vector<Transform>& GetTransforms() { return transforms_; }
+	Transform& GetTransform() { return transform_; }
 
 
 	/**
@@ -79,13 +79,13 @@ private:
 	/**
 	 * @brief 코인 엔티티의 정적 메시 목록입니다.
 	 */
-	std::vector<StaticMesh*> meshes_;
+	StaticMesh* mesh_;
 
 
 	/**
 	 * @brief 코인 엔티티의 트랜스폼입니다.
 	 */
-	std::vector<Transform> transforms_;
+	Transform transform_;
 
 
 	/**
