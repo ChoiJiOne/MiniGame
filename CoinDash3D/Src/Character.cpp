@@ -98,10 +98,11 @@ void Character::Tick(float deltaSeconds)
 	{
 		EPressState state = InputController::GetKeyPressState(key);
 
-		if (state == EPressState::PRESSED)
+		if (state == EPressState::PRESSED && currentStatus_ == EStatus::IDLE)
 		{
 			currentStatus_ = EStatus::RUN;
-			crossFadeController_.FadeTo(&clips_[runClip_], 0.2f);
+			crossFadeController_.FadeTo(&clips_[runClip_], 0.1f);
+			break;
 		}
 	}
 
@@ -118,10 +119,10 @@ void Character::Tick(float deltaSeconds)
 		}
 	}
 
-	if (bChangeClip)
+	if (bChangeClip && currentStatus_ == EStatus::RUN)
 	{
 		currentStatus_ = EStatus::IDLE;
-		crossFadeController_.FadeTo(&clips_[idleClip_], 0.5f);
+		crossFadeController_.FadeTo(&clips_[idleClip_], 0.1f);
 	}
 
 	Vec3f direction = GetMoveDirection();
