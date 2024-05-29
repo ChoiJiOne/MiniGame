@@ -226,7 +226,7 @@ std::vector<Clip> GLTFLoader::LoadAnimationClips(cgltf_data* data)
 	return clips;
 }
 
-std::vector<GLTFLoader::MeshData> GLTFLoader::LoadMeshData(cgltf_data* data)
+std::vector<GLTFLoader::MeshData> GLTFLoader::LoadSkinnedMeshData(cgltf_data* data)
 {
 	std::vector<MeshData> meshes;
 	cgltf_node* nodes = data->nodes;
@@ -236,6 +236,51 @@ std::vector<GLTFLoader::MeshData> GLTFLoader::LoadMeshData(cgltf_data* data)
 	{
 		cgltf_node* node = &(nodes[index]);
 		if (!node->mesh || !node->skin)
+		{
+			continue;
+		}
+
+		uint32_t numPrims = static_cast<uint32_t>(node->mesh->primitives_count);
+		for (uint32_t pi = 0; pi < numPrims; ++pi)
+		{
+			meshes.push_back(MeshData());
+			MeshData& mesh = meshes.back();
+
+			cgltf_primitive* primitive = &(node->mesh->primitives[pi]);
+
+			uint32_t numAttrib = static_cast<uint32_t>(primitive->attributes_count);
+			for (uint32_t ai = 0; ai < numAttrib; ++ai)
+			{
+				cgltf_attribute* attrib = &(primitive->attributes[ai]);
+				GetMeshFromAttribute(mesh, attrib, node->skin, nodes, numNodes);
+			}
+
+			if (primitive->indices)
+			{
+				uint32_t numIndices = static_cast<uint32_t>(primitive->indices->count);
+				mesh.indices.resize(numIndices);
+
+				for (uint32_t i = 0; i < numIndices; ++i)
+				{
+					mesh.indices[i] = static_cast<uint32_t>(cgltf_accessor_read_index(primitive->indices, i));
+				}
+			}
+		}
+	}
+
+	return meshes;
+}
+
+std::vector<GLTFLoader::MeshData> GLTFLoader::LoadStaticMeshData(cgltf_data* data)
+{
+	std::vector<MeshData> meshes;
+	cgltf_node* nodes = data->nodes;
+	uint32_t numNodes = static_cast<uint32_t>(data->nodes_count);
+
+	for (uint32_t index = 0; index < numNodes; ++index)
+	{
+		cgltf_node* node = &(nodes[index]);
+		if (!node->mesh)
 		{
 			continue;
 		}

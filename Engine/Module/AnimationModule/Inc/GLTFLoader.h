@@ -108,13 +108,23 @@ public:
 
 
 	/**
-	 * @brief GLTF 데이터로부터 메시 데이터를 로딩합니다.
+	 * @brief GLTF 데이터로부터 스키닝 메시 데이터를 로딩합니다.
 	 * 
 	 * @param data GLTF 데이터입니다.
 	 * 
 	 * @return GLTF로부터 추출된 메시 데이터 목록을 반환합니다.
 	 */
-	static std::vector<MeshData> LoadMeshData(cgltf_data* data);
+	static std::vector<MeshData> LoadSkinnedMeshData(cgltf_data* data);
+
+
+	/**
+	 * @brief GLTF 데이터로부터 정적 메시 데이터를 로딩합니다.
+	 *
+	 * @param data GLTF 데이터입니다.
+	 *
+	 * @return GLTF로부터 추출된 메시 데이터 목록을 반환합니다.
+	 */
+	static std::vector<MeshData> LoadStaticMeshData(cgltf_data* data);
 
 
 private:
