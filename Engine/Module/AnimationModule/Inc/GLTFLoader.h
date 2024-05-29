@@ -137,6 +137,16 @@ public:
 	static std::vector<Transform> LoadTransformData(cgltf_data* data);
 
 
+	/**
+	 * @brief GLTF 데이터로부터 노드 이름 목록을 얻습니다.
+	 * 
+	 * @param data GLTF 데이터입니다.
+	 *
+	 * @return GLTF로부터 추출된 노드 이름 목록을 반환합니다.
+	 */
+	static std::vector<std::string> LoadNodeNames(cgltf_data* data);
+
+
 private:
 	/**
 	 * @brief GLTF 노드로부터 로컬 트랜스폼을 얻습니다.

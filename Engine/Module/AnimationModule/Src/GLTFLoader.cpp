@@ -336,6 +336,27 @@ std::vector<Transform> GLTFLoader::LoadTransformData(cgltf_data* data)
 	return transforms;
 }
 
+std::vector<std::string> GLTFLoader::LoadNodeNames(cgltf_data* data)
+{
+	std::vector<std::string> names;
+
+	cgltf_node* nodes = data->nodes;
+	uint32_t numNodes = static_cast<uint32_t>(data->nodes_count);
+
+	for (uint32_t index = 0; index < numNodes; ++index)
+	{
+		cgltf_node* node = &(nodes[index]);
+		if (!node)
+		{
+			continue;
+		}
+
+		names.push_back(node->name);
+	}
+
+	return names;
+}
+
 Transform GLTFLoader::GetLocalTransform(cgltf_node* node)
 {
 	Transform transform;
