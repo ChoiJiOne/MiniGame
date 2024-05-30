@@ -48,11 +48,17 @@ void MeshRenderer3D::DrawStaticMesh3D(const Mat4x4& world, IMesh* mesh, ITexture
 	{
 		staticMeshShader_->Bind();
 
+		shadowMap_->Active(SHADOW_MAP_BIND_SLOT);
+		material->Active(MATERIAL_BIND_SLOT);
+
 		staticMeshShader_->SetUniform("world", world);
 		staticMeshShader_->SetUniform("view", view_);
 		staticMeshShader_->SetUniform("projection", projection_);
-
-		material->Active(0);
+		staticMeshShader_->SetUniform("lightView", lightView_);
+		staticMeshShader_->SetUniform("lightProjection", lightProjection_);
+		staticMeshShader_->SetUniform("viewPosition", viewPosition_);
+		staticMeshShader_->SetUniform("light.direction", lightDirection_);
+		staticMeshShader_->SetUniform("light.color", lightColor_);
 
 		mesh->Bind();
 		RenderModule::ExecuteDrawIndex(mesh->GetIndexCount(), EDrawMode::Triangles);
@@ -72,13 +78,19 @@ void MeshRenderer3D::DrawSkinnedMesh3D(const Mat4x4& world, IMesh* mesh, const s
 	{
 		skinnedMeshShader_->Bind();
 
+		shadowMap_->Active(SHADOW_MAP_BIND_SLOT);
+		material->Active(MATERIAL_BIND_SLOT);
+
 		skinnedMeshShader_->SetUniform("world", world);
 		skinnedMeshShader_->SetUniform("view", view_);
 		skinnedMeshShader_->SetUniform("projection", projection_);
+		skinnedMeshShader_->SetUniform("lightView", lightView_);
+		skinnedMeshShader_->SetUniform("lightProjection", lightProjection_);
+		skinnedMeshShader_->SetUniform("viewPosition", viewPosition_);
+		skinnedMeshShader_->SetUniform("light.direction", lightDirection_);
+		skinnedMeshShader_->SetUniform("light.color", lightColor_);
 		skinnedMeshShader_->SetUniform("bindPose", bindPose.data(), bindPose.size());
 		skinnedMeshShader_->SetUniform("invBindPose", invBindPose.data(), invBindPose.size());
-
-		material->Active(0);
 
 		mesh->Bind();
 		RenderModule::ExecuteDrawIndex(mesh->GetIndexCount(), EDrawMode::Triangles);

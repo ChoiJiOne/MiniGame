@@ -56,6 +56,54 @@ public:
 	 */
 	void SetProjection(const Mat4x4& projection) { projection_ = projection; }
 
+
+	/**
+	 * @brief 렌더러의 라이트 뷰 행렬을 설정합니다.
+	 *
+	 * @param lightView 설정할 뷰 행렬입니다.
+	 */
+	void SetLightView(const Mat4x4& lightView) { lightView_ = lightView; }
+
+
+	/**
+	 * @brief 렌더러의 라이트 투영 행렬을 설정합니다.
+	 *
+	 * @param lightProjection 설정할 투영 행렬입니다.
+	 */
+	void SetLightProjection(const Mat4x4& lightProjection) { lightProjection_ = lightProjection; }
+
+
+	/**
+	 * @brief 카메라의 위치를 설정합니다.
+	 *
+	 * @param viewPosition 설정할 카메라의 위치입니다.
+	 */
+	void SetViewPosition(const Vec3f& viewPosition) { viewPosition_ = viewPosition; }
+
+
+	/**
+	 * @brief 라이트의 방향입니다.
+	 *
+	 * @param lightDirection 설정할 라이트의 위치입니다.
+	 */
+	void SetLightDirection(const Vec3f& lightDirection) { lightDirection_ = lightDirection; }
+
+
+	/**
+	 * @brief 라이트의 색상입니다.
+	 *
+	 * @param lightColor 설정할 라이트의 RGB 색상입니다.
+	 */
+	void SetLightColor(const Vec3f& lightColor) { lightColor_ = lightColor; }
+
+
+	/**
+	 * @brief 그림자 렌더링 시 참조할 셰도우 맵을 설정합니다.
+	 *
+	 * @param shadowMap 설정할 셰도우 맵입니다.
+	 */
+	void SetShadowMap(ITexture2D* shadowMap) { shadowMap_ = shadowMap; }
+
 	
 	/**
 	 * @brief 정적 메시를 그립니다.
@@ -90,6 +138,54 @@ private:
 	 * @brief 렌더러의 투영 행렬입니다.
 	 */
 	Mat4x4 projection_;
+
+
+	/**
+	 * @brief 라이트 시점의 시야 행렬입니다.
+	 */
+	Mat4x4 lightView_;
+
+
+	/**
+	 * @brief 라이트 시점의 투영 행렬입니다.
+	 */
+	Mat4x4 lightProjection_;
+
+
+	/**
+	 * @brief 카메라의 위치입니다.
+	 */
+	Vec3f viewPosition_ = Vec3f(0.0f, 0.0f, 0.0f);
+
+
+	/**
+	 * @brief 라이트의 방향입니다.
+	 */
+	Vec3f lightDirection_ = Vec3f(0.0f, 0.0f, 0.0f);
+
+
+	/**
+	 * @brief 라이트의 색상입니다.
+	 */
+	Vec3f lightColor_ = Vec3f(1.0f, 1.0f, 1.0f);
+
+
+	/**
+	 * @brief 그림자 렌더링 시 참조할 깊이 맵입니다.
+	 */
+	ITexture2D* shadowMap_ = nullptr;
+
+
+	/**
+	 * @brief 셰도우 맵의 바인딩 슬롯입니다.
+	 */
+	static const uint32_t SHADOW_MAP_BIND_SLOT = 0;
+
+
+	/**
+	 * @brief 메터리얼의 바인딩 슬롯입니다.
+	 */
+	static const uint32_t MATERIAL_BIND_SLOT = 1;
 
 
 	/**
