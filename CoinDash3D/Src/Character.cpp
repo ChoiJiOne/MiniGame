@@ -162,6 +162,11 @@ void Character::Tick(float deltaSeconds)
 
 		transform_.position = position;
 	}
+
+	for (const auto& mesh : meshes_)
+	{
+		mesh->Skin(&skeleton_, &crossFadeController_.GetCurrentPose());
+	}
 }
 
 void Character::Release()
