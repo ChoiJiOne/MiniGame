@@ -54,7 +54,6 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	PlatformModule::RunLoop(
 		[&](float deltaSeconds) 
 		{
-			wall->Tick(deltaSeconds);
 			character->Tick(deltaSeconds);
 			camera->Tick(deltaSeconds);
 
@@ -64,6 +63,12 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 			geometryRenderer->SetProjection(camera->GetProjection());
 			meshRenderer->SetView(camera->GetView());
 			meshRenderer->SetProjection(camera->GetProjection());
+			meshRenderer->SetViewPosition(camera->GetEyePosition());
+			meshRenderer->SetShadowMap(shadowMap);
+			meshRenderer->SetLightView(light->GetView());
+			meshRenderer->SetLightProjection(light->GetProjection());
+			meshRenderer->SetLightDirection(light->GetDirection());
+			meshRenderer->SetLightColor(light->GetColor());
 			
 			shadowMap->Bind();
 			{
