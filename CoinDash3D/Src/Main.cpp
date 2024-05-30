@@ -14,11 +14,14 @@
 #include "PlatformModule.h"
 #include "RenderModule.h"
 #include "StaticMesh.h"
+#include "ShadowMap.h"
+#include "DepthRenderer3D.h"
 
 #include "Camera.h"
 #include "Character.h"
 #include "Coin.h"
 #include "Floor.h"
+#include "Light.h"
 #include "Wall.h"
 
 int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR pCmdLine, _In_ int32_t nCmdShow)
@@ -35,7 +38,9 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	GameModule::Init();
 
 	GeometryRenderer3D* geometryRenderer = RenderModule::CreateResource<GeometryRenderer3D>();
+	DepthRenderer3D* depthRenderer = RenderModule::CreateResource<DepthRenderer3D>();
 	MeshRenderer3D* meshRenderer = RenderModule::CreateResource<MeshRenderer3D>();
+	ShadowMap* shadowMap = RenderModule::CreateResource<ShadowMap>(ShadowMap::ESize::Size_1024x1024);
 
 	PlatformModule::SetEndLoopCallback([&]() { RenderModule::Uninit(); });
 
@@ -43,7 +48,8 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	Wall* wall = GameModule::CreateEntity<Wall>();
 	Character* character = GameModule::CreateEntity<Character>(wall);
 	Camera* camera = GameModule::CreateEntity<Camera>(character);
-	Coin* coin = GameModule::CreateEntity<Coin>();
+	Coin* coin = GameModule::CreateEntity<Coin>(Vec3f(1.0f, 0.5f, 1.0f));
+	Light* light = GameModule::CreateEntity<Light>();
 
 	PlatformModule::RunLoop(
 		[&](float deltaSeconds) 
@@ -52,44 +58,61 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 			character->Tick(deltaSeconds);
 			camera->Tick(deltaSeconds);
 
+			depthRenderer->SetLightView(light->GetView());
+			depthRenderer->SetLightProjection(light->GetProjection());
 			geometryRenderer->SetView(camera->GetView());
 			geometryRenderer->SetProjection(camera->GetProjection());
 			meshRenderer->SetView(camera->GetView());
 			meshRenderer->SetProjection(camera->GetProjection());
+			
+			shadowMap->Bind();
+			{
+				shadowMap->Clear();
+				RenderModule::SetViewport(0, 0, shadowMap->GetSize(), shadowMap->GetSize());
+
+				std::vector<StaticMesh*>& staticMeshes = wall->GetMeshes();
+				std::vector<Transform>& transforms = wall->GetTransforms();
+
+				for (uint32_t index = 0; index < staticMeshes.size(); ++index)
+				{
+					depthRenderer->DrawStaticMesh3D(Transform::ToMat(transforms[index]), staticMeshes[index]);
+				}
+
+				depthRenderer->DrawStaticMesh3D(Transform::ToMat(floor->GetTransform()), floor->GetMesh());
+				depthRenderer->DrawStaticMesh3D(Transform::ToMat(coin->GetTransform()), coin->GetMesh());
+
+				std::vector<SkinnedMesh*>& skinnedMeshes = character->GetMeshes();
+				for (const auto& skinnedMesh : skinnedMeshes)
+				{
+					const std::vector<Mat4x4>& bindPose = skinnedMesh->GetPosePalette();
+					const std::vector<Mat4x4>& invBindPose = character->GetCrossFadeController().GetSkeleton().GetInvBindPose();
+					depthRenderer->DrawSkinnedMesh3D(Transform::ToMat(character->GetTransform()), skinnedMesh, bindPose, invBindPose);
+				}
+			}
+			shadowMap->Unbind();
 
 			RenderModule::BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
-
-			std::vector<StaticMesh*>& meshes1 = wall->GetMeshes();
-			std::vector<Transform>& transforms1 = wall->GetTransforms();
-			ITexture2D* material1 = wall->GetMaterial();
-
-			for (uint32_t index = 0; index < meshes1.size(); ++index)
 			{
-				meshRenderer->DrawStaticMesh3D(Transform::ToMat(transforms1[index]), meshes1[index], material1);
+				std::vector<StaticMesh*>& staticMeshes = wall->GetMeshes();
+				std::vector<Transform>& transforms = wall->GetTransforms();
+				ITexture2D* material = wall->GetMaterial();
+
+				for (uint32_t index = 0; index < staticMeshes.size(); ++index)
+				{
+					meshRenderer->DrawStaticMesh3D(Transform::ToMat(transforms[index]), staticMeshes[index], material);
+				}
+
+				meshRenderer->DrawStaticMesh3D(Transform::ToMat(floor->GetTransform()), floor->GetMesh(), floor->GetMaterial());
+				meshRenderer->DrawStaticMesh3D(Transform::ToMat(coin->GetTransform()), coin->GetMesh(), coin->GetMaterial());
+
+				std::vector<SkinnedMesh*>& skinnedMeshes = character->GetMeshes();
+				for (const auto& skinnedMesh : skinnedMeshes)
+				{
+					const std::vector<Mat4x4>& bindPose = skinnedMesh->GetPosePalette();
+					const std::vector<Mat4x4>& invBindPose = character->GetCrossFadeController().GetSkeleton().GetInvBindPose();
+					meshRenderer->DrawSkinnedMesh3D(Transform::ToMat(character->GetTransform()), skinnedMesh, bindPose, invBindPose, character->GetMaterial());
+				}
 			}
-
-			std::vector<StaticMesh*>& meshes2 = floor->GetMeshes();
-			std::vector<Transform>& transforms2 = floor->GetTransforms();
-			ITexture2D* material2 = floor->GetMaterial();
-
-			for (uint32_t index = 0; index < meshes2.size(); ++index)
-			{
-				meshRenderer->DrawStaticMesh3D(Transform::ToMat(transforms2[index]), meshes2[index], material2);
-			}
-
-			meshRenderer->DrawStaticMesh3D(Transform::ToMat(coin->GetTransform()), coin->GetMesh(), coin->GetMaterial());
-
-			std::vector<SkinnedMesh*>& meshes = character->GetMeshes();
-			for (const auto& mesh : meshes)
-			{
-				mesh->Skin(&character->GetCrossFadeController().GetSkeleton(), &character->GetCrossFadeController().GetCurrentPose());
-				const std::vector<Mat4x4>& bindPose = mesh->GetPosePalette();
-				const std::vector<Mat4x4>& invBindPose = character->GetCrossFadeController().GetSkeleton().GetInvBindPose();
-				meshRenderer->DrawSkinnedMesh3D(Transform::ToMat(character->GetTransform()), mesh, bindPose, invBindPose, character->GetMaterial());
-			}
-
-			geometryRenderer->DrawSphere3D(Mat4x4::Translation(character->GetSphere().center), character->GetSphere().radius, Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
-
 			RenderModule::EndFrame();
 		}
 	);
