@@ -7,33 +7,28 @@
 
 Floor::Floor()
 {
-	static bool bIsCreateResource = false;
-	if (!bIsCreateResource) // 프로그램 실행 후 한 번만 초기화 수행...
+	static StaticMesh* mesh = nullptr;
+	static Transform transform;
+	if (!mesh)
 	{
 		cgltf_data* data = GLTFLoader::Load("Resource/Model/Floor.gltf");
 
-		std::vector<GLTFLoader::MeshData> meshData = GLTFLoader::LoadStaticMeshData(data);
+		GLTFLoader::MeshData meshData = GLTFLoader::LoadStaticMeshData(data).front();
+		transform = GLTFLoader::LoadTransformData(data).front();
 
-		for (auto& mesh : meshData)
-		{
-			std::size_t size = mesh.positions.size();
-			std::vector<VertexPositionNormalUv3D> vertices(size);
-			std::vector<uint32_t> indices = mesh.indices;
-
-			for (uint32_t index = 0; index < size; ++index)
-			{
-				vertices[index].position = mesh.positions[index];
-				vertices[index].normal = mesh.normals[index];
-				vertices[index].uv = mesh.texcoords[index];
-			}
-
-			meshes_.push_back(RenderModule::CreateResource<StaticMesh>(vertices, indices));
-		}
-
-		transforms_ = GLTFLoader::LoadTransformData(data);
 		GLTFLoader::Free(data);
 
-		bIsCreateResource = true;
+		std::vector<VertexPositionNormalUv3D> vertices(meshData.positions.size());
+		std::vector<uint32_t> indices = meshData.indices;
+
+		for (uint32_t index = 0; index < vertices.size(); ++index)
+		{
+			vertices[index].position = meshData.positions[index];
+			vertices[index].normal = meshData.normals[index];
+			vertices[index].uv = meshData.texcoords[index];
+		}
+
+		mesh = RenderModule::CreateResource<StaticMesh>(vertices, indices);
 	}
 
 	static ITexture2D* material = nullptr;
@@ -47,6 +42,8 @@ Floor::Floor()
 		);
 	}
 
+	mesh_ = mesh;
+	transform_ = transform;
 	material_ = material;
 }
 
