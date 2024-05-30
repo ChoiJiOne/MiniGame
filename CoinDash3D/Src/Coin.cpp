@@ -5,7 +5,7 @@
 
 #include "Coin.h"
 
-Coin::Coin()
+Coin::Coin(const Vec3f& position)
 {
 	static StaticMesh* mesh = nullptr;
 	static Transform transform;
@@ -45,6 +45,8 @@ Coin::Coin()
 	mesh_ = mesh;
 	transform_ = transform;
 	material_ = material;
+
+	transform_.position += position;
 }
 
 Coin::~Coin()

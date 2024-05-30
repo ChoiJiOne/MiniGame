@@ -21,8 +21,10 @@ class Coin : public IEntity
 public:
 	/**
 	 * @brief 코인 엔티티의 생성자입니다.
+	 * 
+	 * @param position 코인의 위치입니다.
 	 */
-	Coin();
+	Coin(const Vec3f& position);
 
 
 	/**
