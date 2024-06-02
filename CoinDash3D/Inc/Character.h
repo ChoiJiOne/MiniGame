@@ -113,12 +113,6 @@ private:
 
 private:
 	/**
-	 * @brief 카메라 엔티티입니다.
-	 */
-	Camera* camera_ = nullptr;
-
-
-	/**
 	 * @brief 스키닝 메시 리소스입니다.
 	 */
 	std::vector<SkinnedMesh*> meshes_;
