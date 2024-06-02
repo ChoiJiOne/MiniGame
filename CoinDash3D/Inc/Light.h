@@ -5,6 +5,8 @@
 
 #include "IEntity.h"
 
+class Character;
+
 
 /**
  * @brief 라이트 엔티티입니다.
@@ -16,8 +18,10 @@ class Light : public IEntity
 public:
 	/**
 	 * @brief 라이트 엔티티의 생성자입니다.
+	 * 
+	 * @param character 라이트가 따라다닐 캐릭터입니다.
 	 */
-	Light();
+	Light(Character* character);
 
 
 	/**
@@ -88,6 +92,19 @@ public:
 
 private:
 	/**
+	 * @brief 캐릭터의 위치를 기준으로 위치를 얻습니다.
+	 */
+	Vec3f GetPositionFromCharacter();
+
+
+	/**
+	 * @brief 캐릭터의 위치를 기준으로 방향을 얻습니다.
+	 */
+	Vec3f GetDirectionFromCharacter();
+
+
+private:
+	/**
 	 * @brief 라이트의 위치입니다.
 	 */
 	Vec3f position_ = Vec3f(0.0f, 0.0f, 0.0f);
@@ -121,4 +138,16 @@ private:
 	 * @brief 라이트의 투영 행렬입니다.
 	 */
 	Mat4x4 projection_;
+
+
+	/**
+	 * @brief 플레이어와 라이트 사이의 거리입니다.
+	 */
+	float distance_ = 0.0f;
+
+
+	/**
+	 * @brief 라이트가 따라다닐 캐릭터입니다.
+	 */
+	Character* character_ = nullptr;
 };
