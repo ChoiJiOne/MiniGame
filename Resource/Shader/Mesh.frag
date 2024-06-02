@@ -59,7 +59,7 @@ void main()
 	// specular
 	vec3 viewDirection = normalize(viewPosition - inWorldPosition);
 	vec3 halfDirection = normalize(direction + viewDirection);
-	float spec = pow(max(dot(inNormal, halfDirection), 0.0f), 64.0f);
+	float spec = pow(max(dot(inNormal, halfDirection), 0.0f), 32.0f);
 	vec3 specularRGB = spec * light.color;
 
 	float shadow = ComputeShadow(inWorldPositionInLightSpace);
