@@ -25,12 +25,12 @@
  */
 enum class EDrawMode : int32_t
 {
-	Points      = 0x0000,
-	Lines       = 0x0001,
-	LineStrip   = 0x0003,
-	Triangles   = 0x0004,
-	TriangleFan = 0x0006,
-	None        = 0xFFFF,
+	POINTS       = 0x0000,
+	LINES        = 0x0001,
+	LINE_STRIP   = 0x0003,
+	TRIANGLES    = 0x0004,
+	TRIANGLE_FAN = 0x0006,
+	NONE         = 0xFFFF,
 };
 
 
