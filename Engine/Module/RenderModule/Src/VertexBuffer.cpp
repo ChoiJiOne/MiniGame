@@ -64,15 +64,15 @@ void VertexBuffer::SetBufferData(const void* bufferPtr, uint32_t bufferSize)
 
 		switch (usage_)
 		{
-		case EUsage::Stream:
+		case EUsage::STREAM:
 			GL_FAILED(glBufferData(GL_ARRAY_BUFFER, bufferSize, bufferPtr, static_cast<GLenum>(usage_)));
 			break;
 
-		case EUsage::Static:
+		case EUsage::STATIC:
 			GL_FAILED(glBufferSubData(GL_ARRAY_BUFFER, 0, bufferSize, bufferPtr));
 			break;
 
-		case EUsage::Dynamic:
+		case EUsage::DYNAMIC:
 			vertexBufferPtr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 			std::memcpy(vertexBufferPtr, bufferPtr, bufferSize);
 			GL_FAILED(glUnmapBuffer(GL_ARRAY_BUFFER));

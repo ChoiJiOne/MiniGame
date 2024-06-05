@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 #include "IResource.h"
 
 
@@ -16,9 +18,9 @@ public:
 	 */
 	enum class EUsage
 	{
-		Stream = 0x88E0,
-		Static = 0x88E4,
-		Dynamic = 0x88E8,
+		STREAM  = 0x88E0,
+		STATIC  = 0x88E4,
+		DYNAMIC = 0x88E8,
 	};
 
 
@@ -97,5 +99,5 @@ private:
 	/**
 	 * @brief 정점 버퍼의 사용 형식입니다.
 	 */
-	EUsage usage_ = EUsage::Static;
+	EUsage usage_ = EUsage::STATIC;
 };
