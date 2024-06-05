@@ -23,12 +23,13 @@ class GLTFLoader
 {
 public:
 	/**
-	 * @brief 메시 데이터입니다.
+	 * @brief 메쉬 리소스입니다.
 	 */
-	struct MeshData
+	struct MeshResource
 	{
 		std::vector<Vec3f> positions;
 		std::vector<Vec3f> normals;
+		std::vector<Vec3f> tangents;
 		std::vector<Vec2f> texcoords;
 		std::vector<Vec4f> weights;
 		std::vector<Vec4i> joints;
@@ -108,23 +109,13 @@ public:
 
 
 	/**
-	 * @brief GLTF 데이터로부터 스키닝 메시 데이터를 로딩합니다.
-	 * 
-	 * @param data GLTF 데이터입니다.
-	 * 
-	 * @return GLTF로부터 추출된 메시 데이터 목록을 반환합니다.
-	 */
-	static std::vector<MeshData> LoadSkinnedMeshData(cgltf_data* data);
-
-
-	/**
-	 * @brief GLTF 데이터로부터 정적 메시 데이터를 로딩합니다.
+	 * @brief GLTF 데이터로부터 메시 리소스를 로딩합니다.
 	 *
 	 * @param data GLTF 데이터입니다.
 	 *
 	 * @return GLTF로부터 추출된 메시 데이터 목록을 반환합니다.
 	 */
-	static std::vector<MeshData> LoadStaticMeshData(cgltf_data* data);
+	static std::vector<MeshResource> LoadMeshResources(cgltf_data* data);
 
 
 	/**
@@ -200,5 +191,5 @@ private:
 	 * @param nodes 노드 목록입니다.
 	 * @param numNodes 노드 목록의 수입니다.
 	 */
-	static void GetMeshFromAttribute(MeshData& outMesh, cgltf_attribute* attribute, cgltf_skin* skin, cgltf_node* nodes, uint32_t numNodes);
+	static void GetMeshFromAttribute(MeshResource& outMesh, cgltf_attribute* attribute, cgltf_skin* skin, cgltf_node* nodes, uint32_t numNodes);
 };

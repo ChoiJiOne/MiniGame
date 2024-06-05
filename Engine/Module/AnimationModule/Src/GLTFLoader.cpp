@@ -226,54 +226,9 @@ std::vector<Clip> GLTFLoader::LoadAnimationClips(cgltf_data* data)
 	return clips;
 }
 
-std::vector<GLTFLoader::MeshData> GLTFLoader::LoadSkinnedMeshData(cgltf_data* data)
+std::vector<GLTFLoader::MeshResource> GLTFLoader::LoadMeshResources(cgltf_data* data)
 {
-	std::vector<MeshData> meshes;
-	cgltf_node* nodes = data->nodes;
-	uint32_t numNodes = static_cast<uint32_t>(data->nodes_count);
-
-	for (uint32_t index = 0; index < numNodes; ++index)
-	{
-		cgltf_node* node = &(nodes[index]);
-		if (!node->mesh || !node->skin)
-		{
-			continue;
-		}
-
-		uint32_t numPrims = static_cast<uint32_t>(node->mesh->primitives_count);
-		for (uint32_t pi = 0; pi < numPrims; ++pi)
-		{
-			meshes.push_back(MeshData());
-			MeshData& mesh = meshes.back();
-
-			cgltf_primitive* primitive = &(node->mesh->primitives[pi]);
-
-			uint32_t numAttrib = static_cast<uint32_t>(primitive->attributes_count);
-			for (uint32_t ai = 0; ai < numAttrib; ++ai)
-			{
-				cgltf_attribute* attrib = &(primitive->attributes[ai]);
-				GetMeshFromAttribute(mesh, attrib, node->skin, nodes, numNodes);
-			}
-
-			if (primitive->indices)
-			{
-				uint32_t numIndices = static_cast<uint32_t>(primitive->indices->count);
-				mesh.indices.resize(numIndices);
-
-				for (uint32_t i = 0; i < numIndices; ++i)
-				{
-					mesh.indices[i] = static_cast<uint32_t>(cgltf_accessor_read_index(primitive->indices, i));
-				}
-			}
-		}
-	}
-
-	return meshes;
-}
-
-std::vector<GLTFLoader::MeshData> GLTFLoader::LoadStaticMeshData(cgltf_data* data)
-{
-	std::vector<MeshData> meshes;
+	std::vector<MeshResource> meshes;
 	cgltf_node* nodes = data->nodes;
 	uint32_t numNodes = static_cast<uint32_t>(data->nodes_count);
 
@@ -288,8 +243,8 @@ std::vector<GLTFLoader::MeshData> GLTFLoader::LoadStaticMeshData(cgltf_data* dat
 		uint32_t numPrims = static_cast<uint32_t>(node->mesh->primitives_count);
 		for (uint32_t pi = 0; pi < numPrims; ++pi)
 		{
-			meshes.push_back(MeshData());
-			MeshData& mesh = meshes.back();
+			meshes.push_back(MeshResource());
+			MeshResource& mesh = meshes.back();
 
 			cgltf_primitive* primitive = &(node->mesh->primitives[pi]);
 
@@ -419,7 +374,7 @@ void GLTFLoader::GetScalarValues(std::vector<float>& outScalars, uint32_t compon
 	}
 }
 
-void GLTFLoader::GetMeshFromAttribute(MeshData& outMesh, cgltf_attribute* attribute, cgltf_skin* skin, cgltf_node* nodes, uint32_t numNodes)
+void GLTFLoader::GetMeshFromAttribute(MeshResource& outMesh, cgltf_attribute* attribute, cgltf_skin* skin, cgltf_node* nodes, uint32_t numNodes)
 {
 	cgltf_attribute_type type = attribute->type;
 	cgltf_accessor* accessor = attribute->data;
@@ -453,15 +408,12 @@ void GLTFLoader::GetMeshFromAttribute(MeshData& outMesh, cgltf_attribute* attrib
 			break;
 
 		case cgltf_attribute_type_normal:
-		{
-			Vec3f normal = Vec3f(values[offset + 0], values[offset + 1], values[offset + 2]);
-			if (Vec3f::LengthSq(normal) < Epsilon)
-			{
-				normal = Vec3f(0.0f, 1.0f, 0.0f);
-			}
-			outMesh.normals.push_back(Vec3f::Normalize(normal));
-		}
-		break;
+			outMesh.normals.push_back(Vec3f(values[offset + 0], values[offset + 1], values[offset + 2]));
+			break;
+
+		case cgltf_attribute_type_tangent:
+			outMesh.tangents.push_back(Vec3f(values[offset + 0], values[offset + 1], values[offset + 2]));
+			break;
 
 		case cgltf_attribute_type_texcoord:
 			outMesh.texcoords.push_back(Vec2f(values[offset + 0], values[offset + 1]));
@@ -473,13 +425,12 @@ void GLTFLoader::GetMeshFromAttribute(MeshData& outMesh, cgltf_attribute* attrib
 
 		case cgltf_attribute_type_joints:
 		{
-			Vec4i joints(
-				static_cast<int32_t>(values[offset + 0] + 0.5f),
-				static_cast<int32_t>(values[offset + 1] + 0.5f),
-				static_cast<int32_t>(values[offset + 2] + 0.5f),
-				static_cast<int32_t>(values[offset + 3] + 0.5f)
-			);
+			int32_t x = static_cast<int32_t>(values[offset + 0] + 0.5f);
+			int32_t y = static_cast<int32_t>(values[offset + 1] + 0.5f);
+			int32_t z = static_cast<int32_t>(values[offset + 2] + 0.5f);
+			int32_t w = static_cast<int32_t>(values[offset + 3] + 0.5f);
 
+			Vec4i joints(x, y, z, w);
 			joints.x = MathModule::Max(0, GetNodeIndex(skin->joints[joints.x], nodes, numNodes));
 			joints.y = MathModule::Max(0, GetNodeIndex(skin->joints[joints.y], nodes, numNodes));
 			joints.z = MathModule::Max(0, GetNodeIndex(skin->joints[joints.z], nodes, numNodes));
