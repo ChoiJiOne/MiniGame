@@ -35,7 +35,7 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 
 	PlatformModule::SetEndLoopCallback([&]() { RenderModule::Uninit(); });
 	
-	cgltf_data* data = GLTFLoader::Load("Resource/Model/Kachujin.gltf");
+	cgltf_data* data = GLTFLoader::Load("Resource/Model/Soldier.gltf");
 	std::vector<GLTFLoader::MeshResource> meshResources = GLTFLoader::LoadMeshResources(data);
 	Skeleton skeleton = GLTFLoader::LoadSkeleton(data);
 	std::vector<Clip> clips = GLTFLoader::LoadAnimationClips(data);
