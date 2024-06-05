@@ -5,8 +5,6 @@
 
 #include "IEntity.h"
 
-class Character;
-
 
 /**
  * @brief 월드 상의 카메라 엔티티입니다.
@@ -15,11 +13,22 @@ class Camera : public IEntity
 {
 public:
 	/**
-	 * @brief 카메라 엔티티의 생성자입니다.
-	 *
-	 * @param character 카메라가 따라다닐 캐릭터입니다.
+	 * @brief 카메라의 움직임 방향입니다.
 	 */
-	Camera(Character* character);
+	enum class EMovement
+	{
+		FORWARD  = 0x00,
+		BACKWARD = 0x01,
+		LEFT     = 0x02,
+		RIGHT    = 0x03,
+	};
+
+
+public:
+	/**
+	 * @brief 카메라 엔티티의 생성자입니다.
+	 */
+	Camera();
 
 
 	/**
@@ -49,14 +58,6 @@ public:
 
 
 	/**
-	 * @brief 카메라의 월드 상 위치를 얻습니다.
-	 *
-	 * @return 카메라의 월드 상 위치를 반환합니다.
-	 */
-	const Vec3f& GetEyePosition() const { return eyePosition_; }
-
-
-	/**
 	 * @brief 시야 행렬을 얻습니다.
 	 *
 	 * @return 시야 행렬을 반환합니다.
@@ -72,13 +73,15 @@ public:
 	const Mat4x4& GetProjection() const { return projection_; }
 
 
-private:
 	/**
-	 * @brief 캐릭터의 위치를 기준으로 카메라의 위치를 얻습니다.
+	 * @brief 카메라 엔티티의 활성화 여부를 설정합니다.
+	 *
+	 * @param active 카메라 엔티티의 활성화 여부입니다.
 	 */
-	Vec3f GetEyePositionFromCharacter();
+	void SetActive(bool active) { bIsActive_ = active; }
 
 
+private:
 	/**
 	 * @brief 카메라의 상태를 업데이트합니다.
 	 */
@@ -173,25 +176,7 @@ private:
 
 
 	/**
-	 * @brief X축 회전 각도의 최댓값입니다.
+	 * @brief 카메라가 활성화되었는지 확인합니다.
 	 */
-	float minPitch_ = 0.0f;
-
-
-	/**
-	 * @brief X축 회전 각도의 최솟값입니다.
-	 */
-	float maxPitch_ = 0.0f;
-
-
-	/**
-	 * @brief 플레이어와 카메라 사이의 거리입니다.
-	 */
-	float distance_ = 0.0f;
-
-
-	/**
-	 * @brief 카메라가 따라다닐 캐릭터입니다.
-	 */
-	Character* character_ = nullptr;
+	bool bIsActive_ = true;
 };
