@@ -8,6 +8,7 @@
 
 #include <functional>
 #include <windows.h>
+#include <string>
 
 
 /**
