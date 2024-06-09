@@ -1,44 +1,44 @@
-@echo off
+@ECHO off
 
-echo ======================
-echo Start Project Package
-echo ======================
+ECHO ======================
+ECHO Start Project Package
+ECHO ======================
 
-set solutionPath=%~dp0..\..\Solution
+SET SOLUTION_PATH=%~dp0..\..\Solution
 
 @REM 프로젝트가 존재하지 않으면 프로젝트를 생성합니다.
-if not exist %solutionPath% (
-    echo Can't find Visual Studio Solution...
+if not exist %SOLUTION_PATH% (
+    ECHO Can't find Visual Studio Solution...
     GOTO:EOF
 )
 
 @REM 패키징할 모드입니다.
-SET mode=%1
+SET MODE=%1
 
 @REM 패키징할 모드의 유효성을 검사합니다.
-if "%mode%" == "Debug" (
-    echo Package "%mode%" mode...
-) else if "%mode%" == "Release" (
-    echo Package "%mode%" mode...
-) else if "%mode%" == "RelWithDebInfo" (
-    echo Package "%mode%" mode...
-) else if "%mode%" == "MinSizeRel" (
-    echo Package "%mode%" mode...
+if "%MODE%" == "Debug" (
+    ECHO Package "%MODE%" mode...
+) else if "%MODE%" == "Release" (
+    ECHO Package "%MODE%" mode...
+) else if "%MODE%" == "RelWithDebInfo" (
+    ECHO Package "%MODE%" mode...
+) else if "%MODE%" == "MinSizeRel" (
+    ECHO Package "%MODE%" mode...
 ) else (
-    echo "%mode%" is illegal mode...
+    ECHO "%MODE%" is illegal mode...
     GOTO:EOF
 )
 
-set currentPath=%~dp0
+SET CURRENT_PATH=%~dp0
 
-pushd %currentPath%
-pushd %solutionPath%
+PUSHD %CURRENT_PATH%
+PUSHD %SOLUTION_PATH%
 
-cpack -C %mode% -G NSIS
+cpack -C %MODE% -G NSIS
 
-popd
-popd
+POPD
+POPD
 
-echo ======================
-echo Done Project Package
-echo ======================
+ECHO ======================
+ECHO Done Project Package
+ECHO ======================
