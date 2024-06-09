@@ -1,80 +1,69 @@
-@echo off
+@ECHO OFF
 
-echo =============================
-echo Start Generate Project Files
-echo =============================
+ECHO =============================
+ECHO Start Generate Project Files
+ECHO =============================
 
 @REM CMake가 설치되었는지 확인합니다.
-@echo off
+@ECHO OFF
 where cmake > nul 2>&1
 if %ERRORLEVEL% EQU 0 (
-    echo CMake is installed on this system...
+    ECHO CMake is installed on this system...
 ) else (
-    echo CMake is not installed on this system...
+    ECHO CMake is not installed on this system...
     GOTO:EOF
 )
 
 @REM Visual Studio 버전입니다. 
-SET vs=%1
-
-@REM visual studio 버전을 검사합니다. 2019 혹은 2022입니다.
-if "%vs%" == "vs2019" (
-    SET visualstudio="Visual Studio 16 2019"
-    echo Visual Studio version is "%vs%"...
-) else if "%vs%" == "vs2022" (
-    SET visualstudio="Visual Studio 17 2022"
-    echo Visual Studio version is "%vs%"...
-) else (
-    echo Visual Studio version "%vs%" is illegal...
-    GOTO:EOF
-)
+@REM 엔진은 Visual Studio 2022만 지원합니다.
+SET visualstudio="Visual Studio 17 2022"
 
 @REM 프로젝트 이름입니다.
-SET project=%2
+SET PROJECT_NAME=%1
 
 @REM 프로젝트 이름의 유효성을 검사합니다.
-if %project% == "" (
-    echo Project name is empty...
+if %PROJECT_NAME% == "" (
+    ECHO Project name is empty...
     GOTO:EOF
 ) else (
-    echo Project name is "%project%"...
+    ECHO Project name is "%PROJECT_NAME%"...
 )
 
 @REM 프로젝트 생성 후 Visual Studio를 실행할 지 여부입니다.
-SET run=%3
-if "%run%" == "on" (
-    SET run="on"
-) else if "%run%" == "On" (
-    SET run="on"
-) else if "%run%" == "off" (
-    SET run="off"
-) else if "%run%" == "Off" (
-    SET run="off"
+SET RUN_OPTION=%2
+if "%RUN_OPTION%" == "on" (
+    SET RUN="on"
+) else if "%RUN_OPTION%" == "On" (
+    SET RUN="on"
+) else if "%RUN_OPTION%" == "off" (
+    SET RUN="off"
+) else if "%RUN_OPTION%" == "Off" (
+    SET RUN="off"
 ) else (
-    SET run="off"
+    SET RUN="off"
 )
-echo Switch %run% run Visual Studio Solution...
+ECHO Switch %RUN% run Visual Studio Solution...
 
-set solutionPath=%~dp0..\..\Solution
+SET SOLUTION_PATH=%~dp0..\..\Solution
 
-if not exist %solutionPath% (
-    mkdir %solutionPath%
+if not exist %SOLUTION_PATH% (
+    mkdir %SOLUTION_PATH%
 )
 
-set currentPath=%~dp0
+SET CURRENT_PATH=%~dp0
 
-pushd %currentPath%
-pushd %solutionPath%
+PUSHD %CURRENT_PATH%
+PUSHD %SOLUTION_PATH%
 
 cmake .. -G %visualstudio% -A "x64"
 
-if %run% == "on" (
-    start %project%.sln
+if %RUN% == "on" (
+    start %PROJECT_NAME%.sln
 )
 
-popd
-popd
+POPD
+POPD
 
-echo =============================
-echo Done Generate Project Files
-echo =============================
+ECHO =============================
+ECHO Done Generate Project Files
+ECHO =============================
