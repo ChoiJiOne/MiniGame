@@ -101,15 +101,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, uint32_t message, WPARAM wParam, LPARAM l
 		break;
 		
 	case WM_DESTROY:
-		if (hwnd == PlatformModule::windowHandle)
+		if (PlatformModule::endLoopCallback)
 		{
-			if (PlatformModule::endLoopCallback)
-			{
-				PlatformModule::endLoopCallback();
-			}
-
-			PostQuitMessage(0);
+			PlatformModule::endLoopCallback();
 		}
+		PostQuitMessage(0);
 		break;
 	}
 
