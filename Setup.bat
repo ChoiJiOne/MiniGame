@@ -1,6 +1,6 @@
 @echo off
 
-SET namae=%1
-SET script=Engine\Script\Setup.bat
+SET NAME=%1
+SET SCRIPT=Engine\Script\Setup.bat
 
-%script% %namae%
+%SCRIPT% %NAME%

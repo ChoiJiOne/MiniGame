@@ -1,6 +1,6 @@
-@echo off
+@ECHO OFF
 
-SET mode=RelWithDebInfo
-SET script=Engine\Script\Package.bat
+SET MODE=RelWithDebInfo
+SET SCRIPT=Engine\Script\Package.bat
 
-%script% %mode%
+%SCRIPT% %MODE%

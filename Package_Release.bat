@@ -1,6 +1,6 @@
-@echo off
+@ECHO OFF
 
-SET mode=Release
-SET script=Engine\Script\Package.bat
+SET MODE=Release
+SET SCRIPT=Engine\Script\Package.bat
 
-%script% %mode%
+%SCRIPT% %MODE%

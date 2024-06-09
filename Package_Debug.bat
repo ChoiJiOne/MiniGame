@@ -1,6 +1,6 @@
-@echo off
+@ECHO OFF
 
-SET mode=Debug
-SET script=Engine\Script\Package.bat
+SET MODE=Debug
+SET SCRIPT=Engine\Script\Package.bat
 
-%script% %mode%
+%SCRIPT% %MODE%

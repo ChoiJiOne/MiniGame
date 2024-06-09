@@ -1,6 +1,6 @@
-@echo off
+@ECHO OFF
 
-SET mode=MinSizeRel
-SET script=Engine\Script\Package.bat
+SET MODE=MinSizeRel
+SET SCRIPT=Engine\Script\Package.bat
 
-%script% %mode%
+%SCRIPT% %MODE%

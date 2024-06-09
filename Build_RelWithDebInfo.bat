@@ -1,6 +1,6 @@
-@echo off
+@ECHO OFF
 
-SET mode=RelWithDebInfo
-SET script=Engine\Script\BuildSolution.bat
+SET MODE=RelWithDebInfo
+SET SCRIPT=Engine\Script\BuildSolution.bat
 
-%script% %mode%
+%SCRIPT% %MODE%
