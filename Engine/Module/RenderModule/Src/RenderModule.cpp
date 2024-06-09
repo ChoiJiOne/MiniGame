@@ -35,16 +35,8 @@ RenderModule::Errors RenderModule::Init(HWND windowHandle)
 	}
 
 	renderTargetHandle = windowHandle;
-	
-	Errors result = Errors::OK;
 
-	result = SetupWGLExtensions();
-	if (result != Errors::OK)
-	{
-		return result;
-	}
-
-	result = CreateWGLContext();
+	Errors result = CreateContext();
 	if (result != Errors::OK)
 	{
 		return result;
@@ -292,106 +284,7 @@ void RenderModule::SetLastWindowsErrorMessage()
 	);
 }
 
-RenderModule::Errors RenderModule::SetupWGLExtensions()
-{
-	wchar_t className[MAX_BUFFER_SIZE];
-	if (!GetClassNameW(renderTargetHandle, className, MAX_BUFFER_SIZE))
-	{
-		SetLastWindowsErrorMessage();
-		return Errors::ERR_WIN;
-	}
-
-	HWND dummyWindow = CreateWindowExW(0, className, L"DummyWindow", 0,
-		CW_USEDEFAULT, CW_USEDEFAULT,
-		CW_USEDEFAULT, CW_USEDEFAULT,
-		0, 0, GetModuleHandle(NULL), 0
-	);
-
-	if (!dummyWindow)
-	{
-		SetLastWindowsErrorMessage();
-		return Errors::ERR_WIN;
-	}
-
-	HDC dummyDeviceContext = ::GetDC(dummyWindow);
-	if (dummyDeviceContext == nullptr)
-	{
-		SetLastErrorMessage(L"Failed to get dummy device context.");
-		return Errors::ERR_WIN;
-	}
-
-	PIXELFORMATDESCRIPTOR pfd = {};
-	pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
-	pfd.nVersion = 1;
-	pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_GENERIC_ACCELERATED | PFD_DOUBLEBUFFER | PFD_SWAP_EXCHANGE;
-	pfd.iPixelType = PFD_TYPE_RGBA;
-	pfd.cColorBits = 32;
-	pfd.cAlphaBits = 8;
-	pfd.cDepthBits = 24;
-	pfd.cStencilBits = 8;
-	pfd.iLayerType = PFD_MAIN_PLANE;
-
-	int32_t pixelFormat = ChoosePixelFormat(dummyDeviceContext, &pfd);
-	if (!pixelFormat)
-	{
-		SetLastWindowsErrorMessage();
-		return Errors::ERR_WGL;
-	}
-
-	if (!SetPixelFormat(dummyDeviceContext, pixelFormat, &pfd))
-	{
-		SetLastWindowsErrorMessage();
-		return Errors::ERR_WGL;
-	}
-
-	HGLRC dummyContext = wglCreateContext(dummyDeviceContext);
-	if (!dummyContext)
-	{
-		SetLastWindowsErrorMessage();
-		return Errors::ERR_WGL;
-	}
-
-	if (!wglMakeCurrent(dummyDeviceContext, dummyContext))
-	{
-		SetLastWindowsErrorMessage();
-		return Errors::ERR_WGL;
-	}
-
-	if (!gladLoadWGL(dummyDeviceContext))
-	{
-		SetLastErrorMessage(L"Failed to windows GL.");
-		return Errors::ERR_WGL;
-	}
-
-	if (!wglMakeCurrent(dummyDeviceContext, nullptr))
-	{
-		SetLastWindowsErrorMessage();
-		return Errors::ERR_WGL;
-	}
-
-	if (!wglDeleteContext(dummyContext))
-	{
-		SetLastWindowsErrorMessage();
-		return Errors::ERR_WGL;
-	}
-
-	if (!::ReleaseDC(dummyWindow, dummyDeviceContext))
-	{
-		SetLastWindowsErrorMessage();
-		return Errors::ERR_WIN;
-	}
-
-	// WM_DESTROY 메시지를 전송하지만, Platform 모듈에서 무시하도록 구현...
-	if (!DestroyWindow(dummyWindow))
-	{
-		SetLastWindowsErrorMessage();
-		return Errors::ERR_WIN;
-	}
-
-	return Errors::OK;
-}
-
-RenderModule::Errors RenderModule::CreateWGLContext()
+RenderModule::Errors RenderModule::CreateContext()
 {
 	deviceContext = ::GetDC(renderTargetHandle);
 	if (deviceContext == nullptr)
@@ -400,45 +293,50 @@ RenderModule::Errors RenderModule::CreateWGLContext()
 		return Errors::ERR_WIN;
 	}
 
-	const std::array<int32_t, 21> pixelFormatAttribs = 
-	{
-		WGL_DRAW_TO_WINDOW_ARB,   GL_TRUE,
-		WGL_SUPPORT_OPENGL_ARB,   GL_TRUE,
-		WGL_DOUBLE_BUFFER_ARB,    GL_TRUE,
-		WGL_SAMPLE_BUFFERS_ARB,   GL_TRUE,
-		WGL_ACCELERATION_ARB,     WGL_FULL_ACCELERATION_ARB,
-		WGL_PIXEL_TYPE_ARB,       WGL_TYPE_RGBA_ARB,
-		WGL_COLOR_BITS_ARB,       24,
-		WGL_ALPHA_BITS_ARB,       8,
-		WGL_DEPTH_BITS_ARB,       24,
-		WGL_STENCIL_BITS_ARB,     8,
-		0,
-	};
+	PIXELFORMATDESCRIPTOR pfd = {};
+	pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
+	pfd.nVersion = 1;
+	pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_GENERIC_ACCELERATED | PFD_DOUBLEBUFFER | PFD_SWAP_EXCHANGE;
+	pfd.iPixelType = PFD_TYPE_RGBA;
+	pfd.cColorBits = 24;
+	pfd.cAlphaBits = 8;
+	pfd.cDepthBits = 24;
+	pfd.cStencilBits = 8;
+	pfd.iLayerType = PFD_MAIN_PLANE;
 
-	int32_t pixelFormat;
-	uint32_t numFormats;
-	wglChoosePixelFormatARB(deviceContext, pixelFormatAttribs.data(), 0, 1, &pixelFormat, &numFormats);
-	if (!numFormats)
-	{
-		SetLastErrorMessage(L"Failed to choose pixel format.");
-		return Errors::ERR_WGL;
-	}
-
-	PIXELFORMATDESCRIPTOR pfd;
-	if (!DescribePixelFormat(deviceContext, pixelFormat, sizeof(pfd), &pfd))
+	int32_t pixelFormat = ChoosePixelFormat(deviceContext, &pfd);
+	if (!pixelFormat)
 	{
 		SetLastWindowsErrorMessage();
 		return Errors::ERR_WGL;
 	}
 
-	if (!SetPixelFormat(deviceContext, pixelFormat, &pfd)) 
+	if (!SetPixelFormat(deviceContext, pixelFormat, &pfd))
 	{
 		SetLastWindowsErrorMessage();
 		return Errors::ERR_WGL;
 	}
 
-	const std::array<int32_t, 9> attributes =
+	HGLRC dummyContext = wglCreateContext(deviceContext);
+	if (!dummyContext)
 	{
+		SetLastWindowsErrorMessage();
+		return Errors::ERR_WGL;
+	}
+
+	if (!wglMakeCurrent(deviceContext, dummyContext))
+	{
+		SetLastWindowsErrorMessage();
+		return Errors::ERR_WGL;
+	}
+
+	if (!gladLoadWGLLoader((GLADloadproc)(wglGetProcAddress), deviceContext))
+	{
+		SetLastErrorMessage(L"Failed to windows GL.");
+		return Errors::ERR_WGL;
+	}
+
+	const std::array<int32_t, 9> attributes = {
 		WGL_CONTEXT_MAJOR_VERSION_ARB, FIX_OPENGL_MAJOR_VERSION,
 		WGL_CONTEXT_MINOR_VERSION_ARB, FIX_OPENGL_MINOR_VERSION,
 		WGL_CONTEXT_FLAGS_ARB, 0,
@@ -451,6 +349,18 @@ RenderModule::Errors RenderModule::CreateWGLContext()
 	if (!glRenderContext)
 	{
 		SetLastErrorMessage(L"Failed to create ARB context.");
+		return Errors::ERR_WGL;
+	}
+
+	if (!wglMakeCurrent(nullptr, nullptr))
+	{
+		SetLastWindowsErrorMessage();
+		return Errors::ERR_WGL;
+	}
+
+	if (!wglDeleteContext(dummyContext))
+	{
+		SetLastWindowsErrorMessage();
 		return Errors::ERR_WGL;
 	}
 

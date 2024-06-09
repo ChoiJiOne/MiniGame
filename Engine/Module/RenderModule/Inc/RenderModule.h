@@ -315,21 +315,13 @@ private:
 	 */
 	static void SetLastWindowsErrorMessage();
 
-
-	/**
-	 * @brief Windows확장 OpenGL을 초기화합니다.
-	 *
-	 * @return Windows확장 OpenGL 초기화에 성공하면 true, 그렇지 않으면 false를 반환합니다.
-	 */
-	static Errors SetupWGLExtensions();
-
-
+	
 	/**
 	 * @brief Windows GL 컨텍스트를 생성합니다.
 	 *
 	 * @return Windows GL 컨텍스트 생성에 성공하면 Errors 열거형의 OK 값을, 그렇지 않으면 그 외의 값을 반환합니다.
 	 */
-	static Errors CreateWGLContext();
+	static Errors CreateContext();
 
 
 private:
