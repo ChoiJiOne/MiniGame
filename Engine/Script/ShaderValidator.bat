@@ -1,12 +1,12 @@
 @echo off
 
-SET src=%1
-SET validator=%~dp0..\Bin\glslangValidator.exe
+SET SRC=%1
+SET VALIDATOR=%~dp0..\Bin\glslangValidator.exe
 
-for %%i in ("%src%") do (
-    set "output=%%~nxi"
+for %%i in ("%SRC%") do (
+    set "OUTPUT=%%~nxi"
 )
 
-echo [CHECK] %src%
+echo [CHECK] %SRC%
 
-%validator% %src%
+%VALIDATOR% %SRC%
