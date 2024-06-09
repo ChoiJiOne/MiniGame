@@ -38,31 +38,30 @@ end
 
 
 local build_script = [[
-@echo off
+@ECHO OFF
 
-SET mode=%s
-SET script=Engine\Script\BuildSolution.bat
+SET MODE=%s
+SET SCRIPT=Engine\Script\BuildSolution.bat
 
-%%script%% %%mode%%
+%%SCRIPT%% %%MODE%%
 ]]
 
 local project_solution_script = [[
-@echo off
+@ECHO OFF
 
-SET visualstudio=%s
-SET project=%s
-SET script=Engine\Script\GenerateProjectFiles.bat
+SET PROJECT_NAME=%s
+SET SCRIPT=Engine\Script\GenerateProjectFiles.bat
 
-%%script%% %%visualstudio%% %%project%% %s
+%%SCRIPT%% %%PROJECT_NAME%% %s
 ]]
 
 local package_script = [[
-@echo off
+@ECHO OFF
 
-SET mode=%s
-SET script=Engine\Script\Package.bat
+SET MODE=%s
+SET SCRIPT=Engine\Script\Package.bat
 
-%%script%% %%mode%%
+%%SCRIPT%% %%MODE%%
 ]]
 
 local solution_script = [[
@@ -173,10 +172,8 @@ writeFile("Build_Debug.bat", string.format(build_script, "Debug"))
 writeFile("Build_MinSizeRel.bat", string.format(build_script, "MinSizeRel"))
 writeFile("Build_Release.bat", string.format(build_script, "Release"))
 writeFile("Build_RelWithDebInfo.bat", string.format(build_script, "RelWithDebInfo"))
-writeFile("GenerateProjectFiles_vs2019.bat", string.format(project_solution_script, "vs2019", name, "On"))
-writeFile("GenerateProjectFiles_vs2022.bat", string.format(project_solution_script, "vs2022", name, "On"))
-writeFile("HotReload_vs2019.bat", string.format(project_solution_script, "vs2019", name, "Off"))
-writeFile("HotReload_vs2022.bat", string.format(project_solution_script, "vs2022", name, "Off"))
+writeFile("GenerateProjectFiles.bat", string.format(project_solution_script, name, "On"))
+writeFile("HotReload.bat", string.format(project_solution_script, name, "Off"))
 writeFile("Package_Debug.bat", string.format(package_script, "Debug"))
 writeFile("Package_MinSizeRel.bat", string.format(package_script, "MinSizeRel"))
 writeFile("Package_Release.bat", string.format(package_script, "Release"))
