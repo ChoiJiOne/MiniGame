@@ -1,40 +1,40 @@
-@echo off
+@ECHO off
 
-echo ===================
-echo Start Setup Project
-echo ===================
-echo.
+ECHO ===================
+ECHO Start Setup Project
+ECHO ===================
+ECHO.
 
-SET name=%1
-SET root=%~dp0..\..\
-SET project=%root%%name%
-SET lua=%~dp0..\Bin\lua54.exe
+SET NAME=%1
+SET ROOT_PATH=%~dp0..\..\
+SET PROJECT_PATH=%ROOT_PATH%%NAME%
+SET LUA_PATH=%~dp0..\Bin\lua54.exe
 
 if not defined name (
-    echo Project name is empty!
-    echo.
-    echo ===================
-    echo Done Setup Project
-    echo ===================
+    ECHO Project name is empty!
+    ECHO.
+    ECHO ===================
+    ECHO Done Setup Project
+    ECHO ===================
     GOTO:EOF
 )
 
-if exist %project% (
-    echo Already setup project!    
-    echo.
-    echo ===================
-    echo Done Setup Project
-    echo ===================
+if exist %PROJECT_PATH% (
+    ECHO Already setup project!    
+    ECHO.
+    ECHO ===================
+    ECHO Done Setup Project
+    ECHO ===================
     GOTO:EOF
 ) else (
-    mkdir %project%
-    mkdir %project%\\Inc
-    mkdir %project%\\Src
+    mkdir %PROJECT_PATH%
+    mkdir %PROJECT_PATH%\\Inc
+    mkdir %PROJECT_PATH%\\Src
 )
 
-%lua% %~dp0Setup.lua %name% %root% %project%
+%LUA_PATH% %~dp0Setup.lua %NAME% %ROOT_PATH% %PROJECT_PATH%
 
-echo.
-echo ===================
-echo Done Setup Project
-echo ===================
+ECHO.
+ECHO ===================
+ECHO Done Setup Project
+ECHO ===================
