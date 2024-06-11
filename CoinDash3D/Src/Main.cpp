@@ -13,7 +13,8 @@
 
 #include "Camera.h"
 #include "GLTFLoader.h"
-#include "GeometryRenderer.h"
+#include "GeometryRenderer2D.h"
+#include "GeometryRenderer3D.h"
 #include "SkinnedMesh.h"
 #include "StaticMesh.h"
 #include "Shader.h"
@@ -35,7 +36,8 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 
 	PlatformModule::SetEndLoopCallback([&]() { RenderModule::Uninit(); });
 	
-	GeometryRenderer* renderer = RenderModule::CreateResource<GeometryRenderer>();
+	GeometryRenderer2D* renderer2d = RenderModule::CreateResource<GeometryRenderer2D>();
+	GeometryRenderer3D* renderer3d = RenderModule::CreateResource<GeometryRenderer3D>();
 	Camera* camera = GameModule::CreateEntity<Camera>();
 
 	PlatformModule::RunLoop(
@@ -43,13 +45,19 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 		{
 			camera->Tick(deltaSeconds);
 
-			renderer->SetView(camera->GetView());
-			renderer->SetProjection(camera->GetProjection());
-			renderer->SetOrtho(RenderModule::GetScreenOrtho());
+			renderer3d->SetView(camera->GetView());
+			renderer3d->SetProjection(camera->GetProjection());
+			renderer2d->SetOrtho(RenderModule::GetScreenOrtho());
 
 			RenderModule::BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
 
-			renderer->DrawGrid3D(Vec3f(100.0f, 100.0f, 100.0f), 1.0f);
+			renderer3d->DrawGrid3D(Vec3f(100.0f, 100.0f, 100.0f), 1.0f);
+			//renderer2d->DrawCircle2D(Vec2f(200.0f, 200.0f), 10.0f, Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
+			renderer2d->DrawWireframeCircle2D(Vec2f(200.0f, 200.0f), 10.0f, Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+
+			static float time = 0.0f;
+			time += deltaSeconds;
+			renderer2d->DrawHorizonProgressBar2D(Vec2f(400.0f, 300.0f), 100.0f, 20.0f, time / 5.0f, Vec4f(1.0f, 0.0f, 0.0f, 1.0f), Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
 
 			RenderModule::EndFrame();
 		}
