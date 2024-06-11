@@ -7,7 +7,7 @@
 
 #include "FileModule.h"
 
-#include "Assertion.h"
+#include "GLAssertion.h"
 #include "TTFont.h"
 
 TTFont::TTFont(const std::string& path, int32_t beginCodePoint, int32_t endCodePoint, float fontSize)
