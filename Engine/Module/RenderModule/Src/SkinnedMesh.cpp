@@ -74,12 +74,12 @@ void SkinnedMesh::Release()
 	bIsInitialized_ = false;
 }
 
-void SkinnedMesh::Bind()
+void SkinnedMesh::Bind() const
 {
 	GL_FAILED(glBindVertexArray(vertexArrayObject_));
 }
 
-void SkinnedMesh::Unbind()
+void SkinnedMesh::Unbind() const
 {
 	GL_FAILED(glBindVertexArray(0));
 }

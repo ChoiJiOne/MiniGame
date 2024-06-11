@@ -68,12 +68,12 @@ void StaticMesh::Release()
 	bIsInitialized_ = false;
 }
 
-void StaticMesh::Bind()
+void StaticMesh::Bind() const
 {
 	GL_FAILED(glBindVertexArray(vertexArrayObject_));
 }
 
-void StaticMesh::Unbind()
+void StaticMesh::Unbind() const
 {
 	GL_FAILED(glBindVertexArray(0));
 }
