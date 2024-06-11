@@ -25,7 +25,7 @@ public:
 		Vec3f tangent;   // 정점의 탄젠트 벡터입니다.
 		Vec2f texcoord;  // 정점의 텍스처 좌표입니다.
 		Vec4f weight;    // 정점의 가중치입니다.
-		Vec4i joints;     // 정점의 뼈대 인덱스입니다.
+		Vec4i joints;    // 정점의 뼈대 인덱스입니다.
 	};
 
 public:
@@ -61,13 +61,13 @@ public:
 	/**
 	 * @brief 메시 리소스를 파이프라인에 바인딩합니다.
 	 */
-	virtual void Bind() override;
+	virtual void Bind() const override;
 
 
 	/**
 	 * @brief 바인딩된 메시 리소스를 바인딩 해제합니다.
 	 */
-	virtual void Unbind() override;
+	virtual void Unbind() const override;
 
 
 	/**

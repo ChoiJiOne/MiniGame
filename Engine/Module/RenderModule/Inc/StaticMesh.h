@@ -60,13 +60,13 @@ public:
 	/**
 	 * @brief 메시 리소스를 파이프라인에 바인딩합니다.
 	 */
-	virtual void Bind() override;
+	virtual void Bind() const override;
 
 
 	/**
 	 * @brief 바인딩된 메시 리소스를 바인딩 해제합니다.
 	 */
-	virtual void Unbind() override;
+	virtual void Unbind() const override;
 
 
 	/**
