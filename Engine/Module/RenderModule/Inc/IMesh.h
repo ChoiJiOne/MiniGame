@@ -34,13 +34,13 @@ public:
 	/**
 	 * @brief 메시 리소스 인터페이스를 파이프라인에 바인딩합니다.
 	 */
-	virtual void Bind() = 0;
+	virtual void Bind() const = 0;
 
 
 	/**
 	 * @brief 바인딩된 메시 리소스 인터페이스를 바인딩 해제합니다.
 	 */
-	virtual void Unbind() = 0;
+	virtual void Unbind() const = 0;
 
 
 	/**
