@@ -68,7 +68,7 @@ void GeometryRenderer2D::DrawPoints2D(const std::vector<Vec2f>& positions, const
 
 	for (std::size_t index = 0; index < positions.size(); ++index)
 	{
-		vertices_[index].position = Vec2f(positions[index].x + 0.5f, positions[index].y + 0.5f);
+		vertices_[index].position = Vec2f(positions[index].x, positions[index].y);
 		vertices_[index].color = color;
 	}
 
@@ -82,7 +82,7 @@ void GeometryRenderer2D::DrawConnectPoints2D(const std::vector<Vec2f>& positions
 
 	for (std::size_t index = 0; index < positions.size(); ++index)
 	{
-		vertices_[index].position = Vec2f(positions[index].x + 0.5f, positions[index].y + 0.5f);
+		vertices_[index].position = Vec2f(positions[index].x, positions[index].y);
 		vertices_[index].color = color;
 	}
 
@@ -93,8 +93,8 @@ void GeometryRenderer2D::DrawLine2D(const Vec2f& fromPosition, const Vec2f& toPo
 {
 	uint32_t vertexCount = 0;
 
-	vertices_[vertexCount++] = Vertex(Vec2f(fromPosition.x + 0.5f, fromPosition.y + 0.5f), color);
-	vertices_[vertexCount++] = Vertex(Vec2f(toPosition.x + 0.5f, toPosition.y + 0.5f), color);
+	vertices_[vertexCount++] = Vertex(Vec2f(fromPosition.x, fromPosition.y), color);
+	vertices_[vertexCount++] = Vertex(Vec2f(  toPosition.x,   toPosition.y), color);
 
 	DrawGeometry2D(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
 }
@@ -103,8 +103,8 @@ void GeometryRenderer2D::DrawLine2D(const Vec2f& fromPosition, const Vec4f& from
 {
 	uint32_t vertexCount = 0;
 
-	vertices_[vertexCount++] = Vertex(Vec2f(fromPosition.x + 0.5f, fromPosition.y + 0.5f), fromColor);
-	vertices_[vertexCount++] = Vertex(Vec2f(toPosition.x + 0.5f, toPosition.y + 0.5f), toColor);
+	vertices_[vertexCount++] = Vertex(Vec2f(fromPosition.x, fromPosition.y), fromColor);
+	vertices_[vertexCount++] = Vertex(Vec2f(  toPosition.x,   toPosition.y),   toColor);
 
 	DrawGeometry2D(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
 }
@@ -115,7 +115,7 @@ void GeometryRenderer2D::DrawLines2D(const std::vector<Vec2f>& positions, const 
 
 	for (std::size_t index = 0; index < positions.size(); ++index)
 	{
-		vertices_[index].position = Vec2f(positions[index].x + 0.5f, positions[index].y + 0.5f);
+		vertices_[index].position = Vec2f(positions[index].x, positions[index].y);
 		vertices_[index].color = color;
 	}
 
@@ -126,9 +126,9 @@ void GeometryRenderer2D::DrawTriangle2D(const Vec2f& fromPosition, const Vec2f& 
 {
 	uint32_t vertexCount = 0;
 
-	vertices_[vertexCount++] = Vertex(Vec2f(fromPosition.x + 0.5f, fromPosition.y + 0.5f), color);
-	vertices_[vertexCount++] = Vertex(Vec2f(byPosition.x + 0.5f, byPosition.y + 0.5f), color);
-	vertices_[vertexCount++] = Vertex(Vec2f(toPosition.x + 0.5f, toPosition.y + 0.5f), color);
+	vertices_[vertexCount++] = Vertex(Vec2f(fromPosition.x, fromPosition.y), color);
+	vertices_[vertexCount++] = Vertex(Vec2f(  byPosition.x,   byPosition.y), color);
+	vertices_[vertexCount++] = Vertex(Vec2f(  toPosition.x,   toPosition.y), color);
 
 	DrawGeometry2D(Mat4x4::Identity(), EDrawMode::TRIANGLES, vertexCount);
 }
@@ -137,9 +137,9 @@ void GeometryRenderer2D::DrawTriangle2D(const Vec2f& fromPosition, const Vec4f& 
 {
 	uint32_t vertexCount = 0;
 
-	vertices_[vertexCount++] = Vertex(Vec2f(fromPosition.x + 0.5f, fromPosition.y + 0.5f), fromColor);
-	vertices_[vertexCount++] = Vertex(Vec2f(byPosition.x + 0.5f, byPosition.y + 0.5f), byColor);
-	vertices_[vertexCount++] = Vertex(Vec2f(toPosition.x + 0.5f, toPosition.y + 0.5f), toColor);
+	vertices_[vertexCount++] = Vertex(Vec2f(fromPosition.x, fromPosition.y), fromColor);
+	vertices_[vertexCount++] = Vertex(Vec2f(  byPosition.x,   byPosition.y),   byColor);
+	vertices_[vertexCount++] = Vertex(Vec2f(  toPosition.x,   toPosition.y),   toColor);
 
 	DrawGeometry2D(Mat4x4::Identity(), EDrawMode::TRIANGLES, vertexCount);
 }
@@ -148,10 +148,10 @@ void GeometryRenderer2D::DrawWireframeTriangle2D(const Vec2f& fromPosition, cons
 {
 	uint32_t vertexCount = 0;
 
-	vertices_[vertexCount++] = Vertex(Vec2f(fromPosition.x + 0.5f, fromPosition.y + 0.5f), color);
-	vertices_[vertexCount++] = Vertex(Vec2f(byPosition.x + 0.5f, byPosition.y + 0.5f), color);
-	vertices_[vertexCount++] = Vertex(Vec2f(toPosition.x + 0.5f, toPosition.y + 0.5f), color);
-	vertices_[vertexCount++] = Vertex(Vec2f(fromPosition.x + 0.5f, fromPosition.y + 0.5f), color);
+	vertices_[vertexCount++] = Vertex(Vec2f(fromPosition.x, fromPosition.y), color);
+	vertices_[vertexCount++] = Vertex(Vec2f(  byPosition.x,   byPosition.y), color);
+	vertices_[vertexCount++] = Vertex(Vec2f(  toPosition.x,   toPosition.y), color);
+	vertices_[vertexCount++] = Vertex(Vec2f(fromPosition.x, fromPosition.y), color);
 
 	DrawGeometry2D(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
 }
@@ -160,10 +160,10 @@ void GeometryRenderer2D::DrawWireframeTriangle2D(const Vec2f& fromPosition, cons
 {
 	uint32_t vertexCount = 0;
 
-	vertices_[vertexCount++] = Vertex(Vec2f(fromPosition.x + 0.5f, fromPosition.y + 0.5f), fromColor);
-	vertices_[vertexCount++] = Vertex(Vec2f(byPosition.x + 0.5f, byPosition.y + 0.5f), byColor);
-	vertices_[vertexCount++] = Vertex(Vec2f(toPosition.x + 0.5f, toPosition.y + 0.5f), toColor);
-	vertices_[vertexCount++] = Vertex(Vec2f(fromPosition.x + 0.5f, fromPosition.y + 0.5f), fromColor);
+	vertices_[vertexCount++] = Vertex(Vec2f(fromPosition.x, fromPosition.y), fromColor);
+	vertices_[vertexCount++] = Vertex(Vec2f(  byPosition.x,   byPosition.y),   byColor);
+	vertices_[vertexCount++] = Vertex(Vec2f(  toPosition.x,   toPosition.y),   toColor);
+	vertices_[vertexCount++] = Vertex(Vec2f(fromPosition.x, fromPosition.y), fromColor);
 
 	DrawGeometry2D(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
 }
@@ -172,10 +172,13 @@ void GeometryRenderer2D::DrawRectangle2D(const Vec2f& center, float width, float
 {
 	uint32_t vertexCount = 0;
 
-	vertices_[vertexCount++] = Vertex(Vec2f(center.x - width / 2.0f + 0.5f, center.y + height / 2.0f + 0.5f), color);
-	vertices_[vertexCount++] = Vertex(Vec2f(center.x + width / 2.0f + 0.5f, center.y + height / 2.0f + 0.5f), color);
-	vertices_[vertexCount++] = Vertex(Vec2f(center.x + width / 2.0f + 0.5f, center.y - height / 2.0f + 0.5f), color);
-	vertices_[vertexCount++] = Vertex(Vec2f(center.x - width / 2.0f + 0.5f, center.y - height / 2.0f + 0.5f), color);
+	float halfW = width * 0.5f;
+	float halfH = height * 0.5f;
+
+	vertices_[vertexCount++] = Vertex(Vec2f(center.x - halfW, center.y + halfH), color);
+	vertices_[vertexCount++] = Vertex(Vec2f(center.x + halfW, center.y + halfH), color);
+	vertices_[vertexCount++] = Vertex(Vec2f(center.x + halfW, center.y - halfH), color);
+	vertices_[vertexCount++] = Vertex(Vec2f(center.x - halfW, center.y - halfH), color);
 
 	Mat4x4 transform = Mat4x4::Translation(-center.x, -center.y, 0.0f) * Mat4x4::RotateZ(rotate) * Mat4x4::Translation(+center.x, +center.y, 0.0f);
 	DrawGeometry2D(transform, EDrawMode::TRIANGLE_FAN, vertexCount);
@@ -185,11 +188,14 @@ void GeometryRenderer2D::DrawWireframeRectangle2D(const Vec2f& center, float wid
 {
 	uint32_t vertexCount = 0;
 
-	vertices_[vertexCount++] = Vertex(Vec2f(center.x - width / 2.0f + 0.5f, center.y - height / 2.0f + 0.5f), color);
-	vertices_[vertexCount++] = Vertex(Vec2f(center.x - width / 2.0f + 0.5f, center.y + height / 2.0f + 0.5f), color);
-	vertices_[vertexCount++] = Vertex(Vec2f(center.x + width / 2.0f + 0.5f, center.y + height / 2.0f + 0.5f), color);
-	vertices_[vertexCount++] = Vertex(Vec2f(center.x + width / 2.0f + 0.5f, center.y - height / 2.0f + 0.5f), color);
-	vertices_[vertexCount++] = Vertex(Vec2f(center.x - width / 2.0f + 0.5f, center.y - height / 2.0f + 0.5f), color);
+	float halfW = width * 0.5f;
+	float halfH = height * 0.5f;
+
+	vertices_[vertexCount++] = Vertex(Vec2f(center.x - halfW, center.y + halfH), color);
+	vertices_[vertexCount++] = Vertex(Vec2f(center.x + halfW, center.y + halfH), color);
+	vertices_[vertexCount++] = Vertex(Vec2f(center.x + halfW, center.y - halfH), color);
+	vertices_[vertexCount++] = Vertex(Vec2f(center.x - halfW, center.y - halfH), color);
+	vertices_[vertexCount++] = Vertex(Vec2f(center.x - halfW, center.y + halfH), color);
 
 	Mat4x4 transform = Mat4x4::Translation(-center.x, -center.y, 0.0f) * Mat4x4::RotateZ(rotate) * Mat4x4::Translation(+center.x, +center.y, 0.0f);
 	DrawGeometry2D(transform, EDrawMode::LINE_STRIP, vertexCount);
@@ -315,10 +321,10 @@ void GeometryRenderer2D::DrawCircle2D(const Vec2f& center, float radius, const V
 		float x = radius * MathModule::Cos(radian);
 		float y = radius * MathModule::Sin(radian);
 
-		vertices_[slice] = Vertex(Vec2f(center.x + x + 0.5f, center.y + y + 0.5f), color);
+		vertices_[slice] = Vertex(Vec2f(center.x + x, center.y + y), color);
 	}
 
-	vertices_[0] = Vertex(Vec2f(center.x + 0.5f, center.y + 0.5f), color);
+	vertices_[0] = Vertex(Vec2f(center.x, center.y), color);
 	vertices_[sliceCount + 1] = vertices_[1];
 	uint32_t vertexCount = static_cast<uint32_t>(sliceCount + 2);
 
@@ -336,7 +342,7 @@ void GeometryRenderer2D::DrawWireframeCircle2D(const Vec2f& center, float radius
 		float x = radius * MathModule::Cos(radian);
 		float y = radius * MathModule::Sin(radian);
 
-		vertices_[index] = Vertex(Vec2f(center.x + x + 0.5f, center.y + y + 0.5f), color);
+		vertices_[index] = Vertex(Vec2f(center.x + x, center.y + y), color);
 	}
 
 	vertices_[sliceCount] = vertices_[0];
@@ -350,8 +356,8 @@ void GeometryRenderer2D::DrawEllipse2D(const Vec2f& center, float xAxis, float y
 	CHECK(xAxis >= 0.0f && yAxis >= 0.0f);
 	CHECK(sliceCount <= MAX_VERTEX_SIZE - 2);
 
-	float halfXAxis = xAxis / 2.0f;
-	float haflYAxis = yAxis / 2.0f;
+	float halfXAxis = xAxis * 0.5f;
+	float haflYAxis = yAxis * 0.5f;
 
 	for (int32_t slice = 1; slice <= sliceCount; ++slice)
 	{
@@ -359,10 +365,10 @@ void GeometryRenderer2D::DrawEllipse2D(const Vec2f& center, float xAxis, float y
 		float x = halfXAxis * MathModule::Cos(radian);
 		float y = haflYAxis * MathModule::Sin(radian);
 
-		vertices_[slice] = Vertex(Vec2f(center.x + x + 0.5f, center.y + y + 0.5f), color);
+		vertices_[slice] = Vertex(Vec2f(center.x + x, center.y + y), color);
 	}
 
-	vertices_[0] = Vertex(Vec2f(center.x + 0.5f, center.y + 0.5f), color);
+	vertices_[0] = Vertex(Vec2f(center.x, center.y), color);
 	vertices_[sliceCount + 1] = vertices_[1];
 	uint32_t vertexCount = static_cast<uint32_t>(sliceCount + 2);
 
@@ -375,8 +381,8 @@ void GeometryRenderer2D::DrawWireframeEllipse2D(const Vec2f& center, float xAxis
 	CHECK(xAxis >= 0.0f && yAxis >= 0.0f);
 	CHECK(sliceCount <= MAX_VERTEX_SIZE - 2);
 
-	float halfXAxis = xAxis / 2.0f;
-	float haflYAxis = yAxis / 2.0f;
+	float halfXAxis = xAxis * 0.5f;
+	float haflYAxis = yAxis * 0.5f;
 
 	for (int32_t index = 0; index < sliceCount; ++index)
 	{
@@ -384,7 +390,7 @@ void GeometryRenderer2D::DrawWireframeEllipse2D(const Vec2f& center, float xAxis
 		float x = halfXAxis * MathModule::Cos(radian);
 		float y = haflYAxis * MathModule::Sin(radian);
 
-		vertices_[index] = Vertex(Vec2f(center.x + x + 0.5f, center.y + y + 0.5f), color);
+		vertices_[index] = Vertex(Vec2f(center.x + x, center.y + y), color);
 	}
 
 	vertices_[sliceCount] = vertices_[0];
