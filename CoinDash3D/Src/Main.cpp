@@ -45,23 +45,10 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 
 	Camera* camera = GameModule::CreateEntity<Camera>();
 
-	std::vector<Vec2f> positions;
-	for (float x = 0.0f; x < 1000; x += 10.0f)
-	{
-		positions.push_back(Vec2f(x, 0.0f));
-		positions.push_back(Vec2f(x, 1000.0f));
-	}
-
-	for (float y = 0.0f; y < 1000; y += 10.0f)
-	{
-		positions.push_back(Vec2f(0.0f, y));
-		positions.push_back(Vec2f(1000.0f, y));
-	}
-
-	std::vector<Vec2f> p;
-	p.push_back(Vec2f(100.0f, 100.0f));
-
 	RenderModule::SetPointSizeMode(true);
+	Mat4x4 screenOrtho = RenderModule::GetScreenOrtho();
+	renderer2d->SetOrtho(screenOrtho);
+	textRenderer->SetOrtho(screenOrtho);
 
 	PlatformModule::RunLoop(
 		[&](float deltaSeconds)
@@ -70,27 +57,9 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 
 			renderer3d->SetView(camera->GetView());
 			renderer3d->SetProjection(camera->GetProjection());
-			renderer2d->SetOrtho(RenderModule::GetScreenOrtho());
-			textRenderer->SetOrtho(RenderModule::GetScreenOrtho());
 
 			RenderModule::BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
-
-
-			//renderer3d->DrawGrid3D(Vec3f(100.0f, 100.0f, 100.0f), 1.0f);
-
-			renderer2d->DrawLines2D(positions, Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
-
-
-			float width = 0.0f;
-			float height = 0.0f;
-			Vec2f center = Vec2f(100.0f, 100.0f);
-			font->MeasureText(L"Hello, World", width, height);
-			renderer2d->DrawPoints2D(p, Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
-			//renderer2d->DrawRectangle2D(center, 100.0f, 100.0f, 0.0f, Vec4f(1.0f, 1.0f, 0.0f, 1.0f));
-			renderer2d->DrawWireframeRectangle2D(center, 100.0f, 19.0f, 0.0f, Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
-			//renderer2d->DrawWireframeRectangle2D(center, width, height, 0.0f, Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
-			//textRenderer->DrawText2D(font, L"Hello, World!", Vec2f(300.0f, 300.0f), Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
-
+			
 			RenderModule::EndFrame();
 		}
 	);
