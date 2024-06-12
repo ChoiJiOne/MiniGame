@@ -67,8 +67,16 @@ void TTFont::MeasureText(const std::wstring& text, float& outWidth, float& outHe
 	for (uint32_t index = 0; index < text.size(); ++index)
 	{
 		const Glyph& glyph = GetGlyph(static_cast<int32_t>(text[index]));
-		width += glyph.xoffset + glyph.xadvance;
 
+		if (index == text.size() - 1)
+		{
+			width += static_cast<float>(glyph.position1.x - glyph.position0.x) + glyph.xoffset;
+		}
+		else
+		{
+			width += glyph.xadvance;
+		}
+		
 		float y0 = glyph.yoffset;
 		float y1 = static_cast<float>(glyph.position1.y - glyph.position0.y) + glyph.yoffset;
 
@@ -76,7 +84,7 @@ void TTFont::MeasureText(const std::wstring& text, float& outWidth, float& outHe
 		maxY = MathModule::Max<float>(y1, maxY);
 	}
 	
-	outWidth = static_cast<float>(width);
+	outWidth = width;
 	outHeight = static_cast<float>(MathModule::Abs(maxY - minY));
 }
 
