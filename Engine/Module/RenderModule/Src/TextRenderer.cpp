@@ -64,7 +64,7 @@ void TextRenderer::Release()
 	GL_FAILED(glDeleteVertexArrays(1, &vertexArrayObject_));
 }
 
-void TextRenderer::DrawText2D(const TTFont* font, const std::wstring& text, const Vec2f& position, const Vec4f& color)
+void TextRenderer::DrawText2D(const TTFont* font, const std::wstring& text, const Vec2f& position, const EStartPivot& startPivot, Vec4f& color)
 {
 	CHECK(text.length() <= MAX_STRING_LEN && font != nullptr);
 
@@ -72,8 +72,37 @@ void TextRenderer::DrawText2D(const TTFont* font, const std::wstring& text, cons
 	float height = 0.0f;
 	font->MeasureText(text, width, height);
 
-	Vec2f startPosition = position - Vec2f(width, -height) * 0.5f;
-	int32_t vertexCount = UpdateGlyphVertexBuffer(font, text, startPosition, color);
+	Vec2f startPosition = position;
+	switch (startPivot)
+	{
+	case EStartPivot::LEFT_TOP:
+		startPosition.y += height;
+		break;
+
+	case EStartPivot::LEFT_BOTTOM:
+		break;
+
+	case EStartPivot::RIGHT_TOP:
+		startPosition.x -= width;
+		startPosition.y += height;
+		break;
+
+	case EStartPivot::RIGHT_BOTTOM:
+		startPosition.x -= width;
+		break;
+
+	case EStartPivot::CENTER:
+		startPosition.x -= width * 0.5f;
+		startPosition.y += height * 0.5f;
+		break;
+	}
+
+	DrawText2D(font, text, startPosition, color);
+}
+
+void TextRenderer::DrawText2D(const TTFont* font, const std::wstring& text, const Vec2f& position, const Vec4f& color)
+{
+	int32_t vertexCount = UpdateGlyphVertexBuffer(font, text, position, color);
 
 	GLboolean originEnableDepth;
 	GL_FAILED(glGetBooleanv(GL_DEPTH_TEST, &originEnableDepth));

@@ -10,6 +10,19 @@ class TTFont;
 
 
 /**
+ * @brief 텍스트의 시작 위치 기준입니다.
+ */
+enum class EStartPivot
+{
+	LEFT_TOP     = 0x00,
+	LEFT_BOTTOM  = 0x01,
+	RIGHT_TOP    = 0x02,
+	RIGHT_BOTTOM = 0x03,
+	CENTER       = 0x04,
+};
+
+
+/**
  * @brief 글리프를 이용해서 텍스트를 렌더링하는 렌더러입니다.
  */
 class TextRenderer : public IResource
@@ -55,9 +68,10 @@ public:
 	 * @param font 폰트 리소스입니다.
 	 * @param text 렌더링할 텍스트입니다.
 	 * @param position 텍스트의 좌표입니다.
+	 * @param startPivot 텍스트 시작 좌표의 기준입니다.
 	 * @param color 텍스트의 RGBA 색상입니다.
 	 */
-	void DrawText2D(const TTFont* font, const std::wstring& text, const Vec2f& position, const Vec4f& color);
+	void DrawText2D(const TTFont* font, const std::wstring& text, const Vec2f& position, const EStartPivot& startPivot, Vec4f& color);
 
 
 private:
@@ -211,6 +225,18 @@ private:
 		 */
 		Vec4f color;
 	};
+
+
+	/**
+	 * @brief 2D 텍스트를 그립니다.
+	 *
+	 * @param font 폰트 리소스입니다.
+	 * @param text 렌더링할 텍스트입니다.
+	 * @param alignment 텍스트 좌표의 정렬 기준입니다.
+	 * @param position 텍스트의 좌표입니다.
+	 * @param color 텍스트의 RGBA 색상입니다.
+	 */
+	void DrawText2D(const TTFont* font, const std::wstring& text, const Vec2f& position, const Vec4f& color);
 
 
 	/**
