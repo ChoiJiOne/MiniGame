@@ -71,7 +71,7 @@ public:
 	virtual void Active(uint32_t unit) const override;
 
 
-public:
+private:
 	/**
 	 * @brief 베이스 컬러 맵의 가로 크기입니다.
 	 */
