@@ -6,6 +6,7 @@
 #include <stb_truetype.h>
 
 #include "FileModule.h"
+#include "MathModule.h"
 
 #include "GLAssertion.h"
 #include "TTFont.h"
@@ -59,26 +60,24 @@ bool TTFont::IsValidCodePoint(int32_t codePoint) const
 
 void TTFont::MeasureText(const std::wstring& text, float& outWidth, float& outHeight) const
 {
-	int32_t textHeight = -1;
-	int32_t textWidth = 0;
+	float width = 0;
+	float minY = +1.0f;
+	float maxY = -1.0f;
 
-	for (const auto& unicode : text)
+	for (uint32_t index = 0; index < text.size(); ++index)
 	{
-		const Glyph& glyph = GetGlyph(static_cast<int32_t>(unicode));
+		const Glyph& glyph = GetGlyph(static_cast<int32_t>(text[index]));
+		width += glyph.xoffset + glyph.xadvance;
 
-		int32_t currentWidth = static_cast<int32_t>(glyph.xadvance);
-		int32_t currentHeight = glyph.position1.y - glyph.position0.y;
+		float y0 = glyph.yoffset;
+		float y1 = static_cast<float>(glyph.position1.y - glyph.position0.y) + glyph.yoffset;
 
-		textWidth += currentWidth;
-
-		if (currentHeight > textHeight)
-		{
-			textHeight = currentHeight;
-		}
+		minY = MathModule::Min<float>(y0, minY);
+		maxY = MathModule::Max<float>(y1, maxY);
 	}
-
-	outWidth = static_cast<float>(textWidth);
-	outHeight = static_cast<float>(textHeight);
+	
+	outWidth = static_cast<float>(width);
+	outHeight = static_cast<float>(MathModule::Abs(maxY - minY));
 }
 
 std::shared_ptr<uint8_t[]> TTFont::GenerateGlyphAtlasBitmap(const std::vector<uint8_t>& buffer, int32_t beginCodePoint, int32_t endCodePoint, float fontSize, std::vector<Glyph>& outGlyphs, int32_t& outGlyphAtlasSize)
