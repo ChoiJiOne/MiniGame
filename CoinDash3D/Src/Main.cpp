@@ -59,7 +59,12 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 			renderer3d->SetProjection(camera->GetProjection());
 
 			RenderModule::BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
-			
+
+			textRenderer->DrawText2D(font, L"Hello, World!", Vec2f(0.0f, 24.0f), EStartPivot::LEFT_TOP, Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+			textRenderer->DrawText2D(font, L"Hello, World!", Vec2f(0.0f, 48.0f), EStartPivot::LEFT_TOP, Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+			textRenderer->DrawText2D(font, L"Hello, World!", Vec2f(0.0f, 72.0f), EStartPivot::LEFT_TOP, Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+			textRenderer->DrawText2D(font, L"Hello, World!", Vec2f(0.0f, 96.0f), EStartPivot::LEFT_TOP, Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+
 			RenderModule::EndFrame();
 		}
 	);
