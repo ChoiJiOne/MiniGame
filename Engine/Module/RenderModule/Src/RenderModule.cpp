@@ -54,6 +54,9 @@ RenderModule::Errors RenderModule::Init(HWND windowHandle)
 		return Errors::ERR_IMGUI;
 	}
 
+	// 기본적으로 알파 블랜딩 모드는 활성화.
+	SetAlphaBlendMode(true);
+
 	bIsInit = true;
 	return Errors::OK;
 }
