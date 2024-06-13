@@ -17,7 +17,7 @@ Camera::Camera()
 	aspectRatio_ = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
 
 	fov_ = PiDiv4;
-	nearZ_ = 0.01f;
+	nearZ_ = 0.1f;
 	farZ_ = 100.0f;
 	projection_ = Mat4x4::Perspective(fov_, aspectRatio_, nearZ_, farZ_);
 }
