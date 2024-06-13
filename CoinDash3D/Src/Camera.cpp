@@ -18,7 +18,7 @@ Camera::Camera()
 
 	fov_ = PiDiv4;
 	nearZ_ = 0.1f;
-	farZ_ = 100.0f;
+	farZ_ = 500.0f;
 	projection_ = Mat4x4::Perspective(fov_, aspectRatio_, nearZ_, farZ_);
 }
 
