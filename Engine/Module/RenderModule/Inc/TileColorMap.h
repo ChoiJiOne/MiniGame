@@ -2,7 +2,7 @@
 
 #include "Vec.h"
 
-#include "ITexture2D.h"
+#include "ITexture.h"
 
 
 /**
@@ -12,7 +12,7 @@
  * - 텍스처의 크기는 반드시 2^n 단위입니다.
  * - 텍스처의 크기는 내부의 열거형으로만 설정할 수 있습니다.
  */
-class TileColorMap : public ITexture2D
+class TileColorMap : public ITexture
 {
 public:
 	/**

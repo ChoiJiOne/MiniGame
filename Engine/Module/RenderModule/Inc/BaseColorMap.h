@@ -2,7 +2,7 @@
 
 #include "Vec.h"
 
-#include "ITexture2D.h"
+#include "ITexture.h"
 
 
 /**
@@ -13,7 +13,7 @@
  * - 텍스처의 크기는 내부의 열거형으로만 설정할 수 있습니다.
  * - 이 텍스처는 단색입니다.
  */
-class BaseColorMap : public ITexture2D
+class BaseColorMap : public ITexture
 {
 public:
 	/**

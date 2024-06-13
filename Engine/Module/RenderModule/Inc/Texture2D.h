@@ -3,13 +3,13 @@
 #include <vector>
 #include <string>
 
-#include "ITexture2D.h"
+#include "ITexture.h"
 
 
 /**
  * @brief OpenGL 파이프라인에 바인딩 가능한 텍스처 리소스입니다.
  */
-class Texture2D : public ITexture2D
+class Texture2D : public ITexture
 {
 public:
 	/**
