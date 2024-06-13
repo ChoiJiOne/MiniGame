@@ -6,7 +6,12 @@ layout(location = 2) in vec2 inTexcoord;
 
 layout(location = 0) out vec4 outFragColor;
 
+layout(binding = 0) uniform sampler2D material;
+
 void main()
 {
-	outFragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	vec3 colorRGB = texture(material, inTexcoord).rgb;
+	float alpha = texture(material, inTexcoord).a;
+
+	outFragColor = vec4(colorRGB, alpha);
 }
