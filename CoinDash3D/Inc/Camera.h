@@ -58,6 +58,38 @@ public:
 
 
 	/**
+	 * @brief 카메라의 하향식 보기 필드 각도(라디안)를 얻습니다.
+	 * 
+	 * @return 하향식 보기 필드 각도(라디안)를 반환합니다.
+	 */
+	float GetFov() const { return fov_; }
+
+
+	/**
+	 * @brief 뷰 공간 X:Y의 가로 세로 비율을 얻습니다.
+	 * 
+	 * @return 뷰 공간 X:Y의 가로 세로 비율을 반환합니다.
+	 */
+	float GetAspectRatio() const { return aspectRatio_; }
+
+
+	/**
+	 * @brief 가까운 클리핑 평면까지의 거리를 얻습니다.
+	 * 
+	 * @return 가까운 클리핑 평면까지의 거리를 반환합니다.
+	 */
+	float GetNearZ() const { return nearZ_; }
+
+
+	/**
+	 * @brief 원거리 클리핑 평면까지의 거리를 얻습니다.
+	 * 
+	 * @return 원거리 클리핑 평면까지의 거리를 반환합니다.
+	 */
+	float GetFarZ() const { return farZ_; }
+
+
+	/**
 	 * @brief 시야 행렬을 얻습니다.
 	 *
 	 * @return 시야 행렬을 반환합니다.
