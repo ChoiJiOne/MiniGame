@@ -58,6 +58,14 @@ public:
 
 
 	/**
+	 * @brief 카메라의 월드 상 위치를 얻습니다.
+	 * 
+	 * @return 카메라의 월드 상 위치를 반환합니다.
+	 */
+	Vec3f GetEyePosition() const { return eyePosition_; }
+
+
+	/**
 	 * @brief 카메라의 하향식 보기 필드 각도(라디안)를 얻습니다.
 	 * 
 	 * @return 하향식 보기 필드 각도(라디안)를 반환합니다.
