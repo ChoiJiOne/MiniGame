@@ -24,8 +24,126 @@
 #include "CrossFadeController.h"
 #include "BaseColorMap.h"
 #include "TileColorMap.h"
+#include "CascadeShadowMap.h"
 
+#include <glad/glad.h>
 #include <imgui.h>
+
+Camera* camera = nullptr;
+float cameraNearPlane = 0.01f;
+float cameraFarPlane = 100.0f;
+std::vector<float> shadowCascadeLevels{ cameraFarPlane / 50.0f, cameraFarPlane / 25.0f, cameraFarPlane / 10.0f, cameraFarPlane / 2.0f };
+
+Vec3f lightDirection = Vec3f::Normalize(Vec3f(20.0f, 50, 20.0f));
+std::vector<Mat4x4> lightMatricesCache;
+
+std::vector<Vec4f> GetFrustumCornersWorldSpace(const Mat4x4& proj, const Mat4x4& view)
+{
+	Mat4x4 inv = Mat4x4::Inverse(view * proj);
+
+	std::vector<Vec4f> frustumCorners;
+	for (uint32_t x = 0; x < 2; ++x)
+	{
+		for (unsigned int y = 0; y < 2; ++y)
+		{
+			for (unsigned int z = 0; z < 2; ++z)
+			{
+				Vec4f pt = inv * Vec4f(2.0f * x - 1.0f, 2.0f * y - 1.0f, 2.0f * z - 1.0f, 1.0f);
+				pt.x /= pt.w;
+				pt.y /= pt.w;
+				pt.z /= pt.w;
+				pt.w /= pt.w;
+				frustumCorners.push_back(pt);
+			}
+		}
+	}
+
+	return frustumCorners;
+}
+
+Mat4x4 GetLightSpaceMatrix(const float nearPlane, const float farPlane)
+{
+	int32_t screenWidth = 0;
+	int32_t screenHeight = 0;
+	RenderModule::GetScreenSize(screenWidth, screenHeight);
+	float aspectRatio = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
+
+	Mat4x4 proj = Mat4x4::Perspective(PiDiv4, aspectRatio, nearPlane, farPlane);
+	Mat4x4 view = camera->GetView();
+	const std::vector<Vec4f> corners = GetFrustumCornersWorldSpace(proj, view);
+
+	Vec3f center;
+	for (const auto& v : corners)
+	{
+		center += Vec3f(v.x, v.y, v.z);
+	}
+	center.x /= corners.size();
+	center.y /= corners.size();
+	center.z /= corners.size();
+
+	const auto lightView = Mat4x4::LookAt(center + lightDirection, center, Vec3f(0.0f, 1.0f, 0.0f));
+
+	float minX = FLT_MAX;
+	float maxX = -FLT_MAX;
+	float minY = FLT_MAX;
+	float maxY = -FLT_MAX;
+	float minZ = FLT_MAX;
+	float maxZ = -FLT_MAX;
+
+	for (const auto& v : corners)
+	{
+		const auto trf = v * lightView;
+		minX = MathModule::Min(minX, trf.x);
+		maxX = MathModule::Max(maxX, trf.x);
+		minY = MathModule::Min(minY, trf.y);
+		maxY = MathModule::Max(maxY, trf.y);
+		minZ = MathModule::Min(minZ, trf.z);
+		maxZ = MathModule::Max(maxZ, trf.z);
+	}
+
+	constexpr float zMult = 10.0f;
+	if (minZ < 0)
+	{
+		minZ *= zMult;
+	}
+	else
+	{
+		minZ /= zMult;
+	}
+	if (maxZ < 0)
+	{
+		maxZ /= zMult;
+	}
+	else
+	{
+		maxZ *= zMult;
+	}
+
+	Mat4x4 lightProjection = Mat4x4::Ortho(minX, maxX, minY, maxY, minZ, maxZ);
+	return lightView * lightProjection;
+}
+
+std::vector<Mat4x4> GetLightSpaceMatrices()
+{
+	std::vector<Mat4x4> result;
+
+	for (size_t i = 0; i < shadowCascadeLevels.size() + 1; ++i)
+	{
+		if (i == 0)
+		{
+			result.push_back(GetLightSpaceMatrix(cameraNearPlane, shadowCascadeLevels[i]));
+		}
+		else if (i < shadowCascadeLevels.size())
+		{
+			result.push_back(GetLightSpaceMatrix(shadowCascadeLevels[i - 1], shadowCascadeLevels[i]));
+		}
+		else
+		{
+			result.push_back(GetLightSpaceMatrix(shadowCascadeLevels[i - 1], cameraFarPlane));
+		}
+	}
+	return result;
+}
 
 int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR pCmdLine, _In_ int32_t nCmdShow)
 {
@@ -53,13 +171,13 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 		Vec4f(1.0f, 1.0f, 1.0f, 1.0f),
 		Vec4f(1.0f, 0.0f, 0.0f, 1.0f)
 	);
-	Camera* camera = GameModule::CreateEntity<Camera>();
+	camera = GameModule::CreateEntity<Camera>();
 
 	Mat4x4 screenOrtho = RenderModule::GetScreenOrtho();
 	renderer2d->SetOrtho(screenOrtho);
 	textRenderer->SetOrtho(screenOrtho);
 
-	cgltf_data* data = GLTFLoader::Load("Resource/Model/test11.glb");
+	cgltf_data* data = GLTFLoader::Load("Resource/Model/test03.glb");
 	std::vector<GLTFLoader::MeshResource> meshResources = GLTFLoader::LoadMeshResources(data);
 	GLTFLoader::Free(data);
 
@@ -73,14 +191,17 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 		{
 			vertices[index].position = meshResource.positions[index];
 			vertices[index].normal = meshResource.normals[index];
-			vertices[index].tangent = meshResource.tangents[index];
 			vertices[index].texcoord = meshResource.texcoords[index];
 		}
 
 		meshes.push_back(RenderModule::CreateResource<StaticMesh>(vertices, indices));
 	}
 
-	Shader* shader = RenderModule::CreateResource<Shader>("Resource/Shader/StaticMesh.vert", "Resource/Shader/Mesh.frag");
+	//Shader* shader = RenderModule::CreateResource<Shader>("Resource/Shader/StaticMesh.vert", "Resource/Shader/Mesh.frag");
+
+	Shader* depth = RenderModule::CreateResource<Shader>("Resource/Shader/Depth.vert", "Resource/Shader/Depth.geom", "Resource/Shader/Depth.frag");
+	CascadeShadowMap* cascadeShadowMap = RenderModule::CreateResource<CascadeShadowMap>(CascadeShadowMap::ESize::Size_2048, shadowCascadeLevels.size());
+
 
 	PlatformModule::RunLoop(
 		[&](float deltaSeconds)
@@ -90,26 +211,50 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 			renderer3d->SetView(camera->GetView());
 			renderer3d->SetProjection(camera->GetProjection());
 
+			cascadeShadowMap->Bind();
+			{
+				RenderModule::SetViewport(0, 0, cascadeShadowMap->GetSize(), cascadeShadowMap->GetSize());
+				cascadeShadowMap->Clear();
+				glCullFace(GL_FRONT);
+				depth->Bind();
+				{
+					std::vector<Mat4x4> lightMatrices = GetLightSpaceMatrices();
+					depth->SetUniform("lightSpaceMatrices", lightMatrices.data(), lightMatrices.size());
+					depth->SetUniform("world", Mat4x4::Identity());
+
+					for (const auto& mesh : meshes)
+					{
+						mesh->Bind();
+						RenderModule::ExecuteDrawIndex(mesh->GetIndexCount(), EDrawMode::TRIANGLES);
+						mesh->Unbind();
+					}
+				}
+				depth->Unbind();
+				glCullFace(GL_BACK);
+			}
+			cascadeShadowMap->Unbind();
+			
+
 			RenderModule::BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
 
 			renderer3d->DrawGrid3D(Vec3f(100.0f, 100.0f, 100.0f), 1.0f);
 
-			shader->Bind();
-			{
-				tileColorMap->Active(0);
+			//shader->Bind();
+			//{
+			//	tileColorMap->Active(0);
 
-				shader->SetUniform("world", Mat4x4::Identity());
-				shader->SetUniform("view", camera->GetView());
-				shader->SetUniform("projection", camera->GetProjection());
+			//	shader->SetUniform("world", Mat4x4::Identity());
+			//	shader->SetUniform("view", camera->GetView());
+			//	shader->SetUniform("projection", camera->GetProjection());
 
-				for (const auto& mesh : meshes)
-				{
-					mesh->Bind();
-					RenderModule::ExecuteDrawIndex(mesh->GetIndexCount(), EDrawMode::TRIANGLES);
-					mesh->Unbind();
-				}
-			}
-			shader->Unbind();
+			//	for (const auto& mesh : meshes)
+			//	{
+			//		mesh->Bind();
+			//		RenderModule::ExecuteDrawIndex(mesh->GetIndexCount(), EDrawMode::TRIANGLES);
+			//		mesh->Unbind();
+			//	}
+			//}
+			//shader->Unbind();
 
 			RenderModule::EndFrame();
 		}
