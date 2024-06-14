@@ -4,7 +4,6 @@
 
 #include "CascadeShadowMap.h"
 #include "GLAssertion.h"
-#include "RenderModule.h"
 
 CascadeShadowMap::CascadeShadowMap(const ESize& size, uint32_t level)
 	: size_(static_cast<uint32_t>(size))
@@ -62,7 +61,7 @@ void CascadeShadowMap::Active(uint32_t unit) const
 
 void CascadeShadowMap::Clear()
 {
-	glClear(GL_DEPTH_BUFFER_BIT);
+	GL_FAILED(glClear(GL_DEPTH_BUFFER_BIT));
 }
 
 void CascadeShadowMap::Bind()
