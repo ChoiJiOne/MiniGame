@@ -31,10 +31,10 @@
 
 Camera* camera = nullptr;
 float cameraNearPlane = 0.01f;
-float cameraFarPlane = 100.0f;
-std::vector<float> shadowCascadeLevels{ cameraFarPlane / 50.0f, cameraFarPlane / 25.0f, cameraFarPlane / 10.0f, cameraFarPlane / 2.0f };
+float cameraFarPlane = 500.0f;
+std::vector<float> shadowCascadeLevels{ cameraFarPlane / 32.0f, cameraFarPlane / 16.0f, cameraFarPlane / 4.0f, cameraFarPlane / 2.0f };
 
-Vec3f lightDirection = Vec3f::Normalize(Vec3f(20.0f, 50, 20.0f));
+Vec3f lightDirection = Vec3f::Normalize(Vec3f(20.0f, 50.0f, 20.0f));
 std::vector<Mat4x4> lightMatricesCache;
 
 std::vector<Vec4f> GetFrustumCornersWorldSpace(const Mat4x4& proj, const Mat4x4& view)
@@ -48,7 +48,7 @@ std::vector<Vec4f> GetFrustumCornersWorldSpace(const Mat4x4& proj, const Mat4x4&
 		{
 			for (unsigned int z = 0; z < 2; ++z)
 			{
-				Vec4f pt = inv * Vec4f(2.0f * x - 1.0f, 2.0f * y - 1.0f, 2.0f * z - 1.0f, 1.0f);
+				Vec4f pt = Vec4f(2.0f * x - 1.0f, 2.0f * y - 1.0f, 2.0f * z - 1.0f, 1.0f) * inv;
 				pt.x /= pt.w;
 				pt.y /= pt.w;
 				pt.z /= pt.w;
@@ -101,7 +101,7 @@ Mat4x4 GetLightSpaceMatrix(const float nearPlane, const float farPlane)
 		maxZ = MathModule::Max(maxZ, trf.z);
 	}
 
-	constexpr float zMult = 10.0f;
+	constexpr float zMult = 5.0f;
 	if (minZ < 0)
 	{
 		minZ *= zMult;
@@ -120,7 +120,7 @@ Mat4x4 GetLightSpaceMatrix(const float nearPlane, const float farPlane)
 	}
 
 	Mat4x4 lightProjection = Mat4x4::Ortho(minX, maxX, minY, maxY, minZ, maxZ);
-	return lightView * lightProjection;
+	return  lightProjection * lightView;
 }
 
 std::vector<Mat4x4> GetLightSpaceMatrices()
@@ -164,7 +164,6 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	GeometryRenderer3D* renderer3d = RenderModule::CreateResource<GeometryRenderer3D>();
 	TextRenderer* textRenderer = RenderModule::CreateResource<TextRenderer>();
 	TTFont* font = RenderModule::CreateResource<TTFont>("Resource/Font/SeoulNamsanEB.ttf", 0, 0x127, 32.0f);
-	BaseColorMap* baseColorMap = RenderModule::CreateResource<BaseColorMap>(BaseColorMap::ESize::Size_1024x1024, Vec4f(1.0f, 0.5f, 0.0f, 1.0f));
 	TileColorMap* tileColorMap = RenderModule::CreateResource<TileColorMap>(
 		TileColorMap::ESize::Size_1024x1024, 
 		TileColorMap::ESize::Size_16x16,
@@ -197,12 +196,10 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 		meshes.push_back(RenderModule::CreateResource<StaticMesh>(vertices, indices));
 	}
 
-	//Shader* shader = RenderModule::CreateResource<Shader>("Resource/Shader/StaticMesh.vert", "Resource/Shader/Mesh.frag");
-
+	Shader* shader = RenderModule::CreateResource<Shader>("Resource/Shader/StaticMesh.vert", "Resource/Shader/Mesh.frag");
 	Shader* depth = RenderModule::CreateResource<Shader>("Resource/Shader/Depth.vert", "Resource/Shader/Depth.geom", "Resource/Shader/Depth.frag");
-	CascadeShadowMap* cascadeShadowMap = RenderModule::CreateResource<CascadeShadowMap>(CascadeShadowMap::ESize::Size_2048, shadowCascadeLevels.size());
-
-
+	CascadeShadowMap* cascadeShadowMap = RenderModule::CreateResource<CascadeShadowMap>(CascadeShadowMap::ESize::Size_4096, shadowCascadeLevels.size());
+	
 	PlatformModule::RunLoop(
 		[&](float deltaSeconds)
 		{
@@ -211,6 +208,7 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 			renderer3d->SetView(camera->GetView());
 			renderer3d->SetProjection(camera->GetProjection());
 
+			std::vector<Mat4x4> lightMatrices = GetLightSpaceMatrices();
 			cascadeShadowMap->Bind();
 			{
 				RenderModule::SetViewport(0, 0, cascadeShadowMap->GetSize(), cascadeShadowMap->GetSize());
@@ -218,7 +216,6 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 				glCullFace(GL_FRONT);
 				depth->Bind();
 				{
-					std::vector<Mat4x4> lightMatrices = GetLightSpaceMatrices();
 					depth->SetUniform("lightSpaceMatrices", lightMatrices.data(), lightMatrices.size());
 					depth->SetUniform("world", Mat4x4::Identity());
 
@@ -234,27 +231,32 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 			}
 			cascadeShadowMap->Unbind();
 			
-
 			RenderModule::BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
-
 			renderer3d->DrawGrid3D(Vec3f(100.0f, 100.0f, 100.0f), 1.0f);
 
-			//shader->Bind();
-			//{
-			//	tileColorMap->Active(0);
+			shader->Bind();
+			{
+				cascadeShadowMap->Active(0);
+				tileColorMap->Active(1);
 
-			//	shader->SetUniform("world", Mat4x4::Identity());
-			//	shader->SetUniform("view", camera->GetView());
-			//	shader->SetUniform("projection", camera->GetProjection());
+				shader->SetUniform("world", Mat4x4::Identity());
+				shader->SetUniform("view", camera->GetView());
+				shader->SetUniform("projection", camera->GetProjection());
+				shader->SetUniform("lightDirection", lightDirection);
+				shader->SetUniform("cameraPosition", camera->GetEyePosition());
+				shader->SetUniform("farPlane", cameraFarPlane);
+				shader->SetUniform("lightSpaceMatrices", lightMatrices.data(), lightMatrices.size());
+				shader->SetUniform("cascadePlaneDistances", shadowCascadeLevels.data(), shadowCascadeLevels.size());
+				shader->SetUniform("cascadeCount", static_cast<int32_t>(shadowCascadeLevels.size()) + 1);
 
-			//	for (const auto& mesh : meshes)
-			//	{
-			//		mesh->Bind();
-			//		RenderModule::ExecuteDrawIndex(mesh->GetIndexCount(), EDrawMode::TRIANGLES);
-			//		mesh->Unbind();
-			//	}
-			//}
-			//shader->Unbind();
+				for (const auto& mesh : meshes)
+				{
+					mesh->Bind();
+					RenderModule::ExecuteDrawIndex(mesh->GetIndexCount(), EDrawMode::TRIANGLES);
+					mesh->Unbind();
+				}
+			}
+			shader->Unbind();
 
 			RenderModule::EndFrame();
 		}
