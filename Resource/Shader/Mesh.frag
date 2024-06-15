@@ -16,14 +16,29 @@ uniform vec3 cameraPosition;
 
 float ShadowFactor(vec4 worldPositionLightSpace)
 {
-	vec3 projectCoords = worldPositionLightSpace.xyz / worldPositionLightSpace.w;
-	projectCoords = projectCoords * 0.5f + 0.5f;
+	vec3 shadowCoords = worldPositionLightSpace.xyz / worldPositionLightSpace.w;
+	shadowCoords = shadowCoords * 0.5f + 0.5f;
 
-	float closestDepth = texture(shadowMap, projectCoords.xy).r; 
-    float currentDepth = projectCoords.z;
-    float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
+	float bias = 0.0001f;
+	float closestDepth = texture(shadowMap, shadowCoords.xy).r;
+	float currentDepth = shadowCoords.z;
+	float shadow = 0.0f;
+	vec2 size = 1.0 / textureSize(shadowMap, 0);
 
-    return shadow;
+	int sampleBound = 7;
+	float sampleCount = (2.0f * sampleBound + 1.0f) * (2.0f * sampleBound + 1.0f);
+	for(int x = -sampleBound; x <= sampleBound; ++x)
+	{
+		for(int y = -sampleBound; y <= sampleBound; ++y)
+		{			
+			float pcf = texture(shadowMap, shadowCoords.xy + vec2(x, y) * size).r;
+			shadow += currentDepth - bias > pcf ? 1.0f : 0.0f;
+		}
+	}
+
+	shadow /= sampleCount;
+
+	return shadow;
 }
 
 void main()
