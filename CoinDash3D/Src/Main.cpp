@@ -11,21 +11,6 @@
 #include "PlatformModule.h"
 #include "RenderModule.h"
 
-#include "Camera.h"
-#include "GLTFLoader.h"
-#include "GeometryRenderer2D.h"
-#include "GeometryRenderer3D.h"
-#include "SkinnedMesh.h"
-#include "StaticMesh.h"
-#include "TextRenderer.h"
-#include "TTFont.h"
-#include "Shader.h"
-#include "GLTFLoader.h"
-#include "CrossFadeController.h"
-#include "BaseColorMap.h"
-#include "TileColorMap.h"
-#include "CascadeShadowMap.h"
-#include "ShadowMap.h"
 
 #include <glad/glad.h>
 #include <imgui.h>
@@ -45,26 +30,10 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 
 	PlatformModule::SetEndLoopCallback([&]() { RenderModule::Uninit(); });
 	
-	GeometryRenderer2D* renderer2d = RenderModule::CreateResource<GeometryRenderer2D>();
-	GeometryRenderer3D* renderer3d = RenderModule::CreateResource<GeometryRenderer3D>();
-	TextRenderer* textRenderer = RenderModule::CreateResource<TextRenderer>();
-	Camera* camera = GameModule::CreateEntity<Camera>();
-
-	Mat4x4 screenOrtho = RenderModule::GetScreenOrtho();
-	renderer2d->SetOrtho(screenOrtho);
-	textRenderer->SetOrtho(screenOrtho);
-
 	PlatformModule::RunLoop(
 		[&](float deltaSeconds)
 		{
-			camera->Tick(deltaSeconds);
-
-			renderer3d->SetView(camera->GetView());
-			renderer3d->SetProjection(camera->GetProjection());
-
 			RenderModule::BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
-
-			renderer3d->DrawGrid3D(Vec3f(100.0f, 100.0f, 100.0f), 1.0f);
 
 			RenderModule::EndFrame();
 		}
