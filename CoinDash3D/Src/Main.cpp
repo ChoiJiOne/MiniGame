@@ -56,7 +56,7 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	renderer2d->SetOrtho(screenOrtho);
 	textRenderer->SetOrtho(screenOrtho);
 
-	cgltf_data* data = GLTFLoader::Load("Resource/Model/test03.glb");
+	cgltf_data* data = GLTFLoader::Load("Resource/Model/Michelle.gltf");
 	std::vector<GLTFLoader::MeshResource> meshResources = GLTFLoader::LoadMeshResources(data);
 	GLTFLoader::Free(data);
 
@@ -75,12 +75,32 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 
 		meshes.push_back(RenderModule::CreateResource<StaticMesh>(vertices, indices));
 	}
-	
+
+	data = GLTFLoader::Load("Resource/Model/test03.glb");
+	meshResources = GLTFLoader::LoadMeshResources(data);
+	GLTFLoader::Free(data);
+
+	for (const auto& meshResource : meshResources)
+	{
+		std::vector<StaticMesh::Vertex> vertices(meshResource.positions.size());
+		std::vector<uint32_t> indices = meshResource.indices;
+
+		for (uint32_t index = 0; index < vertices.size(); ++index)
+		{
+			vertices[index].position = meshResource.positions[index];
+			vertices[index].normal = meshResource.normals[index];
+			vertices[index].texcoord = meshResource.texcoords[index];
+		}
+
+		meshes.push_back(RenderModule::CreateResource<StaticMesh>(vertices, indices));
+	}
+
+	Shader* shader = RenderModule::CreateResource<Shader>("Resource/Shader/StaticMesh.vert", "Resource/Shader/Mesh.frag");
 	Shader* shadow = RenderModule::CreateResource<Shader>("Resource/Shader/Shadow.vert", "Resource/Shader/Shadow.frag");
 	ShadowMap* shadowMap = RenderModule::CreateResource<ShadowMap>(ShadowMap::ESize::Size_2048);
 
-	Vec3f lightPosition = Vec3f(10.0f, 10.0f, 10.0f);
-	Mat4x4 lightProjection = Mat4x4::Ortho(-20.0f, +20.0f, -20.0f, +20.0f, 1.0f, 100.0f);
+	Vec3f lightPosition = Vec3f(5.0f, 5.0f, 5.0f);
+	Mat4x4 lightProjection = Mat4x4::Ortho(-4.0f, +4.0f, -4.0f, +4.0f, 1.0f, 40.0f);
 	Mat4x4 lightView = Mat4x4::LookAt(lightPosition, Vec3f(0.0f, 0.0f, 0.0f), Vec3f(0.0f, 1.0f, 0.0f));
 	Mat4x4 lightSpaceMatrix = lightView * lightProjection;
 
@@ -118,6 +138,27 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 			RenderModule::BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
 
 			renderer3d->DrawGrid3D(Vec3f(100.0f, 100.0f, 100.0f), 1.0f);
+
+			shader->Bind();
+			{
+				shadowMap->Active(0);
+				tileColorMap->Active(1);
+
+				shader->SetUniform("world", Mat4x4::Identity());
+				shader->SetUniform("view", camera->GetView());
+				shader->SetUniform("projection", camera->GetProjection());
+				shader->SetUniform("lightSpaceMatrix", lightSpaceMatrix);
+				shader->SetUniform("lightPosition", lightPosition);
+				shader->SetUniform("cameraPosition", camera->GetEyePosition());
+
+				for (const auto& mesh : meshes)
+				{
+					mesh->Bind();
+					RenderModule::ExecuteDrawIndex(mesh->GetIndexCount(), EDrawMode::TRIANGLES);
+					mesh->Unbind();
+				}
+			}
+			shader->Unbind();
 
 			RenderModule::EndFrame();
 		}
