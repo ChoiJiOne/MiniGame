@@ -189,6 +189,16 @@ public:
 
 
 	/**
+	 * @brief 3D 시야 절두체를 그립니다.
+	 * 
+	 * @param view 시야 절두체의 시야 행렬입니다.
+	 * @param projection 시야 절두체의 투영 행렬입니다.
+	 * @param color 시야 절두체의 색상입니다.
+	 */
+	void DrawViewfrustum3D(const Mat4x4& view, const Mat4x4& projection, const Vec4f& color);
+
+
+	/**
 	 * @brief 격자를 그립니다.
 	 *
 	 * @param extensions 격자의 XYZ 순의 크기입니다.

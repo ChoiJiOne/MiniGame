@@ -315,6 +315,72 @@ void GeometryRenderer3D::DrawSphere3D(const Mat4x4& world, float radius, const V
 	DrawGeometry3D(world, EDrawMode::LINES, vertexCount);
 }
 
+void GeometryRenderer3D::DrawViewfrustum3D(const Mat4x4& view, const Mat4x4& projection, const Vec4f& color)
+{
+	static const uint32_t MAX_FRUSTUM_CORNER = 8;
+	static const std::array<Vec3f, MAX_FRUSTUM_CORNER> corners =
+	{
+		Vec3f(0.0f, 0.0f, 0.0f),
+		Vec3f(0.0f, 0.0f, 1.0f),
+		Vec3f(0.0f, 1.0f, 0.0f),
+		Vec3f(0.0f, 1.0f, 1.0f),
+		Vec3f(1.0f, 0.0f, 0.0f),
+		Vec3f(1.0f, 0.0f, 1.0f),
+		Vec3f(1.0f, 1.0f, 0.0f),
+		Vec3f(1.0f, 1.0f, 1.0f),
+	};
+
+	Mat4x4 inv = Mat4x4::Inverse(view * projection);
+	std::array<Vec3f, MAX_FRUSTUM_CORNER> frustumCorners;
+	for (int32_t index = 0; index < MAX_FRUSTUM_CORNER; ++index)
+	{
+		Vec4f transform = Vec4f(2.0f * corners[index].x - 1.0f, 2.0f * corners[index].y - 1.0f, 2.0f * corners[index].z - 1.0f, 1.0f) * inv;
+		frustumCorners[index].x = transform.x / transform.w;
+		frustumCorners[index].y = transform.y / transform.w;
+		frustumCorners[index].z = transform.z / transform.w;
+	}
+
+	uint32_t vertexCount = 0;
+
+	vertices_[vertexCount++] = Vertex(frustumCorners[0], color);
+	vertices_[vertexCount++] = Vertex(frustumCorners[1], color);
+
+	vertices_[vertexCount++] = Vertex(frustumCorners[2], color);
+	vertices_[vertexCount++] = Vertex(frustumCorners[3], color);
+
+	vertices_[vertexCount++] = Vertex(frustumCorners[4], color);
+	vertices_[vertexCount++] = Vertex(frustumCorners[5], color);
+
+	vertices_[vertexCount++] = Vertex(frustumCorners[6], color);
+	vertices_[vertexCount++] = Vertex(frustumCorners[7], color);
+
+	vertices_[vertexCount++] = Vertex(frustumCorners[0], color);
+	vertices_[vertexCount++] = Vertex(frustumCorners[2], color);
+
+	vertices_[vertexCount++] = Vertex(frustumCorners[1], color);
+	vertices_[vertexCount++] = Vertex(frustumCorners[3], color);
+
+	vertices_[vertexCount++] = Vertex(frustumCorners[4], color);
+	vertices_[vertexCount++] = Vertex(frustumCorners[6], color);
+
+	vertices_[vertexCount++] = Vertex(frustumCorners[5], color);
+	vertices_[vertexCount++] = Vertex(frustumCorners[7], color);
+
+	vertices_[vertexCount++] = Vertex(frustumCorners[0], color);
+	vertices_[vertexCount++] = Vertex(frustumCorners[4], color);
+
+	vertices_[vertexCount++] = Vertex(frustumCorners[1], color);
+	vertices_[vertexCount++] = Vertex(frustumCorners[5], color);
+
+	vertices_[vertexCount++] = Vertex(frustumCorners[2], color);
+	vertices_[vertexCount++] = Vertex(frustumCorners[6], color);
+
+	vertices_[vertexCount++] = Vertex(frustumCorners[3], color);
+	vertices_[vertexCount++] = Vertex(frustumCorners[7], color);
+
+	DrawGeometry3D(Mat4x4::Identity(), EDrawMode::LINES, vertexCount);
+}
+
 void GeometryRenderer3D::DrawGrid3D(const Vec3f& extensions, float stride)
 {
 	CHECK(stride >= 1.0f);
