@@ -2039,7 +2039,7 @@ struct Mat4x4
 			1.0f / (aspect * tanHalfFovy),                 0.0f,                                    0.0f,  0.0f,
 					                 0.0f, 1.0f / (tanHalfFovy),                                    0.0f,  0.0f,
 					                 0.0f,                 0.0f,        -(farZ + nearZ) / (farZ - nearZ), -1.0f,
-					                 0.0f,                 0.0f, -(2.0f * farZ * nearZ) / (farZ - nearZ),  1.0f
+					                 0.0f,                 0.0f, -(2.0f * farZ * nearZ) / (farZ - nearZ),  0.0f
 		);
 	}
 
