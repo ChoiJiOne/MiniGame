@@ -38,6 +38,8 @@ void DepthRenderer::Release()
 		RenderModule::DestroyResource(staticMeshShader_);
 		staticMeshShader_ = nullptr;
 	}
+
+	bIsInitialized_ = false;
 }
 
 void DepthRenderer::DrawStaticMesh(const Mat4x4& world, const StaticMesh* mesh)

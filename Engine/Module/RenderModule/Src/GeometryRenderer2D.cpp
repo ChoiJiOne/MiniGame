@@ -61,6 +61,8 @@ void GeometryRenderer2D::Release()
 	}
 
 	GL_FAILED(glDeleteVertexArrays(1, &vertexArrayObject_));
+
+	bIsInitialized_ = false;
 }
 
 void GeometryRenderer2D::DrawPoints2D(const std::vector<Vec2f>& positions, const Vec4f& color, float pointSize)

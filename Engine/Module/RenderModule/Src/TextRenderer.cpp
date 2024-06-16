@@ -64,6 +64,8 @@ void TextRenderer::Release()
 	}
 
 	GL_FAILED(glDeleteVertexArrays(1, &vertexArrayObject_));
+
+	bIsInitialized_ = false;
 }
 
 void TextRenderer::DrawText2D(const TTFont* font, const std::wstring& text, const Vec2f& position, const EStartPivot& startPivot, Vec4f& color)

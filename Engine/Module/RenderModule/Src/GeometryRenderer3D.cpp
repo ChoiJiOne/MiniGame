@@ -61,6 +61,8 @@ void GeometryRenderer3D::Release()
 	}
 
 	GL_FAILED(glDeleteVertexArrays(1, &vertexArrayObject_));
+
+	bIsInitialized_ = false;
 }
 
 void GeometryRenderer3D::DrawPoints3D(const std::vector<Vec3f>& positions, const Vec4f& color, float pointSize)
