@@ -4,6 +4,7 @@
 
 #include "IEntity.h"
 
+class Character;
 class Coin;
 
 
@@ -17,8 +18,9 @@ public:
 	 * @brief 코인을 생성하는 엔티티의 생성자입니다.
 	 *
 	 * @param coins 코인 목록의 참조자입니다.
+	 * @param character 코인이 참조할 캐릭터 엔티티입니다.
 	 */
-	CoinSpawner(std::list<Coin*>& coins);
+	CoinSpawner(std::list<Coin*>& coins, Character* character);
 
 
 	/**
@@ -59,6 +61,12 @@ private:
 	 * @brief 코인 목록의 참조자입니다.
 	 */
 	std::list<Coin*>& coins_;
+
+
+	/**
+	 * @brief 코인이 참조할 캐릭터 엔티티입니다.
+	 */
+	Character* character_ = nullptr;
 
 
 	/**
