@@ -1,6 +1,12 @@
 #include "Assertion.h"
+#include "DepthRenderer.h"
+#include "GeometryRenderer2D.h"
+#include "GeometryRenderer3D.h"
+#include "MeshRenderer.h"
+#include "TextRenderer.h"
 
 #include "Application.h"
+#include "PlayScene.h"
 
 Application::Application()
 {
@@ -13,6 +19,12 @@ Application::Application()
 	ASSERT(GameModule::Init() == GameModule::Errors::OK, "Failed to initialize GameModule.");
 
 	PlatformModule::SetEndLoopCallback([&]() { RenderModule::Uninit(); });
+
+	depthRenderer_ = RenderModule::CreateResource<DepthRenderer>();
+	geometryRenderer2D_ = RenderModule::CreateResource<GeometryRenderer2D>();
+	geometryRenderer3D_ = RenderModule::CreateResource<GeometryRenderer3D>();
+	meshRenderer_ = RenderModule::CreateResource<MeshRenderer>();
+	textRenderer_ = RenderModule::CreateResource<TextRenderer>();
 }
 
 Application::~Application()
@@ -25,15 +37,25 @@ Application::~Application()
 
 void Application::Init()
 {
+	playScene_ = std::make_unique<PlayScene>(this);
 }
 
 void Application::Run()
 {
+	currentScene_ = playScene_.get();
+	currentScene_->Enter();
+
 	PlatformModule::RunLoop(
 		[&](float deltaSeconds)
 		{
-			RenderModule::BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
-			RenderModule::EndFrame();
+			currentScene_->Tick(deltaSeconds);
+
+			if (currentScene_->IsDetectSwitch())
+			{
+				currentScene_->Exit();
+				currentScene_ = currentScene_->GetLink();
+				currentScene_->Enter();
+			}
 		}
 	);
 }

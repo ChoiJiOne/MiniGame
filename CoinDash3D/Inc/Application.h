@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "AudioModule.h"
 #include "CrashModule.h"
 #include "FileModule.h"
@@ -7,6 +9,14 @@
 #include "MathModule.h"
 #include "PlatformModule.h"
 #include "RenderModule.h"
+
+#include "IScene.h"
+
+class DepthRenderer;
+class GeometryRenderer2D;
+class GeometryRenderer3D;
+class MeshRenderer;
+class TextRenderer;
 
 
 /**
@@ -46,5 +56,52 @@ public:
 
 
 private:
+	/**
+	 * @brief 씬 내부에서 Application의 내부에 접근할 수 있도록 선언합니다.
+	 */
+	friend class IScene;
+	friend class PlayScene;
 
+
+private:
+	/**
+	 * @brief 3D 씬의 깊이 값을 렌더링하는 렌더러입니다.
+	 */
+	DepthRenderer* depthRenderer_ = nullptr;
+
+
+	/**
+	 * @brief 2D 기하 도형을 렌더링하는 렌더러입니다.
+	 */
+	GeometryRenderer2D* geometryRenderer2D_ = nullptr;
+
+
+	/**
+	 * @brief 3D 기하 도형을 렌더링하는 렌더러입니다.
+	 */
+	GeometryRenderer3D* geometryRenderer3D_ = nullptr;
+
+
+	/**
+	 * @brief 3D 메쉬를 렌더링하는 렌더러입니다.
+	 */
+	MeshRenderer* meshRenderer_ = nullptr;
+
+
+	/**
+	 * @brief 2D 텍스트를 렌더링하는 렌더러입니다.
+	 */
+	TextRenderer* textRenderer_ = nullptr;
+
+	
+	/**
+	 * @brief 플레이 씬입니다.
+	 */
+	std::unique_ptr<IScene> playScene_ = nullptr;
+
+
+	/**
+	 * @brief 현재 씬입니다.
+	 */
+	IScene* currentScene_ = nullptr;
 };
