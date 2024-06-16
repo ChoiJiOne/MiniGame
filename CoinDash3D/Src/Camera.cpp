@@ -7,7 +7,7 @@
 
 Camera::Camera(Character* character)
 	: character_(character)
-	, distance_(10.0f)
+	, distance_(8.0f)
 {
 	yaw_ = MathModule::ToRadian(-90.0f);
 	pitch_ = MathModule::ToRadian(-50.0f);
