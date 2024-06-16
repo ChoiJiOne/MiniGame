@@ -80,6 +80,21 @@ void GeometryRenderer2D::DrawPoints2D(const std::vector<Vec2f>& positions, const
 	DrawGeometry2D(Mat4x4::Identity(), EDrawMode::POINTS, static_cast<uint32_t>(positions.size()));
 }
 
+void GeometryRenderer2D::DrawPoints2D(const Vec2f* positions, uint32_t size, const Vec4f& color, float pointSize)
+{
+	CHECK(size <= MAX_VERTEX_SIZE);
+	CHECK(pointSize >= 0.0f);
+
+	for (std::size_t index = 0; index < size; ++index)
+	{
+		vertices_[index].position = Vec2f(positions[index].x, positions[index].y);
+		vertices_[index].color = color;
+	}
+
+	pointSize_ = pointSize;
+	DrawGeometry2D(Mat4x4::Identity(), EDrawMode::POINTS, size);
+}
+
 void GeometryRenderer2D::DrawConnectPoints2D(const std::vector<Vec2f>& positions, const Vec4f& color)
 {
 	CHECK(positions.size() <= MAX_VERTEX_SIZE);
