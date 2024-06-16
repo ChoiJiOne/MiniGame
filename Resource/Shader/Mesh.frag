@@ -12,6 +12,7 @@ layout(binding = 0) uniform sampler2D shadowMap;
 layout(binding = 1) uniform sampler2D material;
 
 uniform vec3 lightDirection;
+uniform vec3 lightColor;
 uniform vec3 cameraPosition;
 
 float ShadowFactor(vec4 worldPositionLightSpace)
@@ -45,10 +46,9 @@ void main()
 {
 	vec3 colorRGB = texture(material, inTexcoord).rgb;
 	vec3 normal = normalize(inNormal);
-	vec3 lightColor = vec3(1.0f);
 
 	// ambient
-	vec3 ambient = 0.15f * lightColor;
+	vec3 ambient = 0.5f * lightColor;
 
 	// diffuse
 	vec3 lightDir = -lightDirection;
@@ -59,7 +59,7 @@ void main()
 	vec3 viewDirection = normalize(cameraPosition - inWorldPosition);
 	float spec = 0.0f;
 	vec3 halfwayDirection = normalize(lightDir + viewDirection);  
-    spec = pow(max(dot(normal, halfwayDirection), 0.0f), 64.0f);
+    spec = pow(max(dot(normal, halfwayDirection), 0.0f), 32.0f);
     vec3 specular = spec * lightColor;    
 
 	// shadow
