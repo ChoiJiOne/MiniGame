@@ -3,12 +3,15 @@
 #include "RenderModule.h"
 
 #include "Camera.h"
+#include "Character.h"
 
-Camera::Camera()
+Camera::Camera(Character* character)
+	: character_(character)
+	, distance_(10.0f)
 {
 	yaw_ = MathModule::ToRadian(-90.0f);
-	pitch_ = MathModule::ToRadian(-30.0f);
-	eyePosition_ = Vec3f(0.0f, 3.0f, 4.0f);
+	pitch_ = MathModule::ToRadian(-45.0f);
+	eyePosition_ = GetEyePositionFromCharacter();
 	UpdateState();
 
 	int32_t screenWidth = 0;
@@ -17,9 +20,14 @@ Camera::Camera()
 	aspectRatio_ = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
 
 	fov_ = PiDiv4;
-	nearZ_ = 0.1f;
-	farZ_ = 500.0f;
+	nearZ_ = 0.01f;
+	farZ_ = 100.0f;
 	projection_ = Mat4x4::Perspective(fov_, aspectRatio_, nearZ_, farZ_);
+
+	minPitch_ = -PiDiv2 + 0.1f;
+	maxPitch_ = +PiDiv2 - 0.1f;
+
+	bIsInitialized_ = true;
 }
 
 Camera::~Camera()
@@ -32,59 +40,8 @@ Camera::~Camera()
 
 void Camera::Tick(float deltaSeconds)
 {
-	if (!bIsActive_)
-	{
-		return;
-	}
-
-	bool bIsUpdateState = false;
-
-	if (InputController::GetKeyPressState(EKey::KEY_LBUTTON) == EPressState::HELD)
-	{
-		CursorPos prev = InputController::GetPrevCursorPos();
-		CursorPos curr = InputController::GetCurrCursorPos();
-
-		float xoffset = static_cast<float>(curr.x - prev.x);
-		float yoffset = static_cast<float>(prev.y - curr.y);
-
-		xoffset *= 0.01f;
-		yoffset *= 0.01f;
-
-		yaw_ += xoffset;
-		pitch_ += yoffset;
-
-		pitch_ = MathModule::Clamp<float>(pitch_, -PiDiv2 + 0.1f, +PiDiv2 - 0.1f);
-		bIsUpdateState = true;
-	}
-
-	if (InputController::GetKeyPressState(EKey::KEY_W) == EPressState::HELD)
-	{
-		eyePosition_ += eyeDirection_ * deltaSeconds * speed_;
-		bIsUpdateState = true;
-	}
-
-	if (InputController::GetKeyPressState(EKey::KEY_S) == EPressState::HELD)
-	{
-		eyePosition_ -= eyeDirection_ * deltaSeconds * speed_;
-		bIsUpdateState = true;
-	}
-
-	if (InputController::GetKeyPressState(EKey::KEY_A) == EPressState::HELD)
-	{
-		eyePosition_ -= rightDirection_ * deltaSeconds * speed_;
-		bIsUpdateState = true;
-	}
-
-	if (InputController::GetKeyPressState(EKey::KEY_D) == EPressState::HELD)
-	{
-		eyePosition_ += rightDirection_ * deltaSeconds * speed_;
-		bIsUpdateState = true;
-	}
-
-	if (bIsUpdateState)
-	{
-		UpdateState();
-	}
+	eyePosition_ = GetEyePositionFromCharacter();
+	UpdateState();
 }
 
 void Camera::Release()
@@ -93,6 +50,16 @@ void Camera::Release()
 	{
 		bIsInitialized_ = false;
 	}
+}
+
+Vec3f Camera::GetEyePositionFromCharacter()
+{
+	Vec3f position;
+	position.y = distance_ * MathModule::Sin(-pitch_);
+	position.z = distance_ * MathModule::Cos(-pitch_);
+
+	position += character_->GetTransform().position;
+	return position;
 }
 
 void Camera::UpdateState()
