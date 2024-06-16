@@ -16,6 +16,7 @@ class TextRenderer;
 class Camera;
 class Character;
 class Coin;
+class CoinSpawner;
 class Floor;
 class Light;
 
@@ -152,4 +153,16 @@ private:
 	 * @brief 라이트 엔티티입니다.
 	 */
 	Light* light_ = nullptr;
+
+
+	/**
+	 * @brief 코인 엔티티입니다.
+	 */
+	std::list<Coin*> coins_;
+
+
+	/**
+	 * @brief 코인을 생성하는 엔티티입니다.
+	 */
+	CoinSpawner* coinSpawner_ = nullptr;
 };

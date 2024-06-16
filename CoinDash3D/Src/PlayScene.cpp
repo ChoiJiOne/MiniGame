@@ -10,6 +10,7 @@
 #include "Camera.h"
 #include "Character.h"
 #include "Coin.h"
+#include "CoinSpawner.h"
 #include "Floor.h"
 #include "Light.h"
 #include "PlayScene.h"
@@ -37,18 +38,21 @@ void PlayScene::Enter()
 	character_ = GameModule::CreateEntity<Character>();
 	camera_ = GameModule::CreateEntity<Camera>(character_);
 	light_ = GameModule::CreateEntity<Light>(camera_);
+	coins_ = std::list<Coin*>();
+	coinSpawner_ = GameModule::CreateEntity<CoinSpawner>(coins_);
 
 	bIsEnter_ = true;
 }
 
 void PlayScene::Exit()
 {
-	std::array<IEntity*, 4> entities =
+	std::array<IEntity*, 5> entities =
 	{
 		light_,
 		camera_,
 		character_,
 		floor_,
+		coinSpawner_,
 	};
 
 	for (auto& entity : entities)
@@ -58,18 +62,27 @@ void PlayScene::Exit()
 			GameModule::DestroyEntity(entity);
 		}
 	}
-	
+
+	for (auto& coin : coins_)
+	{
+		if (coin)
+		{
+			GameModule::DestroyEntity(coin);
+		}
+	}
+
 	bIsEnter_ = false;
 	bDetectSwitch_ = false;
 }
 
 void PlayScene::Update(float deltaSeconds)
 {
-	std::array<IEntity*, 3> entities =
+	std::array<IEntity*, 4> entities =
 	{ 
 		character_,
 		camera_,
 		light_,
+		coinSpawner_,
 	};
 
 	for (auto& entity : entities)
@@ -111,6 +124,15 @@ void PlayScene::DepthPass()
 		depthRenderer_->DrawStaticMesh(Transform::ToMat(floor_->GetTransform()), mesh);
 	}
 
+	for (const auto& coin : coins_)
+	{
+		const std::vector<StaticMesh*>& meshes = coin->GetMeshes();
+		for (const auto& mesh : meshes)
+		{
+			depthRenderer_->DrawStaticMesh(Transform::ToMat(coin->GetTransform()), mesh);
+		}
+	}
+
 	const std::vector<SkinnedMesh*>& skinnedMeshes = character_->GetMeshes();
 	for (const auto& mesh : skinnedMeshes)
 	{
@@ -135,11 +157,22 @@ void PlayScene::RenderPass()
 		meshRenderer_->DrawStaticMesh(Transform::ToMat(floor_->GetTransform()), mesh, floor_->GetMaterial());
 	}
 
+	for (const auto& coin : coins_)
+	{
+		const std::vector<StaticMesh*>& meshes = coin->GetMeshes();
+		for (const auto& mesh : meshes)
+		{
+			meshRenderer_->DrawStaticMesh(Transform::ToMat(coin->GetTransform()), mesh, coin->GetMaterial());
+		}
+	}
+
 	const std::vector<SkinnedMesh*>& skinnedMeshes = character_->GetMeshes();
 	for (const auto& mesh : skinnedMeshes)
 	{
 		meshRenderer_->DrawSkinnedMesh(Transform::ToMat(character_->GetTransform()), character_->GetBindPose(), character_->GetInvBindPose(), mesh, character_->GetMaterial());
 	}
+
+	geometryRenderer3D_->DrawSphere3D(Mat4x4::Translation(character_->GetSphere().center), character_->GetSphere().radius, Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
 
 	RenderModule::EndFrame();
 }
