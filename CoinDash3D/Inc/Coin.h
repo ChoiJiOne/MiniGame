@@ -58,7 +58,7 @@ public:
 	 *
 	 * @return 코인 엔티티의 정적 메시를 반환합니다.
 	 */
-	const std::vector<StaticMesh*>& GetMesh() const { return meshes_; }
+	const std::vector<StaticMesh*>& GetMeshes() const { return meshes_; }
 
 
 	/**
