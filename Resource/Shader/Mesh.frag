@@ -11,7 +11,7 @@ layout(location = 0) out vec4 outFragColor;
 layout(binding = 0) uniform sampler2D shadowMap;
 layout(binding = 1) uniform sampler2D material;
 
-uniform vec3 lightPosition;
+uniform vec3 lightDirection;
 uniform vec3 cameraPosition;
 
 float ShadowFactor(vec4 worldPositionLightSpace)
@@ -45,20 +45,20 @@ void main()
 {
 	vec3 colorRGB = texture(material, inTexcoord).rgb;
 	vec3 normal = normalize(inNormal);
-	vec3 lightColor = vec3(0.3f);
+	vec3 lightColor = vec3(1.0f);
 
 	// ambient
 	vec3 ambient = 0.15f * lightColor;
 
 	// diffuse
-	vec3 lightDirection = lightPosition - inWorldPosition;
-	float diff = max(dot(lightDirection, normal), 0.0f);
+	vec3 lightDir = -lightDirection;
+	float diff = max(dot(lightDir, normal), 0.0f);
 	vec3 diffuse = diff * lightColor;
 
 	// specular
 	vec3 viewDirection = normalize(cameraPosition - inWorldPosition);
 	float spec = 0.0f;
-	vec3 halfwayDirection = normalize(lightDirection + viewDirection);  
+	vec3 halfwayDirection = normalize(lightDir + viewDirection);  
     spec = pow(max(dot(normal, halfwayDirection), 0.0f), 64.0f);
     vec3 specular = spec * lightColor;    
 
