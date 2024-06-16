@@ -16,6 +16,7 @@ class DepthRenderer;
 class GeometryRenderer2D;
 class GeometryRenderer3D;
 class MeshRenderer;
+class ShadowMap;
 class TextRenderer;
 
 
@@ -92,6 +93,12 @@ private:
 	 * @brief 2D 텍스트를 렌더링하는 렌더러입니다.
 	 */
 	TextRenderer* textRenderer_ = nullptr;
+
+
+	/**
+	 * @brief 셰도우 맵입니다.
+	 */
+	ShadowMap* shadowMap_ = nullptr;
 
 	
 	/**
