@@ -42,6 +42,8 @@ Coin::Coin(const Vec3f& position)
 	material_ = material;
 
 	transform_.position += position;
+
+	bIsInitialized_ = true;
 }
 
 Coin::~Coin()

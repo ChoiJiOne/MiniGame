@@ -73,6 +73,8 @@ Character::Character()
 	crossFadeController_.SetSkeleton(skeleton_);
 	crossFadeController_.Play(&clips_[idleClip_]);
 	moveSpeed_ = 5.0f;
+
+	bIsInitialized_ = true;
 }
 
 Character::~Character()

@@ -45,6 +45,8 @@ Floor::Floor()
 	meshes_ = meshes;
 	transform_ = Transform();
 	material_ = material;
+
+	bIsInitialized_ = true;
 }
 
 Floor::~Floor()
