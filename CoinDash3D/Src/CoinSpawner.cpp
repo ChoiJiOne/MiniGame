@@ -30,7 +30,16 @@ void CoinSpawner::Tick(float deltaSeconds)
 	}
 	else
 	{
-		coins_.remove_if([&](Coin* coin) { return coin->HasCollectedCoin(); });
+		for (auto& coin : coins_)
+		{
+			if (coin && coin->HasCollectedCoin())
+			{
+				GameModule::DestroyEntity(coin);
+				coin = nullptr;
+			}
+		}
+
+		coins_.remove_if([&](Coin* coin) { return coin == nullptr; });
 	}
 }
 
