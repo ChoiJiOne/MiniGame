@@ -12,6 +12,7 @@
  */
 class GameModule
 {
+public:
 	/**
 	 * @brief 게임 모듈의 에러 처리 목록입니다.
 	 */
