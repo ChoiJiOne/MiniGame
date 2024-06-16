@@ -39,7 +39,7 @@ void PlayScene::Enter()
 	camera_ = GameModule::CreateEntity<Camera>(character_);
 	light_ = GameModule::CreateEntity<Light>(camera_);
 	coins_ = std::list<Coin*>();
-	coinSpawner_ = GameModule::CreateEntity<CoinSpawner>(coins_);
+	coinSpawner_ = GameModule::CreateEntity<CoinSpawner>(coins_, character_);
 
 	bIsEnter_ = true;
 }
@@ -77,18 +77,24 @@ void PlayScene::Exit()
 
 void PlayScene::Update(float deltaSeconds)
 {
-	std::array<IEntity*, 4> entities =
+	std::array<IEntity*, 3> entities =
 	{ 
 		character_,
 		camera_,
 		light_,
-		coinSpawner_,
 	};
 
 	for (auto& entity : entities)
 	{
 		entity->Tick(deltaSeconds);
 	}
+
+	for (auto& coin : coins_)
+	{
+		coin->Tick(deltaSeconds);
+	}
+
+	coinSpawner_->Tick(deltaSeconds);
 }
 
 void PlayScene::PrepareForRendering()
@@ -172,7 +178,15 @@ void PlayScene::RenderPass()
 		meshRenderer_->DrawSkinnedMesh(Transform::ToMat(character_->GetTransform()), character_->GetBindPose(), character_->GetInvBindPose(), mesh, character_->GetMaterial());
 	}
 
+
+
+
 	geometryRenderer3D_->DrawSphere3D(Mat4x4::Translation(character_->GetSphere().center), character_->GetSphere().radius, Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
+	for (const auto& coin : coins_)
+	{
+		geometryRenderer3D_->DrawCube3D(Mat4x4::Translation(coin->GetAABB().center), coin->GetAABB().extents, Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
+	}
+
 
 	RenderModule::EndFrame();
 }
