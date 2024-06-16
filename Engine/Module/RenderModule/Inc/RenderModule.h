@@ -158,9 +158,17 @@ public:
 	/**
 	 * @brief 셰이더의 포인트 크기 옵션을 설정합니다.
 	 *
-	 * @param bIsEnabel 포인트 크기 옵션을 활성화하려면 true, 그렇지 않으면 false입니다.
+	 * @param bIsEnable 포인트 크기 옵션을 활성화하려면 true, 그렇지 않으면 false입니다.
 	 */
 	static void SetPointSizeMode(bool bIsEnable);
+
+
+	/**
+	 * @brief 페이스 컬링 모드 옵션을 설정합니다.
+	 * 
+	 * @param bIsEnable 페이스 컬링 모드를 활성화하려면 true, 비활성화하려면 false입니다.
+	 */
+	static void SetCullFaceMode(bool bIsEnable);
 
 
 	/**

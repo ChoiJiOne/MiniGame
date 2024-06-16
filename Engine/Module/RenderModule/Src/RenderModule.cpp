@@ -220,6 +220,18 @@ void RenderModule::SetPointSizeMode(bool bIsEnable)
 	}
 }
 
+void RenderModule::SetCullFaceMode(bool bIsEnable)
+{
+	if (bIsEnable)
+	{
+		GL_FAILED(glEnable(GL_CULL_FACE));
+	}
+	else
+	{
+		GL_FAILED(glDisable(GL_CULL_FACE));
+	}
+}
+
 RenderModule::Errors RenderModule::GetScreenSize(int32_t& outWidth, int32_t& outHeight)
 {
 	RECT windowRect;
