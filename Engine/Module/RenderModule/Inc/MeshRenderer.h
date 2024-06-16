@@ -78,6 +78,14 @@ public:
 
 
 	/**
+	 * @brief 렌더러의 라이트 색상 값을 설정합니다.
+	 * 
+	 * @param lightColor 설정할 라이트의 RGB 값입니다.
+	 */
+	void SetLightColor(const Vec3f& lightColor) { lightColor_ = lightColor; }
+
+
+	/**
 	 * @brief 렌더러의 라이트 시점 행렬을 설정합니다.
 	 * 
 	 * @param lightSpaceMatrix 설정할 라이트 시점 행렬 값입니다.
@@ -132,6 +140,12 @@ private:
 	 * @brief 라이트의 방향입니다.
 	 */
 	Vec3f lightDirection_;
+
+	
+	/**
+	 * @brief 라이트의 색상입니다.
+	 */
+	Vec3f lightColor_;
 
 
 	/**

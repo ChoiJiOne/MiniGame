@@ -60,6 +60,7 @@ void MeshRenderer::DrawStaticMesh(const Mat4x4& world, const StaticMesh* mesh, c
 		staticMeshShader_->SetUniform("projection", projection_);
 		staticMeshShader_->SetUniform("lightSpaceMatrix", lightSpaceMatrix_);
 		staticMeshShader_->SetUniform("lightDirection", lightDirection_);
+		staticMeshShader_->SetUniform("lightColor", lightColor_);
 		staticMeshShader_->SetUniform("cameraPosition", cameraPosition_);
 
 		mesh->Bind();
@@ -90,6 +91,7 @@ void MeshRenderer::DrawSkinnedMesh(const Mat4x4& world, const std::vector<Mat4x4
 		skinnedMeshShader_->SetUniform("bindPose", bindPose.data(), bindPose.size());
 		skinnedMeshShader_->SetUniform("invBindPose", invBindPose.data(), invBindPose.size());
 		skinnedMeshShader_->SetUniform("lightDirection", lightDirection_);
+		skinnedMeshShader_->SetUniform("lightColor", lightColor_);
 		skinnedMeshShader_->SetUniform("cameraPosition", cameraPosition_);
 
 		mesh->Bind();
