@@ -57,6 +57,7 @@ RenderModule::Errors RenderModule::Init(HWND windowHandle)
 	SetDepthMode(true);     // 기본적으로 깊이 테스트 모드는 활성화.
 	SetAlphaBlendMode(true);// 기본적으로 알파 블랜딩 모드는 활성화.
 	SetPointSizeMode(true); // 기본적으로 포인트 크기 모드는 활성화.
+	SetCullFaceMode(true);  // 기본적으로 페이스 컬링 모드는 활성화.
 
 	bIsInit = true;
 	return Errors::OK;
