@@ -144,22 +144,11 @@ void Character::Tick(float deltaSeconds)
 		position += Vec3f(deltaSeconds * moveSpeed_ * sin, 0.0f, deltaSeconds * moveSpeed_ * cos);
 		sphere_.center = position + Vec3f(0.0f, 0.7f, 0.0f);
 
-		//const std::vector<AABB>& aabbs = wall_->GetBoundingBoxes();
-		//bool bIsCollision = false;
-		//for (const auto& aabb : aabbs)
-		//{
-		//	if (Collision::SphereToAABB(sphere_, aabb))
-		//	{
-		//		bIsCollision = true;
-		//		break;
-		//	}
-		//}
-
-		//if (bIsCollision)
-		//{
-		//	position = transform_.position;
-		//	sphere_.center = position + Vec3f(0.0f, 0.7f, 0.0f);
-		//}
+		if (MathModule::Abs(position.x) >= 9.5f || MathModule::Abs(position.z) >= 9.5f)
+		{
+			position = transform_.position;
+			sphere_.center = position + Vec3f(0.0f, 0.7f, 0.0f);
+		}
 
 		transform_.position = position;
 	}
