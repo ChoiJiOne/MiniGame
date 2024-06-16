@@ -32,6 +32,8 @@ GeometryRenderer3D::GeometryRenderer3D()
 		vertexBuffer_->Unbind();
 	}
 	GL_FAILED(glBindVertexArray(0));
+
+	bIsInitialized_ = true;
 }
 
 GeometryRenderer3D::~GeometryRenderer3D()

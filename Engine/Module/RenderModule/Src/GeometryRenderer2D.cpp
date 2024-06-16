@@ -32,6 +32,8 @@ GeometryRenderer2D::GeometryRenderer2D()
 		vertexBuffer_->Unbind();
 	}
 	GL_FAILED(glBindVertexArray(0));
+
+	bIsInitialized_ = true;
 }
 
 GeometryRenderer2D::~GeometryRenderer2D()

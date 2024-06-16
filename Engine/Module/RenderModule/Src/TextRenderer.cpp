@@ -35,6 +35,8 @@ TextRenderer::TextRenderer()
 		vertexBuffer_->Unbind();
 	}
 	GL_FAILED(glBindVertexArray(0));
+
+	bIsInitialized_ = true;
 }
 
 TextRenderer::~TextRenderer()
