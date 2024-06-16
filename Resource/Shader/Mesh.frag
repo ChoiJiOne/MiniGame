@@ -45,7 +45,7 @@ void main()
 {
 	vec3 colorRGB = texture(material, inTexcoord).rgb;
 	vec3 normal = normalize(inNormal);
-	vec3 lightColor = vec3(1.0f);
+	vec3 lightColor = vec3(0.3f);
 
 	// ambient
 	vec3 ambient = 0.15f * lightColor;
