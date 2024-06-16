@@ -104,20 +104,19 @@ void PlayScene::DepthPass()
 	RenderModule::SetViewport(0, 0, shadowMap_->GetSize(), shadowMap_->GetSize());
 
 	depthRenderer_->SetLightSpaceMatrix(light_->GetLightSpaceMatrix());
+
+	const std::vector<StaticMesh*>& staticMeshes = floor_->GetMeshes();
+	for (const auto& mesh : staticMeshes)
 	{
-		const std::vector<StaticMesh*>& meshes = floor_->GetMeshes();
-		for (const auto& mesh : meshes)
-		{
-			depthRenderer_->DrawStaticMesh(Transform::ToMat(floor_->GetTransform()), mesh);
-		}
+		depthRenderer_->DrawStaticMesh(Transform::ToMat(floor_->GetTransform()), mesh);
 	}
+
+	const std::vector<SkinnedMesh*>& skinnedMeshes = character_->GetMeshes();
+	for (const auto& mesh : skinnedMeshes)
 	{
-		const std::vector<SkinnedMesh*>& meshes = character_->GetMeshes();
-		for (const auto& mesh : meshes)
-		{
-			depthRenderer_->DrawSkinnedMesh(Transform::ToMat(character_->GetTransform()), character_->GetBindPose(), character_->GetInvBindPose(), mesh);
-		}
+		depthRenderer_->DrawSkinnedMesh(Transform::ToMat(character_->GetTransform()), character_->GetBindPose(), character_->GetInvBindPose(), mesh);
 	}
+
 	shadowMap_->Unbind();
 }
 
@@ -128,20 +127,18 @@ void PlayScene::RenderPass()
 	meshRenderer_->SetShadowMap(shadowMap_);
 	meshRenderer_->SetLightSpaceMatrix(light_->GetLightSpaceMatrix());
 	meshRenderer_->SetLightDirection(light_->GetDirection());
+	meshRenderer_->SetLightColor(light_->GetColor());
 
+	const std::vector<StaticMesh*>& staticMeshes = floor_->GetMeshes();
+	for (const auto& mesh : staticMeshes)
 	{
-		const std::vector<StaticMesh*>& meshes = floor_->GetMeshes();
-		for (const auto& mesh : meshes)
-		{
-			meshRenderer_->DrawStaticMesh(Transform::ToMat(floor_->GetTransform()), mesh, floor_->GetMaterial());
-		}
+		meshRenderer_->DrawStaticMesh(Transform::ToMat(floor_->GetTransform()), mesh, floor_->GetMaterial());
 	}
+
+	const std::vector<SkinnedMesh*>& skinnedMeshes = character_->GetMeshes();
+	for (const auto& mesh : skinnedMeshes)
 	{
-		const std::vector<SkinnedMesh*>& meshes = character_->GetMeshes();
-		for (const auto& mesh : meshes)
-		{
-			meshRenderer_->DrawSkinnedMesh(Transform::ToMat(character_->GetTransform()), character_->GetBindPose(), character_->GetInvBindPose(), mesh, character_->GetMaterial());
-		}
+		meshRenderer_->DrawSkinnedMesh(Transform::ToMat(character_->GetTransform()), character_->GetBindPose(), character_->GetInvBindPose(), mesh, character_->GetMaterial());
 	}
 
 	RenderModule::EndFrame();
