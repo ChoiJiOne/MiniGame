@@ -1,5 +1,8 @@
 #pragma once
 
+#include <list>
+
+
 #include "IScene.h"
 
 class Application; 
@@ -7,7 +10,14 @@ class DepthRenderer;
 class GeometryRenderer2D;
 class GeometryRenderer3D;
 class MeshRenderer;
+class ShadowMap;
 class TextRenderer;
+
+class Camera;
+class Character;
+class Coin;
+class Floor;
+class Light;
 
 
 /**
@@ -52,6 +62,39 @@ public:
 
 private:
 	/**
+	 * @brief 전체 로직을 업데이트합니다.
+	 * 
+	 * @param deltaSeconds 초 단위 델타 시간값입니다.
+	 */
+	void Update(float deltaSeconds);
+
+
+	/**
+	 * @brief 렌더링 준비를 합니다.
+	 */
+	void PrepareForRendering();
+
+
+	/**
+	 * @brief 씬 렌더링을 수행합니다.
+	 */
+	void Render();
+
+
+	/**
+	 * @brief 깊이 씬 렌더링을 수행합니다.
+	 */
+	void DepthPass();
+
+
+	/**
+	 * @brief 씬 렌더링을 수행합니다.
+	 */
+	void RenderPass();
+
+
+private:
+	/**
 	 * @brief 3D 씬의 깊이 값을 렌더링하는 렌더러입니다.
 	 */
 	DepthRenderer* depthRenderer_ = nullptr;
@@ -79,4 +122,34 @@ private:
 	 * @brief 2D 텍스트를 렌더링하는 렌더러입니다.
 	 */
 	TextRenderer* textRenderer_ = nullptr;
+
+
+	/**
+	 * @brief 깊이 값을 렌더링할 셰도우 맵입니다.
+	 */
+	ShadowMap* shadowMap_ = nullptr;
+
+
+	/**
+	 * @brief 카메라 엔티티입니다.
+	 */
+	Camera* camera_ = nullptr;
+
+
+	/**
+	 * @brief 플레이어가 조종하는 캐릭터입니다.
+	 */
+	Character* character_ = nullptr;
+
+
+	/**
+	 * @brief 바닥 엔티티입니다.
+	 */
+	Floor* floor_ = nullptr;
+
+
+	/**
+	 * @brief 라이트 엔티티입니다.
+	 */
+	Light* light_ = nullptr;
 };
