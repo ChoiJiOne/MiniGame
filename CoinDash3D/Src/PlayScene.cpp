@@ -13,6 +13,7 @@
 #include "CoinSpawner.h"
 #include "Floor.h"
 #include "Light.h"
+#include "MiniMap.h"
 #include "PlayScene.h"
 
 PlayScene::PlayScene(Application* app)
@@ -40,19 +41,21 @@ void PlayScene::Enter()
 	light_ = GameModule::CreateEntity<Light>(camera_);
 	coins_ = std::list<Coin*>();
 	coinSpawner_ = GameModule::CreateEntity<CoinSpawner>(coins_, character_);
+	miniMap_ = GameModule::CreateEntity<MiniMap>(coins_, character_, geometryRenderer2D_);
 
 	bIsEnter_ = true;
 }
 
 void PlayScene::Exit()
 {
-	std::array<IEntity*, 5> entities =
+	std::array<IEntity*, 6> entities =
 	{
+		miniMap_,
+		coinSpawner_,
 		light_,
 		camera_,
 		character_,
 		floor_,
-		coinSpawner_,
 	};
 
 	for (auto& entity : entities)
@@ -95,6 +98,7 @@ void PlayScene::Update(float deltaSeconds)
 	}
 
 	coinSpawner_->Tick(deltaSeconds);
+	miniMap_->Tick(deltaSeconds);
 }
 
 void PlayScene::PrepareForRendering()
@@ -177,6 +181,8 @@ void PlayScene::RenderPass()
 	{
 		meshRenderer_->DrawSkinnedMesh(Transform::ToMat(character_->GetTransform()), character_->GetBindPose(), character_->GetInvBindPose(), mesh, character_->GetMaterial());
 	}
+
+	miniMap_->Render();
 	
 	RenderModule::EndFrame();
 }

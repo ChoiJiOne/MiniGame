@@ -19,6 +19,7 @@ class Coin;
 class CoinSpawner;
 class Floor;
 class Light;
+class MiniMap;
 
 
 /**
@@ -165,4 +166,10 @@ private:
 	 * @brief 코인을 생성하는 엔티티입니다.
 	 */
 	CoinSpawner* coinSpawner_ = nullptr;
+
+
+	/**
+	 * @brief 미니맵 엔티티입니다.
+	 */
+	MiniMap* miniMap_ = nullptr;
 };
