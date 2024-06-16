@@ -39,13 +39,13 @@ public:
 	 *
 	 * @param deltaSeconds 델타 시간 값입니다.
 	 */
-	virtual void Tick(float deltaSeconds);
+	virtual void Tick(float deltaSeconds) override;
 
 
 	/**
 	 * @brief 카메라 엔티티 내의 리소스를 할당 해제합니다.
 	 */
-	virtual void Release();
+	virtual void Release() override;
 
 
 	/**
