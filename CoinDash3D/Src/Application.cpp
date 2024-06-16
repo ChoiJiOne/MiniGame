@@ -3,6 +3,7 @@
 #include "GeometryRenderer2D.h"
 #include "GeometryRenderer3D.h"
 #include "MeshRenderer.h"
+#include "ShadowMap.h"
 #include "TextRenderer.h"
 
 #include "Application.h"
@@ -10,7 +11,7 @@
 
 Application::Application()
 {
-	PlatformModule::WindowConstructParams windowParam{ L"CoinDash3D", 100, 100, 800, 600, false, false };
+	PlatformModule::WindowConstructParams windowParam{ L"CoinDash3D", 200, 200, 800, 600, false, false };
 
 	ASSERT(CrashModule::Init() == CrashModule::Errors::OK, "Failed to initialize CrashModule.");
 	ASSERT(PlatformModule::Init(windowParam) == PlatformModule::Errors::OK, "Failed to initialize PlatformModule.");
@@ -25,6 +26,7 @@ Application::Application()
 	geometryRenderer3D_ = RenderModule::CreateResource<GeometryRenderer3D>();
 	meshRenderer_ = RenderModule::CreateResource<MeshRenderer>();
 	textRenderer_ = RenderModule::CreateResource<TextRenderer>();
+	shadowMap_ = RenderModule::CreateResource<ShadowMap>(ShadowMap::ESize::Size_4096);
 }
 
 Application::~Application()
