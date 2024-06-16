@@ -177,16 +177,6 @@ void PlayScene::RenderPass()
 	{
 		meshRenderer_->DrawSkinnedMesh(Transform::ToMat(character_->GetTransform()), character_->GetBindPose(), character_->GetInvBindPose(), mesh, character_->GetMaterial());
 	}
-
-
-
-
-	geometryRenderer3D_->DrawSphere3D(Mat4x4::Translation(character_->GetSphere().center), character_->GetSphere().radius, Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
-	for (const auto& coin : coins_)
-	{
-		geometryRenderer3D_->DrawCube3D(Mat4x4::Translation(coin->GetAABB().center), coin->GetAABB().extents, Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
-	}
-
-
+	
 	RenderModule::EndFrame();
 }
