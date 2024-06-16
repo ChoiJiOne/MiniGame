@@ -31,10 +31,9 @@ void Light::Tick(float deltaSeconds)
 {
 	Vec3f eyePosition = camera_->GetEyePosition();
 	position_ = eyePosition;
-	position_.z -= 5.0f;
 
 	view_ = Mat4x4::LookAt(position_, position_ + direction_, Vec3f(0.0f, 1.0f, 0.0f));
-	projection_ = Mat4x4::Ortho(-10.0f, +10.0f, -10.0f, +10.0f, 1.0f, 40.0f);
+	projection_ = Mat4x4::Ortho(-10.0f, +10.0f, -10.0f, +10.0f, 1.0f, 50.0f);
 	lightSpaceMatrix_ = view_ * projection_;
 }
 
