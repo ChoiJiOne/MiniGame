@@ -1,13 +1,21 @@
+#include "Collision.h"
+#include "MathModule.h"
+
 #include "BaseColorMap.h"
 #include "GLTFLoader.h"
 #include "RenderModule.h"
 #include "StaticMesh.h"
 
+#include "Character.h"
 #include "Coin.h"
 
-Coin::Coin(const Vec3f& position)
+Coin::Coin(const Vec3f& position, Character* character)
+	: character_(character)
 {
 	static std::vector<StaticMesh*> meshes;
+	static Vec3f minPosition(Infinity, Infinity, Infinity);
+	static Vec3f maxPosition(NegInfinity, NegInfinity, NegInfinity);
+
 	if (meshes.empty())
 	{
 		cgltf_data* data = GLTFLoader::Load("Resource/Model/Coin.glb");		
@@ -25,6 +33,16 @@ Coin::Coin(const Vec3f& position)
 				vertices[index].normal = meshResource.normals[index];
 				vertices[index].tangent = meshResource.tangents[index];
 				vertices[index].texcoord = meshResource.texcoords[index];
+
+				if (vertices[index].position.x < minPosition.x && vertices[index].position.y < minPosition.y && vertices[index].position.z < minPosition.z)
+				{
+					minPosition = vertices[index].position;
+				}
+
+				if (vertices[index].position.x > maxPosition.x && vertices[index].position.y > maxPosition.y && vertices[index].position.z > maxPosition.z)
+				{
+					maxPosition = vertices[index].position;
+				}
 			}
 
 			meshes.push_back(RenderModule::CreateResource<StaticMesh>(vertices, indices));
@@ -43,6 +61,9 @@ Coin::Coin(const Vec3f& position)
 
 	transform_.position += position;
 
+	Vec3f extensions = maxPosition - minPosition;
+	aabb_ = AABB(transform_.position, extensions);
+
 	bIsInitialized_ = true;
 }
 
@@ -56,7 +77,10 @@ Coin::~Coin()
 
 void Coin::Tick(float deltaSeconds)
 {
-	// 아무 동작도 수행하지 않습니다.
+	if (Collision::SphereToAABB(character_->GetSphere(), aabb_))
+	{
+		hasCollectedCoin_ = true;
+	}
 }
 
 void Coin::Release()

@@ -9,6 +9,7 @@
 
 #include "IEntity.h"
 
+class Character;
 class StaticMesh;
 class ITexture;
 
@@ -23,8 +24,9 @@ public:
 	 * @brief 코인 엔티티의 생성자입니다.
 	 *
 	 * @param position 코인의 위치입니다.
+	 * @param character 코인과 충돌 여부를 확인할 캐릭터 엔티티입니다.
 	 */
-	Coin(const Vec3f& position);
+	Coin(const Vec3f& position, Character* character);
 
 
 	/**
@@ -85,6 +87,14 @@ public:
 	const ITexture* GetMaterial() const { return material_; }
 
 
+	/**
+	 * @brief 플레이어가 이 코인을 소유하고 있는지 확인합니다.
+	 * 
+	 * @return 플레이어가 이 코인을 소유하고 있다면 true, 그렇지 않으면 false를 반환합니다.
+	 */
+	bool HasCollectedCoin() const { return hasCollectedCoin_; }
+
+
 private:
 	/**
 	 * @brief 코인 엔티티의 정적 메시 목록입니다.
@@ -108,4 +118,16 @@ private:
 	 * @brief 코인 엔티티의 매터리얼입니다.
 	 */
 	ITexture* material_ = nullptr;
+
+
+	/**
+	 * @brief 코인과 충돌 여부를 확인할 캐릭터 엔티티입니다.
+	 */
+	Character* character_ = nullptr;
+
+
+	/**
+	 * @brief 플레이어가 코인을 가졌는지 확인합니다.
+	 */
+	bool hasCollectedCoin_ = false;
 };
