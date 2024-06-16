@@ -72,9 +72,9 @@ public:
 	/**
 	 * @brief 렌더러의 라이트 위치 값을 설정합니다.
 	 * 
-	 * @param lightPosition 설정할 라이트 위치 값입니다.
+	 * @param lightDirection 설정할 라이트 위치 값입니다.
 	 */
-	void SetLightPosition(const Vec3f& lightPosition) { lightPosition_ = lightPosition; }
+	void SetLightDirection(const Vec3f& lightDirection) { lightDirection_ = lightDirection; }
 
 
 	/**
@@ -129,9 +129,9 @@ private:
 
 
 	/**
-	 * @brief 라이트의 위치입니다.
+	 * @brief 라이트의 방향입니다.
 	 */
-	Vec3f lightPosition_;
+	Vec3f lightDirection_;
 
 
 	/**
