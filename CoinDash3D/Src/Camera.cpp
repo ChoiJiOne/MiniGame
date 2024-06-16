@@ -10,7 +10,7 @@ Camera::Camera(Character* character)
 	, distance_(10.0f)
 {
 	yaw_ = MathModule::ToRadian(-90.0f);
-	pitch_ = MathModule::ToRadian(-45.0f);
+	pitch_ = MathModule::ToRadian(-50.0f);
 	eyePosition_ = GetEyePositionFromCharacter();
 	UpdateState();
 
