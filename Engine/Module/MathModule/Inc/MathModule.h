@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <limits>
 
 
 /**
@@ -43,6 +44,18 @@ const float PiDiv4 = 0.785398163f;
  * @brief 엡실론(ε) 값입니다.
  */
 const float Epsilon = 1.192092896e-07F;
+
+
+/**
+ * @brief 양의 무한대 값입니다.
+ */
+const float Infinity = std::numeric_limits<float>::infinity();
+
+
+/**
+ * @brief 음의 무한대 값입니다.
+ */
+const float NegInfinity = -std::numeric_limits<float>::infinity();
 
 
 /**
