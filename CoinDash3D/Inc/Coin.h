@@ -66,7 +66,7 @@ public:
 	 * 
 	 * @return 코인 엔티티의 경계 영역을 반환합니다.
 	 */
-	const AABB& GetBoundingVolume() const { return aabb_; }
+	const AABB& GetAABB() const { return aabb_; }
 
 
 	/**
