@@ -1,0 +1,69 @@
+#pragma once
+
+#include "IScene.h"
+
+class Application;
+class GeometryRenderer2D;
+class TextRenderer;
+
+class Button;
+
+
+/**
+ * @brief 게임 시작 씬입니다.
+ */
+class StartScene : public IScene
+{
+public:
+	/**
+	 * @brief 게임 시작 씬의 생성자입니다.
+	 *
+	 * @param app 게임 플레이 씬이 참조할 애플리케이션 클래스입니다.
+	 */
+	StartScene(Application* app);
+
+
+	/**
+	 * @brief 게임 시작 씬의 가상 소멸자입니다.
+	 */
+	StartScene() {}
+
+
+	/**
+	 * @brief 씬의 한 프레임을 수행합니다.
+	 *
+	 * @param deltaSeconds 초 단위 델타 시간값입니다.
+	 */
+	virtual void Tick(float deltaSeconds) override;
+
+
+	/**
+	 * @brief 씬에 진입합니다.
+	 */
+	virtual void Enter() override;
+
+
+	/**
+	 * @brief 씬에서 나갑니다.
+	 */
+	virtual void Exit() override;
+
+
+private:
+	/**
+	 * @brief 2D 기하 도형을 렌더링하는 렌더러입니다.
+	 */
+	GeometryRenderer2D* geometryRenderer2D_ = nullptr;
+
+
+	/**
+	 * @brief 2D 텍스트를 렌더링하는 렌더러입니다.
+	 */
+	TextRenderer* textRenderer_ = nullptr;
+
+
+	/**
+	 * @brief 크기에 따른 폰트 리소스입니다.
+	 */
+	std::map<int32_t, TTFont*> fonts_;
+};
