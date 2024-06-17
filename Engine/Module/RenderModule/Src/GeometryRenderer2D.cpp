@@ -432,21 +432,21 @@ void GeometryRenderer2D::DrawHorizonProgressBar2D(const Vec2f& center, float wid
 	uint32_t vertexCount = 0;
 
 	vertices_[vertexCount++] = Vertex(Vec2f(x0, y0), color);
+	vertices_[vertexCount++] = Vertex(Vec2f( x, y1), color);
 	vertices_[vertexCount++] = Vertex(Vec2f( x, y0), color);
-	vertices_[vertexCount++] = Vertex(Vec2f( x, y1), color);
-
+	
 	vertices_[vertexCount++] = Vertex(Vec2f(x0, y0), color);
-	vertices_[vertexCount++] = Vertex(Vec2f( x, y1), color);
 	vertices_[vertexCount++] = Vertex(Vec2f(x0, y1), color);
-
+	vertices_[vertexCount++] = Vertex(Vec2f( x, y1), color);
+	
 	vertices_[vertexCount++] = Vertex(Vec2f( x, y0), bgColor);
+	vertices_[vertexCount++] = Vertex(Vec2f(x1, y1), bgColor);
 	vertices_[vertexCount++] = Vertex(Vec2f(x1, y0), bgColor);
-	vertices_[vertexCount++] = Vertex(Vec2f(x1, y1), bgColor);
-
+	
 	vertices_[vertexCount++] = Vertex(Vec2f( x, y0), bgColor);
-	vertices_[vertexCount++] = Vertex(Vec2f(x1, y1), bgColor);
 	vertices_[vertexCount++] = Vertex(Vec2f( x, y1), bgColor);
-
+	vertices_[vertexCount++] = Vertex(Vec2f(x1, y1), bgColor);
+	
 	Mat4x4 transform = Mat4x4::Translation(center.x, center.y, 0.0f);
 
 	DrawGeometry2D(transform, EDrawMode::TRIANGLES, vertexCount);
