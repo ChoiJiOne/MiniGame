@@ -50,6 +50,14 @@ public:
 	virtual void Exit() override;
 
 
+	/**
+	 * @brief 플레이 씬의 포인터를 설정합니다.
+	 * 
+	 * @param playScene 설정할 플레이 씬의 포인터입니다.
+	 */
+	void SetPlayScene(IScene* playScene) { playScene_ = playScene; }
+
+
 private:
 	/**
 	 * @brief 씬 내의 엔티티를 업데이트합니다.
@@ -88,6 +96,12 @@ private:
 	 * @brief 크기에 따른 폰트 리소스입니다.
 	 */
 	std::map<int32_t, TTFont*> fonts_;
+
+
+	/**
+	 * @brief 플레이 씬입니다.
+	 */
+	IScene* playScene_ = nullptr;
 
 
 	/**

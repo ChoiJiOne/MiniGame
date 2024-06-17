@@ -36,7 +36,11 @@ void StartScene::Enter()
 	static Button* startButton = nullptr;
 	if (!startButton)
 	{
-		auto clickEvent = [&]() {};
+		auto clickEvent = [&]() 
+		{
+				SetLink(playScene_);
+				bDetectSwitch_ = true;
+		};
 		startButton = GameModule::CreateEntity<Button>("Resource/Button/Start.json", fonts_[32], EMouseButton::LEFT, clickEvent, geometryRenderer2D_, textRenderer_);
 	}
 
