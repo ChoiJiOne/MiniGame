@@ -152,6 +152,14 @@ public:
 	 */
 	float GetMaxRemainTime() const { return maxRemainTime_; }
 
+	
+	/**
+	 * @brief 게임 플레이가 종료되었는지 확인합니다.
+	 * 
+	 * @return 게임 플레이가 종료되었다면 true, 그렇지 않으면 false를 반환합니다.
+	 */
+	bool IsDone() const { return bIsDone_; }
+
 
 private:
 	/**
