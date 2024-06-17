@@ -8,5 +8,5 @@ layout(binding = 0) uniform sampler2D framebuffer;
 
 void main()
 {
-    outFragColor = texture(framebuffer, inTexCoords);
+    outFragColor = vec4(texture(framebuffer, inTexCoords).rgb, 1.0f);
 }
