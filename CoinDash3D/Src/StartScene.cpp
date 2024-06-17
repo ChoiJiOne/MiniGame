@@ -15,6 +15,7 @@ StartScene::StartScene(Application* app)
 {
 	geometryRenderer2D_ = app->geometryRenderer2D_;
 	textRenderer_ = app->textRenderer_;
+	postEffectComposer_ = app->postEffectComposer_;
 	fonts_ = app->fonts_;
 }
 

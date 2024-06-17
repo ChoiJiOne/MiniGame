@@ -4,6 +4,7 @@
 
 class Application;
 class GeometryRenderer2D;
+class PostEffectComposer;
 class TextRenderer;
 
 class Button;
@@ -90,6 +91,12 @@ private:
 	 * @brief 2D 텍스트를 렌더링하는 렌더러입니다.
 	 */
 	TextRenderer* textRenderer_ = nullptr;
+
+
+	/**
+	 * @brief 후처리 효과(Grayscale, Blur, Fade 등등)를 적용할 때 사용합니다.
+	 */
+	PostEffectComposer* postEffectComposer_ = nullptr;
 
 
 	/**
