@@ -15,6 +15,7 @@
 #include "Light.h"
 #include "MiniMap.h"
 #include "PlayScene.h"
+#include "StatusViewer.h"
 
 PlayScene::PlayScene(Application* app)
 {
@@ -24,6 +25,7 @@ PlayScene::PlayScene(Application* app)
 	meshRenderer_ = app->meshRenderer_;
 	textRenderer_ = app->textRenderer_;
 	shadowMap_ = app->shadowMap_;
+	fonts_ = app->fonts_;
 }
 
 void PlayScene::Tick(float deltaSeconds)
@@ -42,14 +44,16 @@ void PlayScene::Enter()
 	coins_ = std::list<Coin*>();
 	coinSpawner_ = GameModule::CreateEntity<CoinSpawner>(coins_, character_);
 	miniMap_ = GameModule::CreateEntity<MiniMap>(coins_, character_, geometryRenderer2D_);
+	statusViewer_ = GameModule::CreateEntity<StatusViewer>(character_, geometryRenderer2D_, textRenderer_, fonts_[24]);
 
 	bIsEnter_ = true;
 }
 
 void PlayScene::Exit()
 {
-	std::array<IEntity*, 6> entities =
+	std::array<IEntity*, 7> entities =
 	{
+		statusViewer_,
 		miniMap_,
 		coinSpawner_,
 		light_,
@@ -99,6 +103,7 @@ void PlayScene::Update(float deltaSeconds)
 
 	coinSpawner_->Tick(deltaSeconds);
 	miniMap_->Tick(deltaSeconds);
+	statusViewer_->Tick(deltaSeconds);
 }
 
 void PlayScene::PrepareForRendering()
@@ -154,7 +159,7 @@ void PlayScene::DepthPass()
 
 void PlayScene::RenderPass()
 {
-	RenderModule::BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
+	RenderModule::BeginFrame(0.53f, 0.81f, 0.98f, 1.0f);
 
 	meshRenderer_->SetShadowMap(shadowMap_);
 	meshRenderer_->SetLightSpaceMatrix(light_->GetLightSpaceMatrix());
@@ -183,6 +188,7 @@ void PlayScene::RenderPass()
 	}
 
 	miniMap_->Render();
-	
+	statusViewer_->Render();
+		
 	RenderModule::EndFrame();
 }

@@ -20,6 +20,7 @@ class CoinSpawner;
 class Floor;
 class Light;
 class MiniMap;
+class StatusViewer;
 
 
 /**
@@ -133,6 +134,12 @@ private:
 
 
 	/**
+	 * @brief 크기에 따른 폰트 리소스입니다.
+	 */
+	std::map<int32_t, TTFont*> fonts_;
+
+
+	/**
 	 * @brief 카메라 엔티티입니다.
 	 */
 	Camera* camera_ = nullptr;
@@ -172,4 +179,10 @@ private:
 	 * @brief 미니맵 엔티티입니다.
 	 */
 	MiniMap* miniMap_ = nullptr;
+
+
+	/**
+	 * @brief 현재 상태를 표시하는 엔티티입니다.
+	 */
+	StatusViewer* statusViewer_ = nullptr;
 };
