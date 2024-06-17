@@ -2,6 +2,7 @@
 
 #include <cgltf.h>
 
+#include "AudioModule.h"
 #include "GLTFLoader.h"
 #include "InputController.h"
 #include "RenderModule.h"
@@ -35,7 +36,6 @@ Character::Character()
 			{
 				vertices[index].position = meshResource.positions[index];
 				vertices[index].normal = meshResource.normals[index];
-				//vertices[index].tangent = meshResource.tangents[index];
 				vertices[index].texcoord = meshResource.texcoords[index];
 				vertices[index].weight = meshResource.weights[index];
 				vertices[index].joints = meshResource.joints[index];
@@ -51,9 +51,16 @@ Character::Character()
 		material = RenderModule::CreateResource<Texture2D>("Resource/Texture/Michelle.png", false);
 	}
 
+	static SoundID soundID = -1;
+	if (soundID < 0)
+	{
+		soundID = AudioModule::CreateSound("Resource/Sound/EndSound.wav");
+	}
+
 	material_ = material;
 	sphere_ = Sphere(transform_.position + Vec3f(0.0f, 0.7f, 0.0f), 0.3f);
 	transform_ = Transform();
+	soundID_ = soundID;
 
 	skeleton_ = skeleton;
 	clips_ = clips;
@@ -102,6 +109,14 @@ void Character::Tick(float deltaSeconds)
 			currentStatus_ = EStatus::IDLE;
 			crossFadeController_.FadeTo(&clips_[idleClip_], 0.1f);
 		}
+
+		if (!bIsDone_)
+		{
+			AudioModule::SetLooping(soundID_, false);
+			AudioModule::Play(soundID_);
+		}
+		
+		bIsDone_ = true;
 		return;
 	}
 
@@ -175,6 +190,7 @@ void Character::Release()
 {
 	if (bIsInitialized_)
 	{
+		AudioModule::Reset(soundID_);
 		bIsInitialized_ = false;
 	}
 }

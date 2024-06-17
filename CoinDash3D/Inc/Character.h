@@ -251,4 +251,16 @@ private:
 	 * @brief 플레이어의 최대 남은 시간값입니다.
 	 */
 	float maxRemainTime_ = 0.0f;
+
+
+	/**
+	 * @brief 게임 플레이가 종료되었는지 확인합니다.
+	 */
+	bool bIsDone_ = false;
+
+
+	/**
+	 * @brief 게임 플레이를 종료했을 때 출력할 사운드 리소스ID입니다.
+	 */
+	uint32_t soundID_ = 0;
 };
