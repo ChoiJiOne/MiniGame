@@ -3,6 +3,7 @@
 #include "IScene.h"
 
 class Application;
+class FrameBuffer;
 class GeometryRenderer2D;
 class PostEffectComposer;
 class TextRenderer;
@@ -97,6 +98,12 @@ private:
 	 * @brief 후처리 효과(Grayscale, Blur, Fade 등등)를 적용할 때 사용합니다.
 	 */
 	PostEffectComposer* postEffectComposer_ = nullptr;
+
+
+	/**
+	 * @brief 프레임 버퍼입니다.
+	 */
+	FrameBuffer* framebuffer_ = nullptr;
 
 
 	/**

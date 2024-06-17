@@ -162,6 +162,12 @@ private:
 
 
 	/**
+	 * @brief 프레임 버퍼입니다.
+	 */
+	FrameBuffer* framebuffer_ = nullptr;
+
+
+	/**
 	 * @brief 크기에 따른 폰트 리소스입니다.
 	 */
 	std::map<int32_t, TTFont*> fonts_;
