@@ -27,6 +27,13 @@ Application::Application()
 	meshRenderer_ = RenderModule::CreateResource<MeshRenderer>();
 	textRenderer_ = RenderModule::CreateResource<TextRenderer>();
 	shadowMap_ = RenderModule::CreateResource<ShadowMap>(ShadowMap::ESize::Size_4096);
+
+	std::string path = "Resource/Font/SeoulNamsanEB.ttf";
+	std::array<int32_t, 4> fontSizes = { 16, 32, 64, 128, };
+	for (const auto& fontSize : fontSizes)
+	{
+		fonts_.insert({ fontSize, RenderModule::CreateResource<TTFont>(path, 0x00, 0x127, static_cast<float>(fontSize)) });
+	}
 }
 
 Application::~Application()

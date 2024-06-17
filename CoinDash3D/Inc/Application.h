@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+#include <map>
 #include <memory>
 
 #include "AudioModule.h"
@@ -18,6 +20,7 @@ class GeometryRenderer3D;
 class MeshRenderer;
 class ShadowMap;
 class TextRenderer;
+class TTFont;
 
 
 /**
@@ -100,7 +103,13 @@ private:
 	 */
 	ShadowMap* shadowMap_ = nullptr;
 
-	
+
+	/**
+	 * @brief 크기에 따른 폰트 리소스입니다.
+	 */
+	std::map<int32_t, TTFont*> fonts_;
+
+		
 	/**
 	 * @brief 플레이 씬입니다.
 	 */
