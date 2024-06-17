@@ -46,7 +46,7 @@ void PlayScene::Enter()
 				SetLink(startScene_);
 				bDetectSwitch_ = true;
 			};
-		resetButton = GameModule::CreateEntity<Button>("Resource/Button/Start.json", fonts_[32], EMouseButton::LEFT, clickEvent, geometryRenderer2D_, textRenderer_);
+		resetButton = GameModule::CreateEntity<Button>("Resource/Button/Reset.json", fonts_[32], EMouseButton::LEFT, clickEvent, geometryRenderer2D_, textRenderer_);
 	}
 
 	static Button* quitButton = nullptr;
@@ -106,19 +106,15 @@ void PlayScene::Exit()
 
 void PlayScene::Update(float deltaSeconds)
 {
-	std::array<IEntity*, 3> entities =
-	{ 
-		character_,
-		camera_,
-		light_,
-	};
-
-	if (status_ == EStatus::PLAY)
+	switch (status_)
 	{
-		for (auto& entity : entities)
-		{
-			entity->Tick(deltaSeconds);
-		}
+	case EStatus::READY:
+		break;
+
+	case EStatus::PLAY:
+		character_->Tick(deltaSeconds);
+		camera_->Tick(deltaSeconds);
+		light_->Tick(deltaSeconds);
 
 		for (auto& coin : coins_)
 		{
@@ -128,6 +124,21 @@ void PlayScene::Update(float deltaSeconds)
 		coinSpawner_->Tick(deltaSeconds);
 		miniMap_->Tick(deltaSeconds);
 		statusViewer_->Tick(deltaSeconds);
+		break;
+
+	case EStatus::PAUSE:
+		break;
+
+	case EStatus::DONE:
+		character_->Tick(deltaSeconds);
+		resetButton_->Tick(deltaSeconds);
+		quitButton_->Tick(deltaSeconds);
+		break;
+	}
+	
+	if (character_->IsDone())
+	{
+		status_ = EStatus::DONE;
 	}
 }
 
@@ -214,6 +225,12 @@ void PlayScene::RenderPass()
 
 	miniMap_->Render();
 	statusViewer_->Render();
+
+	if (status_ == EStatus::DONE)
+	{
+		resetButton_->Render();
+		quitButton_->Render();
+	}
 		
 	RenderModule::EndFrame();
 }

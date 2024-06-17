@@ -12,6 +12,7 @@ class MeshRenderer;
 class ShadowMap;
 class TextRenderer;
 
+class Button;
 class Camera;
 class Character;
 class Coin;
