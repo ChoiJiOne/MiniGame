@@ -62,13 +62,16 @@ void StartScene::Update(float deltaSeconds)
 	}
 }
 
-void StartScene::Render()
+void StartScene::PrepareForRendering()
 {
 	Mat4x4 screenOrtho = RenderModule::GetScreenOrtho();
 
 	geometryRenderer2D_->SetOrtho(screenOrtho);
 	textRenderer_->SetOrtho(screenOrtho);
+}
 
+void StartScene::Render()
+{
 	std::array<Entity2D*, 2> entities =
 	{
 		startButton_,

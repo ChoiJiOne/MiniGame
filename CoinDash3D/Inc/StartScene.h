@@ -59,6 +59,12 @@ private:
 
 
 	/**
+	 * @brief 렌더링 준비를 합니다.
+	 */
+	void PrepareForRendering();
+
+
+	/**
 	 * @brief 씬 내의 엔티티를 렌더링합니다.
 	 */
 	void Render();
