@@ -20,7 +20,7 @@ PostEffectComposer::PostEffectComposer()
 
 	uint32_t byteSize = static_cast<uint32_t>(Vertex::GetStride() * vertices.size());
 	VertexBuffer::EUsage usage = VertexBuffer::EUsage::STATIC;
-	vertexBuffer_ = RenderModule::CreateResource<VertexBuffer>(byteSize, usage);
+	vertexBuffer_ = RenderModule::CreateResource<VertexBuffer>(vertices.data(), byteSize, usage);
 
 	GL_FAILED(glGenVertexArrays(1, &vertexArrayObject_));
 	GL_FAILED(glBindVertexArray(vertexArrayObject_));
