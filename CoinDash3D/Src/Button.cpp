@@ -6,7 +6,6 @@
 #include "RenderModule.h"
 #include "TextRenderer.h"
 
-#include "Assertion.h"
 #include "Button.h"
 #include "StringUtils.h"
 
