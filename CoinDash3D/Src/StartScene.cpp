@@ -3,6 +3,7 @@
 #include "Assertion.h"
 #include "GameModule.h"
 #include "GeometryRenderer2D.h"
+#include "PlatformModule.h"
 #include "TextRenderer.h"
 
 #include "Application.h"
@@ -42,7 +43,7 @@ void StartScene::Enter()
 	static Button* quitButton = nullptr;
 	if (!quitButton)
 	{
-		auto clickEvent = [&]() {};
+		auto clickEvent = [&]() { PlatformModule::SetQuitLoop(true); };
 		quitButton = GameModule::CreateEntity<Button>("Resource/Button/Quit.json", fonts_[32], EMouseButton::LEFT, clickEvent, geometryRenderer2D_, textRenderer_);
 	}
 
