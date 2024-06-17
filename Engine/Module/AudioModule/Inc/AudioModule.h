@@ -137,7 +137,7 @@ public:
 	 * @param soundID 사운드 리소스의 ID입니다.
 	 * @param volume 사운드의 크기입니다. 범위는 0.0 ~ 1.0 입니다.
 	 */
-	static void SetSoundVolume(const SoundID& soundID, float volume);
+	static void SetVolume(const SoundID& soundID, float volume);
 
 
 	/**
@@ -149,7 +149,7 @@ public:
 	 * 
 	 * @note 사운드 크기의 범위는 0.0 ~ 1.0 입니다.
 	 */
-	static float GetSoundVolume(const SoundID& soundID);
+	static float GetVolume(const SoundID& soundID);
 
 
 	/**
@@ -158,7 +158,7 @@ public:
 	 * @param soundID 사운드 리소스의 ID입니다.
 	 * @param bIsLoop 사운드 반복 여부입니다.
 	 */
-	static void SetSoundLooping(const SoundID& soundID, bool bIsLoop);
+	static void SetLooping(const SoundID& soundID, bool bIsLoop);
 
 
 	/**
@@ -168,7 +168,7 @@ public:
 	 * 
 	 * @return 사운드가 반복한다면 true, 그렇지 않다면 false를 반환합니다.
 	 */
-	static bool IsSoundLooping(const SoundID& soundID);
+	static bool IsLooping(const SoundID& soundID);
 
 
 	/**
@@ -178,7 +178,7 @@ public:
 	 *
 	 * @note 이전에 중지한 적이 있다면 중지한 시점부터 플레이됩니다.
 	 */
-	static void PlaySound(const SoundID& soundID);
+	static void Play(const SoundID& soundID);
 
 
 	/**
@@ -188,7 +188,7 @@ public:
 	 *
 	 * @return 사운드가 플레이 중이라면 true, 그렇지 않다면 false를 반환합니다.
 	 */
-	static bool IsSoundPlaying(const SoundID& soundID);
+	static bool IsPlaying(const SoundID& soundID);
 
 
 	/**
@@ -198,7 +198,7 @@ public:
 	 *
 	 * @return 사운드 플레이가 끝났다면 true, 그렇지 않다면 false를 반환합니다.
 	 */
-	static bool IsDoneSound(const SoundID& soundID);
+	static bool IsDone(const SoundID& soundID);
 
 
 	/**
@@ -206,7 +206,7 @@ public:
 	 * 
 	 * @param soundID 사운드 리소스의 ID입니다.
 	 */
-	static void StopSound(const SoundID& soundID);
+	static void Stop(const SoundID& soundID);
 
 
 	/**
@@ -216,7 +216,7 @@ public:
 	 *
 	 * @return 사운드 플레이가 중지 되었다면 true, 그렇지 않으면 false를 반환합니다.
 	 */
-	static bool IsSoundStopping(const SoundID& soundID);
+	static bool IsStopping(const SoundID& soundID);
 
 
 	/**
@@ -224,7 +224,7 @@ public:
 	 * 
 	 * @param soundID 사운드 리소스의 ID입니다.
 	 */
-	static void ResetSound(const SoundID& soundID);
+	static void Reset(const SoundID& soundID);
 
 	
 private:

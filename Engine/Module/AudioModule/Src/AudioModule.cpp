@@ -92,7 +92,7 @@ void AudioModule::DestroySound(const SoundID& soundID)
 	}
 }
 
-void AudioModule::SetSoundVolume(const SoundID& soundID, float volume)
+void AudioModule::SetVolume(const SoundID& soundID, float volume)
 {
 	CHECK(0 <= soundID && soundID < MAX_SOUND_RESOURCE_SIZE);
 	ma_sound* sound = cache[soundID].get();
@@ -101,7 +101,7 @@ void AudioModule::SetSoundVolume(const SoundID& soundID, float volume)
 	ma_sound_set_volume(sound, volume);
 }
 
-float AudioModule::GetSoundVolume(const SoundID& soundID)
+float AudioModule::GetVolume(const SoundID& soundID)
 {
 	CHECK(0 <= soundID && soundID < MAX_SOUND_RESOURCE_SIZE);
 	ma_sound* sound = cache[soundID].get();
@@ -109,7 +109,7 @@ float AudioModule::GetSoundVolume(const SoundID& soundID)
 	return ma_sound_get_volume(sound);
 }
 
-void AudioModule::SetSoundLooping(const SoundID& soundID, bool bIsLoop)
+void AudioModule::SetLooping(const SoundID& soundID, bool bIsLoop)
 {
 	CHECK(0 <= soundID && soundID < MAX_SOUND_RESOURCE_SIZE);
 	ma_sound* sound = cache[soundID].get();
@@ -117,7 +117,7 @@ void AudioModule::SetSoundLooping(const SoundID& soundID, bool bIsLoop)
 	ma_sound_set_looping(sound, static_cast<ma_bool32>(bIsLoop));
 }
 
-bool AudioModule::IsSoundLooping(const SoundID& soundID)
+bool AudioModule::IsLooping(const SoundID& soundID)
 {
 	CHECK(0 <= soundID && soundID < MAX_SOUND_RESOURCE_SIZE);
 	ma_sound* sound = cache[soundID].get();
@@ -125,7 +125,7 @@ bool AudioModule::IsSoundLooping(const SoundID& soundID)
 	return ma_sound_is_looping(sound) == MA_TRUE;
 }
 
-void AudioModule::PlaySound(const SoundID& soundID)
+void AudioModule::Play(const SoundID& soundID)
 {
 	CHECK(0 <= soundID && soundID < MAX_SOUND_RESOURCE_SIZE);
 	ma_sound* sound = cache[soundID].get();
@@ -133,7 +133,7 @@ void AudioModule::PlaySound(const SoundID& soundID)
 	ma_sound_start(sound);
 }
 
-bool AudioModule::IsSoundPlaying(const SoundID& soundID)
+bool AudioModule::IsPlaying(const SoundID& soundID)
 {
 	CHECK(0 <= soundID && soundID < MAX_SOUND_RESOURCE_SIZE);
 	ma_sound* sound = cache[soundID].get();
@@ -141,7 +141,7 @@ bool AudioModule::IsSoundPlaying(const SoundID& soundID)
 	return ma_sound_is_playing(sound) == MA_TRUE;
 }
 
-bool AudioModule::IsDoneSound(const SoundID& soundID)
+bool AudioModule::IsDone(const SoundID& soundID)
 {
 	CHECK(0 <= soundID && soundID < MAX_SOUND_RESOURCE_SIZE);
 	ma_sound* sound = cache[soundID].get();
@@ -149,7 +149,7 @@ bool AudioModule::IsDoneSound(const SoundID& soundID)
 	return ma_sound_at_end(sound) == MA_TRUE;
 }
 
-void AudioModule::StopSound(const SoundID& soundID)
+void AudioModule::Stop(const SoundID& soundID)
 {
 	CHECK(0 <= soundID && soundID < MAX_SOUND_RESOURCE_SIZE);
 	ma_sound* sound = cache[soundID].get();
@@ -157,7 +157,7 @@ void AudioModule::StopSound(const SoundID& soundID)
 	ma_sound_stop(sound);
 }
 
-bool AudioModule::IsSoundStopping(const SoundID& soundID)
+bool AudioModule::IsStopping(const SoundID& soundID)
 {
 	CHECK(0 <= soundID && soundID < MAX_SOUND_RESOURCE_SIZE);
 	ma_sound* sound = cache[soundID].get();
@@ -165,7 +165,7 @@ bool AudioModule::IsSoundStopping(const SoundID& soundID)
 	return ma_sound_at_end(sound) != MA_TRUE && ma_sound_is_playing(sound) != MA_TRUE;
 }
 
-void AudioModule::ResetSound(const SoundID& soundID)
+void AudioModule::Reset(const SoundID& soundID)
 {
 	CHECK(0 <= soundID && soundID < MAX_SOUND_RESOURCE_SIZE);
 	ma_sound* sound = cache[soundID].get();
