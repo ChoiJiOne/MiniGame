@@ -7,6 +7,7 @@
 #include "TextRenderer.h"
 
 #include "Application.h"
+#include "Button.h"
 #include "Camera.h"
 #include "Character.h"
 #include "Coin.h"
@@ -37,6 +38,24 @@ void PlayScene::Tick(float deltaSeconds)
 
 void PlayScene::Enter()
 {
+	static Button* resetButton = nullptr;
+	if (!resetButton)
+	{
+		auto clickEvent = [&]()
+			{
+				SetLink(startScene_);
+				bDetectSwitch_ = true;
+			};
+		resetButton = GameModule::CreateEntity<Button>("Resource/Button/Start.json", fonts_[32], EMouseButton::LEFT, clickEvent, geometryRenderer2D_, textRenderer_);
+	}
+
+	static Button* quitButton = nullptr;
+	if (!quitButton)
+	{
+		auto clickEvent = [&]() { PlatformModule::SetQuitLoop(true); };
+		quitButton = GameModule::CreateEntity<Button>("Resource/Button/Quit.json", fonts_[32], EMouseButton::LEFT, clickEvent, geometryRenderer2D_, textRenderer_);
+	}
+
 	floor_ = GameModule::CreateEntity<Floor>();
 	character_ = GameModule::CreateEntity<Character>();
 	camera_ = GameModule::CreateEntity<Camera>(character_);
@@ -45,7 +64,10 @@ void PlayScene::Enter()
 	coinSpawner_ = GameModule::CreateEntity<CoinSpawner>(coins_, character_);
 	miniMap_ = GameModule::CreateEntity<MiniMap>(coins_, character_, geometryRenderer2D_);
 	statusViewer_ = GameModule::CreateEntity<StatusViewer>(character_, geometryRenderer2D_, textRenderer_, fonts_[24]);
+	resetButton_ = resetButton;
+	quitButton_ = quitButton;
 
+	status_ = EStatus::PLAY;
 	bIsEnter_ = true;
 }
 
@@ -91,19 +113,22 @@ void PlayScene::Update(float deltaSeconds)
 		light_,
 	};
 
-	for (auto& entity : entities)
+	if (status_ == EStatus::PLAY)
 	{
-		entity->Tick(deltaSeconds);
-	}
+		for (auto& entity : entities)
+		{
+			entity->Tick(deltaSeconds);
+		}
 
-	for (auto& coin : coins_)
-	{
-		coin->Tick(deltaSeconds);
-	}
+		for (auto& coin : coins_)
+		{
+			coin->Tick(deltaSeconds);
+		}
 
-	coinSpawner_->Tick(deltaSeconds);
-	miniMap_->Tick(deltaSeconds);
-	statusViewer_->Tick(deltaSeconds);
+		coinSpawner_->Tick(deltaSeconds);
+		miniMap_->Tick(deltaSeconds);
+		statusViewer_->Tick(deltaSeconds);
+	}
 }
 
 void PlayScene::PrepareForRendering()

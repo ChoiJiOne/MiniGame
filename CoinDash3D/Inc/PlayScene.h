@@ -29,6 +29,19 @@ class PlayScene : public IScene
 {
 public:
 	/**
+	 * @brief 게임 플레이 씬의 상태입니다.
+	 */
+	enum class EStatus
+	{
+		READY = 0x00,
+		PLAY  = 0x01,
+		PAUSE = 0x02,
+		DONE  = 0x03,
+	};
+
+
+public:
+	/**
 	 * @brief 게임 플레이 씬의 생성자입니다.
 	 * 
 	 * @param app 게임 플레이 씬이 참조할 애플리케이션 클래스입니다.
@@ -195,7 +208,25 @@ private:
 
 
 	/**
+	 * @brief 게임 리셋 버튼입니다.
+	 */
+	Button* resetButton_ = nullptr;
+
+
+	/**
+	 * @brief 게임 종료 버튼입니다.
+	 */
+	Button* quitButton_ = nullptr;
+
+
+	/**
 	 * @brief 시작 씬입니다.
 	 */
 	IScene* startScene_ = nullptr;
+
+
+	/**
+	 * @brief 현재 게임 플레이 씬의 상태입니다.
+	 */
+	EStatus status_ = EStatus::READY;
 };
