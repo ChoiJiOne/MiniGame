@@ -52,7 +52,7 @@ public:
 
 
 	/**
-	 * @brief 코인을 생성하는 엔티티 내의 리소스를 할당 해제합니다.
+	 * @brief 미니맵 내의 리소스를 할당 해제합니다.
 	 */
 	virtual void Release() override;
 
