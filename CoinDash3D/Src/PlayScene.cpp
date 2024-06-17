@@ -1,8 +1,10 @@
 #include "Assertion.h"
 #include "DepthRenderer.h"
+#include "FrameBuffer.h"
 #include "GeometryRenderer2D.h"
 #include "GeometryRenderer3D.h"
 #include "MeshRenderer.h"
+#include "PostEffectComposer.h"
 #include "ShadowMap.h"
 #include "TextRenderer.h"
 
@@ -27,6 +29,7 @@ PlayScene::PlayScene(Application* app)
 	postEffectComposer_ = app->postEffectComposer_;
 	textRenderer_ = app->textRenderer_;
 	shadowMap_ = app->shadowMap_;
+	framebuffer_ = app->framebuffer_;
 	fonts_ = app->fonts_;
 }
 
@@ -67,8 +70,8 @@ void PlayScene::Enter()
 	statusViewer_ = GameModule::CreateEntity<StatusViewer>(character_, geometryRenderer2D_, textRenderer_, fonts_[24]);
 	resetButton_ = resetButton;
 	quitButton_ = quitButton;
-
-	status_ = EStatus::PLAY;
+	status_ = EStatus::READY;
+	waitTime_ = 0.0f;
 	bIsEnter_ = true;
 }
 
@@ -110,6 +113,11 @@ void PlayScene::Update(float deltaSeconds)
 	switch (status_)
 	{
 	case EStatus::READY:
+		waitTime_ += deltaSeconds;
+		if (waitTime_ >= maxWaitTime_)
+		{
+			status_ = EStatus::PLAY;
+		}
 		break;
 
 	case EStatus::PLAY:
@@ -196,42 +204,63 @@ void PlayScene::DepthPass()
 
 void PlayScene::RenderPass()
 {
+	framebuffer_->Bind();
+	{
+		framebuffer_->Clear(0.53f, 0.81f, 0.98f, 1.0f);
+		RenderModule::SetWindowViewport();
+
+		meshRenderer_->SetShadowMap(shadowMap_);
+		meshRenderer_->SetLightSpaceMatrix(light_->GetLightSpaceMatrix());
+		meshRenderer_->SetLightDirection(light_->GetDirection());
+		meshRenderer_->SetLightColor(light_->GetColor());
+
+		const std::vector<StaticMesh*>& staticMeshes = floor_->GetMeshes();
+		for (const auto& mesh : staticMeshes)
+		{
+			meshRenderer_->DrawStaticMesh(Transform::ToMat(floor_->GetTransform()), mesh, floor_->GetMaterial());
+		}
+
+		for (const auto& coin : coins_)
+		{
+			const std::vector<StaticMesh*>& meshes = coin->GetMeshes();
+			for (const auto& mesh : meshes)
+			{
+				meshRenderer_->DrawStaticMesh(Transform::ToMat(coin->GetTransform()), mesh, coin->GetMaterial());
+			}
+		}
+
+		const std::vector<SkinnedMesh*>& skinnedMeshes = character_->GetMeshes();
+		for (const auto& mesh : skinnedMeshes)
+		{
+			meshRenderer_->DrawSkinnedMesh(Transform::ToMat(character_->GetTransform()), character_->GetBindPose(), character_->GetInvBindPose(), mesh, character_->GetMaterial());
+		}
+
+		miniMap_->Render();
+		statusViewer_->Render();
+	}
+	framebuffer_->Unbind();
+
 	RenderModule::BeginFrame(0.53f, 0.81f, 0.98f, 1.0f);
 
-	meshRenderer_->SetShadowMap(shadowMap_);
-	meshRenderer_->SetLightSpaceMatrix(light_->GetLightSpaceMatrix());
-	meshRenderer_->SetLightDirection(light_->GetDirection());
-	meshRenderer_->SetLightColor(light_->GetColor());
-
-	const std::vector<StaticMesh*>& staticMeshes = floor_->GetMeshes();
-	for (const auto& mesh : staticMeshes)
+	switch (status_)
 	{
-		meshRenderer_->DrawStaticMesh(Transform::ToMat(floor_->GetTransform()), mesh, floor_->GetMaterial());
-	}
+	case EStatus::READY:
+		postEffectComposer_->Fade(framebuffer_, 0, waitTime_ / maxWaitTime_);
+		break;
 
-	for (const auto& coin : coins_)
-	{
-		const std::vector<StaticMesh*>& meshes = coin->GetMeshes();
-		for (const auto& mesh : meshes)
-		{
-			meshRenderer_->DrawStaticMesh(Transform::ToMat(coin->GetTransform()), mesh, coin->GetMaterial());
-		}
-	}
+	case EStatus::PLAY:
+		postEffectComposer_->Blit(framebuffer_, 0);
+		break;
 
-	const std::vector<SkinnedMesh*>& skinnedMeshes = character_->GetMeshes();
-	for (const auto& mesh : skinnedMeshes)
-	{
-		meshRenderer_->DrawSkinnedMesh(Transform::ToMat(character_->GetTransform()), character_->GetBindPose(), character_->GetInvBindPose(), mesh, character_->GetMaterial());
-	}
+	case EStatus::PAUSE:
+		break;
 
-	miniMap_->Render();
-	statusViewer_->Render();
-
-	if (status_ == EStatus::DONE)
-	{
+	case EStatus::DONE:
+		postEffectComposer_->Blit(framebuffer_, 0);
 		resetButton_->Render();
 		quitButton_->Render();
+		break;
 	}
-		
+			
 	RenderModule::EndFrame();
 }

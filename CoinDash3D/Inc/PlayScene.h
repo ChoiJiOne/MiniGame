@@ -240,6 +240,18 @@ private:
 
 
 	/**
+	 * @brief 최대 씬 전환 대기 시간입니다.
+	 */
+	float maxWaitTime_ = 3.0f;
+
+
+	/**
+	 * @brief 대기 시간입니다.
+	 */
+	float waitTime_ = 0.0f;
+
+
+	/**
 	 * @brief 현재 게임 플레이 씬의 상태입니다.
 	 */
 	EStatus status_ = EStatus::READY;
