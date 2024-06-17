@@ -1,3 +1,4 @@
+#include "AudioModule.h"
 #include "Collision.h"
 #include "MathModule.h"
 
@@ -55,9 +56,16 @@ Coin::Coin(const Vec3f& position, Character* character)
 		material = RenderModule::CreateResource<BaseColorMap>(BaseColorMap::ESize::Size_256x256, Vec4f(1.0f, 0.843f, 0.0f, 1.0f));
 	}
 
+	static SoundID soundID = -1;
+	if (soundID < 0)
+	{
+		soundID = AudioModule::CreateSound("Resource/Sound/Coin.wav");
+	}
+
 	meshes_ = meshes;
 	transform_ = Transform();
 	material_ = material;
+	soundID_ = soundID;
 
 	transform_.position += position;
 
@@ -82,6 +90,9 @@ void Coin::Tick(float deltaSeconds)
 		int32_t coinCount = character_->GetCoinCount();
 		character_->SetCoinCount(coinCount + 1);
 		hasCollectedCoin_ = true;
+
+		AudioModule::Reset(soundID_);
+		AudioModule::Play(soundID_);
 	}
 }
 

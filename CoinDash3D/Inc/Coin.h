@@ -130,4 +130,10 @@ private:
 	 * @brief 플레이어가 코인을 가졌는지 확인합니다.
 	 */
 	bool hasCollectedCoin_ = false;
+
+
+	/**
+	 * @brief 플레이어가 코인을 획득했을 때 출력할 사운드 리소스ID입니다.
+	 */
+	uint32_t soundID_ = 0;
 };
