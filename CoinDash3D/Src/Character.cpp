@@ -74,6 +74,7 @@ Character::Character()
 	crossFadeController_.Play(&clips_[idleClip_]);
 	moveSpeed_ = 5.0f;
 	remainTime_ = 30.0f;
+	maxRemainTime_ = remainTime_;
 
 	bIsInitialized_ = true;
 }
@@ -176,6 +177,16 @@ void Character::Release()
 	{
 		bIsInitialized_ = false;
 	}
+}
+
+void Character::SetRemainTime(float remainTime)
+{
+	if (remainTime > maxRemainTime_)
+	{
+		maxRemainTime_ = remainTime;
+	}
+
+	remainTime_ = remainTime;
 }
 
 Vec3f Character::GetMoveDirection()

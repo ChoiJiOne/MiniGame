@@ -142,7 +142,15 @@ public:
 	 * 
 	 * @param remainTime 설정할 플레이어의 남은 시간 값입니다
 	 */
-	void SetRemainTime(float remainTime) { remainTime_ = remainTime; }
+	void SetRemainTime(float remainTime);
+
+
+	/**
+	 * @brief 플레이어의 최대 남은 시간 값을 얻습니다.
+	 *
+	 * @return 플레이어의 최대 남은 시간 값을 반환합니다.
+	 */
+	float GetMaxRemainTime() const { return maxRemainTime_; }
 
 
 private:
@@ -237,4 +245,10 @@ private:
 	 * @brief 플레이어의 남은 시간입니다.
 	 */
 	float remainTime_ = 0.0f;
+
+
+	/**
+	 * @brief 플레이어의 최대 남은 시간값입니다.
+	 */
+	float maxRemainTime_ = 0.0f;
 };
