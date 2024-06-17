@@ -27,6 +27,7 @@ target_link_libraries(
     MathModule
     PlatformModule
     RenderModule
+    jsoncpp
 )
 
 target_compile_definitions(
