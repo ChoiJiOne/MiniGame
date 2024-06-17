@@ -113,6 +113,22 @@ public:
 	const std::vector<Mat4x4>& GetInvBindPose() { return crossFadeController_.GetSkeleton().GetInvBindPose(); }
 
 
+	/**
+	 * @brief 플레이어가 획득한 코인의 수를 얻습니다.
+	 * 
+	 * @return 플레이어가 획득한 코인의 수를 반환합니다.
+	 */
+	int32_t GetCoinCount() const { return coinCount_; }
+
+
+	/**
+	 * @brief 플레이어의 남은 시간 값을 얻습니다.
+	 * 
+	 * @return 플레이어의 남은 시간 값을 반환합니다.
+	 */
+	float GetRemainTime() const { return remainTime_; }
+
+
 private:
 	/**
 	 * @brief 캐릭터의 이동 방향을 얻습니다.
@@ -193,4 +209,16 @@ private:
 	 * @brief 캐릭터의 이동 속도입니다.
 	 */
 	float moveSpeed_ = 0.0f;
+
+
+	/**
+	 * @brief 플레이어가 획득한 코인의 수입니다.
+	 */
+	int32_t coinCount_ = 0;
+
+
+	/**
+	 * @brief 플레이어의 남은 시간입니다.
+	 */
+	float remainTime_ = 0.0f;
 };

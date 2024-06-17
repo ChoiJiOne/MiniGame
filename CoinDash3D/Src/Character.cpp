@@ -73,6 +73,7 @@ Character::Character()
 	crossFadeController_.SetSkeleton(skeleton_);
 	crossFadeController_.Play(&clips_[idleClip_]);
 	moveSpeed_ = 5.0f;
+	remainTime_ = 30.0f;
 
 	bIsInitialized_ = true;
 }
@@ -89,6 +90,17 @@ void Character::Tick(float deltaSeconds)
 {
 	crossFadeController_.Update(deltaSeconds);
 	crossFadeController_.GetCurrentPose().GetMatrixPalette(bindPose_);
+
+	remainTime_ -= deltaSeconds;
+	if (remainTime_ <= 0.0f)
+	{
+		if (currentStatus_ == EStatus::RUN)
+		{
+			currentStatus_ = EStatus::IDLE;
+			crossFadeController_.FadeTo(&clips_[idleClip_], 0.1f);
+		}
+		return;
+	}
 
 	static std::array<EKey, 4> keys =
 	{
