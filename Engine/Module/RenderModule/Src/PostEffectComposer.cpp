@@ -37,6 +37,7 @@ PostEffectComposer::PostEffectComposer()
 	blit_ = RenderModule::CreateResource<Shader>("Resource/Shader/Blit.vert", "Resource/Shader/Blit.frag");
 	fade_ = RenderModule::CreateResource<Shader>("Resource/Shader/Blit.vert", "Resource/Shader/Fade.frag");
 	grayscale_ = RenderModule::CreateResource<Shader>("Resource/Shader/Blit.vert", "Resource/Shader/Grayscale.frag");
+	blur_ = RenderModule::CreateResource<Shader>("Resource/Shader/Blit.vert", "Resource/Shader/Blur.frag");
 
 	bIsInitialized_ = true;
 }
@@ -51,6 +52,18 @@ PostEffectComposer::~PostEffectComposer()
 
 void PostEffectComposer::Release()
 {
+	if (blur_)
+	{
+		RenderModule::DestroyResource(blur_);
+		blur_ = nullptr;
+	}
+
+	if (grayscale_)
+	{
+		RenderModule::DestroyResource(grayscale_);
+		grayscale_ = nullptr;
+	}
+
 	if (fade_)
 	{
 		RenderModule::DestroyResource(fade_);
@@ -116,4 +129,18 @@ void PostEffectComposer::Grayscale(FrameBuffer* framebuffer, uint32_t index)
 		GL_FAILED(glBindVertexArray(0));
 	}
 	grayscale_->Unbind();
+}
+
+void PostEffectComposer::Blur(FrameBuffer* framebuffer, uint32_t index)
+{
+	blur_->Bind();
+	{
+		framebuffer->SetTargetColorBuffer(index);
+		framebuffer->Active(FRAME_BUFFER_BIND_SLOT);
+
+		GL_FAILED(glBindVertexArray(vertexArrayObject_));
+		RenderModule::ExecuteDrawVertex(MAX_VERTEX_SIZE, EDrawMode::TRIANGLES);
+		GL_FAILED(glBindVertexArray(0));
+	}
+	blur_->Unbind();
 }
