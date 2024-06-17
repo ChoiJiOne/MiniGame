@@ -21,6 +21,7 @@ class GeometryRenderer3D;
 class MeshRenderer;
 class PostEffectComposer;
 class ShadowMap;
+class SkyboxRenderer;
 class TextRenderer;
 class TTFont;
 
@@ -105,6 +106,12 @@ private:
 	 * @brief 2D 텍스트를 렌더링하는 렌더러입니다.
 	 */
 	TextRenderer* textRenderer_ = nullptr;
+
+
+	/**
+	 * @brief 스카이 박스를 렌더링하는 렌더러입니다.
+	 */
+	SkyboxRenderer* skyboxRenderer_ = nullptr;
 
 
 	/**

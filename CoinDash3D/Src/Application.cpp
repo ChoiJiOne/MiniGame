@@ -6,6 +6,7 @@
 #include "MeshRenderer.h"
 #include "PostEffectComposer.h"
 #include "ShadowMap.h"
+#include "SkyboxRenderer.h"
 #include "TextRenderer.h"
 #include "TTFont.h"
 
@@ -35,6 +36,7 @@ Application::Application()
 	meshRenderer_ = RenderModule::CreateResource<MeshRenderer>();
 	postEffectComposer_ = RenderModule::CreateResource<PostEffectComposer>();
 	textRenderer_ = RenderModule::CreateResource<TextRenderer>();
+	skyboxRenderer_ = RenderModule::CreateResource<SkyboxRenderer>();
 	shadowMap_ = RenderModule::CreateResource<ShadowMap>(ShadowMap::ESize::Size_4096);
 	framebuffer_ = RenderModule::CreateResource<FrameBuffer>(screenWidth, screenHeight);
 
