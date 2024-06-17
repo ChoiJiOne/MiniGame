@@ -156,6 +156,12 @@ private:
 
 
 	/**
+	 * @brief 스카이 박스를 렌더링하는 렌더러입니다.
+	 */
+	SkyboxRenderer* skyboxRenderer_ = nullptr;
+
+
+	/**
 	 * @brief 깊이 값을 렌더링할 셰도우 맵입니다.
 	 */
 	ShadowMap* shadowMap_ = nullptr;

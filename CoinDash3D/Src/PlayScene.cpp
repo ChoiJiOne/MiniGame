@@ -28,6 +28,7 @@ PlayScene::PlayScene(Application* app)
 	meshRenderer_ = app->meshRenderer_;
 	postEffectComposer_ = app->postEffectComposer_;
 	textRenderer_ = app->textRenderer_;
+	skyboxRenderer_ = app->skyboxRenderer_;
 	shadowMap_ = app->shadowMap_;
 	framebuffer_ = app->framebuffer_;
 	fonts_ = app->fonts_;
