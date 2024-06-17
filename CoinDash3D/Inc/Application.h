@@ -15,6 +15,7 @@
 #include "IScene.h"
 
 class DepthRenderer;
+class FrameBuffer;
 class GeometryRenderer2D;
 class GeometryRenderer3D;
 class MeshRenderer;
@@ -110,6 +111,12 @@ private:
 	 * @brief 셰도우 맵입니다.
 	 */
 	ShadowMap* shadowMap_ = nullptr;
+
+
+	/**
+	 * @brief 프레임 버퍼입니다.
+	 */
+	FrameBuffer* framebuffer_ = nullptr;
 
 
 	/**

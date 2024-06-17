@@ -1,5 +1,6 @@
 #include "Assertion.h"
 #include "DepthRenderer.h"
+#include "FrameBuffer.h"
 #include "GeometryRenderer2D.h"
 #include "GeometryRenderer3D.h"
 #include "MeshRenderer.h"
@@ -24,6 +25,10 @@ Application::Application()
 
 	PlatformModule::SetEndLoopCallback([&]() { RenderModule::Uninit(); });
 
+	int32_t screenWidth = 0;
+	int32_t screenHeight = 0;
+	RenderModule::GetScreenSize(screenWidth, screenHeight);
+
 	depthRenderer_ = RenderModule::CreateResource<DepthRenderer>();
 	geometryRenderer2D_ = RenderModule::CreateResource<GeometryRenderer2D>();
 	geometryRenderer3D_ = RenderModule::CreateResource<GeometryRenderer3D>();
@@ -31,6 +36,7 @@ Application::Application()
 	postEffectComposer_ = RenderModule::CreateResource<PostEffectComposer>();
 	textRenderer_ = RenderModule::CreateResource<TextRenderer>();
 	shadowMap_ = RenderModule::CreateResource<ShadowMap>(ShadowMap::ESize::Size_4096);
+	framebuffer_ = RenderModule::CreateResource<FrameBuffer>(screenWidth, screenHeight);
 
 	std::string path = "Resource/Font/SeoulNamsanEB.ttf";
 	std::array<int32_t, 6> fontSizes = { 16, 24, 32, 64, 72, 128, };
