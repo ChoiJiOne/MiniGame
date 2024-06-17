@@ -51,6 +51,12 @@ void Application::Init()
 {
 	startScene_ = std::make_unique<StartScene>(this);
 	playScene_ = std::make_unique<PlayScene>(this);
+
+	StartScene* startScene = reinterpret_cast<StartScene*>(startScene_.get());
+	PlayScene* playScene = reinterpret_cast<PlayScene*>(playScene_.get());
+
+	startScene->SetPlayScene(playScene);
+	playScene->SetStartScene(startScene);
 }
 
 void Application::Run()
