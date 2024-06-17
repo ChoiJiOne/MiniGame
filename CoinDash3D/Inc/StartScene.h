@@ -51,6 +51,21 @@ public:
 
 private:
 	/**
+	 * @brief 씬 내의 엔티티를 업데이트합니다.
+	 * 
+	 * @param deltaSeconds 초 단위 델타 시간값입니다.
+	 */
+	void Update(float deltaSeconds);
+
+
+	/**
+	 * @brief 씬 내의 엔티티를 렌더링합니다.
+	 */
+	void Render();
+
+
+private:
+	/**
 	 * @brief 2D 기하 도형을 렌더링하는 렌더러입니다.
 	 */
 	GeometryRenderer2D* geometryRenderer2D_ = nullptr;
@@ -66,4 +81,16 @@ private:
 	 * @brief 크기에 따른 폰트 리소스입니다.
 	 */
 	std::map<int32_t, TTFont*> fonts_;
+
+
+	/**
+	 * @brief 게임 시작 버튼입니다.
+	 */
+	Button* startButton_ = nullptr;
+
+
+	/**
+	 * @brief 게임 종료 버튼입니다.
+	 */
+	Button* quitButton_ = nullptr;
 };
