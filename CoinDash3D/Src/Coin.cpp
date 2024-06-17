@@ -79,6 +79,8 @@ void Coin::Tick(float deltaSeconds)
 {
 	if (Collision::SphereToAABB(character_->GetSphere(), aabb_))
 	{
+		int32_t coinCount = character_->GetCoinCount();
+		character_->SetCoinCount(coinCount + 1);
 		hasCollectedCoin_ = true;
 	}
 }
