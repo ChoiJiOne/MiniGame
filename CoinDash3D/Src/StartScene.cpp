@@ -37,10 +37,10 @@ void StartScene::Enter()
 	if (!startButton)
 	{
 		auto clickEvent = [&]() 
-		{
+			{
 				SetLink(playScene_);
 				bDetectSwitch_ = true;
-		};
+			};
 		startButton = GameModule::CreateEntity<Button>("Resource/Button/Start.json", fonts_[32], EMouseButton::LEFT, clickEvent, geometryRenderer2D_, textRenderer_);
 	}
 
