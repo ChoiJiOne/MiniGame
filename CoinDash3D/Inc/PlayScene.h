@@ -2,7 +2,6 @@
 
 #include <list>
 
-
 #include "IScene.h"
 
 class Application; 
@@ -61,6 +60,14 @@ public:
 	 * @brief 씬에서 나갑니다.
 	 */
 	virtual void Exit() override;
+
+
+	/**
+	 * @brief 시작 씬의 포인터를 설정합니다.
+	 * 
+	 * @param startScene 설정할 시작 씬의 포인터입니다.
+	 */
+	void SetStartScene(IScene* startScene) { startScene_ = startScene; }
 
 
 private:
@@ -185,4 +192,10 @@ private:
 	 * @brief 현재 상태를 표시하는 엔티티입니다.
 	 */
 	StatusViewer* statusViewer_ = nullptr;
+
+
+	/**
+	 * @brief 시작 씬입니다.
+	 */
+	IScene* startScene_ = nullptr;
 };
