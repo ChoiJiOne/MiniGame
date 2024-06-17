@@ -65,6 +65,7 @@ private:
 	 */
 	friend class IScene;
 	friend class PlayScene;
+	friend class StartScene;
 
 
 private:
