@@ -73,4 +73,10 @@ private:
 	 * @brief 최대 코인 생성 수입니다.
 	 */
 	uint32_t maxCoin_ = 10;
+
+
+	/**
+	 * @brief 추가 시간입니다.
+	 */
+	float extraTime_ = 10.0f;
 };

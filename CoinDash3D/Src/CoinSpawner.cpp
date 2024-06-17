@@ -25,6 +25,9 @@ void CoinSpawner::Tick(float deltaSeconds)
 {
 	if (coins_.empty())
 	{
+		float remainTime = character_->GetRemainTime();
+		character_->SetRemainTime(remainTime + extraTime_);
+
 		maxCoin_++;
 		GenerateCoins();
 	}
