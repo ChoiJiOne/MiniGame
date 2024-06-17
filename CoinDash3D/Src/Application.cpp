@@ -3,6 +3,7 @@
 #include "GeometryRenderer2D.h"
 #include "GeometryRenderer3D.h"
 #include "MeshRenderer.h"
+#include "PostEffectComposer.h"
 #include "ShadowMap.h"
 #include "TextRenderer.h"
 #include "TTFont.h"
@@ -27,6 +28,7 @@ Application::Application()
 	geometryRenderer2D_ = RenderModule::CreateResource<GeometryRenderer2D>();
 	geometryRenderer3D_ = RenderModule::CreateResource<GeometryRenderer3D>();
 	meshRenderer_ = RenderModule::CreateResource<MeshRenderer>();
+	postEffectComposer_ = RenderModule::CreateResource<PostEffectComposer>();
 	textRenderer_ = RenderModule::CreateResource<TextRenderer>();
 	shadowMap_ = RenderModule::CreateResource<ShadowMap>(ShadowMap::ESize::Size_4096);
 
