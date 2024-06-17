@@ -13,6 +13,7 @@ class PostEffectComposer;
 class ShadowMap;
 class TextRenderer;
 
+class Background;
 class Button;
 class Camera;
 class Character;
@@ -219,6 +220,12 @@ private:
 	 * @brief 미니맵 엔티티입니다.
 	 */
 	MiniMap* miniMap_ = nullptr;
+
+
+	/**
+	 * @brief 백그라운드 엔티티입니다.
+	 */
+	Background* background_ = nullptr;
 
 
 	/**

@@ -6,9 +6,12 @@
 #include "MeshRenderer.h"
 #include "PostEffectComposer.h"
 #include "ShadowMap.h"
+#include "Skybox.h"
+#include "SkyboxRenderer.h"
 #include "TextRenderer.h"
 
 #include "Application.h"
+#include "Background.h"
 #include "Button.h"
 #include "Camera.h"
 #include "Character.h"
@@ -18,6 +21,7 @@
 #include "Light.h"
 #include "MiniMap.h"
 #include "PlayScene.h"
+#include "Background.h"
 #include "StatusViewer.h"
 
 PlayScene::PlayScene(Application* app)
@@ -76,6 +80,7 @@ void PlayScene::Enter()
 	coinSpawner_ = GameModule::CreateEntity<CoinSpawner>(coins_, character_);
 	miniMap_ = GameModule::CreateEntity<MiniMap>(coins_, character_, geometryRenderer2D_);
 	statusViewer_ = GameModule::CreateEntity<StatusViewer>(character_, geometryRenderer2D_, textRenderer_, fonts_[24]);
+	background_ = GameModule::CreateEntity<Background>();
 	continueButton_ = continueButton;
 	resetButton_ = resetButton;
 	quitButton_ = quitButton;
@@ -86,8 +91,9 @@ void PlayScene::Enter()
 
 void PlayScene::Exit()
 {
-	std::array<IEntity*, 7> entities =
+	std::array<IEntity*, 8> entities =
 	{
+		background_,
 		statusViewer_,
 		miniMap_,
 		coinSpawner_,
@@ -225,6 +231,8 @@ void PlayScene::RenderPass()
 	{
 		framebuffer_->Clear(0.53f, 0.81f, 0.98f, 1.0f);
 		RenderModule::SetWindowViewport();
+
+		skyboxRenderer_->Draw(camera_->GetView(), camera_->GetProjection(), background_->GetSkybox());
 
 		meshRenderer_->SetShadowMap(shadowMap_);
 		meshRenderer_->SetLightSpaceMatrix(light_->GetLightSpaceMatrix());
