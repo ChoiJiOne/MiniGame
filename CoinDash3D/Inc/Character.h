@@ -122,11 +122,27 @@ public:
 
 
 	/**
+	 * @brief 플레이어가 획득한 코인의 수를 설정합니다.
+	 * 
+	 * @param coinCount 설정할 플레이어가 획득한 코인의 수입니다.
+	 */
+	void SetCoinCount(int32_t coinCount) { coinCount_ = coinCount; }
+
+
+	/**
 	 * @brief 플레이어의 남은 시간 값을 얻습니다.
 	 * 
 	 * @return 플레이어의 남은 시간 값을 반환합니다.
 	 */
 	float GetRemainTime() const { return remainTime_; }
+
+
+	/**
+	 * @brief 플레이어의 남은 시간 값을 설정합니다.
+	 * 
+	 * @param remainTime 설정할 플레이어의 남은 시간 값입니다
+	 */
+	void SetRemainTime(float remainTime) { remainTime_ = remainTime; }
 
 
 private:

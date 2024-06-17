@@ -94,6 +94,8 @@ void Character::Tick(float deltaSeconds)
 	remainTime_ -= deltaSeconds;
 	if (remainTime_ <= 0.0f)
 	{
+		remainTime_ = 0.0f;
+
 		if (currentStatus_ == EStatus::RUN)
 		{
 			currentStatus_ = EStatus::IDLE;
