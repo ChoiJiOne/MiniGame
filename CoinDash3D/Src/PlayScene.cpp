@@ -161,7 +161,7 @@ void PlayScene::Update(float deltaSeconds)
 		status_ = EStatus::DONE;
 	}
 
-	if (InputController::GetKeyPressState(EKey::KEY_ESCAPE) == EPressState::PRESSED)
+	if (InputController::GetKeyPressState(EKey::KEY_ESCAPE) == EPressState::PRESSED && status_ == EStatus::PLAY)
 	{
 		status_ = EStatus::PAUSE;
 	}
