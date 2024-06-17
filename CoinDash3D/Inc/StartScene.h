@@ -7,6 +7,7 @@ class GeometryRenderer2D;
 class TextRenderer;
 
 class Button;
+class Panel;
 
 
 /**
@@ -87,6 +88,12 @@ private:
 	 * @brief 크기에 따른 폰트 리소스입니다.
 	 */
 	std::map<int32_t, TTFont*> fonts_;
+
+
+	/**
+	 * @brief 타이틀 패널입니다.
+	 */
+	Panel* titlePanel_ = nullptr;
 
 
 	/**

@@ -1,11 +1,13 @@
 #include <array>
 
 #include "Assertion.h"
+#include "GameModule.h"
 #include "GeometryRenderer2D.h"
 #include "TextRenderer.h"
 
 #include "Application.h"
 #include "Button.h"
+#include "Panel.h"
 #include "StartScene.h"
 
 StartScene::StartScene(Application* app)
@@ -18,11 +20,18 @@ StartScene::StartScene(Application* app)
 void StartScene::Tick(float deltaSeconds)
 {
 	Update(deltaSeconds);
+	PrepareForRendering();
 	Render();
 }
 
 void StartScene::Enter()
 {
+	static Panel* titlePanel = nullptr;
+	if (!titlePanel)
+	{
+		titlePanel = GameModule::CreateEntity<Panel>("Resource/Panel/Title.json", fonts_[72], geometryRenderer2D_, textRenderer_);
+	}
+
 	static Button* startButton = nullptr;
 	if (!startButton)
 	{
@@ -37,6 +46,7 @@ void StartScene::Enter()
 		quitButton = GameModule::CreateEntity<Button>("Resource/Button/Quit.json", fonts_[32], EMouseButton::LEFT, clickEvent, geometryRenderer2D_, textRenderer_);
 	}
 
+	titlePanel_ = titlePanel;
 	startButton_ = startButton;
 	quitButton_ = quitButton;
 	bIsEnter_ = true;
@@ -72,8 +82,9 @@ void StartScene::PrepareForRendering()
 
 void StartScene::Render()
 {
-	std::array<Entity2D*, 2> entities =
+	std::array<Entity2D*, 3> entities =
 	{
+		titlePanel_,
 		startButton_,
 		quitButton_,
 	};
