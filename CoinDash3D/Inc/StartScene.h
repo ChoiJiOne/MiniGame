@@ -134,4 +134,22 @@ private:
 	 * @brief 게임 종료 버튼입니다.
 	 */
 	Button* quitButton_ = nullptr;
+
+
+	/**
+	 * @brief 게임을 시작할 지 확인합니다.
+	 */
+	bool bIsStartGame_ = false;
+
+
+	/**
+	 * @brief 씬 전환의 최대 시간값입니다.
+	 */
+	float maxChangeCountdown_ = 3.0f;
+
+
+	/**
+	 * @brief 씬 전환 시간입니다.
+	 */
+	float changeCountdown_ = 0.0f;
 };
