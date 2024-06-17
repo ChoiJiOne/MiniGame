@@ -9,6 +9,7 @@ class DepthRenderer;
 class GeometryRenderer2D;
 class GeometryRenderer3D;
 class MeshRenderer;
+class PostEffectComposer;
 class ShadowMap;
 class TextRenderer;
 
@@ -140,6 +141,12 @@ private:
 	 * @brief 3D 메쉬를 렌더링하는 렌더러입니다.
 	 */
 	MeshRenderer* meshRenderer_ = nullptr;
+
+
+	/**
+	 * @brief 후처리 효과(Grayscale, Blur, Fade 등등)를 적용할 때 사용합니다.
+	 */
+	PostEffectComposer* postEffectComposer_ = nullptr;
 
 
 	/**

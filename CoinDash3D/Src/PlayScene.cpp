@@ -24,6 +24,7 @@ PlayScene::PlayScene(Application* app)
 	geometryRenderer2D_ = app->geometryRenderer2D_;
 	geometryRenderer3D_ = app->geometryRenderer3D_;
 	meshRenderer_ = app->meshRenderer_;
+	postEffectComposer_ = app->postEffectComposer_;
 	textRenderer_ = app->textRenderer_;
 	shadowMap_ = app->shadowMap_;
 	fonts_ = app->fonts_;
