@@ -9,6 +9,7 @@
 
 #include "Application.h"
 #include "PlayScene.h"
+#include "StartScene.h"
 
 Application::Application()
 {
@@ -48,12 +49,13 @@ Application::~Application()
 
 void Application::Init()
 {
+	startScene_ = std::make_unique<StartScene>(this);
 	playScene_ = std::make_unique<PlayScene>(this);
 }
 
 void Application::Run()
 {
-	currentScene_ = playScene_.get();
+	currentScene_ = startScene_.get();
 	currentScene_->Enter();
 
 	PlatformModule::RunLoop(

@@ -110,6 +110,12 @@ private:
 	 */
 	std::map<int32_t, TTFont*> fonts_;
 
+
+	/**
+	 * @brief 시작 씬입니다.
+	 */
+	std::unique_ptr<IScene> startScene_ = nullptr;
+
 		
 	/**
 	 * @brief 플레이 씬입니다.
