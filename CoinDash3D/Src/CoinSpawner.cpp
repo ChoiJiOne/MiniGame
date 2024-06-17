@@ -1,3 +1,4 @@
+#include "AudioModule.h"
 #include "GameModule.h"
 #include "MathModule.h"
 
@@ -9,6 +10,14 @@ CoinSpawner::CoinSpawner(std::list<Coin*>& coins, Character* character)
 	: coins_(coins)
 	, character_(character)
 {
+	static SoundID soundID = -1;
+	if (soundID < 0)
+	{
+		soundID = AudioModule::CreateSound("Resource/Sound/Level.wav");
+	}
+
+	soundID_ = soundID;
+
 	GenerateCoins();
 	bIsInitialized_ = true;
 }
@@ -30,6 +39,9 @@ void CoinSpawner::Tick(float deltaSeconds)
 
 		maxCoin_++;
 		GenerateCoins();
+
+		AudioModule::Reset(soundID_);
+		AudioModule::Play(soundID_);
 	}
 	else
 	{

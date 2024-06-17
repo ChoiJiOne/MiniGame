@@ -79,4 +79,10 @@ private:
 	 * @brief 추가 시간입니다.
 	 */
 	float extraTime_ = 10.0f;
+
+
+	/**
+	 * @brief 코인을 생성했을 때 출력할 사운드 리소스ID입니다.
+	 */
+	uint32_t soundID_ = 0;
 };
