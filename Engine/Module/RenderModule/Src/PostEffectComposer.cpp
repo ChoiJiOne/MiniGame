@@ -35,6 +35,7 @@ PostEffectComposer::PostEffectComposer()
 	GL_FAILED(glBindVertexArray(0));
 
 	blit_ = RenderModule::CreateResource<Shader>("Resource/Shader/Blit.vert", "Resource/Shader/Blit.frag");
+	fade_ = RenderModule::CreateResource<Shader>("Resource/Shader/Blit.vert", "Resource/Shader/Fade.frag");
 
 	bIsInitialized_ = true;
 }
@@ -49,6 +50,12 @@ PostEffectComposer::~PostEffectComposer()
 
 void PostEffectComposer::Release()
 {
+	if (fade_)
+	{
+		RenderModule::DestroyResource(fade_);
+		fade_ = nullptr;
+	}
+
 	if (blit_)
 	{
 		RenderModule::DestroyResource(blit_);
@@ -78,4 +85,20 @@ void PostEffectComposer::Blit(FrameBuffer* framebuffer, uint32_t index)
 		GL_FAILED(glBindVertexArray(0));
 	}
 	blit_->Unbind();
+}
+
+void PostEffectComposer::Fade(FrameBuffer* framebuffer, uint32_t index, float bias)
+{
+	fade_->Bind();
+	{
+		framebuffer->SetTargetColorBuffer(index);
+		framebuffer->Active(FRAME_BUFFER_BIND_SLOT);
+
+		fade_->SetUniform("fadeBias", bias);
+		
+		GL_FAILED(glBindVertexArray(vertexArrayObject_));
+		RenderModule::ExecuteDrawVertex(MAX_VERTEX_SIZE, EDrawMode::TRIANGLES);
+		GL_FAILED(glBindVertexArray(0));
+	}
+	fade_->Unbind();
 }

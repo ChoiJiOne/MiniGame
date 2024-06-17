@@ -51,6 +51,16 @@ public:
 	void Blit(FrameBuffer* framebuffer, uint32_t index);
 
 
+	/**
+	 * @brief 프레임 버퍼에 페이드 효과를 적용합니다.
+	 * 
+	 * @param framebuffer 전송할 프레임 버퍼입니다.
+	 * @param index 프레임 버퍼의 컬러 버퍼 인덱스입니다.
+	 * @param bias 페이드의 바이어스 값입니다. 값의 범위는 0.0에서 1.0입니다.
+	 */
+	void Fade(FrameBuffer* framebuffer, uint32_t index, float bias);
+
+
 private:
 	/**
 	 * @brief 내부에서만 사용하는 정점입니다.
@@ -181,6 +191,12 @@ private:
 	 * @brief 프레임 버퍼의 블릿을 수행하는 셰이더입니다.
 	 */
 	Shader* blit_ = nullptr;
+
+
+	/**
+	 * @brief 프레임 버퍼의 페이드 효과를 적용하는 셰이더입니다.
+	 */
+	Shader* fade_ = nullptr;
 
 
 	/**
