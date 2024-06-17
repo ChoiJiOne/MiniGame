@@ -61,6 +61,15 @@ public:
 	void Fade(FrameBuffer* framebuffer, uint32_t index, float bias);
 
 
+	/**
+	 * @brief 프레임 버퍼에 그레이 스케일 효과를 적용합니다.
+	 * 
+	 * @param framebuffer 전송할 프레임 버퍼입니다.
+	 * @param index 프레임 버퍼의 컬러 버퍼 인덱스입니다.
+	 */
+	void Grayscale(FrameBuffer* framebuffer, uint32_t index);
+
+
 private:
 	/**
 	 * @brief 내부에서만 사용하는 정점입니다.
@@ -197,6 +206,12 @@ private:
 	 * @brief 프레임 버퍼의 페이드 효과를 적용하는 셰이더입니다.
 	 */
 	Shader* fade_ = nullptr;
+
+
+	/**
+	 * @brief 프레임 버퍼의 그레이 스케일 효과를 적용하는 셰이더입니다.
+	 */
+	Shader* grayscale_ = nullptr;
 
 
 	/**

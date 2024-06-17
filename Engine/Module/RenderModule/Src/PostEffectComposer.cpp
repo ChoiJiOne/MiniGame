@@ -36,6 +36,7 @@ PostEffectComposer::PostEffectComposer()
 
 	blit_ = RenderModule::CreateResource<Shader>("Resource/Shader/Blit.vert", "Resource/Shader/Blit.frag");
 	fade_ = RenderModule::CreateResource<Shader>("Resource/Shader/Blit.vert", "Resource/Shader/Fade.frag");
+	grayscale_ = RenderModule::CreateResource<Shader>("Resource/Shader/Blit.vert", "Resource/Shader/Grayscale.frag");
 
 	bIsInitialized_ = true;
 }
@@ -101,4 +102,18 @@ void PostEffectComposer::Fade(FrameBuffer* framebuffer, uint32_t index, float bi
 		GL_FAILED(glBindVertexArray(0));
 	}
 	fade_->Unbind();
+}
+
+void PostEffectComposer::Grayscale(FrameBuffer* framebuffer, uint32_t index)
+{
+	grayscale_->Bind();
+	{
+		framebuffer->SetTargetColorBuffer(index);
+		framebuffer->Active(FRAME_BUFFER_BIND_SLOT);
+
+		GL_FAILED(glBindVertexArray(vertexArrayObject_));
+		RenderModule::ExecuteDrawVertex(MAX_VERTEX_SIZE, EDrawMode::TRIANGLES);
+		GL_FAILED(glBindVertexArray(0));
+	}
+	grayscale_->Unbind();
 }
