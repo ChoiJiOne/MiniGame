@@ -222,6 +222,12 @@ private:
 
 
 	/**
+	 * @brief 중지된 게임을 다시 시작하는 버튼입니다.
+	 */
+	Button* continueButton_ = nullptr;
+
+
+	/**
 	 * @brief 게임 리셋 버튼입니다.
 	 */
 	Button* resetButton_ = nullptr;

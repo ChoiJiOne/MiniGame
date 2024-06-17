@@ -42,6 +42,13 @@ void PlayScene::Tick(float deltaSeconds)
 
 void PlayScene::Enter()
 {
+	static Button* continueButton = nullptr;
+	if (!continueButton)
+	{
+		auto clickEvent = [&]() { status_ = EStatus::PLAY; };
+		continueButton = GameModule::CreateEntity<Button>("Resource/Button/Continue.json", fonts_[32], EMouseButton::LEFT, clickEvent, geometryRenderer2D_, textRenderer_);
+	}
+
 	static Button* resetButton = nullptr;
 	if (!resetButton)
 	{
@@ -68,6 +75,7 @@ void PlayScene::Enter()
 	coinSpawner_ = GameModule::CreateEntity<CoinSpawner>(coins_, character_);
 	miniMap_ = GameModule::CreateEntity<MiniMap>(coins_, character_, geometryRenderer2D_);
 	statusViewer_ = GameModule::CreateEntity<StatusViewer>(character_, geometryRenderer2D_, textRenderer_, fonts_[24]);
+	continueButton_ = continueButton;
 	resetButton_ = resetButton;
 	quitButton_ = quitButton;
 	status_ = EStatus::READY;
@@ -136,6 +144,9 @@ void PlayScene::Update(float deltaSeconds)
 		break;
 
 	case EStatus::PAUSE:
+		continueButton_->Tick(deltaSeconds);
+		resetButton_->Tick(deltaSeconds);
+		quitButton_->Tick(deltaSeconds);
 		break;
 
 	case EStatus::DONE:
@@ -148,6 +159,11 @@ void PlayScene::Update(float deltaSeconds)
 	if (character_->IsDone())
 	{
 		status_ = EStatus::DONE;
+	}
+
+	if (InputController::GetKeyPressState(EKey::KEY_ESCAPE) == EPressState::PRESSED)
+	{
+		status_ = EStatus::PAUSE;
 	}
 }
 
@@ -253,10 +269,14 @@ void PlayScene::RenderPass()
 		break;
 
 	case EStatus::PAUSE:
+		postEffectComposer_->Blur(framebuffer_, 0);
+		continueButton_->Render();
+		resetButton_->Render();
+		quitButton_->Render();
 		break;
 
 	case EStatus::DONE:
-		postEffectComposer_->Blit(framebuffer_, 0);
+		postEffectComposer_->Grayscale(framebuffer_, 0);
 		resetButton_->Render();
 		quitButton_->Render();
 		break;
