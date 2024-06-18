@@ -9,4 +9,4 @@ for %%i in ("%SRC%") do (
 
 echo [CHECK] %SRC%
 
-"%VALIDATOR%" "%SRC%"
+"%VALIDATOR%" %SRC%

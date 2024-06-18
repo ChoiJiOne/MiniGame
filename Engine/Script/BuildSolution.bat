@@ -16,8 +16,8 @@ if %ERRORLEVEL% EQU 0 (
 SET SOLUTION_PATH=%~dp0..\..\Solution
 
 @REM 프로젝트가 존재하지 않으면 프로젝트를 생성합니다.
-if not exist %SOLUTION_PATH% (
-    mkdir %SOLUTION_PATH%
+if not exist "%SOLUTION_PATH%" (
+    mkdir "%SOLUTION_PATH%"
 )
 
 @REM 빌드할 모드입니다.

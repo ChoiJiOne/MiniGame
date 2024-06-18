@@ -46,8 +46,8 @@ ECHO Switch %RUN% run Visual Studio Solution...
 
 SET SOLUTION_PATH=%~dp0..\..\Solution
 
-if not exist %SOLUTION_PATH% (
-    mkdir %SOLUTION_PATH%
+if not exist "%SOLUTION_PATH%" (
+    mkdir "%SOLUTION_PATH%"
 )
 
 SET CURRENT_PATH=%~dp0
