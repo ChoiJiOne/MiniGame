@@ -52,8 +52,8 @@ if not exist %SOLUTION_PATH% (
 
 SET CURRENT_PATH=%~dp0
 
-PUSHD %CURRENT_PATH%
-PUSHD %SOLUTION_PATH%
+PUSHD "%CURRENT_PATH%"
+PUSHD "%SOLUTION_PATH%"
 
 cmake .. -G %visualstudio% -A "x64"
 
