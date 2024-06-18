@@ -14,3 +14,4 @@ set(PROJECT_NAME "CoinDash3D")
 
 add_subdirectory(Engine)
 add_subdirectory(${PROJECT_NAME})
+add_subdirectory(Impl)
