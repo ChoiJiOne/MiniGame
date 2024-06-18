@@ -19,7 +19,7 @@ if not defined name (
     GOTO:EOF
 )
 
-if exist %PROJECT_PATH% (
+if exist "%PROJECT_PATH%" (
     ECHO Already setup project!    
     ECHO.
     ECHO ===================
@@ -27,12 +27,12 @@ if exist %PROJECT_PATH% (
     ECHO ===================
     GOTO:EOF
 ) else (
-    mkdir %PROJECT_PATH%
-    mkdir %PROJECT_PATH%\\Inc
-    mkdir %PROJECT_PATH%\\Src
+    mkdir "%PROJECT_PATH%"
+    mkdir "%PROJECT_PATH%\Inc"
+    mkdir "%PROJECT_PATH%\Src"
 )
 
-%LUA_PATH% %~dp0Setup.lua %NAME% %ROOT_PATH% %PROJECT_PATH%
+"%LUA_PATH%" "%~dp0\Setup.lua" "%NAME%" "%ROOT_PATH%" "%PROJECT_PATH%"
 
 ECHO.
 ECHO ===================
