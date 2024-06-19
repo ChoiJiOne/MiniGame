@@ -32,5 +32,7 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 		}
 	);
 
+	PlatformModule::Uninit();
+	CrashModule::Uninit();
 	return 0;
 }
