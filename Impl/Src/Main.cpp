@@ -11,6 +11,7 @@
 #include "RenderModule.h"
 
 #include "GeometryRenderer2D.h"
+#include "Renderer2D.h"
 
 int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR pCmdLine, _In_ int32_t nCmdShow)
 {
@@ -26,8 +27,39 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 
 	PlatformModule::SetEndLoopCallback([&]() { RenderModule::Uninit(); });
 
-	GeometryRenderer2D* renderer = RenderModule::CreateResource<GeometryRenderer2D>();
+	//GeometryRenderer2D* renderer = RenderModule::CreateResource<GeometryRenderer2D>();
 
+	Renderer2D* renderer = RenderModule::CreateResource<Renderer2D>();
+
+	std::vector<Vec2f> positions;
+	std::vector<Vec4f> colors;
+
+	// ·»´ý.
+	//for (uint32_t count = 0; count < 100; ++count)
+	//{
+	//	positions.push_back(Vec2f(MathModule::GenerateRandomFloat(0.0f, 800.0f), MathModule::GenerateRandomFloat(0.0f, 600.0f)));
+	//	colors.push_back(Vec4f(
+	//		MathModule::GenerateRandomFloat(0.0f, 1.0f),
+	//		MathModule::GenerateRandomFloat(0.0f, 1.0f),
+	//		MathModule::GenerateRandomFloat(0.0f, 1.0f),
+	//		MathModule::GenerateRandomFloat(0.0f, 1.0f)
+	//	));
+	//}
+
+	for (float x = 0.0f; x <= 800.0f; x += 10.0f)
+	{
+		positions.push_back(Vec2f(x, 10.0f));
+		//colors.push_back(Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+
+		colors.push_back(Vec4f(
+			MathModule::GenerateRandomFloat(0.0f, 1.0f),
+			MathModule::GenerateRandomFloat(0.0f, 1.0f),
+			MathModule::GenerateRandomFloat(0.0f, 1.0f),
+			//MathModule::GenerateRandomFloat(0.0f, 1.0f)
+			1.0f
+		));
+	}
+	
 	PlatformModule::RunLoop(
 		[&](float deltaSeconds) 
 		{
@@ -35,7 +67,14 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 
 			RenderModule::BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
 
-			renderer->DrawLine2D(Vec2f(0.0f, 0.0f), Vec2f(400.0f, 300.0f), Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
+			renderer->DrawPoint(positions.data(), colors.data(), positions.size(), 5.0f);
+			renderer->DrawLine(positions.data(), colors.data(), positions.size());
+
+			//renderer->DrawLine2D(Vec2f(0.0f, 0.0f), Vec2f(400.0f, 300.0f), Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
+
+			renderer->DrawLine(Vec2f(0.0f, 0.0f), Vec2f(0.0f, 561.0f), Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
+			renderer->DrawLine(Vec2f(0.0f + 0.1f, 0.0f), Vec2f(0.0f + 0.1f, 561.0f), Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
+			renderer->DrawLine(Vec2f(784.0f, 0.0f), Vec2f(784.0f, 561.0f), Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
 
 			RenderModule::EndFrame();
 		}
