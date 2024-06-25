@@ -80,12 +80,25 @@ void Renderer2D::DrawPoint(const Vec2f* positions, const Vec4f* colors, uint32_t
 
 	for (uint32_t index = 0; index < size; ++index)
 	{
-		vertices_[index].position = Vec2f(positions[index]);
+		vertices_[index].position = Vec2f(positions[index].x + 0.5f, positions[index].y + 0.5f);
 		vertices_[index].color = colors[index];
 	}
 
 	pointSize_ = pointSize;
 	Draw(Mat4x4::Identity(), EDrawMode::POINTS, size);
+}
+
+void Renderer2D::DrawLine(const Vec2f* positions, const Vec4f* colors, uint32_t size)
+{
+	CHECK(size <= MAX_VERTEX_SIZE);
+
+	for (uint32_t index = 0; index < size; ++index)
+	{
+		vertices_[index].position = Vec2f(positions[index].x + 0.5f, positions[index].y + 0.5f);
+		vertices_[index].color = colors[index];
+	}
+
+	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, size);
 }
 
 void Renderer2D::Draw(const Mat4x4& transform, const EDrawMode& drawMode, uint32_t vertexCount)

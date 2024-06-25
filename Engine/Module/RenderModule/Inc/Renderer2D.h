@@ -58,6 +58,16 @@ public:
 	 */
 	void DrawPoint(const Vec2f* positions, const Vec4f* colors, uint32_t size, float pointSize = 1.0f);
 
+
+	/**
+	 * @brief 2D 점들을 연결한 선을 그립니다.
+	 * 
+	 * @param positions 점의 배열 포인터입니다.
+	 * @param colors 색상 배열 포인터입니다. 이때, 점과 색상의 수는 같아야 합니다.
+	 * @param size 점의 개수입니다.
+	 */
+	void DrawLine(const Vec2f* positions, const Vec4f* colors, uint32_t size);
+
 	
 private:
 	/**
