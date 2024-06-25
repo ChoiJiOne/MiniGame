@@ -68,6 +68,16 @@ public:
 	 */
 	void DrawLine(const Vec2f* positions, const Vec4f* colors, uint32_t size);
 
+
+	/**
+	 * @brief 2D 선을 그립니다.
+	 *
+	 * @param fromPosition 선의 시작점입니다.
+	 * @param toPosition 선의 끝점입니다.
+	 * @param color 선의 색상입니다.
+	 */
+	void DrawLine(const Vec2f& fromPosition, const Vec2f& toPosition, const Vec4f& color);
+
 	
 private:
 	/**
