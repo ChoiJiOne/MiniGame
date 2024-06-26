@@ -88,6 +88,16 @@ public:
 	 * @param endColor 선의 끝점 색상입니다.
 	 */
 	void DrawLine(const Vec2f& startPosition, const Vec4f& startColor, const Vec2f& endPosition, const Vec4f& endColor);
+
+
+	/**
+	 * @brief 2D 선들을 그립니다.
+	 * 
+	 * @param positions 연결되지 않은 선의 양 끝점 목록입니다.
+	 * @param size 연결되지 않은 선의 양 끝점 목록의 수입니다.
+	 * @param color 선의 색상입니다.
+	 */
+	void DrawLines(const Vec2f* positions, uint32_t size, const Vec4f& color);
 	
 	
 private:
