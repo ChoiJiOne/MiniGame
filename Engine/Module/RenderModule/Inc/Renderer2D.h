@@ -149,6 +149,23 @@ public:
 	void DrawTriangleWireframe(const Vec2f& fromPosition, const Vec2f& byPosition, const Vec2f& toPosition, const Vec4f& color);
 
 
+	/**
+	 * @brief 2D 와이어 프레임 삼각형을 그립니다.
+	 *
+	 * @param fromPosition 삼각형 시작 점입니다.
+	 * @param fromColor 삼각형 시작 점의 색상입니다.
+	 * @param byPosition 삼각형 중간 점입니다.
+	 * @param byColor 삼각형 중간 점의 색상입니다.
+	 * @param toPosition 삼각형 끝 점입니다.
+	 * @param toColor 삼각형 끝 점의 색상입니다.
+	 */
+	void DrawTriangleWireframe(
+		const Vec2f& fromPosition, const Vec4f& fromColor,
+		const Vec2f& byPosition,   const Vec4f& byColor,
+		const Vec2f& toPosition,   const Vec4f& toColor
+	);
+
+
 private:
 	/**
 	 * @brief 2D 렌더러 내부에서 사용하는 정점입니다.

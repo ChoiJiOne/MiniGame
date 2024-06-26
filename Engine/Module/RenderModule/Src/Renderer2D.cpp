@@ -205,6 +205,28 @@ void Renderer2D::DrawTriangleWireframe(const Vec2f& fromPosition, const Vec2f& b
 	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
 }
 
+void Renderer2D::DrawTriangleWireframe(
+	const Vec2f& fromPosition, const Vec4f& fromColor, 
+	const Vec2f& byPosition,   const Vec4f& byColor, 
+	const Vec2f& toPosition,   const Vec4f& toColor)
+{
+	uint32_t vertexCount = 0;
+
+	vertices_[vertexCount].position = Vec2f(fromPosition.x + 0.375f, fromPosition.y + 0.375f);
+	vertices_[vertexCount++].color = fromColor;
+
+	vertices_[vertexCount].position = Vec2f(byPosition.x + 0.375f, byPosition.y + 0.375f);
+	vertices_[vertexCount++].color = byColor;
+
+	vertices_[vertexCount].position = Vec2f(toPosition.x + 0.375f, toPosition.y + 0.375f);
+	vertices_[vertexCount++].color = toColor;
+
+	vertices_[vertexCount].position = Vec2f(fromPosition.x + 0.375f, fromPosition.y + 0.375f);
+	vertices_[vertexCount++].color = fromColor;
+
+	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
+}
+
 void Renderer2D::Draw(const Mat4x4& transform, const EDrawMode& drawMode, uint32_t vertexCount)
 {
 	CHECK(drawMode != EDrawMode::NONE);
