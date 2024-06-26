@@ -150,6 +150,22 @@ void Renderer2D::DrawLines(const Vec2f* positions, const Vec4f* colors, uint32_t
 	Draw(Mat4x4::Identity(), EDrawMode::LINES, size);
 }
 
+void Renderer2D::DrawTriangle(const Vec2f& fromPosition, const Vec2f& byPosition, const Vec2f& toPosition, const Vec4f& color)
+{
+	uint32_t vertexCount = 0;
+
+	vertices_[vertexCount].position = Vec2f(fromPosition.x + 0.375f, fromPosition.y + 0.375f);
+	vertices_[vertexCount++].color = color;
+
+	vertices_[vertexCount].position = Vec2f(byPosition.x + 0.375f, byPosition.y + 0.375f);
+	vertices_[vertexCount++].color = color;
+
+	vertices_[vertexCount].position = Vec2f(toPosition.x + 0.375f, toPosition.y + 0.375f);
+	vertices_[vertexCount++].color = color;
+
+	Draw(Mat4x4::Identity(), EDrawMode::TRIANGLES, vertexCount);
+}
+
 void Renderer2D::Draw(const Mat4x4& transform, const EDrawMode& drawMode, uint32_t vertexCount)
 {
 	CHECK(drawMode != EDrawMode::NONE);
@@ -157,7 +173,11 @@ void Renderer2D::Draw(const Mat4x4& transform, const EDrawMode& drawMode, uint32
 	GLboolean originEnableDepth;
 	GL_FAILED(glGetBooleanv(GL_DEPTH_TEST, &originEnableDepth));
 
+	GLboolean originEnableCull;
+	GL_FAILED(glGetBooleanv(GL_CULL_FACE, &originEnableCull));
+
 	RenderModule::SetDepthMode(false);
+	RenderModule::SetCullFaceMode(false);
 	{
 		shader_->Bind();
 
@@ -179,6 +199,7 @@ void Renderer2D::Draw(const Mat4x4& transform, const EDrawMode& drawMode, uint32
 
 		shader_->Unbind();
 	}
+	RenderModule::SetCullFaceMode(originEnableCull);
 	RenderModule::SetDepthMode(originEnableDepth);
 }
 

@@ -108,7 +108,18 @@ public:
 	 * @param size 연결되지 않은 선의 양 끝점 목록의 수입니다.
 	 */
 	void DrawLines(const Vec2f* positions, const Vec4f* colors, uint32_t size);
-	
+
+
+	/**
+	 * @brief 2D 삼각형을 그립니다.
+	 * 
+	 * @param fromPosition 삼각형 시작 점입니다.
+	 * @param byPosition 삼각형 중간 점입니다.
+	 * @param toPosition 삼각형 끝 점입니다.
+	 * @param color 삼각형의 색상입니다.
+	 */
+	void DrawTriangle(const Vec2f& fromPosition, const Vec2f& byPosition, const Vec2f& toPosition, const Vec4f& color);
+
 	
 private:
 	/**
