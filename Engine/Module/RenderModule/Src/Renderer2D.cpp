@@ -9,9 +9,6 @@
 #include "Renderer2D.h"
 #include "Shader.h"
 
-
-#pragma warning(pop)
-
 Renderer2D::Renderer2D()
 {
 	std::string vsPath = "Resource/Shader/Renderer2D.vert";
@@ -80,7 +77,7 @@ void Renderer2D::DrawPoint(const Vec2f* positions, const Vec4f* colors, uint32_t
 
 	for (uint32_t index = 0; index < size; ++index)
 	{
-		vertices_[index].position = Vec2f(positions[index].x, positions[index].y);
+		vertices_[index].position = Vec2f(positions[index].x + 0.375f, positions[index].y + 0.375f);
 		vertices_[index].color = colors[index];
 	}
 
@@ -94,23 +91,36 @@ void Renderer2D::DrawLine(const Vec2f* positions, const Vec4f* colors, uint32_t 
 
 	for (uint32_t index = 0; index < size; ++index)
 	{
-		vertices_[index].position = Vec2f(positions[index].x, positions[index].y);
+		vertices_[index].position = Vec2f(positions[index].x + 0.375f, positions[index].y + 0.375f);
 		vertices_[index].color = colors[index];
 	}
 
 	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, size);
 }
 
-void Renderer2D::DrawLine(const Vec2f& fromPosition, const Vec2f& toPosition, const Vec4f& color)
+void Renderer2D::DrawLine(const Vec2f& startPosition, const Vec2f& endPosition, const Vec4f& color)
 {
 	uint32_t vertexCount = 0;
 
-	vertices_[vertexCount].position = Vec2f(fromPosition.x, fromPosition.y);
+	vertices_[vertexCount].position = Vec2f(startPosition.x + 0.375f, startPosition.y + 0.375f);
 	vertices_[vertexCount++].color = color;
 
-	vertices_[vertexCount].position = Vec2f(toPosition.x , toPosition.y);
+	vertices_[vertexCount].position = Vec2f(endPosition.x + 0.375f, endPosition.y + 0.375f);
 	vertices_[vertexCount++].color = color;
 	
+	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
+}
+
+void Renderer2D::DrawLine(const Vec2f& startPosition, const Vec4f& startColor, const Vec2f& endPosition, const Vec4f& endColor)
+{
+	uint32_t vertexCount = 0;
+
+	vertices_[vertexCount].position = Vec2f(startPosition.x + 0.375f, startPosition.y + 0.375f);
+	vertices_[vertexCount++].color = startColor;
+
+	vertices_[vertexCount].position = Vec2f(endPosition.x + 0.375f, endPosition.y + 0.375f);
+	vertices_[vertexCount++].color = endColor;
+
 	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
 }
 
@@ -145,3 +155,5 @@ void Renderer2D::Draw(const Mat4x4& transform, const EDrawMode& drawMode, uint32
 	}
 	RenderModule::SetDepthMode(originEnableDepth);
 }
+
+#pragma warning(pop)

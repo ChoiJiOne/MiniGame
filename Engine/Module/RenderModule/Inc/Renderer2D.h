@@ -72,12 +72,23 @@ public:
 	/**
 	 * @brief 2D 선을 그립니다.
 	 *
-	 * @param fromPosition 선의 시작점입니다.
-	 * @param toPosition 선의 끝점입니다.
+	 * @param startPosition 선의 시작점입니다.
+	 * @param endPosition 선의 끝점입니다.
 	 * @param color 선의 색상입니다.
 	 */
-	void DrawLine(const Vec2f& fromPosition, const Vec2f& toPosition, const Vec4f& color);
+	void DrawLine(const Vec2f& startPosition, const Vec2f& endPosition, const Vec4f& color);
 
+
+	/**
+	 * @brief 2D 선을 그립니다.
+	 * 
+	 * @param startPosition 선의 시작점입니다.
+	 * @param startColor 선의 시작점 색상입니다.
+	 * @param endPosition 선의 끝점입니다.
+	 * @param endColor 선의 끝점 색상입니다.
+	 */
+	void DrawLine(const Vec2f& startPosition, const Vec4f& startColor, const Vec2f& endPosition, const Vec4f& endColor);
+	
 	
 private:
 	/**
