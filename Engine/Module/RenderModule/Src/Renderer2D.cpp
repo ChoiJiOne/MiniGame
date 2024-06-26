@@ -70,6 +70,21 @@ void Renderer2D::Release()
 	bIsInitialized_ = false;
 }
 
+void Renderer2D::DrawPoint(const Vec2f* positions, uint32_t size, const Vec4f& color, float pointSize)
+{
+	CHECK(size <= MAX_VERTEX_SIZE);
+	CHECK(pointSize >= 0.0f);
+
+	for (uint32_t index = 0; index < size; ++index)
+	{
+		vertices_[index].position = Vec2f(positions[index].x + 0.375f, positions[index].y + 0.375f);
+		vertices_[index].color = color;
+	}
+
+	pointSize_ = pointSize;
+	Draw(Mat4x4::Identity(), EDrawMode::POINTS, size);
+}
+
 void Renderer2D::DrawPoint(const Vec2f* positions, const Vec4f* colors, uint32_t size, float pointSize)
 {
 	CHECK(size <= MAX_VERTEX_SIZE);
