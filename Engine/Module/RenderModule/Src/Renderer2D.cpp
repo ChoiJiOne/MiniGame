@@ -98,27 +98,27 @@ void Renderer2D::DrawLine(const Vec2f* positions, const Vec4f* colors, uint32_t 
 	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, size);
 }
 
-void Renderer2D::DrawLine(const Vec2f& startPosition, const Vec2f& endPosition, const Vec4f& color)
+void Renderer2D::DrawLine(const Vec2f& startPos, const Vec2f& endPos, const Vec4f& color)
 {
 	uint32_t vertexCount = 0;
 
-	vertices_[vertexCount].position = Vec2f(startPosition.x + 0.375f, startPosition.y + 0.375f);
+	vertices_[vertexCount].position = Vec2f(startPos.x + 0.375f, startPos.y + 0.375f);
 	vertices_[vertexCount++].color = color;
 
-	vertices_[vertexCount].position = Vec2f(endPosition.x + 0.375f, endPosition.y + 0.375f);
+	vertices_[vertexCount].position = Vec2f(endPos.x + 0.375f, endPos.y + 0.375f);
 	vertices_[vertexCount++].color = color;
 	
 	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
 }
 
-void Renderer2D::DrawLine(const Vec2f& startPosition, const Vec4f& startColor, const Vec2f& endPosition, const Vec4f& endColor)
+void Renderer2D::DrawLine(const Vec2f& startPos, const Vec4f& startColor, const Vec2f& endPos, const Vec4f& endColor)
 {
 	uint32_t vertexCount = 0;
 
-	vertices_[vertexCount].position = Vec2f(startPosition.x + 0.375f, startPosition.y + 0.375f);
+	vertices_[vertexCount].position = Vec2f(startPos.x + 0.375f, startPos.y + 0.375f);
 	vertices_[vertexCount++].color = startColor;
 
-	vertices_[vertexCount].position = Vec2f(endPosition.x + 0.375f, endPosition.y + 0.375f);
+	vertices_[vertexCount].position = Vec2f(endPos.x + 0.375f, endPos.y + 0.375f);
 	vertices_[vertexCount++].color = endColor;
 
 	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
@@ -150,78 +150,71 @@ void Renderer2D::DrawLines(const Vec2f* positions, const Vec4f* colors, uint32_t
 	Draw(Mat4x4::Identity(), EDrawMode::LINES, size);
 }
 
-void Renderer2D::DrawTriangle(const Vec2f& fromPosition, const Vec2f& byPosition, const Vec2f& toPosition, const Vec4f& color)
+void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec2f& byPos, const Vec2f& toPos, const Vec4f& color)
 {
 	uint32_t vertexCount = 0;
 
-	vertices_[vertexCount].position = Vec2f(fromPosition.x + 0.375f, fromPosition.y + 0.375f);
+	vertices_[vertexCount].position = Vec2f(fromPos.x + 0.375f, fromPos.y + 0.375f);
 	vertices_[vertexCount++].color = color;
 
-	vertices_[vertexCount].position = Vec2f(byPosition.x + 0.375f, byPosition.y + 0.375f);
+	vertices_[vertexCount].position = Vec2f(byPos.x + 0.375f, byPos.y + 0.375f);
 	vertices_[vertexCount++].color = color;
 
-	vertices_[vertexCount].position = Vec2f(toPosition.x + 0.375f, toPosition.y + 0.375f);
+	vertices_[vertexCount].position = Vec2f(toPos.x + 0.375f, toPos.y + 0.375f);
 	vertices_[vertexCount++].color = color;
 
 	Draw(Mat4x4::Identity(), EDrawMode::TRIANGLES, vertexCount);
 }
 
-void Renderer2D::DrawTriangle(
-	const Vec2f& fromPosition, const Vec4f& fromColor, 
-	const Vec2f& byPosition,   const Vec4f& byColor, 
-	const Vec2f& toPosition,   const Vec4f& toColor
-)
+void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec4f& fromColor, const Vec2f& byPos, const Vec4f& byColor, const Vec2f& toPos, const Vec4f& toColor)
 {
 	uint32_t vertexCount = 0;
 
-	vertices_[vertexCount].position = Vec2f(fromPosition.x + 0.375f, fromPosition.y + 0.375f);
+	vertices_[vertexCount].position = Vec2f(fromPos.x + 0.375f, fromPos.y + 0.375f);
 	vertices_[vertexCount++].color = fromColor;
 
-	vertices_[vertexCount].position = Vec2f(byPosition.x + 0.375f, byPosition.y + 0.375f);
+	vertices_[vertexCount].position = Vec2f(byPos.x + 0.375f, byPos.y + 0.375f);
 	vertices_[vertexCount++].color = byColor;
 
-	vertices_[vertexCount].position = Vec2f(toPosition.x + 0.375f, toPosition.y + 0.375f);
+	vertices_[vertexCount].position = Vec2f(toPos.x + 0.375f, toPos.y + 0.375f);
 	vertices_[vertexCount++].color = toColor;
 
 	Draw(Mat4x4::Identity(), EDrawMode::TRIANGLES, vertexCount);
 }
 
-void Renderer2D::DrawTriangleWireframe(const Vec2f& fromPosition, const Vec2f& byPosition, const Vec2f& toPosition, const Vec4f& color)
+void Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Vec2f& byPos, const Vec2f& toPos, const Vec4f& color)
 {
 	uint32_t vertexCount = 0;
 
-	vertices_[vertexCount].position = Vec2f(fromPosition.x + 0.375f, fromPosition.y + 0.375f);
+	vertices_[vertexCount].position = Vec2f(fromPos.x + 0.375f, fromPos.y + 0.375f);
 	vertices_[vertexCount++].color = color;
 
-	vertices_[vertexCount].position = Vec2f(byPosition.x + 0.375f, byPosition.y + 0.375f);
+	vertices_[vertexCount].position = Vec2f(byPos.x + 0.375f, byPos.y + 0.375f);
 	vertices_[vertexCount++].color = color;
 
-	vertices_[vertexCount].position = Vec2f(toPosition.x + 0.375f, toPosition.y + 0.375f);
+	vertices_[vertexCount].position = Vec2f(toPos.x + 0.375f, toPos.y + 0.375f);
 	vertices_[vertexCount++].color = color;
 
-	vertices_[vertexCount].position = Vec2f(fromPosition.x + 0.375f, fromPosition.y + 0.375f);
+	vertices_[vertexCount].position = Vec2f(fromPos.x + 0.375f, fromPos.y + 0.375f);
 	vertices_[vertexCount++].color = color;
 
 	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
 }
 
-void Renderer2D::DrawTriangleWireframe(
-	const Vec2f& fromPosition, const Vec4f& fromColor, 
-	const Vec2f& byPosition,   const Vec4f& byColor, 
-	const Vec2f& toPosition,   const Vec4f& toColor)
+void Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Vec4f& fromColor, const Vec2f& byPos, const Vec4f& byColor, const Vec2f& toPos, const Vec4f& toColor)
 {
 	uint32_t vertexCount = 0;
 
-	vertices_[vertexCount].position = Vec2f(fromPosition.x + 0.375f, fromPosition.y + 0.375f);
+	vertices_[vertexCount].position = Vec2f(fromPos.x + 0.375f, fromPos.y + 0.375f);
 	vertices_[vertexCount++].color = fromColor;
 
-	vertices_[vertexCount].position = Vec2f(byPosition.x + 0.375f, byPosition.y + 0.375f);
+	vertices_[vertexCount].position = Vec2f(byPos.x + 0.375f, byPos.y + 0.375f);
 	vertices_[vertexCount++].color = byColor;
 
-	vertices_[vertexCount].position = Vec2f(toPosition.x + 0.375f, toPosition.y + 0.375f);
+	vertices_[vertexCount].position = Vec2f(toPos.x + 0.375f, toPos.y + 0.375f);
 	vertices_[vertexCount++].color = toColor;
 
-	vertices_[vertexCount].position = Vec2f(fromPosition.x + 0.375f, fromPosition.y + 0.375f);
+	vertices_[vertexCount].position = Vec2f(fromPos.x + 0.375f, fromPos.y + 0.375f);
 	vertices_[vertexCount++].color = fromColor;
 
 	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
