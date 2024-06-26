@@ -343,6 +343,58 @@ void Renderer2D::DrawRoundRect(const Vec2f& center, float w, float h, float side
 	Draw(transform, EDrawMode::TRIANGLE_FAN, vertexCount);
 }
 
+void Renderer2D::DrawRoundRectWireframe(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate)
+{
+	uint32_t vertexCount = 0;
+
+	Vec2f c = center + Vec2f(0.375f, 0.375f);
+	float w2 = w * 0.5f;
+	float h2 = h * 0.5f;
+	side = MathModule::Min<float>(side, MathModule::Min<float>(w2, h2));
+	
+	auto calculateBezierCurve = [&](const Vec2f& startPos, const Vec2f& endPos, const Vec2f& controlPos, uint32_t sliceCount)
+		{
+			for (int32_t slice = 0; slice <= sliceCount; ++slice)
+			{
+				float t = static_cast<float>(slice) / static_cast<float>(sliceCount);
+				Vec2f p = startPos * (1.0f - t) + controlPos * t;
+				Vec2f q = controlPos * (1.0f - t) + endPos * t;
+				Vec2f r = p * (1.0f - t) + q * t;
+
+				vertices_[vertexCount].position = Vec2f(r.x, r.y) + Vec2f(0.375f, 0.375f);
+				vertices_[vertexCount++].color = color;
+			}
+		};
+
+	Vec2f control = c + Vec2f(-w2, -h2);
+	Vec2f start = control + Vec2f(side, 0.0f);
+	Vec2f end = control + Vec2f(0.0f, side);
+	calculateBezierCurve(start, end, control, MAX_SLICE_SIZE);
+
+	control = c + Vec2f(-w2, +h2);
+	start = control + Vec2f(0.0f, -side);
+	end = control + Vec2f(side, 0.0f);
+	calculateBezierCurve(start, end, control, MAX_SLICE_SIZE);
+
+	control = c + Vec2f(+w2, +h2);
+	start = control + Vec2f(-side, 0.0f);
+	end = control + Vec2f(0.0f, -side);
+	calculateBezierCurve(start, end, control, MAX_SLICE_SIZE);
+
+	control = c + Vec2f(+w2, -h2);
+	start = control + Vec2f(0.0f, +side);
+	end = control + Vec2f(-side, 0.0f);
+	calculateBezierCurve(start, end, control, MAX_SLICE_SIZE);
+
+	control = c + Vec2f(-w2, -h2);
+	vertices_[vertexCount].position = Vec2f(control.x + side, control.y) + Vec2f(0.375f, 0.375f);
+	vertices_[vertexCount++].color = color;
+
+	Mat4x4 transform = Mat4x4::Translation(-c.x, -c.y, 0.0f) * Mat4x4::RotateZ(rotate) * Mat4x4::Translation(+c.x, +c.y, 0.0f);
+
+	Draw(transform, EDrawMode::LINE_STRIP, vertexCount);
+}
+
 void Renderer2D::Draw(const Mat4x4& transform, const EDrawMode& drawMode, uint32_t vertexCount)
 {
 	CHECK(drawMode != EDrawMode::NONE);
