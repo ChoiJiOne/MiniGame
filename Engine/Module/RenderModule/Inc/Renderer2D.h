@@ -98,6 +98,16 @@ public:
 	 * @param color 선의 색상입니다.
 	 */
 	void DrawLines(const Vec2f* positions, uint32_t size, const Vec4f& color);
+
+
+	/**
+	 * @brief 2D 선들을 그립니다.
+	 *
+	 * @param positions 연결되지 않은 선의 양 끝점 목록입니다.
+	 * @param colors 색상 배열 포인터입니다. 이때, 선의 양 끝점 수와 색상의 수는 같아야 합니다.
+	 * @param size 연결되지 않은 선의 양 끝점 목록의 수입니다.
+	 */
+	void DrawLines(const Vec2f* positions, const Vec4f* colors, uint32_t size);
 	
 	
 private:

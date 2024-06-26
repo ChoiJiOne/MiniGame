@@ -137,6 +137,19 @@ void Renderer2D::DrawLines(const Vec2f* positions, uint32_t size, const Vec4f& c
 	Draw(Mat4x4::Identity(), EDrawMode::LINES, size);
 }
 
+void Renderer2D::DrawLines(const Vec2f* positions, const Vec4f* colors, uint32_t size)
+{
+	CHECK(size <= MAX_VERTEX_SIZE);
+
+	for (uint32_t index = 0; index < size; ++index)
+	{
+		vertices_[index].position = Vec2f(positions[index].x + 0.375f, positions[index].y + 0.375f);
+		vertices_[index].color = colors[index];
+	}
+
+	Draw(Mat4x4::Identity(), EDrawMode::LINES, size);
+}
+
 void Renderer2D::Draw(const Mat4x4& transform, const EDrawMode& drawMode, uint32_t vertexCount)
 {
 	CHECK(drawMode != EDrawMode::NONE);
