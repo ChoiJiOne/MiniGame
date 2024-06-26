@@ -181,6 +181,18 @@ public:
 	void DrawRect(const Vec2f& center, float w, float h, const Vec4f& color, float rotate = 0.0f);
 
 
+	/**
+	 * @brief 2D 와이어프레임 직사각형을 그립니다.
+	 * 
+	 * @param center 직사각형의 중심 좌표입니다.
+	 * @param w 직사각형의 가로 크기입니다.
+	 * @param h 직사각형의 세로 크기입니다.
+	 * @param color 직사각형의 색상입니다.
+	 * @param rotate 직사각형의 회전 각도입니다. 기본 값은 0.0입니다.
+	 */
+	void DrawRectWireframe(const Vec2f& center, float w, float h, const Vec4f& color, float rotate = 0.0f);
+
+
 private:
 	/**
 	 * @brief 2D 렌더러 내부에서 사용하는 정점입니다.

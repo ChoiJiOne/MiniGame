@@ -260,6 +260,34 @@ void Renderer2D::DrawRect(const Vec2f& center, float w, float h, const Vec4f& co
 	Draw(transform, EDrawMode::TRIANGLE_FAN, vertexCount);
 }
 
+void Renderer2D::DrawRectWireframe(const Vec2f& center, float w, float h, const Vec4f& color, float rotate)
+{
+	uint32_t vertexCount = 0;
+
+	Vec2f c = center + Vec2f(0.375f, 0.375f);
+	float w2 = w * 0.5f;
+	float h2 = h * 0.5f;
+
+	vertices_[vertexCount].position = c + Vec2f(-w2, +h2);
+	vertices_[vertexCount++].color = color;
+
+	vertices_[vertexCount].position = c + Vec2f(+w2, +h2);
+	vertices_[vertexCount++].color = color;
+
+	vertices_[vertexCount].position = c + Vec2f(+w2, -h2);
+	vertices_[vertexCount++].color = color;
+
+	vertices_[vertexCount].position = c + Vec2f(-w2, -h2);
+	vertices_[vertexCount++].color = color;
+
+	vertices_[vertexCount].position = c + Vec2f(-w2, +h2);
+	vertices_[vertexCount++].color = color;
+
+	Mat4x4 transform = Mat4x4::Translation(-c.x, -c.y, 0.0f) * Mat4x4::RotateZ(rotate) * Mat4x4::Translation(+c.x, +c.y, 0.0f);
+
+	Draw(transform, EDrawMode::LINE_STRIP, vertexCount);
+}
+
 void Renderer2D::Draw(const Mat4x4& transform, const EDrawMode& drawMode, uint32_t vertexCount)
 {
 	CHECK(drawMode != EDrawMode::NONE);
