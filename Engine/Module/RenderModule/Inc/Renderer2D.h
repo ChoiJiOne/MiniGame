@@ -241,6 +241,19 @@ public:
 	void DrawCircleWireframe(const Vec2f& center, float radius, const Vec4f& color, int32_t sliceCount = 300);
 
 
+	/**
+	 * @brief 2D 타원을 그립니다.
+	 *
+	 * @param center 타원의 중심 좌표입니다.
+	 * @param xAxis 타원의 x축 길이입니다. 만약, 이 길이가 y축 길이보다 크다면 장축이 되고, 그렇지 않으면 단축이 됩니다.
+	 * @param yAxis 타원의 y축 길이입니다. 만약, 이 길이가 x축 길이보다 크다면 장축이 되고, 그렇지 않으면 단축이 됩니다.
+	 * @param color 타원의 색상입니다.
+	 * @param rotate 타원의 라디안 회전 각도입니다. 기본 값은 1.0입니다.
+	 * @param sliceCount 타원 둘레의 절단 횟수입니다. 기본 값은 300입니다.
+	 */
+	void DrawEllipse(const Vec2f& center, float xAxis, float yAxis, const Vec4f& color, float rotate = 0.0f, int32_t sliceCount = 300);
+
+
 private:
 	/**
 	 * @brief 2D 렌더러 내부에서 사용하는 정점입니다.
