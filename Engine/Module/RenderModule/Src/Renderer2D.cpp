@@ -395,6 +395,30 @@ void Renderer2D::DrawRoundRectWireframe(const Vec2f& center, float w, float h, f
 	Draw(transform, EDrawMode::LINE_STRIP, vertexCount);
 }
 
+void Renderer2D::DrawCircle(const Vec2f& center, float radius, const Vec4f& color, int32_t sliceCount)
+{
+	CHECK(radius >= 0.0f);
+	CHECK(sliceCount <= MAX_VERTEX_SIZE - 2);
+
+	for (int32_t slice = 1; slice <= sliceCount; ++slice)
+	{
+		float radian = (static_cast<float>(slice - 1) * TwoPi) / static_cast<float>(sliceCount);
+		float x = radius * MathModule::Cos(radian);
+		float y = radius * MathModule::Sin(radian);
+
+		vertices_[slice].position = Vec2f(center.x + x, center.y + y) + Vec2f(0.375f, 0.375f);
+		vertices_[slice].color = color;
+	}
+
+	vertices_[0].position = Vec2f(center.x, center.y) + Vec2f(0.375f, 0.375f);
+	vertices_[0].color = color;
+
+	vertices_[sliceCount + 1] = vertices_[1];
+	uint32_t vertexCount = static_cast<uint32_t>(sliceCount + 2);
+
+	Draw(Mat4x4::Identity(), EDrawMode::TRIANGLE_FAN, vertexCount);
+}
+
 void Renderer2D::Draw(const Mat4x4& transform, const EDrawMode& drawMode, uint32_t vertexCount)
 {
 	CHECK(drawMode != EDrawMode::NONE);
