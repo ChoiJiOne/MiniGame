@@ -469,6 +469,31 @@ void Renderer2D::DrawEllipse(const Vec2f& center, float xAxis, float yAxis, cons
 	Draw(transform, EDrawMode::TRIANGLE_FAN, vertexCount);
 }
 
+void Renderer2D::DrawEllipseWireframe(const Vec2f& center, float xAxis, float yAxis, const Vec4f& color, float rotate, int32_t sliceCount)
+{
+	CHECK(xAxis >= 0.0f && yAxis >= 0.0f);
+	CHECK(sliceCount <= MAX_VERTEX_SIZE - 2);
+
+	float x2 = xAxis * 0.5f;
+	float y2 = yAxis * 0.5f;
+
+	for (int32_t index = 0; index < sliceCount; ++index)
+	{
+		float radian = (static_cast<float>(index) * TwoPi) / static_cast<float>(sliceCount);
+		float x = x2 * MathModule::Cos(radian);
+		float y = y2 * MathModule::Sin(radian);
+
+		vertices_[index].position = Vec2f(center.x + x, center.y + y) + Vec2f(0.375f, 0.375f);
+		vertices_[index].color = color;
+	}
+
+	vertices_[sliceCount] = vertices_[0];
+	uint32_t vertexCount = static_cast<uint32_t>(sliceCount + 1);
+
+	Mat4x4 transform = Mat4x4::Translation(-center.x, -center.y, 0.0f) * Mat4x4::RotateZ(rotate) * Mat4x4::Translation(+center.x, +center.y, 0.0f);
+	Draw(transform, EDrawMode::LINE_STRIP, vertexCount);
+}
+
 void Renderer2D::Draw(const Mat4x4& transform, const EDrawMode& drawMode, uint32_t vertexCount)
 {
 	CHECK(drawMode != EDrawMode::NONE);
