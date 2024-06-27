@@ -290,7 +290,7 @@ void RenderModule::SetLastErrorMessage(const std::wstring& message)
 void RenderModule::SetLastWindowsErrorMessage()
 {
 	DWORD errorCode = static_cast<DWORD>(GetLastError());
-	FormatMessageW(
+	::FormatMessageW(
 		FORMAT_MESSAGE_FROM_SYSTEM,
 		nullptr,
 		errorCode,
@@ -321,27 +321,27 @@ RenderModule::Errors RenderModule::CreateContext()
 	pfd.cStencilBits = 8;
 	pfd.iLayerType = PFD_MAIN_PLANE;
 
-	int32_t pixelFormat = ChoosePixelFormat(deviceContext, &pfd);
+	int32_t pixelFormat = ::ChoosePixelFormat(deviceContext, &pfd);
 	if (!pixelFormat)
 	{
 		SetLastWindowsErrorMessage();
 		return Errors::ERR_WGL;
 	}
 
-	if (!SetPixelFormat(deviceContext, pixelFormat, &pfd))
+	if (!::SetPixelFormat(deviceContext, pixelFormat, &pfd))
 	{
 		SetLastWindowsErrorMessage();
 		return Errors::ERR_WGL;
 	}
 
-	HGLRC dummyContext = wglCreateContext(deviceContext);
+	HGLRC dummyContext = ::wglCreateContext(deviceContext);
 	if (!dummyContext)
 	{
 		SetLastWindowsErrorMessage();
 		return Errors::ERR_WGL;
 	}
 
-	if (!wglMakeCurrent(deviceContext, dummyContext))
+	if (!::wglMakeCurrent(deviceContext, dummyContext))
 	{
 		SetLastWindowsErrorMessage();
 		return Errors::ERR_WGL;
@@ -369,13 +369,13 @@ RenderModule::Errors RenderModule::CreateContext()
 		return Errors::ERR_WGL;
 	}
 
-	if (!wglMakeCurrent(nullptr, nullptr))
+	if (!::wglMakeCurrent(nullptr, nullptr))
 	{
 		SetLastWindowsErrorMessage();
 		return Errors::ERR_WGL;
 	}
 
-	if (!wglDeleteContext(dummyContext))
+	if (!::wglDeleteContext(dummyContext))
 	{
 		SetLastWindowsErrorMessage();
 		return Errors::ERR_WGL;
