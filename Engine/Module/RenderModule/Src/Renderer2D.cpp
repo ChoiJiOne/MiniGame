@@ -12,8 +12,8 @@
 
 Renderer2D::Renderer2D()
 {
-	std::string vsPath = "Resource/Shader/Renderer2D.vert";
-	std::string fsPath = "Resource/Shader/Renderer2D.frag";
+	std::string vsPath = "Engine/Resource/Shader/Renderer2D.vert";
+	std::string fsPath = "Engine/Resource/Shader/Renderer2D.frag";
 	shader_ = RenderModule::CreateResource<Shader>(vsPath, fsPath);
 
 	uint32_t byteSize = static_cast<uint32_t>(Vertex::GetStride() * vertices_.size());
