@@ -230,6 +230,17 @@ public:
 	void DrawCircle(const Vec2f& center, float radius, const Vec4f& color, int32_t sliceCount = 300);
 
 
+	/**
+	 * @brief 2D 와이어 프레임 원을 그립니다.
+	 *
+	 * @param center 원의 중심 좌표입니다.
+	 * @param radius 원의 반지름 길이입니다.
+	 * @param color 원의 색상입니다.
+	 * @param sliceCount 원의 둘레 절단 횟수입니다. 기본 값은 300입니다.
+	 */
+	void DrawCircleWireframe(const Vec2f& center, float radius, const Vec4f& color, int32_t sliceCount = 300);
+
+
 private:
 	/**
 	 * @brief 2D 렌더러 내부에서 사용하는 정점입니다.
