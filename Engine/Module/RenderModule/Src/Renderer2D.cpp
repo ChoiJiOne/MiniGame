@@ -8,6 +8,7 @@
 #include "GLAssertion.h"
 #include "Renderer2D.h"
 #include "Shader.h"
+#include "TTFont.h"
 
 Renderer2D::Renderer2D()
 {
@@ -82,7 +83,7 @@ void Renderer2D::DrawPoint(const Vec2f* positions, uint32_t size, const Vec4f& c
 	}
 
 	pointSize_ = pointSize;
-	Draw(Mat4x4::Identity(), EDrawMode::POINTS, size);
+	Draw(Mat4x4::Identity(), EDrawMode::POINTS, size, EMode::GEOMETRY);
 }
 
 void Renderer2D::DrawPoint(const Vec2f* positions, const Vec4f* colors, uint32_t size, float pointSize)
@@ -97,7 +98,7 @@ void Renderer2D::DrawPoint(const Vec2f* positions, const Vec4f* colors, uint32_t
 	}
 
 	pointSize_ = pointSize;
-	Draw(Mat4x4::Identity(), EDrawMode::POINTS, size);
+	Draw(Mat4x4::Identity(), EDrawMode::POINTS, size, EMode::GEOMETRY);
 }
 
 void Renderer2D::DrawLine(const Vec2f* positions, const Vec4f* colors, uint32_t size)
@@ -110,7 +111,7 @@ void Renderer2D::DrawLine(const Vec2f* positions, const Vec4f* colors, uint32_t 
 		vertices_[index].color = colors[index];
 	}
 
-	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, size);
+	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, size, EMode::GEOMETRY);
 }
 
 void Renderer2D::DrawLine(const Vec2f& startPos, const Vec2f& endPos, const Vec4f& color)
@@ -123,7 +124,7 @@ void Renderer2D::DrawLine(const Vec2f& startPos, const Vec2f& endPos, const Vec4
 	vertices_[vertexCount].position = Vec2f(endPos.x + 0.375f, endPos.y + 0.375f);
 	vertices_[vertexCount++].color = color;
 	
-	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
+	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount, EMode::GEOMETRY);
 }
 
 void Renderer2D::DrawLine(const Vec2f& startPos, const Vec4f& startColor, const Vec2f& endPos, const Vec4f& endColor)
@@ -136,7 +137,7 @@ void Renderer2D::DrawLine(const Vec2f& startPos, const Vec4f& startColor, const 
 	vertices_[vertexCount].position = Vec2f(endPos.x + 0.375f, endPos.y + 0.375f);
 	vertices_[vertexCount++].color = endColor;
 
-	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
+	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount, EMode::GEOMETRY);
 }
 
 void Renderer2D::DrawLines(const Vec2f* positions, uint32_t size, const Vec4f& color)
@@ -149,7 +150,7 @@ void Renderer2D::DrawLines(const Vec2f* positions, uint32_t size, const Vec4f& c
 		vertices_[index].color = color;
 	}
 
-	Draw(Mat4x4::Identity(), EDrawMode::LINES, size);
+	Draw(Mat4x4::Identity(), EDrawMode::LINES, size, EMode::GEOMETRY);
 }
 
 void Renderer2D::DrawLines(const Vec2f* positions, const Vec4f* colors, uint32_t size)
@@ -162,7 +163,7 @@ void Renderer2D::DrawLines(const Vec2f* positions, const Vec4f* colors, uint32_t
 		vertices_[index].color = colors[index];
 	}
 
-	Draw(Mat4x4::Identity(), EDrawMode::LINES, size);
+	Draw(Mat4x4::Identity(), EDrawMode::LINES, size, EMode::GEOMETRY);
 }
 
 void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec2f& byPos, const Vec2f& toPos, const Vec4f& color)
@@ -178,7 +179,7 @@ void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec2f& byPos, const Ve
 	vertices_[vertexCount].position = Vec2f(toPos.x + 0.375f, toPos.y + 0.375f);
 	vertices_[vertexCount++].color = color;
 
-	Draw(Mat4x4::Identity(), EDrawMode::TRIANGLES, vertexCount);
+	Draw(Mat4x4::Identity(), EDrawMode::TRIANGLES, vertexCount, EMode::GEOMETRY);
 }
 
 void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec4f& fromColor, const Vec2f& byPos, const Vec4f& byColor, const Vec2f& toPos, const Vec4f& toColor)
@@ -194,7 +195,7 @@ void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec4f& fromColor, cons
 	vertices_[vertexCount].position = Vec2f(toPos.x + 0.375f, toPos.y + 0.375f);
 	vertices_[vertexCount++].color = toColor;
 
-	Draw(Mat4x4::Identity(), EDrawMode::TRIANGLES, vertexCount);
+	Draw(Mat4x4::Identity(), EDrawMode::TRIANGLES, vertexCount, EMode::GEOMETRY);
 }
 
 void Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Vec2f& byPos, const Vec2f& toPos, const Vec4f& color)
@@ -213,7 +214,7 @@ void Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Vec2f& byPos,
 	vertices_[vertexCount].position = Vec2f(fromPos.x + 0.375f, fromPos.y + 0.375f);
 	vertices_[vertexCount++].color = color;
 
-	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
+	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount, EMode::GEOMETRY);
 }
 
 void Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Vec4f& fromColor, const Vec2f& byPos, const Vec4f& byColor, const Vec2f& toPos, const Vec4f& toColor)
@@ -232,7 +233,7 @@ void Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Vec4f& fromCo
 	vertices_[vertexCount].position = Vec2f(fromPos.x + 0.375f, fromPos.y + 0.375f);
 	vertices_[vertexCount++].color = fromColor;
 
-	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
+	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount, EMode::GEOMETRY);
 }
 
 void Renderer2D::DrawRect(const Vec2f& center, float w, float h, const Vec4f& color, float rotate)
@@ -257,7 +258,7 @@ void Renderer2D::DrawRect(const Vec2f& center, float w, float h, const Vec4f& co
 
 	Mat4x4 transform = Mat4x4::Translation(-c.x, -c.y, 0.0f) * Mat4x4::RotateZ(rotate) * Mat4x4::Translation(+c.x, +c.y, 0.0f);
 
-	Draw(transform, EDrawMode::TRIANGLE_FAN, vertexCount);
+	Draw(transform, EDrawMode::TRIANGLE_FAN, vertexCount, EMode::GEOMETRY);
 }
 
 void Renderer2D::DrawRectWireframe(const Vec2f& center, float w, float h, const Vec4f& color, float rotate)
@@ -285,7 +286,7 @@ void Renderer2D::DrawRectWireframe(const Vec2f& center, float w, float h, const 
 
 	Mat4x4 transform = Mat4x4::Translation(-c.x, -c.y, 0.0f) * Mat4x4::RotateZ(rotate) * Mat4x4::Translation(+c.x, +c.y, 0.0f);
 
-	Draw(transform, EDrawMode::LINE_STRIP, vertexCount);
+	Draw(transform, EDrawMode::LINE_STRIP, vertexCount, EMode::GEOMETRY);
 }
 
 void Renderer2D::DrawRoundRect(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate)
@@ -340,7 +341,7 @@ void Renderer2D::DrawRoundRect(const Vec2f& center, float w, float h, float side
 	
 	Mat4x4 transform = Mat4x4::Translation(-c.x, -c.y, 0.0f) * Mat4x4::RotateZ(rotate) * Mat4x4::Translation(+c.x, +c.y, 0.0f);
 
-	Draw(transform, EDrawMode::TRIANGLE_FAN, vertexCount);
+	Draw(transform, EDrawMode::TRIANGLE_FAN, vertexCount, EMode::GEOMETRY);
 }
 
 void Renderer2D::DrawRoundRectWireframe(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate)
@@ -392,7 +393,7 @@ void Renderer2D::DrawRoundRectWireframe(const Vec2f& center, float w, float h, f
 
 	Mat4x4 transform = Mat4x4::Translation(-c.x, -c.y, 0.0f) * Mat4x4::RotateZ(rotate) * Mat4x4::Translation(+c.x, +c.y, 0.0f);
 
-	Draw(transform, EDrawMode::LINE_STRIP, vertexCount);
+	Draw(transform, EDrawMode::LINE_STRIP, vertexCount, EMode::GEOMETRY);
 }
 
 void Renderer2D::DrawCircle(const Vec2f& center, float radius, const Vec4f& color, int32_t sliceCount)
@@ -416,7 +417,7 @@ void Renderer2D::DrawCircle(const Vec2f& center, float radius, const Vec4f& colo
 	vertices_[sliceCount + 1] = vertices_[1];
 	uint32_t vertexCount = static_cast<uint32_t>(sliceCount + 2);
 
-	Draw(Mat4x4::Identity(), EDrawMode::TRIANGLE_FAN, vertexCount);
+	Draw(Mat4x4::Identity(), EDrawMode::TRIANGLE_FAN, vertexCount, EMode::GEOMETRY);
 }
 
 void Renderer2D::DrawCircleWireframe(const Vec2f& center, float radius, const Vec4f& color, int32_t sliceCount)
@@ -437,7 +438,7 @@ void Renderer2D::DrawCircleWireframe(const Vec2f& center, float radius, const Ve
 	vertices_[sliceCount] = vertices_[0];
 	uint32_t vertexCount = static_cast<uint32_t>(sliceCount + 1);
 
-	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
+	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount, EMode::GEOMETRY);
 }
 
 void Renderer2D::DrawEllipse(const Vec2f& center, float xAxis, float yAxis, const Vec4f& color, float rotate, int32_t sliceCount)
@@ -466,7 +467,7 @@ void Renderer2D::DrawEllipse(const Vec2f& center, float xAxis, float yAxis, cons
 
 	Mat4x4 transform = Mat4x4::Translation(-center.x, -center.y, 0.0f) * Mat4x4::RotateZ(rotate) * Mat4x4::Translation(+center.x, +center.y, 0.0f);
 
-	Draw(transform, EDrawMode::TRIANGLE_FAN, vertexCount);
+	Draw(transform, EDrawMode::TRIANGLE_FAN, vertexCount, EMode::GEOMETRY);
 }
 
 void Renderer2D::DrawEllipseWireframe(const Vec2f& center, float xAxis, float yAxis, const Vec4f& color, float rotate, int32_t sliceCount)
@@ -491,10 +492,69 @@ void Renderer2D::DrawEllipseWireframe(const Vec2f& center, float xAxis, float yA
 	uint32_t vertexCount = static_cast<uint32_t>(sliceCount + 1);
 
 	Mat4x4 transform = Mat4x4::Translation(-center.x, -center.y, 0.0f) * Mat4x4::RotateZ(rotate) * Mat4x4::Translation(+center.x, +center.y, 0.0f);
-	Draw(transform, EDrawMode::LINE_STRIP, vertexCount);
+	Draw(transform, EDrawMode::LINE_STRIP, vertexCount, EMode::GEOMETRY);
 }
 
-void Renderer2D::Draw(const Mat4x4& transform, const EDrawMode& drawMode, uint32_t vertexCount)
+void Renderer2D::DrawString(const TTFont* font, const std::wstring& text, const Vec2f& pos, const Vec4f& color)
+{
+	uint32_t vertexCount = SetGlyphVertexBuffer(font, text, pos, color);
+
+	GL_FAILED(glActiveTexture(GL_TEXTURE0));
+	GL_FAILED(glBindTexture(GL_TEXTURE_2D, font->GetGlyphAtlasID()));
+
+	Draw(Mat4x4::Identity(), EDrawMode::TRIANGLES, vertexCount, EMode::STRING);
+}
+
+uint32_t Renderer2D::SetGlyphVertexBuffer(const TTFont* font, const std::wstring& text, const Vec2f& pos, const Vec4f& color)
+{
+	float w = 0.0f;
+	float h = 0.0f;
+	font->MeasureText(text, w, h);
+
+	float atlasSize = static_cast<float>(font->GetGlyphAtlasSize());
+
+	Vec2f currPos = Vec2f(pos.x, pos.y + h);
+	int32_t vertexCount = 0;
+
+	for (const auto& unicode : text)
+	{
+		const Glyph& glyph = font->GetGlyph(static_cast<int32_t>(unicode));
+
+		float unicodeWidth = static_cast<float>(glyph.position1.x - glyph.position0.x);
+		float unicodeHeight = static_cast<float>(glyph.position1.y - glyph.position0.y);
+
+		vertices_[vertexCount + 0].position = Vec2f(currPos.x + glyph.xoffset, currPos.y + glyph.yoffset);
+		vertices_[vertexCount + 0].uv = Vec2f(static_cast<float>(glyph.position0.x) / atlasSize, static_cast<float>(glyph.position0.y) / atlasSize);
+		vertices_[vertexCount + 0].color = color;
+
+		vertices_[vertexCount + 1].position = Vec2f(currPos.x + glyph.xoffset, currPos.y + unicodeHeight + glyph.yoffset);
+		vertices_[vertexCount + 1].uv = Vec2f(static_cast<float>(glyph.position0.x) / atlasSize, static_cast<float>(glyph.position1.y) / atlasSize);
+		vertices_[vertexCount + 1].color = color;
+
+		vertices_[vertexCount + 2].position = Vec2f(currPos.x + glyph.xoffset + unicodeWidth, currPos.y + glyph.yoffset);
+		vertices_[vertexCount + 2].uv = Vec2f(static_cast<float>(glyph.position1.x) / atlasSize, static_cast<float>(glyph.position0.y) / atlasSize);
+		vertices_[vertexCount + 2].color = color;
+
+		vertices_[vertexCount + 3].position = Vec2f(currPos.x + glyph.xoffset + unicodeWidth, currPos.y + glyph.yoffset);
+		vertices_[vertexCount + 3].uv = Vec2f(static_cast<float>(glyph.position1.x) / atlasSize, static_cast<float>(glyph.position0.y) / atlasSize);
+		vertices_[vertexCount + 3].color = color;
+
+		vertices_[vertexCount + 4].position = Vec2f(currPos.x + glyph.xoffset, currPos.y + unicodeHeight + glyph.yoffset);
+		vertices_[vertexCount + 4].uv = Vec2f(static_cast<float>(glyph.position0.x) / atlasSize, static_cast<float>(glyph.position1.y) / atlasSize);
+		vertices_[vertexCount + 4].color = color;
+
+		vertices_[vertexCount + 5].position = Vec2f(currPos.x + glyph.xoffset + unicodeWidth, currPos.y + unicodeHeight + glyph.yoffset);
+		vertices_[vertexCount + 5].uv = Vec2f(static_cast<float>(glyph.position1.x) / atlasSize, static_cast<float>(glyph.position1.y) / atlasSize);
+		vertices_[vertexCount + 5].color = color;
+
+		currPos.x += glyph.xadvance;
+		vertexCount += 6;
+	}
+
+	return vertexCount;
+}
+
+void Renderer2D::Draw(const Mat4x4& transform, const EDrawMode& drawMode, uint32_t vertexCount, const EMode& mode)
 {
 	CHECK(drawMode != EDrawMode::NONE);
 
@@ -515,6 +575,7 @@ void Renderer2D::Draw(const Mat4x4& transform, const EDrawMode& drawMode, uint32
 
 		shader_->SetUniform("transform", transform);
 		shader_->SetUniform("ortho", ortho_);
+		shader_->SetUniform("mode", static_cast<int32_t>(mode));
 
 		if (drawMode == EDrawMode::POINTS)
 		{
