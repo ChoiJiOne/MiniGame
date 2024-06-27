@@ -5,13 +5,17 @@
 #include <crtdbg.h>
 #endif
 
+#include <imgui.h>
+#include <glad/glad.h>
+
 #include "Assertion.h"
 #include "CrashModule.h"
 #include "PlatformModule.h"
 #include "RenderModule.h"
 
-#include "GeometryRenderer2D.h"
+#include "Mat.h"
 #include "Renderer2D.h"
+#include "TTFont.h"
 
 int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR pCmdLine, _In_ int32_t nCmdShow)
 {
@@ -26,59 +30,65 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	ASSERT(RenderModule::Init(PlatformModule::GetWindowHandle()) == RenderModule::Errors::OK, "Failed to initialize RenderModule.");
 
 	PlatformModule::SetEndLoopCallback([&]() { RenderModule::Uninit(); });
-	
-	Renderer2D* renderer = RenderModule::CreateResource<Renderer2D>();
 
+	TTFont* font = RenderModule::CreateResource<TTFont>("Resource/Font/SeoulNamsanEB.ttf", 0x0, 0x127, 32.0f);
+	Renderer2D* renderer = RenderModule::CreateResource<Renderer2D>();
+	
 	std::vector<Vec2f> positions;
 	std::vector<Vec4f> colors;
 
-	for (uint32_t x = 0; x <= 784; x += 10)
+	for (float x = -400.0f; x <= 400.0f; x += 10.0f)
 	{
-		positions.push_back(Vec2f(static_cast<float>(x), 0.0f));
-		positions.push_back(Vec2f(static_cast<float>(x), 561.0f));
+		positions.push_back(Vec2f(x, -300.0f));
+		positions.push_back(Vec2f(x, +300.0f));
+
+		if (MathModule::NearZero(x))
+		{
+			colors.push_back(Vec4f(1.0f, 0.0f, 0.0f, 0.5f));
+			colors.push_back(Vec4f(1.0f, 0.0f, 0.0f, 0.5f));
+		}
+		else
+		{
+			colors.push_back(Vec4f(1.0f, 1.0f, 1.0f, 0.5f));
+			colors.push_back(Vec4f(1.0f, 1.0f, 1.0f, 0.5f));
+		}
 	}
 
-	for (uint32_t y = 0; y <= 561; y += 10)
+	for (float y = -300.0f; y <= 300.0f; y += 10)
 	{
-		positions.push_back(Vec2f(0.0f, static_cast<float>(y)));
-		positions.push_back(Vec2f(784.0f, static_cast<float>(y)));
-	}
-		
-	PlatformModule::RunLoop(
-		[&](float deltaSeconds) 
+		positions.push_back(Vec2f(-400.0f, y));
+		positions.push_back(Vec2f(+400.0f, y));
+
+		if (MathModule::NearZero(y))
 		{
-			renderer->SetOrtho(RenderModule::GetScreenOrtho());
+			colors.push_back(Vec4f(0.0f, 0.0f, 1.0f, 0.5f));
+			colors.push_back(Vec4f(0.0f, 0.0f, 1.0f, 0.5f));
+		}
+		else
+		{
+			colors.push_back(Vec4f(1.0f, 1.0f, 1.0f, 0.5f));
+			colors.push_back(Vec4f(1.0f, 1.0f, 1.0f, 0.5f));
+		}
+	}
+
+	int32_t width = 0;
+	int32_t height = 0;
+	RenderModule::GetScreenSize(width, height);
+
+	PlatformModule::RunLoop(
+		[&](float deltaSeconds)
+		{
+			renderer->SetOrtho(Mat4x4::Ortho(-width * 0.5f, +width * 0.5f, -height * 0.5f, +height * 0.5f, -1.0f, 1.0f));
 
 			RenderModule::BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
 
-			renderer->DrawLines(positions.data(), positions.size(), Vec4f(1.0f, 1.0f, 1.0f, 0.5f));
+			renderer->DrawLines(positions.data(), colors.data(), positions.size());
+			renderer->DrawLine(Vec2f(-200.0f, -200.0f), Vec2f(+200.0f, +200.0f), Vec4f(1.0f, 1.0f, 0.0f, 1.0f));
+			//renderer->DrawCircleWireframe(Vec2f(400.3f, 300.0f), 50.3f, Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
+			//renderer->DrawEllipse(Vec2f(400.3f, 300.0f), 50.0f, 200.0f, Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+			//renderer->DrawEllipseWireframe(Vec2f(400.3f, 300.0f), 50.0f, 200.0f, Vec4f(1.0f, 0.0f, 1.0f, 1.0f));
 
-			renderer->DrawLine(
-				Vec2f(0.4f, 0.4f), Vec4f(1.0f, 0.0f, 0.0f, 1.0f), 
-				Vec2f(100.0f, 100.0f), Vec4f(0.0f, 1.0f, 0.0f, 1.0f)
-			);
-
-			////renderer->DrawTriangle(Vec2f(100.0f, 100.0f), Vec2f(400.0f, 100.0f), Vec2f(250.0f, 300.0f), Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
-			//renderer->DrawTriangle(
-			//	Vec2f(100.0f, 100.0f), Vec4f(1.0f, 0.0f, 0.0f, 1.0f),
-			//	Vec2f(400.0f, 100.0f), Vec4f(0.0f, 1.0f, 0.0f, 1.0f),
-			//	Vec2f(250.0f, 300.0f), Vec4f(0.0f, 0.0f, 1.0f, 1.0f)
-			//);
-			////renderer->DrawTriangleWireframe(Vec2f(100.0f, 100.0f), Vec2f(400.0f, 100.0f), Vec2f(250.0f, 300.0f), Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
-			//renderer->DrawTriangleWireframe(
-			//	Vec2f(100.0f, 100.0f), Vec4f(0.0f, 0.0f, 1.0f, 1.0f),
-			//	Vec2f(400.0f, 100.0f), Vec4f(0.0f, 1.0f, 0.0f, 1.0f),
-			//	Vec2f(250.0f, 300.0f), Vec4f(1.0f, 0.0f, 0.0f, 1.0f)
-			//);
-
-			static float time = 0.0f;
-			time += deltaSeconds;
-
-
-			//renderer->DrawRect(Vec2f(400.3f, 300.0f), 101.7f, 100.3f, Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
-			renderer->DrawRectWireframe(Vec2f(400.3f, 300.0f), 101.7f, 100.3f, Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
-			renderer->DrawRoundRect(Vec2f(400.3f, 300.0f), 101.7f, 100.3f, 10.0f, Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
-			renderer->DrawRoundRectWireframe(Vec2f(400.3f, 300.0f), 101.7f, 100.3f, 10.0f, Vec4f(1.0f, 1.0f, 0.0f, 1.0f));
+			//renderer->DrawString(font, L"Hello, World", Vec2f(100.0f, 100.0f), Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
 
 			RenderModule::EndFrame();
 		}
