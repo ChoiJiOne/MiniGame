@@ -5759,7 +5759,7 @@ struct Quat
 	 */
 	bool operator==(Quat&& q) const
 	{
-		return Abs(x - q.x) <= EPSILON && Abs(y - q.y) <= Epsilon && Abs(z - q.z) <= Epsilon && Abs(w - q.w) <= Epsilon;
+		return Abs(x - q.x) <= EPSILON && Abs(y - q.y) <= EPSILON && Abs(z - q.z) <= EPSILON && Abs(w - q.w) <= EPSILON;
 	}
 
 
@@ -5772,7 +5772,7 @@ struct Quat
 	 */
 	bool operator==(const Quat& q) const
 	{
-		return Abs(x - q.x) <= Epsilon && Abs(y - q.y) <= Epsilon && Abs(z - q.z) <= Epsilon && Abs(w - q.w) <= Epsilon;
+		return Abs(x - q.x) <= EPSILON && Abs(y - q.y) <= EPSILON && Abs(z - q.z) <= EPSILON && Abs(w - q.w) <= EPSILON;
 	}
 
 
@@ -5785,7 +5785,7 @@ struct Quat
 	 */
 	bool operator!=(Quat&& q) const
 	{
-		return Abs(x - q.x) > Epsilon || Abs(y - q.y) > Epsilon || Abs(z - q.z) > Epsilon || Abs(w - q.w) > Epsilon;
+		return Abs(x - q.x) > EPSILON || Abs(y - q.y) > EPSILON || Abs(z - q.z) > EPSILON || Abs(w - q.w) > EPSILON;
 	}
 
 
@@ -5798,7 +5798,7 @@ struct Quat
 	 */
 	bool operator!=(const Quat& q) const
 	{
-		return Abs(x - q.x) > Epsilon || Abs(y - q.y) > Epsilon || Abs(z - q.z) > Epsilon || Abs(w - q.w) > Epsilon;
+		return Abs(x - q.x) > EPSILON || Abs(y - q.y) > EPSILON || Abs(z - q.z) > EPSILON || Abs(w - q.w) > EPSILON;
 	}
 
 
@@ -6184,8 +6184,8 @@ struct Quat
 	 */
 	bool IsSameOrientation(const Quat& lhs, const Quat& rhs)
 	{
-		return (Abs(lhs.x - rhs.x) <= Epsilon && Abs(lhs.y - rhs.y) <= Epsilon && Abs(lhs.z - rhs.z) <= Epsilon && Abs(lhs.w - rhs.w) <= Epsilon)
-			|| (Abs(lhs.x + rhs.x) <= Epsilon && Abs(lhs.y + rhs.y) <= Epsilon && Abs(lhs.z + rhs.z) <= Epsilon && Abs(lhs.w + rhs.w) <= Epsilon);
+		return (Abs(lhs.x - rhs.x) <= EPSILON && Abs(lhs.y - rhs.y) <= EPSILON && Abs(lhs.z - rhs.z) <= EPSILON && Abs(lhs.w - rhs.w) <= EPSILON)
+			|| (Abs(lhs.x + rhs.x) <= EPSILON && Abs(lhs.y + rhs.y) <= EPSILON && Abs(lhs.z + rhs.z) <= EPSILON && Abs(lhs.w + rhs.w) <= EPSILON);
 	}
 
 
