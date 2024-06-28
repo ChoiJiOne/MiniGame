@@ -90,4 +90,32 @@ namespace GameMaker
 	}
 
 
+	/**
+	 * @brief 두 값중 큰 값을 반환합니다.
+	 *
+	 * @param lhs 크기를 비교할 값 중 왼쪽 값입니다.
+	 * @param rhs 크기를 비교할 값 중 오른쪽 값입니다.
+	 *
+	 * @return 두 값 중 큰 값을 반환합니다.
+	 */
+	template <typename T>
+	__forceinline T Max(const T& lhs, const T& rhs)
+	{
+		return (lhs < rhs ? rhs : lhs);
+	}
+
+
+	/**
+	 * @brief 두 값중 작은 값을 반환합니다.
+	 *
+	 * @param lhs 크기를 비교할 값 중 왼쪽 값입니다.
+	 * @param rhs 크기를 비교할 값 중 오른쪽 값입니다.
+	 *
+	 * @return 두 값 중 작은 값을 반환합니다.
+	 */
+	template <typename T>
+	__forceinline T Min(const T& lhs, const T& rhs)
+	{
+		return (lhs < rhs ? lhs : rhs);
+	}
 }
