@@ -41,72 +41,87 @@ public:
 
 
 	/**
-	 * @brief 렌더러의 파라미터를 설정합니다.
-	 *
+	 * @brief 3D 렌더러의 렌더링을 시작합니다.
+	 * 
 	 * @param view 설정할 뷰 행렬입니다.
-	 */
-	void SetView(const Mat4x4& view) { view_ = view; }
-
-
-	/**
-	 * @brief 렌더러의 원근 투영 행렬을 설정합니다.
-	 *
 	 * @param projection 설정할 투영 행렬입니다.
 	 */
-	void SetProjection(const Mat4x4& projection) { projection_ = projection; }
+	void Begin(const Mat4x4& view, const Mat4x4& projection);
 
 
 	/**
-	 * @brief 3D 점들을 그립니다.
+	 * @brief 3D 렌더러의 렌더링을 종료합니다.
+	 */
+	void End();
+
+	
+	/**
+	 * @brief 3D 점을 그립니다.
 	 *
-	 * @param positions 화면 상의 3D 점들입니다.
+	 * @param positions 점의 배열 포인터입니다.
+	 * @param size 점의 개수입니다.
 	 * @param color 점들의 색상입니다.
 	 * @param pointSize 점의 크기입니다. 기본 값은 1.0f입니다.
 	 *
 	 * @note 3D 점들의 개수는 MAX_VERTEX_SIZE(10000)의 크기를 넘을 수 없습니다.
 	 */
-	void DrawPoints3D(const std::vector<Vec3f>& positions, const Vec4f& color, float pointSize = 1.0f);
+	void DrawPoint(const Vec3f* positions, uint32_t size, const Vec4f& color, float pointSize = 1.0f);
 
 
 	/**
-	 * @brief 점들을 연결한 3D 선을 그립니다.
+	 * @brief 3D 점을 그립니다.
 	 *
-	 * @param positions 화면 상의 3D 점들입니다.
-	 * @param color 점들의 색상입니다.
+	 * @param positions 점의 배열 포인터입니다.
+	 * @param colors 색상 배열 포인터입니다. 이때, 점과 색상의 수는 같아야 합니다.
+	 * @param size 점의 개수입니다.
+	 * @param pointSize 점의 크기입니다. 기본 값은 1.0f입니다.
 	 *
-	 * @note 2D 점들의 개수는 MAX_VERTEX_SIZE(10000)의 크기를 넘을 수 없습니다.
+	 * @note 3D 점들의 개수는 MAX_VERTEX_SIZE(10000)의 크기를 넘을 수 없습니다.
 	 */
-	void DrawConnectPoints3D(const std::vector<Vec3f>& positions, const Vec4f& color);
+	void DrawPoint(const Vec3f* positions, const Vec4f* colors, uint32_t size, float pointSize = 1.0f);
+
+
+	/**
+	 * @brief 3D 점들을 연결한 선을 그립니다.
+	 *
+	 * @param positions 점의 배열 포인터입니다.
+	 * @param colors 색상 배열 포인터입니다. 이때, 점과 색상의 수는 같아야 합니다.
+	 * @param size 점의 개수입니다.
+	 *
+	 * @note 3D 점들의 개수는 MAX_VERTEX_SIZE(10000)의 크기를 넘을 수 없습니다.
+	 */
+	void DrawLine(const Vec3f* positions, const Vec4f* colors, uint32_t size);
 
 
 	/**
 	 * @brief 3D 선을 그립니다.
 	 *
-	 * @param fromPosition 선의 시작점입니다.
-	 * @param toPosition 선의 끝점입니다.
+	 * @param startPos 선의 시작점입니다.
+	 * @param endPos 선의 끝점입니다.
 	 * @param color 선의 색상입니다.
 	 */
-	void DrawLine3D(const Vec3f& fromPosition, const Vec3f& toPosition, const Vec4f& color);
+	void DrawLine(const Vec3f& startPos, const Vec3f& endPos, const Vec4f& color);
 
 
 	/**
 	 * @brief 3D 선을 그립니다.
 	 *
-	 * @param fromPosition 선의 시작점입니다.
-	 * @param fromColor 선의 시작점 색상입니다.
-	 * @param toPosition 선의 끝점입니다.
-	 * @param toColor 선의 끝점 색상입니다.
+	 * @param startPos 선의 시작점입니다.
+	 * @param startColor 선의 시작점 색상입니다.
+	 * @param endPos 선의 끝점입니다.
+	 * @param endColor 선의 끝점 색상입니다.
 	 */
-	void DrawLine3D(const Vec3f& fromPosition, const Vec4f& fromColor, const Vec3f& toPosition, const Vec4f& toColor);
+	void DrawLine(const Vec3f& startPos, const Vec4f& startColor, const Vec3f& endPos, const Vec4f& endColor);
 
 
 	/**
 	 * @brief 3D 선들을 그립니다.
 	 *
-	 * @param positions 연결되지 않은 선의 점 목록입니다.
+	 * @param positions 연결되지 않은 선의 양 끝점 목록입니다.
+	 * @param size 연결되지 않은 선의 양 끝점 목록의 수입니다.
 	 * @param color 선의 색상입니다.
 	 */
-	void DrawLines3D(const std::vector<Vec3f>& positions, const Vec4f& color);
+	void DrawLines(const Vec3f* positions, uint32_t size, const Vec4f& color);
 
 
 	/**
@@ -119,53 +134,7 @@ public:
 	 *
 	 * @note 3D 쿼드는 XY평면 기준입니다.
 	 */
-	void DrawQuad3D(const Mat4x4& world, float width, float height, const Vec4f& color);
-
-
-	/**
-	 * @brief 화면에 분할된 3D 쿼드를 그립니다.
-	 *
-	 * @param world 월드 행렬입니다.
-	 * @param view 시야 행렬입니다.
-	 * @param projection 투영 행렬입니다.
-	 * @param width 쿼드의 가로 크기입니다.
-	 * @param height 쿼드의 세로 크기입니다.
-	 * @param rate 쿼드의 분할 비율입니다. 값의 범위는 0.0f ~ 1.0f입니다.
-	 * @param color 쿼드의 rate 비율 부분의 색상입니다.
-	 * @param bgColor 쿼드의 1.0f - rate 비율 부분의 색상입니다.
-	 *
-	 * @note
-	 * - 3D 쿼드는 XY 평면 기준입니다.
-	 * - 분할 기준입니다.
-	 * ┌────────┬────────────────┐
-	 * │        │                │
-	 * │  rate  │  1.0f - rate   │
-	 * │        │                │
-	 * └────────┴────────────────┘
-	 */
-	void DrawHorizonProgressBar3D(const Mat4x4& world, float width, float height, float rate, const Vec4f& color, const Vec4f& bgColor);
-
-
-	/**
-	 * @brief 화면에 분할된 3D 쿼드를 그립니다.
-	 *
-	 * @param world 월드 행렬입니다.
-	 * @param width 쿼드의 가로 크기입니다.
-	 * @param height 쿼드의 세로 크기입니다.
-	 * @param rate 쿼드의 분할 비율입니다. 값의 범위는 0.0f ~ 1.0f입니다.
-	 * @param color 쿼드의 rate 비율 부분의 색상입니다.
-	 * @param bgColor 쿼드의 1.0f - rate 비율 부분의 색상입니다.
-	 *
-	 * @note
-	 * - 3D 쿼드는 XY 평면 기준입니다.
-	 * - 분할 기준입니다.
-	 * ┌──────────────┐
-	 * │ 1.0f - rate  │
-	 * ├──────────────┤
-	 * │     rate     │
-	 * └──────────────┘
-	 */
-	void DrawVerticalProgressBar3D(const Mat4x4& world, float width, float height, float rate, const Vec4f& color, const Vec4f& bgColor);
+	void DrawQuad(const Mat4x4& world, float width, float height, const Vec4f& color);
 
 
 	/**
@@ -175,7 +144,7 @@ public:
 	 * @param extents 큐브의 X/Y/Z 축 방향으로의 크기입니다.
 	 * @param color 큐브의 색상입니다.
 	 */
-	void DrawCube3D(const Mat4x4& world, const Vec3f& extents, const Vec4f& color);
+	void DrawCube(const Mat4x4& world, const Vec3f& extents, const Vec4f& color);
 
 
 	/**
@@ -185,7 +154,7 @@ public:
 	 * @param radius 구의 반지름 길이입니다.
 	 * @param color 구의 색상입니다.
 	 */
-	void DrawSphere3D(const Mat4x4& world, float radius, const Vec4f& color);
+	void DrawSphere(const Mat4x4& world, float radius, const Vec4f& color);
 
 
 	/**
@@ -195,7 +164,7 @@ public:
 	 * @param projection 시야 절두체의 투영 행렬입니다.
 	 * @param color 시야 절두체의 색상입니다.
 	 */
-	void DrawViewfrustum3D(const Mat4x4& view, const Mat4x4& projection, const Vec4f& color);
+	void DrawViewfrustum(const Mat4x4& view, const Mat4x4& projection, const Vec4f& color);
 
 
 	/**
@@ -204,7 +173,7 @@ public:
 	 * @param extensions 격자의 XYZ 순의 크기입니다.
 	 * @param stride 격자의 간격입니다.
 	 */
-	void DrawGrid3D(const Vec3f& extensions, float stride);
+	void DrawGrid(const Vec3f& extensions, float stride);
 
 
 private:
@@ -344,13 +313,13 @@ private:
 
 private:
 	/**
-	 * @brief 기하 도형 그리기를 수행합니다.
+	 * @brief 그리기를 수행합니다.
 	 *
 	 * @parma world 월드 행렬입니다.
 	 * @param drawMode 그리기 타입입니다.
 	 * @param vertexCount 정점 수입니다.
 	 */
-	void DrawGeometry3D(const Mat4x4& world, const EDrawMode& drawMode, uint32_t vertexCount);
+	void Draw(const Mat4x4& world, const EDrawMode& drawMode, uint32_t vertexCount);
 
 
 private:
@@ -373,15 +342,9 @@ private:
 
 
 	/**
-	 * @brief 렌더러의 뷰 행렬입니다.
+	 * @brief 렌더링이 시작되었는지 확인합니다.
 	 */
-	Mat4x4 view_;
-
-
-	/**
-	 * @brief 렌더러의 원근 투영 행렬입니다.
-	 */
-	Mat4x4 projection_;
+	bool bIsBegin_ = false;
 
 
 	/**
@@ -406,4 +369,10 @@ private:
 	 * @brief 렌더링 시 사용할 셰이더입니다.
 	 */
 	Shader* shader_ = nullptr;
+	
+
+	/**
+	 * @brief 이전의 깊이 버퍼 활성화 여부입니다.
+	 */
+	bool bIsBeforeEnableDepth_ = true;
 };

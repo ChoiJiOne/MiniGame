@@ -12,7 +12,9 @@
 
 Renderer3D::Renderer3D()
 {
-	shader_ = RenderModule::CreateResource<Shader>("Resource/Shader/Geometry3D.vert", "Resource/Shader/Geometry3D.frag");
+	std::string vsPath = "Engine/Resource/Shader/Renderer3D.vert";
+	std::string fsPath = "Engine/Resource/Shader/Renderer3D.frag";
+	shader_ = RenderModule::CreateResource<Shader>(vsPath, fsPath);
 
 	uint32_t byteSize = static_cast<uint32_t>(Vertex::GetStride() * vertices_.size());
 	VertexBuffer::EUsage usage = VertexBuffer::EUsage::DYNAMIC;
@@ -65,64 +67,118 @@ void Renderer3D::Release()
 	bIsInitialized_ = false;
 }
 
-void Renderer3D::DrawPoints3D(const std::vector<Vec3f>& positions, const Vec4f& color, float pointSize)
+void Renderer3D::Begin(const Mat4x4& view, const Mat4x4& projection)
 {
-	CHECK(positions.size() <= MAX_VERTEX_SIZE);
+	CHECK(!bIsBegin_);
 
-	for (std::size_t index = 0; index < positions.size(); ++index)
+	GLboolean originEnableDepth;
+	GL_FAILED(glGetBooleanv(GL_DEPTH_TEST, &originEnableDepth));
+
+	bIsBeforeEnableDepth_ = static_cast<bool>(originEnableDepth);
+	RenderModule::SetDepthMode(false);
+
+	shader_->Bind();
 	{
-		vertices_[index] = Vertex(positions[index], color);
+		shader_->SetUniform("view", view);
+		shader_->SetUniform("projection", projection);
+	}
+	shader_->Unbind();
+
+	bIsBegin_ = true;
+}
+
+void Renderer3D::End()
+{
+	CHECK(bIsBegin_);
+
+	RenderModule::SetDepthMode(bIsBeforeEnableDepth_);
+
+	bIsBegin_ = false;
+}
+
+void Renderer3D::DrawPoint(const Vec3f* positions, uint32_t size, const Vec4f& color, float pointSize)
+{
+	CHECK(size <= MAX_VERTEX_SIZE);
+	CHECK(pointSize >= 0.0f);
+
+	for (uint32_t index = 0; index < size; ++index)
+	{
+		vertices_[index].position = positions[index];
+		vertices_[index].color = color;
 	}
 
 	pointSize_ = pointSize;
-	DrawGeometry3D(Mat4x4::Identity(), EDrawMode::POINTS, static_cast<uint32_t>(positions.size()));
+	Draw(Mat4x4::Identity(), EDrawMode::POINTS, size);
 }
 
-void Renderer3D::DrawConnectPoints3D(const std::vector<Vec3f>& positions, const Vec4f& color)
+void Renderer3D::DrawPoint(const Vec3f* positions, const Vec4f* colors, uint32_t size, float pointSize)
 {
-	CHECK(positions.size() <= MAX_VERTEX_SIZE);
+	CHECK(size <= MAX_VERTEX_SIZE);
+	CHECK(pointSize >= 0.0f);
 
-	for (std::size_t index = 0; index < positions.size(); ++index)
+	for (uint32_t index = 0; index < size; ++index)
 	{
-		vertices_[index] = Vertex(positions[index], color);
+		vertices_[index].position = positions[index];
+		vertices_[index].color = colors[index];
 	}
 
-	DrawGeometry3D(Mat4x4::Identity(), EDrawMode::LINE_STRIP, static_cast<uint32_t>(positions.size()));
+	pointSize_ = pointSize;
+	Draw(Mat4x4::Identity(), EDrawMode::POINTS, size);
 }
 
-void Renderer3D::DrawLine3D(const Vec3f& fromPosition, const Vec3f& toPosition, const Vec4f& color)
+void Renderer3D::DrawLine(const Vec3f* positions, const Vec4f* colors, uint32_t size)
+{
+	CHECK(size <= MAX_VERTEX_SIZE);
+
+	for (std::size_t index = 0; index < size; ++index)
+	{
+		vertices_[index].position = positions[index];
+		vertices_[index].color = colors[index];
+	}
+
+	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, size);
+}
+
+void Renderer3D::DrawLine(const Vec3f& startPos, const Vec3f& endPos, const Vec4f& color)
 {
 	uint32_t vertexCount = 0;
 
-	vertices_[vertexCount++] = Vertex(fromPosition, color);
-	vertices_[vertexCount++] = Vertex(toPosition, color);
+	vertices_[vertexCount].position = startPos;
+	vertices_[vertexCount++].color = color;
 
-	DrawGeometry3D(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
+	vertices_[vertexCount].position = endPos;
+	vertices_[vertexCount++].color = color;
+
+	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
 }
 
-void Renderer3D::DrawLine3D(const Vec3f& fromPosition, const Vec4f& fromColor, const Vec3f& toPosition, const Vec4f& toColor)
+void Renderer3D::DrawLine(const Vec3f& startPos, const Vec4f& startColor, const Vec3f& endPos, const Vec4f& endColor)
 {
 	uint32_t vertexCount = 0;
 
-	vertices_[vertexCount++] = Vertex(fromPosition, fromColor);
-	vertices_[vertexCount++] = Vertex(toPosition, toColor);
+	vertices_[vertexCount].position = startPos;
+	vertices_[vertexCount++].color = startColor;
 
-	DrawGeometry3D(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
+	vertices_[vertexCount].position = endPos;
+	vertices_[vertexCount++].color = endColor;
+
+	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
 }
 
-void Renderer3D::DrawLines3D(const std::vector<Vec3f>& positions, const Vec4f& color)
+void Renderer3D::DrawLines(const Vec3f* positions, uint32_t size, const Vec4f& color)
 {
-	CHECK(positions.size() <= MAX_VERTEX_SIZE);
+	CHECK(size <= MAX_VERTEX_SIZE);
 
-	for (std::size_t index = 0; index < positions.size(); ++index)
+	for (std::size_t index = 0; index < size; ++index)
 	{
-		vertices_[index] = Vertex(Vec3f(positions[index].x, positions[index].y, positions[index].z), color);
+		vertices_[index].position = positions[index];
+		vertices_[index].color = color;
 	}
 
-	DrawGeometry3D(Mat4x4::Identity(), EDrawMode::LINES, static_cast<uint32_t>(positions.size()));
+	Draw(Mat4x4::Identity(), EDrawMode::LINES, size);
 }
 
-void Renderer3D::DrawQuad3D(const Mat4x4& world, float width, float height, const Vec4f& color)
+void Renderer3D::DrawQuad(const Mat4x4& world, float width, float height, const Vec4f& color)
 {
 	uint32_t vertexCount = 0;
 
@@ -134,72 +190,10 @@ void Renderer3D::DrawQuad3D(const Mat4x4& world, float width, float height, cons
 	vertices_[vertexCount++] = Vertex(Vec3f(+width * 0.5f, +height * 0.5f, 0.0f), color);
 	vertices_[vertexCount++] = Vertex(Vec3f(-width * 0.5f, +height * 0.5f, 0.0f), color);
 
-	DrawGeometry3D(world, EDrawMode::TRIANGLES, vertexCount);
+	Draw(world, EDrawMode::TRIANGLES, vertexCount);
 }
 
-void Renderer3D::DrawHorizonProgressBar3D(const Mat4x4& world, float width, float height, float rate, const Vec4f& color, const Vec4f& bgColor)
-{
-	rate = MathModule::Clamp<float>(rate, 0.0f, 1.0f);
-
-	float x0 = -width * 0.5f;
-	float x1 = +width * 0.5f;
-	float y0 = -height * 0.5f;
-	float y1 = +height * 0.5f;
-	float x = x0 + rate * width;
-
-	uint32_t vertexCount = 0;
-
-	vertices_[vertexCount++] = Vertex(Vec3f(x0, y0, 0.0f), color);
-	vertices_[vertexCount++] = Vertex(Vec3f( x, y0, 0.0f), color);
-	vertices_[vertexCount++] = Vertex(Vec3f( x, y1, 0.0f), color);
-
-	vertices_[vertexCount++] = Vertex(Vec3f(x0, y0, 0.0f), color);
-	vertices_[vertexCount++] = Vertex(Vec3f( x, y1, 0.0f), color);
-	vertices_[vertexCount++] = Vertex(Vec3f(x0, y1, 0.0f), color);
-
-	vertices_[vertexCount++] = Vertex(Vec3f( x, y0, 0.0f), bgColor);
-	vertices_[vertexCount++] = Vertex(Vec3f(x1, y0, 0.0f), bgColor);
-	vertices_[vertexCount++] = Vertex(Vec3f(x1, y1, 0.0f), bgColor);
-
-	vertices_[vertexCount++] = Vertex(Vec3f( x, y0, 0.0f), bgColor);
-	vertices_[vertexCount++] = Vertex(Vec3f(x1, y1, 0.0f), bgColor);
-	vertices_[vertexCount++] = Vertex(Vec3f( x, y1, 0.0f), bgColor);
-
-	DrawGeometry3D(world, EDrawMode::TRIANGLES, vertexCount);
-}
-
-void Renderer3D::DrawVerticalProgressBar3D(const Mat4x4& world, float width, float height, float rate, const Vec4f& color, const Vec4f& bgColor)
-{
-	rate = MathModule::Clamp<float>(rate, 0.0f, 1.0f);
-
-	float x0 = -width * 0.5f;
-	float x1 = +width * 0.5f;
-	float y0 = -height * 0.5f;
-	float y1 = +height * 0.5f;
-	float y = y0 + rate * height;
-
-	uint32_t vertexCount = 0;
-
-	vertices_[vertexCount++] = Vertex(Vec3f(x0, y0, 0.0f), color);
-	vertices_[vertexCount++] = Vertex(Vec3f(x1, y0, 0.0f), color);
-	vertices_[vertexCount++] = Vertex(Vec3f(x1, y, 0.0f), color);
-
-	vertices_[vertexCount++] = Vertex(Vec3f(x0, y0, 0.0f), color);
-	vertices_[vertexCount++] = Vertex(Vec3f(x1, y, 0.0f), color);
-	vertices_[vertexCount++] = Vertex(Vec3f(x0, y, 0.0f), color);
-
-	vertices_[vertexCount++] = Vertex(Vec3f(x0, y, 0.0f), bgColor);
-	vertices_[vertexCount++] = Vertex(Vec3f(x1, y, 0.0f), bgColor);
-	vertices_[vertexCount++] = Vertex(Vec3f(x1, y1, 0.0f), bgColor);
-
-	vertices_[vertexCount++] = Vertex(Vec3f(x0, y, 0.0f), bgColor);
-	vertices_[vertexCount++] = Vertex(Vec3f(x1, y1, 0.0f), bgColor);
-	vertices_[vertexCount++] = Vertex(Vec3f(x0, y1, 0.0f), bgColor);
-
-	DrawGeometry3D(world, EDrawMode::TRIANGLES, vertexCount);
-}
-
-void Renderer3D::DrawCube3D(const Mat4x4& world, const Vec3f& extents, const Vec4f& color)
+void Renderer3D::DrawCube(const Mat4x4& world, const Vec3f& extents, const Vec4f& color)
 {
 	uint32_t vertexCount = 0;
 
@@ -242,10 +236,10 @@ void Renderer3D::DrawCube3D(const Mat4x4& world, const Vec3f& extents, const Vec
 	vertices_[vertexCount++] = Vertex(Vec3f(maxPosition.x, maxPosition.y, minPosition.z), color);
 	vertices_[vertexCount++] = Vertex(Vec3f(maxPosition.x, minPosition.y, minPosition.z), color);
 
-	DrawGeometry3D(world, EDrawMode::LINES, vertexCount);
+	Draw(world, EDrawMode::LINES, vertexCount);
 }
 
-void Renderer3D::DrawSphere3D(const Mat4x4& world, float radius, const Vec4f& color)
+void Renderer3D::DrawSphere(const Mat4x4& world, float radius, const Vec4f& color)
 {
 	static const uint32_t sliceCount = 20;
 
@@ -316,10 +310,10 @@ void Renderer3D::DrawSphere3D(const Mat4x4& world, float radius, const Vec4f& co
 		}
 	}
 
-	DrawGeometry3D(world, EDrawMode::LINES, vertexCount);
+	Draw(world, EDrawMode::LINES, vertexCount);
 }
 
-void Renderer3D::DrawViewfrustum3D(const Mat4x4& view, const Mat4x4& projection, const Vec4f& color)
+void Renderer3D::DrawViewfrustum(const Mat4x4& view, const Mat4x4& projection, const Vec4f& color)
 {
 	static const uint32_t MAX_FRUSTUM_CORNER = 8;
 	static const std::array<Vec3f, MAX_FRUSTUM_CORNER> corners =
@@ -382,10 +376,10 @@ void Renderer3D::DrawViewfrustum3D(const Mat4x4& view, const Mat4x4& projection,
 	vertices_[vertexCount++] = Vertex(frustumCorners[3], color);
 	vertices_[vertexCount++] = Vertex(frustumCorners[7], color);
 
-	DrawGeometry3D(Mat4x4::Identity(), EDrawMode::LINES, vertexCount);
+	Draw(Mat4x4::Identity(), EDrawMode::LINES, vertexCount);
 }
 
-void Renderer3D::DrawGrid3D(const Vec3f& extensions, float stride)
+void Renderer3D::DrawGrid(const Vec3f& extensions, float stride)
 {
 	CHECK(stride >= 1.0f);
 
@@ -425,27 +419,20 @@ void Renderer3D::DrawGrid3D(const Vec3f& extensions, float stride)
 	CHECK(0 <= vertexCount && vertexCount < MAX_VERTEX_SIZE);
 	vertices_[vertexCount++] = Vertex(Vec3f(0.0f, maxYPosition, 0.0f), Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
 
-	DrawGeometry3D(Mat4x4::Identity(), EDrawMode::LINES, static_cast<uint32_t>(vertexCount));
+	Draw(Mat4x4::Identity(), EDrawMode::LINES, static_cast<uint32_t>(vertexCount));
 }
 
-void Renderer3D::DrawGeometry3D(const Mat4x4& world, const EDrawMode& drawMode, uint32_t vertexCount)
+void Renderer3D::Draw(const Mat4x4& world, const EDrawMode& drawMode, uint32_t vertexCount)
 {
 	CHECK(drawMode != EDrawMode::NONE);
 
-	GLboolean originEnableDepth;
-	GL_FAILED(glGetBooleanv(GL_DEPTH_TEST, &originEnableDepth));
+	const void* vertexPtr = reinterpret_cast<const void*>(vertices_.data());
+	uint32_t bufferByteSize = static_cast<uint32_t>(Vertex::GetStride() * vertices_.size());
+	vertexBuffer_->SetBufferData(vertexPtr, bufferByteSize);
 
-	RenderModule::SetDepthMode(true);
+	shader_->Bind();
 	{
-		shader_->Bind();
-
-		const void* vertexPtr = reinterpret_cast<const void*>(vertices_.data());
-		uint32_t bufferByteSize = static_cast<uint32_t>(Vertex::GetStride() * vertices_.size());
-		vertexBuffer_->SetBufferData(vertexPtr, bufferByteSize);
-
 		shader_->SetUniform("world", world);
-		shader_->SetUniform("view", view_);
-		shader_->SetUniform("projection", projection_);
 
 		if (drawMode == EDrawMode::POINTS)
 		{
@@ -455,10 +442,8 @@ void Renderer3D::DrawGeometry3D(const Mat4x4& world, const EDrawMode& drawMode, 
 		GL_FAILED(glBindVertexArray(vertexArrayObject_));
 		RenderModule::ExecuteDrawVertex(vertexCount, drawMode);
 		GL_FAILED(glBindVertexArray(0));
-
-		shader_->Unbind();
 	}
-	RenderModule::SetDepthMode(originEnableDepth);
+	shader_->Unbind();
 }
 
 #pragma warning(pop)
