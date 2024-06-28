@@ -111,8 +111,9 @@ inline void DebugPrintF(const wchar_t* format, ...)
  * @param Expression 검사할 호출값입니다.
  *
  * @note
- * - Debug 모드와 Release 모드에서는 평가식을 검사하지만 Shipping 모드에서는 평가식을 검사하지 않습니다.
- * - 디버거가 존재하면 브레이크 포인트가 걸립니다.
+ * - 디버거가 존재할 때, DEBUG_MODE에서는 브레이크 포인트가 걸린 후 프로세스가 종료됩니다.
+ * - 디버거가 존재할 때, RELEASE_MODE와 RELWITHDEBINFO_MODE에서는 브레이크 포인트가 걸리지만 프로세스는 종료되지 않습니다.
+ * - MINSIZEREL_MODE에서는 평가식을 검사하지 않습니다.
  */
 #if defined(DEBUG_MODE)
 #ifndef CHECK
@@ -140,5 +141,99 @@ inline void DebugPrintF(const wchar_t* format, ...)
 #else // defined(MINSIZEREL_MODE)
 #ifndef CHECK
 #define CHECK(Expression, ...) ((void)(Expression))
+#endif
+#endif
+
+
+#if defined(SDL_h_)
+/**
+ * @brief 평가식을 검사합니다.
+ *
+ * @param Expression 검사할 호출값입니다.
+ * @param ... 평가식을 만족하지 못할 경우 표시할 가변 인자 메시지입니다.
+ *
+ * @note
+ * - 디버거가 존재할 때, DEBUG_MODE에서는 브레이크 포인트가 걸린 후 프로세스가 종료됩니다.
+ * - 디버거가 존재할 때, RELEASE_MODE와 RELWITHDEBINFO_MODE에서는 브레이크 포인트가 걸리지만 프로세스는 종료되지 않습니다.
+ * - MINSIZEREL_MODE에서는 평가식을 검사하지 않습니다.
+ * - SDL API은 호출에 성공하면 0을 반환합니다.
+ */
+#if defined(DEBUG_MODE)
+#ifndef SDL_ASSERT
+#define SDL_ASSERT(Expression, ...)\
+{\
+	if ((bool)(Expression))                                                                                                                     \
+	{                                                                                                                                           \
+		DebugPrintF("\nSDL Assertion check point failed!\nFile : %s\nLine : %d\nExpression : %s\nMessage : ", __FILE__, __LINE__, #Expression); \
+		DebugPrintF(__VA_ARGS__);                                                                                                               \
+		DebugPrintF("\nSDL error message : %s\n", SDL_GetError());                                                                              \
+		DebugPrintF("\n");                                                                                                                      \
+		__debugbreak();                                                                                                                         \
+		ExitProcess(-1);                                                                                                                        \
+	}                                                                                                                                           \
+}
+#endif
+#elif defined(RELEASE_MODE) || defined(RELWITHDEBINFO_MODE)
+#ifndef SDL_ASSERT
+#define SDL_ASSERT(Expression, ...)\
+{\
+	if ((bool)(Expression))                                                                                                                     \
+	{                                                                                                                                           \
+		DebugPrintF("\nSDL Assertion check point failed!\nFile : %s\nLine : %d\nExpression : %s\nMessage : ", __FILE__, __LINE__, #Expression); \
+		DebugPrintF(__VA_ARGS__);                                                                                                               \
+		DebugPrintF("\nSDL error message : %s\n", SDL_GetError());                                                                              \
+		DebugPrintF("\n");                                                                                                                      \
+		__debugbreak();                                                                                                                         \
+}
+#endif
+#else // defined(MINSIZEREL_MODE)
+#ifndef SDL_ASSERT
+#define SDL_ASSERT(Expression, ...) ((void)(Expression))
+#endif
+#endif
+
+
+/**
+ * @brief SDL API가 호출에 실패했는지 확인합니다.
+ *
+ * @param Expression 검사할 호출값입니다.
+ *
+ * @note
+ * - 디버거가 존재할 때, DEBUG_MODE에서는 브레이크 포인트가 걸린 후 프로세스가 종료됩니다.
+ * - 디버거가 존재할 때, RELEASE_MODE와 RELWITHDEBINFO_MODE에서는 브레이크 포인트가 걸리지만 프로세스는 종료되지 않습니다.
+ * - MINSIZEREL_MODE에서는 평가식을 검사하지 않습니다.
+ * - SDL API은 호출에 성공하면 0을 반환합니다.
+ */
+#if defined(DEBUG_MODE)
+#ifndef SDL_FAILED
+#define SDL_FAILED(Expression)\
+{\
+	if ((bool)(Expression))                                                                                                   \
+	{                                                                                                                         \
+		DebugPrintF("\nSDL API call has failed!\nFile : %s\nLine : %d\nExpression : %s\n", __FILE__, __LINE__, #Expression);  \
+		DebugPrintF("SDL error message : %s\n", SDL_GetError());                                                              \
+		DebugPrintF("\n");                                                                                                    \
+		__debugbreak();                                                                                                       \
+		ExitProcess(-1);                                                                                                      \
+	}                                                                                                                         \
+}
+#endif
+#elif defined(RELEASE_MODE) || defined(RELWITHDEBINFO_MODE)
+#ifndef SDL_FAILED
+#define SDL_FAILED(Expression)\
+{\
+	if ((bool)(Expression))                                                                                                   \
+	{                                                                                                                         \
+		DebugPrintF("\nSDL API call has failed!\nFile : %s\nLine : %d\nExpression : %s\n", __FILE__, __LINE__, #Expression);  \
+		DebugPrintF("SDL error message : %s\n", SDL_GetError());                                                              \
+		DebugPrintF("\n");                                                                                                    \
+		__debugbreak();                                                                                                       \
+	}                                                                                                                         \
+}
+#endif
+#else // defined(MINSIZEREL_MODE)
+#ifndef SDL_FAILED
+#define SDL_FAILED(Expression, ...) ((void)(Expression))
+#endif
 #endif
 #endif
