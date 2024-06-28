@@ -241,4 +241,38 @@ namespace GameMaker
 	}
 
 
+	/**
+	 * @brief 부동 소수점 숫자의 아크 코사인을 계산합니다.
+	 *
+	 * @param value -1.0 에서 1.0 사이의 값입니다.
+	 *
+	 * @return 입력한 값의 코아크 사인(역 사인) 값을 반환합니다.
+	 *
+	 * @note
+	 * - DirectXMath의 XMScalarACos 참조
+	 * - 알고리즘은 7차원 미니맥스(Minimax) 근사치(1th-degree Minimax approximation) 사용
+	 * - https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91
+	 */
+	__forceinline float ACos(float value)
+	{
+		float x = std::fabsf(value);
+		float omx = 1.0f - x;
+		if (omx < 0.0f)
+		{
+			omx = 0.0f;
+		}
+
+		float root = sqrtf(omx);
+		float result = ((((((-0.0012624911f * x + 0.0066700901f) * x - 0.0170881256f) * x + 0.0308918810f) * x - 0.0501743046f) * x + 0.0889789874f) * x - 0.2145988016f) * x + 1.5707963050f;
+		result *= root;
+
+		if (value >= 0.0f)
+		{
+			return result;
+		}
+		else
+		{
+			return PI - result;
+		}
+	}
 }
