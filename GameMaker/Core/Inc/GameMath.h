@@ -331,4 +331,40 @@ namespace GameMaker
 	{
 		return Min<T>(upper, Max<T>(lower, value));
 	}
+
+
+	/**
+	 * @brief 임의의 정수를 생성합니다.
+	 *
+	 * @param minValue 생성할 난수 범위의 최솟값입니다.
+	 * @param maxValue 생성할 난수 범위의 최댓값입니다.
+	 *
+	 * @return 생성된 임의의 정수를 반환합니다.
+	 */
+	__forceinline int32_t GenerateRandomInt(int32_t minValue, int32_t maxValue)
+	{
+		std::random_device randomDevice;
+		std::mt19937 generator(randomDevice());
+		std::uniform_int_distribution<int32_t> distribution(Min<int32_t>(minValue, maxValue), Max<int32_t>(minValue, maxValue));
+
+		return distribution(generator);
+	}
+
+
+	/**
+	 * @brief 임의의 실수를 생성합니다.
+	 *
+	 * @param minValue 생성할 난수 범위의 최솟값입니다.
+	 * @param maxValue 생성할 난수 범위의 최댓값입니다.
+	 *
+	 * @return 생성된 임의의 실수를 반환합니다.
+	 */
+	__forceinline float GenerateRandomFloat(float minValue, float maxValue)
+	{
+		std::random_device randomDevice;
+		std::mt19937 generator(randomDevice());
+		std::uniform_real_distribution<float> distribution(Min<float>(minValue, maxValue), Max<float>(minValue, maxValue));
+
+		return distribution(generator);
+	}
 }
