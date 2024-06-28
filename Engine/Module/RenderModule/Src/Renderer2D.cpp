@@ -71,6 +71,33 @@ void Renderer2D::Release()
 	bIsInitialized_ = false;
 }
 
+void Renderer2D::Begin(const Mat4x4& ortho)
+{
+	GLboolean originEnableDepth;
+	GL_FAILED(glGetBooleanv(GL_DEPTH_TEST, &originEnableDepth));
+
+	GLboolean originEnableCull;
+	GL_FAILED(glGetBooleanv(GL_CULL_FACE, &originEnableCull));
+
+	bIsBeforeEnableDepth_ = static_cast<bool>(originEnableDepth);
+	bIsBeforeEnableCull_ = static_cast<bool>(originEnableCull);
+
+	RenderModule::SetDepthMode(false);
+	RenderModule::SetCullFaceMode(false);
+
+	shader_->Bind();
+	{
+		shader_->SetUniform("ortho", ortho);
+	}
+	shader_->Unbind();
+}
+
+void Renderer2D::End()
+{
+	RenderModule::SetCullFaceMode(bIsBeforeEnableCull_);
+	RenderModule::SetDepthMode(bIsBeforeEnableDepth_);
+}
+
 void Renderer2D::DrawPoint(const Vec2f* positions, uint32_t size, const Vec4f& color, float pointSize)
 {
 	CHECK(size <= MAX_VERTEX_SIZE);
@@ -558,23 +585,13 @@ void Renderer2D::Draw(const Mat4x4& transform, const EDrawMode& drawMode, uint32
 {
 	CHECK(drawMode != EDrawMode::NONE);
 
-	GLboolean originEnableDepth;
-	GL_FAILED(glGetBooleanv(GL_DEPTH_TEST, &originEnableDepth));
+	const void* vertexPtr = reinterpret_cast<const void*>(vertices_.data());
+	uint32_t bufferByteSize = static_cast<uint32_t>(Vertex::GetStride() * vertices_.size());
+	vertexBuffer_->SetBufferData(vertexPtr, bufferByteSize);
 
-	GLboolean originEnableCull;
-	GL_FAILED(glGetBooleanv(GL_CULL_FACE, &originEnableCull));
-
-	RenderModule::SetDepthMode(false);
-	RenderModule::SetCullFaceMode(false);
+	shader_->Bind();
 	{
-		shader_->Bind();
-
-		const void* vertexPtr = reinterpret_cast<const void*>(vertices_.data());
-		uint32_t bufferByteSize = static_cast<uint32_t>(Vertex::GetStride() * vertices_.size());
-		vertexBuffer_->SetBufferData(vertexPtr, bufferByteSize);
-
 		shader_->SetUniform("transform", transform);
-		shader_->SetUniform("ortho", ortho_);
 		shader_->SetUniform("mode", static_cast<int32_t>(mode));
 
 		if (drawMode == EDrawMode::POINTS)
@@ -585,11 +602,8 @@ void Renderer2D::Draw(const Mat4x4& transform, const EDrawMode& drawMode, uint32
 		GL_FAILED(glBindVertexArray(vertexArrayObject_));
 		RenderModule::ExecuteDrawVertex(vertexCount, drawMode);
 		GL_FAILED(glBindVertexArray(0));
-
-		shader_->Unbind();
 	}
-	RenderModule::SetCullFaceMode(originEnableCull);
-	RenderModule::SetDepthMode(originEnableDepth);
+	shader_->Unbind();
 }
 
 #pragma warning(pop)

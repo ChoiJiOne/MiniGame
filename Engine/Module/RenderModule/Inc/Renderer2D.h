@@ -46,11 +46,17 @@ public:
 
 
 	/**
-	 * @brief 렌더러의 직교 투영 행렬을 설정합니다.
-	 *
+	 * @brief 2D 렌더러의 렌더링을 시작합니다.
+	 * 
 	 * @param ortho 설정할 직교 투영 행렬입니다.
 	 */
-	void SetOrtho(const Mat4x4& ortho) { ortho_ = ortho; }
+	void Begin(const Mat4x4& ortho);
+
+
+	/**
+	 * @brief 2D 렌더러의 렌더링을 종료합니다.
+	 */
+	void End();
 
 
 	/**
@@ -491,12 +497,6 @@ private:
 
 
 	/**
-	 * @brief 렌더러의 직교 투영 행렬입니다.
-	 */
-	Mat4x4 ortho_;
-
-
-	/**
 	 * @brief 점의 크기입니다.
 	 */
 	float pointSize_ = 1.0f;
@@ -518,4 +518,16 @@ private:
 	 * @brief 렌더링 시 사용할 셰이더입니다.
 	 */
 	Shader* shader_ = nullptr;
+
+
+	/**
+	 * @brief 이전의 깊이 버퍼 활성화 여부입니다.
+	 */
+	bool bIsBeforeEnableDepth_ = true;
+
+
+	/**
+	 * @brief 이전의 컬링 활성화 여부입니다.
+	 */
+	bool bIsBeforeEnableCull_ = false;
 };
