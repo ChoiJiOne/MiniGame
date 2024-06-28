@@ -49,13 +49,27 @@ namespace GameMaker
 
 
 	/**
-	 * @brief 양의 무한대 값입니다.
+	 * @brief 라디안 각을 육십분법 각으로 변환합니다.
+	 *
+	 * @param radian 변환할 라디안 각입니다.
+	 *
+	 * @return 변환된 육십분법 각입니다.
 	 */
-	const float INFINITY = std::numeric_limits<float>::infinity();
+	__forceinline float ToDegree(float radian)
+	{
+		return (radian * 180.0f) / PI;
+	}
 
 
 	/**
-	 * @brief 음의 무한대 값입니다.
+	 * @brief 육십분법 각을 라디안 각으로 변환합니다.
+	 *
+	 * @param degree 변환할 육십분법 각입니다.
+	 *
+	 * @return 변환된 라디안 각입니다.
 	 */
-	const float N_INFINITY = -std::numeric_limits<float>::infinity();
+	__forceinline float ToRadian(float degree)
+	{
+		return (degree * PI) / 180.0f;
+	}
 }
