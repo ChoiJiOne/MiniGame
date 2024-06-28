@@ -288,4 +288,19 @@ namespace GameMaker
 	{
 		return std::sqrtf(x);
 	}
+
+
+	/**
+	 * @brief 절댓값을 계산합니다.
+	 *
+	 * @param x 절댓값을 계산할 부동소수점수입니다.
+	 *
+	 * @return 절대값을 반환합니다.
+	 */
+	__forceinline float Abs(float x)
+	{
+		return std::fabsf(x);
+	}
+
+
 }
