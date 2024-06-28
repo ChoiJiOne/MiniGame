@@ -132,7 +132,7 @@ namespace GameMaker
 	 * - 알고리즘은 11차원 미니맥스(Minimax) 근사치(1th-degree Minimax approximation) 사용
 	 * - https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91
 	 */
-	static __forceinline float Sin(float radian)
+	__forceinline float Sin(float radian)
 	{
 		float quotient = ONE_DIV_2PI * radian;
 		if (radian >= 0.0f)
@@ -157,5 +157,50 @@ namespace GameMaker
 
 		float y2 = y * y;
 		return (((((-2.3889859e-08f * y2 + 2.7525562e-06f) * y2 - 0.00019840874f) * y2 + 0.0083333310f) * y2 - 0.16666667f) * y2 + 1.0f) * y;
+	}
+
+
+	/**
+	 * @brief 라디안 각도에 대응하는 코사인 값을 반환합니다.
+	 *
+	 * @param radian 코사인 값을 얻을 라디안 각도입니다.
+	 *
+	 * @return 라디안 각도에 대응하는 코사인값을 반환합니다.
+	 *
+	 * @note
+	 * - DirectXMath의 XMScalarCos 참조
+	 * - 알고리즘은 10차원 미니맥스(Minimax) 근사치(1th-degree Minimax approximation) 사용
+	 * - https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91
+	 */
+	__forceinline float Cos(float radian)
+	{
+		float quotient = ONE_DIV_2PI * radian;
+		if (radian >= 0.0f)
+		{
+			quotient = static_cast<float>(static_cast<int>(quotient + 0.5f));
+		}
+		else
+		{
+			quotient = static_cast<float>(static_cast<int>(quotient - 0.5f));
+		}
+
+		float y = radian - TWO_PI * quotient;
+		float sign = 1.0f;
+
+		if (y > PI_DIV_2)
+		{
+			y = PI - y;
+			sign = -1.0f;
+		}
+		else if (y < -PI_DIV_2)
+		{
+			y = -PI - y;
+			sign = -1.0f;
+		}
+
+		float y2 = y * y;
+		float p = ((((-2.6051615e-07f * y2 + 2.4760495e-05f) * y2 - 0.0013888378f) * y2 + 0.041666638f) * y2 - 0.5f) * y2 + 1.0f;
+
+		return sign * p;
 	}
 }
