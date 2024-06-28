@@ -248,15 +248,6 @@ RenderModule::Errors RenderModule::GetScreenSize(int32_t& outWidth, int32_t& out
 	return Errors::OK;
 }
 
-Mat4x4 RenderModule::GetScreenOrtho(float nearZ, float farZ)
-{
-	int32_t width = 0;
-	int32_t height = 0;
-	GetScreenSize(width, height);
-
-	return Mat4x4::Ortho(0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f, nearZ, farZ);
-}
-
 const wchar_t* RenderModule::GetLastErrorMessage()
 {
 	return lastErrorMessage;

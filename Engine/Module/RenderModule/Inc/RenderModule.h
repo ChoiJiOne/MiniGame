@@ -251,17 +251,6 @@ public:
 
 
 	/**
-	 * @brief 스크린 크기에 대응하는 투영 행렬을 얻습니다.
-	 * 
-	 * @param nearZ 투영 행렬에서 가까운 Z값입니다.
-	 * @param farZ 투영 행렬에서 먼 Z값입니다.
-	 * 
-	 * @return 스크린 크기에 대응하는 투영 행렬을 반환합니다.
-	 */
-	static Mat4x4 GetScreenOrtho(float nearZ = -1.0f, float farZ = 1.0f);
-
-
-	/**
 	 * @brief 렌더 모듈의 가장 최근 에러 메시지를 얻습니다.
 	 *
 	 * @return 렌더 모듈의 가장 최근에 발생한 에러 메시지의 포인터 값을 반환합니다.
