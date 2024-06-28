@@ -1,0 +1,7 @@
+@ECHO OFF
+
+SET PROJECT_NAME=CoinDash3D
+SET SCRIPT_PATH=GameMaker\Script
+SET SCRIPT=%SCRIPT_PATH%\GenerateProjectFiles.bat
+
+%SCRIPT% %PROJECT_NAME% On
