@@ -178,10 +178,23 @@ void Renderer3D::DrawLines(const Vec3f* positions, uint32_t size, const Vec4f& c
 	Draw(Mat4x4::Identity(), EDrawMode::LINES, size);
 }
 
+void Renderer3D::DrawLines(const Vec3f* positions, const Vec4f* colors, uint32_t size)
+{
+	CHECK(size <= MAX_VERTEX_SIZE);
+
+	for (std::size_t index = 0; index < size; ++index)
+	{
+		vertices_[index].position = positions[index];
+		vertices_[index].color = colors[index];
+	}
+
+	Draw(Mat4x4::Identity(), EDrawMode::LINES, size);
+}
+
 void Renderer3D::DrawQuad(const Mat4x4& world, float width, float height, const Vec4f& color)
 {
 	uint32_t vertexCount = 0;
-
+	
 	vertices_[vertexCount++] = Vertex(Vec3f(-width * 0.5f, -height * 0.5f, 0.0f), color);
 	vertices_[vertexCount++] = Vertex(Vec3f(+width * 0.5f, -height * 0.5f, 0.0f), color);
 	vertices_[vertexCount++] = Vertex(Vec3f(+width * 0.5f, +height * 0.5f, 0.0f), color);
