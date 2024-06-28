@@ -2,7 +2,8 @@
 
 #include <cstdint>
 
-
+namespace GameMaker
+{
 /**
  * @brief 게임 내에서 시간을 측정하는 타이머입니다.
  */
@@ -173,3 +174,5 @@ private:
 	 */
 	uint64_t currTime_ = 0LL;
 };
+
+}

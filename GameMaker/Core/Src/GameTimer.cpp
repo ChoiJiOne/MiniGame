@@ -3,6 +3,8 @@
 #include "Assertion.h"
 #include "GameTimer.h"
 
+using namespace GameMaker;
+
 float GameTimer::GetDeltaSeconds() const
 {
 	if (bIsStop_)
