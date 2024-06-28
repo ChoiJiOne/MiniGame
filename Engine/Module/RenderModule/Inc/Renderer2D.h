@@ -497,6 +497,12 @@ private:
 
 
 	/**
+	 * @brief 렌더링이 시작되었는지 확인합니다.
+	 */
+	bool bIsBegin_ = false;
+
+
+	/**
 	 * @brief 점의 크기입니다.
 	 */
 	float pointSize_ = 1.0f;

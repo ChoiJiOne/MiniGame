@@ -73,6 +73,8 @@ void Renderer2D::Release()
 
 void Renderer2D::Begin(const Mat4x4& ortho)
 {
+	CHECK(!bIsBegin_);
+
 	GLboolean originEnableDepth;
 	GL_FAILED(glGetBooleanv(GL_DEPTH_TEST, &originEnableDepth));
 
@@ -90,12 +92,18 @@ void Renderer2D::Begin(const Mat4x4& ortho)
 		shader_->SetUniform("ortho", ortho);
 	}
 	shader_->Unbind();
+
+	bIsBegin_ = true;
 }
 
 void Renderer2D::End()
 {
+	CHECK(bIsBegin_);
+
 	RenderModule::SetCullFaceMode(bIsBeforeEnableCull_);
 	RenderModule::SetDepthMode(bIsBeforeEnableDepth_);
+
+	bIsBegin_ = false;
 }
 
 void Renderer2D::DrawPoint(const Vec2f* positions, uint32_t size, const Vec4f& color, float pointSize)
