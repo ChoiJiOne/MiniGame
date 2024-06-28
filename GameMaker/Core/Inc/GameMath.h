@@ -275,4 +275,17 @@ namespace GameMaker
 			return PI - result;
 		}
 	}
+
+
+	/**
+	 * @brief 제곱근을 계산합니다.
+	 *
+	 * @param x 제곱근을 계산할 부동소수점수입니다.
+	 *
+	 * @return 제곱근 값을 반환합니다.
+	 */
+	__forceinline float Sqrt(float x)
+	{
+		return std::sqrtf(x);
+	}
 }
