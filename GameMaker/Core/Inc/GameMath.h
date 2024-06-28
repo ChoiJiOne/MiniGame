@@ -315,4 +315,20 @@ namespace GameMaker
 	{
 		return std::fmodf(x, y);
 	}
+
+
+	/**
+	 * @brief 값을 [lower, upper] 범위로 자릅니다.
+	 *
+	 * @param value 범위로 자를 값입니다.
+	 * @param lower 범위의 최소값입니다.
+	 * @param upper 범위의 최대값입니다.
+	 *
+	 * @return 범위로 잘려 나간 값을 반환합니다.
+	 */
+	template <typename T>
+	__forceinline T Clamp(const T& value, const T& lower, const T& upper)
+	{
+		return Min<T>(upper, Max<T>(lower, value));
+	}
 }
