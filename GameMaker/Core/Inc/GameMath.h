@@ -303,4 +303,16 @@ namespace GameMaker
 	}
 
 
+	/**
+	 * @brief 부동 소수점 나머지를 계산합니다.
+	 *
+	 * @param x 부동 소수점 나머지를 계산할 왼쪽 피연산자입니다.
+	 * @param y 부동 소수점 나머지를 계산할 오른쪽 피연산자입니다.
+	 *
+	 * @return 계산된 부동 소수점 나머지를 반환합니다.
+	 */
+	__forceinline float Fmod(float x, float y)
+	{
+		return std::fmodf(x, y);
+	}
 }
