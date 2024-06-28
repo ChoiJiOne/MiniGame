@@ -12,7 +12,11 @@ class TTFont;
 /**
  * @brief 2D 렌더링을 수행하는 렌더러입니다.
  * 
- * @note 좌표계 기준은 윈도우 좌표계 기준입니다.
+ * @note 좌표계 기준은 다음과 같습니다.
+ *     +y
+ *     │
+ * ────┼────x+
+ *     │
  */
 class Renderer2D : public IResource
 {

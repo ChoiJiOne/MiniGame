@@ -513,7 +513,7 @@ uint32_t Renderer2D::SetGlyphVertexBuffer(const TTFont* font, const std::wstring
 
 	float atlasSize = static_cast<float>(font->GetGlyphAtlasSize());
 
-	Vec2f currPos = Vec2f(pos.x, pos.y + h);
+	Vec2f currPos = Vec2f(pos.x, pos.y - h);
 	int32_t vertexCount = 0;
 
 	for (const auto& unicode : text)
@@ -523,27 +523,27 @@ uint32_t Renderer2D::SetGlyphVertexBuffer(const TTFont* font, const std::wstring
 		float unicodeWidth = static_cast<float>(glyph.position1.x - glyph.position0.x);
 		float unicodeHeight = static_cast<float>(glyph.position1.y - glyph.position0.y);
 
-		vertices_[vertexCount + 0].position = Vec2f(currPos.x + glyph.xoffset, currPos.y + glyph.yoffset);
+		vertices_[vertexCount + 0].position = Vec2f(currPos.x + glyph.xoffset, currPos.y - glyph.yoffset);
 		vertices_[vertexCount + 0].uv = Vec2f(static_cast<float>(glyph.position0.x) / atlasSize, static_cast<float>(glyph.position0.y) / atlasSize);
 		vertices_[vertexCount + 0].color = color;
 
-		vertices_[vertexCount + 1].position = Vec2f(currPos.x + glyph.xoffset, currPos.y + unicodeHeight + glyph.yoffset);
+		vertices_[vertexCount + 1].position = Vec2f(currPos.x + glyph.xoffset, currPos.y - unicodeHeight - glyph.yoffset);
 		vertices_[vertexCount + 1].uv = Vec2f(static_cast<float>(glyph.position0.x) / atlasSize, static_cast<float>(glyph.position1.y) / atlasSize);
 		vertices_[vertexCount + 1].color = color;
 
-		vertices_[vertexCount + 2].position = Vec2f(currPos.x + glyph.xoffset + unicodeWidth, currPos.y + glyph.yoffset);
+		vertices_[vertexCount + 2].position = Vec2f(currPos.x + glyph.xoffset + unicodeWidth, currPos.y - glyph.yoffset);
 		vertices_[vertexCount + 2].uv = Vec2f(static_cast<float>(glyph.position1.x) / atlasSize, static_cast<float>(glyph.position0.y) / atlasSize);
 		vertices_[vertexCount + 2].color = color;
 
-		vertices_[vertexCount + 3].position = Vec2f(currPos.x + glyph.xoffset + unicodeWidth, currPos.y + glyph.yoffset);
+		vertices_[vertexCount + 3].position = Vec2f(currPos.x + glyph.xoffset + unicodeWidth, currPos.y - glyph.yoffset);
 		vertices_[vertexCount + 3].uv = Vec2f(static_cast<float>(glyph.position1.x) / atlasSize, static_cast<float>(glyph.position0.y) / atlasSize);
 		vertices_[vertexCount + 3].color = color;
 
-		vertices_[vertexCount + 4].position = Vec2f(currPos.x + glyph.xoffset, currPos.y + unicodeHeight + glyph.yoffset);
+		vertices_[vertexCount + 4].position = Vec2f(currPos.x + glyph.xoffset, currPos.y - unicodeHeight - glyph.yoffset);
 		vertices_[vertexCount + 4].uv = Vec2f(static_cast<float>(glyph.position0.x) / atlasSize, static_cast<float>(glyph.position1.y) / atlasSize);
 		vertices_[vertexCount + 4].color = color;
 
-		vertices_[vertexCount + 5].position = Vec2f(currPos.x + glyph.xoffset + unicodeWidth, currPos.y + unicodeHeight + glyph.yoffset);
+		vertices_[vertexCount + 5].position = Vec2f(currPos.x + glyph.xoffset + unicodeWidth, currPos.y - unicodeHeight - glyph.yoffset);
 		vertices_[vertexCount + 5].uv = Vec2f(static_cast<float>(glyph.position1.x) / atlasSize, static_cast<float>(glyph.position1.y) / atlasSize);
 		vertices_[vertexCount + 5].color = color;
 
