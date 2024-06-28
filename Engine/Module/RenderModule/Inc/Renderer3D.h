@@ -9,29 +9,29 @@ class Shader;
 
 
 /**
- * @brief 3D 기하 도형을 렌더링하는 렌더러입니다.
+ * @brief 3D 렌더링을 수행하는 렌더러입니다.
  */
-class GeometryRenderer3D : public IResource
+class Renderer3D : public IResource
 {
 public:
 	/**
-	 * @brief 3D 기하 도형을 그리는 렌더러의 디폴트 생성자입니다.
+	 * @brief 3D 렌더링을 수행하는 렌더러의 디폴트 생성자입니다.
 	 */
-	explicit GeometryRenderer3D();
+	explicit Renderer3D();
 
 
 	/**
-	 * @brief 3D 기하 도형을 그리는 렌더러의 가상 소멸자입니다.
+	 * @brief 3D 렌더링을 수행하는 렌더러의 가상 소멸자입니다.
 	 *
 	 * @note 렌더러 내부에서 할당된 요소를 해제하기 위해서는 반드시 Release를 호출해야 합니다.
 	 */
-	virtual ~GeometryRenderer3D();
+	virtual ~Renderer3D();
 
 
 	/**
-	 * @brief 3D 기하 도형을 그리는 렌더러의 복사 생성자와 대입 연산자를 명시적으로 삭제합니다.
+	 * @brief 3D 렌더링을 수행하는 렌더러의 복사 생성자와 대입 연산자를 명시적으로 삭제합니다.
 	 */
-	DISALLOW_COPY_AND_ASSIGN(GeometryRenderer3D);
+	DISALLOW_COPY_AND_ASSIGN(Renderer3D);
 
 
 	/**

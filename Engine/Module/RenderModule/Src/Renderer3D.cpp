@@ -6,11 +6,11 @@
 #include <glad/glad.h>
 
 #include "GLAssertion.h"
-#include "GeometryRenderer3D.h"
+#include "Renderer3D.h"
 #include "RenderModule.h"
 #include "Shader.h"
 
-GeometryRenderer3D::GeometryRenderer3D()
+Renderer3D::Renderer3D()
 {
 	shader_ = RenderModule::CreateResource<Shader>("Resource/Shader/Geometry3D.vert", "Resource/Shader/Geometry3D.frag");
 
@@ -36,7 +36,7 @@ GeometryRenderer3D::GeometryRenderer3D()
 	bIsInitialized_ = true;
 }
 
-GeometryRenderer3D::~GeometryRenderer3D()
+Renderer3D::~Renderer3D()
 {
 	if (bIsInitialized_)
 	{
@@ -44,7 +44,7 @@ GeometryRenderer3D::~GeometryRenderer3D()
 	}
 }
 
-void GeometryRenderer3D::Release()
+void Renderer3D::Release()
 {
 	CHECK(bIsInitialized_);
 
@@ -65,7 +65,7 @@ void GeometryRenderer3D::Release()
 	bIsInitialized_ = false;
 }
 
-void GeometryRenderer3D::DrawPoints3D(const std::vector<Vec3f>& positions, const Vec4f& color, float pointSize)
+void Renderer3D::DrawPoints3D(const std::vector<Vec3f>& positions, const Vec4f& color, float pointSize)
 {
 	CHECK(positions.size() <= MAX_VERTEX_SIZE);
 
@@ -78,7 +78,7 @@ void GeometryRenderer3D::DrawPoints3D(const std::vector<Vec3f>& positions, const
 	DrawGeometry3D(Mat4x4::Identity(), EDrawMode::POINTS, static_cast<uint32_t>(positions.size()));
 }
 
-void GeometryRenderer3D::DrawConnectPoints3D(const std::vector<Vec3f>& positions, const Vec4f& color)
+void Renderer3D::DrawConnectPoints3D(const std::vector<Vec3f>& positions, const Vec4f& color)
 {
 	CHECK(positions.size() <= MAX_VERTEX_SIZE);
 
@@ -90,7 +90,7 @@ void GeometryRenderer3D::DrawConnectPoints3D(const std::vector<Vec3f>& positions
 	DrawGeometry3D(Mat4x4::Identity(), EDrawMode::LINE_STRIP, static_cast<uint32_t>(positions.size()));
 }
 
-void GeometryRenderer3D::DrawLine3D(const Vec3f& fromPosition, const Vec3f& toPosition, const Vec4f& color)
+void Renderer3D::DrawLine3D(const Vec3f& fromPosition, const Vec3f& toPosition, const Vec4f& color)
 {
 	uint32_t vertexCount = 0;
 
@@ -100,7 +100,7 @@ void GeometryRenderer3D::DrawLine3D(const Vec3f& fromPosition, const Vec3f& toPo
 	DrawGeometry3D(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
 }
 
-void GeometryRenderer3D::DrawLine3D(const Vec3f& fromPosition, const Vec4f& fromColor, const Vec3f& toPosition, const Vec4f& toColor)
+void Renderer3D::DrawLine3D(const Vec3f& fromPosition, const Vec4f& fromColor, const Vec3f& toPosition, const Vec4f& toColor)
 {
 	uint32_t vertexCount = 0;
 
@@ -110,7 +110,7 @@ void GeometryRenderer3D::DrawLine3D(const Vec3f& fromPosition, const Vec4f& from
 	DrawGeometry3D(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
 }
 
-void GeometryRenderer3D::DrawLines3D(const std::vector<Vec3f>& positions, const Vec4f& color)
+void Renderer3D::DrawLines3D(const std::vector<Vec3f>& positions, const Vec4f& color)
 {
 	CHECK(positions.size() <= MAX_VERTEX_SIZE);
 
@@ -122,7 +122,7 @@ void GeometryRenderer3D::DrawLines3D(const std::vector<Vec3f>& positions, const 
 	DrawGeometry3D(Mat4x4::Identity(), EDrawMode::LINES, static_cast<uint32_t>(positions.size()));
 }
 
-void GeometryRenderer3D::DrawQuad3D(const Mat4x4& world, float width, float height, const Vec4f& color)
+void Renderer3D::DrawQuad3D(const Mat4x4& world, float width, float height, const Vec4f& color)
 {
 	uint32_t vertexCount = 0;
 
@@ -137,7 +137,7 @@ void GeometryRenderer3D::DrawQuad3D(const Mat4x4& world, float width, float heig
 	DrawGeometry3D(world, EDrawMode::TRIANGLES, vertexCount);
 }
 
-void GeometryRenderer3D::DrawHorizonProgressBar3D(const Mat4x4& world, float width, float height, float rate, const Vec4f& color, const Vec4f& bgColor)
+void Renderer3D::DrawHorizonProgressBar3D(const Mat4x4& world, float width, float height, float rate, const Vec4f& color, const Vec4f& bgColor)
 {
 	rate = MathModule::Clamp<float>(rate, 0.0f, 1.0f);
 
@@ -168,7 +168,7 @@ void GeometryRenderer3D::DrawHorizonProgressBar3D(const Mat4x4& world, float wid
 	DrawGeometry3D(world, EDrawMode::TRIANGLES, vertexCount);
 }
 
-void GeometryRenderer3D::DrawVerticalProgressBar3D(const Mat4x4& world, float width, float height, float rate, const Vec4f& color, const Vec4f& bgColor)
+void Renderer3D::DrawVerticalProgressBar3D(const Mat4x4& world, float width, float height, float rate, const Vec4f& color, const Vec4f& bgColor)
 {
 	rate = MathModule::Clamp<float>(rate, 0.0f, 1.0f);
 
@@ -199,7 +199,7 @@ void GeometryRenderer3D::DrawVerticalProgressBar3D(const Mat4x4& world, float wi
 	DrawGeometry3D(world, EDrawMode::TRIANGLES, vertexCount);
 }
 
-void GeometryRenderer3D::DrawCube3D(const Mat4x4& world, const Vec3f& extents, const Vec4f& color)
+void Renderer3D::DrawCube3D(const Mat4x4& world, const Vec3f& extents, const Vec4f& color)
 {
 	uint32_t vertexCount = 0;
 
@@ -245,7 +245,7 @@ void GeometryRenderer3D::DrawCube3D(const Mat4x4& world, const Vec3f& extents, c
 	DrawGeometry3D(world, EDrawMode::LINES, vertexCount);
 }
 
-void GeometryRenderer3D::DrawSphere3D(const Mat4x4& world, float radius, const Vec4f& color)
+void Renderer3D::DrawSphere3D(const Mat4x4& world, float radius, const Vec4f& color)
 {
 	static const uint32_t sliceCount = 20;
 
@@ -319,7 +319,7 @@ void GeometryRenderer3D::DrawSphere3D(const Mat4x4& world, float radius, const V
 	DrawGeometry3D(world, EDrawMode::LINES, vertexCount);
 }
 
-void GeometryRenderer3D::DrawViewfrustum3D(const Mat4x4& view, const Mat4x4& projection, const Vec4f& color)
+void Renderer3D::DrawViewfrustum3D(const Mat4x4& view, const Mat4x4& projection, const Vec4f& color)
 {
 	static const uint32_t MAX_FRUSTUM_CORNER = 8;
 	static const std::array<Vec3f, MAX_FRUSTUM_CORNER> corners =
@@ -385,7 +385,7 @@ void GeometryRenderer3D::DrawViewfrustum3D(const Mat4x4& view, const Mat4x4& pro
 	DrawGeometry3D(Mat4x4::Identity(), EDrawMode::LINES, vertexCount);
 }
 
-void GeometryRenderer3D::DrawGrid3D(const Vec3f& extensions, float stride)
+void Renderer3D::DrawGrid3D(const Vec3f& extensions, float stride)
 {
 	CHECK(stride >= 1.0f);
 
@@ -428,7 +428,7 @@ void GeometryRenderer3D::DrawGrid3D(const Vec3f& extensions, float stride)
 	DrawGeometry3D(Mat4x4::Identity(), EDrawMode::LINES, static_cast<uint32_t>(vertexCount));
 }
 
-void GeometryRenderer3D::DrawGeometry3D(const Mat4x4& world, const EDrawMode& drawMode, uint32_t vertexCount)
+void Renderer3D::DrawGeometry3D(const Mat4x4& world, const EDrawMode& drawMode, uint32_t vertexCount)
 {
 	CHECK(drawMode != EDrawMode::NONE);
 
