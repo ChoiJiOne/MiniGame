@@ -70,10 +70,7 @@ void RenderManager::Shutdown()
 
 void RenderManager::BeginFrame(float red, float green, float blue, float alpha, float depth, uint8_t stencil)
 {
-	int32_t w;
-	int32_t h;
-	GetScreenSize<int32_t>(w, h);
-	SetViewport(0, 0, w, h);
+	SetWindowViewport();
 
 	glClearColor(red, green, blue, alpha);
 	glClearDepth(depth);
@@ -94,6 +91,10 @@ void RenderManager::SetViewport(int32_t x, int32_t y, int32_t width, int32_t hei
 
 void RenderManager::SetWindowViewport()
 {
+	int32_t w;
+	int32_t h;
+	GetScreenSize<int32_t>(w, h);
+	SetViewport(0, 0, w, h);
 }
 
 void RenderManager::SetVsyncMode(bool bIsEnable)
