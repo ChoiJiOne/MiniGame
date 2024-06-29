@@ -292,4 +292,93 @@ inline std::wstring GetWinErrorCodeMessageW(uint32_t errorCode)
 
 	return std::wstring(buffer, size);
 }
+
+
+/**
+ * @brief 평가식을 검사합니다.
+ *
+ * @param Expression 검사할 호출값입니다.
+ * @param ... 평가식을 만족하지 못할 경우 표시할 가변 인자 메시지입니다.
+ *
+ * @note
+ * - 디버거가 존재할 때, DEBUG_MODE에서는 브레이크 포인트가 걸린 후 프로세스가 종료됩니다.
+ * - 디버거가 존재할 때, RELEASE_MODE와 RELWITHDEBINFO_MODE에서는 브레이크 포인트가 걸리지만 프로세스는 종료되지 않습니다.
+ * - MINSIZEREL_MODE에서는 평가식을 검사하지 않습니다.
+ */
+#if defined(DEBUG_MODE)
+#ifndef WINDOWS_ASSERT
+#define WINDOWS_ASSERT(Expression, ...)\
+{\
+	if (!(bool)(Expression))                                                                                                                        \
+	{                                                                                                                                               \
+		DebugPrintF("\nWindows assertion check point failed!\nFile : %s\nLine : %d\nExpression : %s\nMessage : ", __FILE__, __LINE__, #Expression); \
+		DebugPrintF(__VA_ARGS__);                                                                                                                   \
+		DebugPrintF(L"Windows error message : %s\n", GetWinErrorCodeMessageW(GetLastError()).c_str());                                              \
+		DebugPrintF("\n\n");                                                                                                                        \
+		__debugbreak();                                                                                                                             \
+		ExitProcess(-1);                                                                                                                            \
+	}                                                                                                                                               \
+}
+#endif
+#elif defined(RELEASE_MODE) || defined(RELWITHDEBINFO_MODE)
+#ifndef WINDOWS_ASSERT
+#define WINDOWS_ASSERT(Expression, ...)\
+{\
+	if (!(bool)(Expression))                                                                                                                        \
+	{                                                                                                                                               \
+		DebugPrintF("\nWindows assertion check point failed!\nFile : %s\nLine : %d\nExpression : %s\nMessage : ", __FILE__, __LINE__, #Expression); \
+		DebugPrintF(__VA_ARGS__);                                                                                                                   \
+		DebugPrintF(L"Windows error message : %s\n", GetWinErrorCodeMessageW(GetLastError()).c_str());                                              \
+		DebugPrintF("\n\n");                                                                                                                        \
+		__debugbreak();                                                                                                                             \
+	}                                                                                                                                               \
+}
+#endif
+#else // defined(MINSIZEREL_MODE)
+#ifndef WINDOWS_ASSERT
+#define WINDOWS_ASSERT(Expression, ...) ((void)(Expression))
+#endif
+#endif
+
+
+/**
+ * @brief 평가식을 검사합니다.
+ *
+ * @param Expression 검사할 호출값입니다.
+ *
+ * @note
+ * - 디버거가 존재할 때, DEBUG_MODE에서는 브레이크 포인트가 걸린 후 프로세스가 종료됩니다.
+ * - 디버거가 존재할 때, RELEASE_MODE와 RELWITHDEBINFO_MODE에서는 브레이크 포인트가 걸리지만 프로세스는 종료되지 않습니다.
+ * - MINSIZEREL_MODE에서는 평가식을 검사하지 않습니다.
+ */
+#if defined(DEBUG_MODE)
+#ifndef WINDOWS_CHECK
+#define WINDOWS_CHECK(Expression)\
+{\
+	if (!(bool)(Expression))                                                                                              \
+	{                                                                                                                     \
+		DebugPrintF("\nCheck point failed!\nFile : %s\nLine : %d\nExpression : %s\n\n", __FILE__, __LINE__, #Expression); \
+		DebugPrintF(L"Windows error message : %s\n", GetWinErrorCodeMessageW(GetLastError()).c_str());                    \
+		__debugbreak();                                                                                                   \
+		ExitProcess(-1);                                                                                                  \
+	}                                                                                                                     \
+}
+#endif
+#elif defined(RELEASE_MODE) || defined(RELWITHDEBINFO_MODE)
+#ifndef WINDOWS_CHECK
+#define WINDOWS_CHECK(Expression)\
+{\
+	if (!(bool)(Expression))                                                                                              \
+	{                                                                                                                     \
+		DebugPrintF("\nCheck point failed!\nFile : %s\nLine : %d\nExpression : %s\n\n", __FILE__, __LINE__, #Expression); \
+		DebugPrintF(L"Windows error message : %s\n", GetWinErrorCodeMessageW(GetLastError()).c_str());                    \
+		__debugbreak();                                                                                                   \
+	}                                                                                                                     \
+}
+#endif
+#else // defined(MINSIZEREL_MODE)
+#ifndef WINDOWS_CHECK
+#define WINDOWS_CHECK(Expression, ...) ((void)(Expression))
+#endif
+#endif
 #endif
