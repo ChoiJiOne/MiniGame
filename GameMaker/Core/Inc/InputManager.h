@@ -4,6 +4,7 @@
 #include <functional>
 
 #include "GameMath.h"
+#include "IManager.h"
 
 
 namespace GameMaker
@@ -335,13 +336,45 @@ enum class EWindowEvent : int32_t
 
 
 /**
- * @brief 게임의 입력 상태를 관리합니다.
+ * @brief 게임의 입력 상태를 관리하는 매니저입니다.
  * 
- * @note 이 클래스의 모든 멤버 함수 및 변수는 모두 정적(static) 타입입니다.
+ * @note 이 클래스는 싱글턴입니다.
  */
-class GameInput
+class InputManager : public IManager
 {
 public:
+	/**
+	 * @brief 게임의 입력 상태를 관리하는 매니저의 복사 생성자와 대입 연산자를 명시적으로 삭제합니다.
+	 */
+	DISALLOW_COPY_AND_ASSIGN(InputManager);
+
+
+	/**
+	 * @brief 게임의 입력 상태를 관리하는 매니저의 참조자를 얻습니다.
+	 *
+	 * @return 게임의 입력 상태를 관리하는 매니저의 참조자를 반환합니다.
+	 */
+	static InputManager& Get();
+
+
+	/**
+	 * @brief 게임의 입력 상태를 관리하는 매니저의 사용을 시작합니다.
+	 *
+	 * @note 이 메서드는 한 번만 호출되어야 합니다.
+	 */
+	virtual void Startup() override;
+
+
+	/**
+	 * @brief 게임의 입력 상태를 관리하는 매니저의 사용을 종료합니다.
+	 *
+	 * @note
+	 * - 애플리케이션 종료 전에 이 메서드를 반드시 호출하여 내부 리소스를 정리해야 합니다.
+	 * - 이 메서드는 반드시 한 번만 호출되어야 합니다.
+	 */
+	virtual void Shutdown() override;
+
+
 	/**
 	 * @brief 가상 키의 입력 상태를 확인합니다.
 	 *
@@ -349,7 +382,7 @@ public:
 	 *
 	 * @return 키의 입력 상태를 반환합니다.
 	 */
-	static EPressState GetKeyPressState(const EKey& key);
+	EPressState GetKeyPressState(const EKey& key);
 
 
 	/**
@@ -359,7 +392,7 @@ public:
 	 *
 	 * @return 마우스의 입력 상태를 반환합니다.
 	 */
-	static EPressState GetMousePressState(const EMouse& mouse);
+	EPressState GetMousePressState(const EMouse& mouse);
 
 
 	/**
@@ -371,7 +404,7 @@ public:
 	 *
 	 * @return 윈도우 이벤트의 ID 값을 반환합니다.
 	 */
-	static WindowEventID AddWindowEventAction(const EWindowEvent& windowEvent, const std::function<void()>& eventAction, bool bIsActive = true);
+	WindowEventID AddWindowEventAction(const EWindowEvent& windowEvent, const std::function<void()>& eventAction, bool bIsActive = true);
 
 
 	/**
@@ -381,7 +414,7 @@ public:
 	 *
 	 * @note 시그니처에 대응하는 윈도우 이벤트가 존재하지 않으면 아무 동작도 수행하지 않습니다.
 	 */
-	static void DeleteWindowEventAction(const WindowEventID& windowEventID);
+	void DeleteWindowEventAction(const WindowEventID& windowEventID);
 
 
 	/**
@@ -392,10 +425,16 @@ public:
 	 *
 	 * @note 시그니처에 대응하는 윈도우 이벤트가 존재하지 않으면 아무 동작도 수행하지 않습니다.
 	 */
-	static void SetActiveWindowEventAction(const WindowEventID& windowEventID, bool bIsActive);
+	void SetActiveWindowEventAction(const WindowEventID& windowEventID, bool bIsActive);
 	
 
 private:
+	/**
+	 * @brief 입력 처리를 수행하는 매니저에 디폴트 생성자와 빈 가상 소멸자를 삽입합니다.
+	 */
+	DEFAULT_CONSTRUCTOR_AND_VIRTUAL_DESTRUCTOR(InputManager);
+
+
 	/**
 	 * @brief 게임 엔진에서 접근할 수 있도록 friend 선언을 추가합니다.
 	 */
@@ -436,7 +475,7 @@ private:
 	/**
 	 * @brief 입력 상태를 업데이트합니다.
 	 */
-	static void Tick();
+	void Tick();
 
 
 	/**
@@ -444,7 +483,7 @@ private:
 	 *
 	 * @param windowEvent 실행할 윈도우 이벤트입니다.
 	 */
-	static void ExecuteWindowEventAction(const EWindowEvent& windowEvent);
+	void ExecuteWindowEventAction(const EWindowEvent& windowEvent);
 
 
 	/**
@@ -455,7 +494,7 @@ private:
 	 *
 	 * @return 키가 눌렸다면 true, 그렇지 않으면 false를 반환합니다.
 	 */
-	static bool IsPressKey(const KeyboardState& keyboardState, const EKey& key);
+	bool IsPressKey(const KeyboardState& keyboardState, const EKey& key);
 
 
 	/**
@@ -466,50 +505,50 @@ private:
 	 *
 	 * @return 마우스 버튼이 눌렸다면 true, 그렇지 않으면 false를 반환합니다.
 	 */
-	static bool IsPressMouse(const MouseState& mouseState, const EMouse& mouse);
+	bool IsPressMouse(const MouseState& mouseState, const EMouse& mouse);
 
 
 private:
 	/**
      * @brief 입력 처리 매니저의 업데이트 이전 키보드 입력 상태입니다.
      */
-	static KeyboardState prevKeyboardState_;
+	KeyboardState prevKeyboardState_;
 
 
 	/**
      * @brief 입력 처리 매니저의 업데이트 이후 키보드 입력 상태입니다.
      */
-	static KeyboardState currKeyboardState_;
+	KeyboardState currKeyboardState_;
 
 
 	/**
      * @brief 입력 처리 매니저의 업데이트 이전의 마우스 상태입니다.
      */
-	static MouseState prevMouseState_;
+	MouseState prevMouseState_;
 
 
 	/**
      * @brief 입력 처리 매니저의 업데이트 이후의 마우스 상태입니다.
      */
-	static MouseState currMouseState_;
+	MouseState currMouseState_;
 
 
 	/**
      * @brief 입력 처리 매니저의 이벤트 액션 배열의 크기입니다.
      */
-	static uint32_t windowEventActionSize_;
+	uint32_t windowEventActionSize_;
 
 
 	/**
      * @brief 입력 처리 매니저의 이벤트 액션 배열의 최대 크기입니다.
      */
-	static const uint32_t MAX_EVENT_ACTION_SIZE = 100;
+	static const uint32_t MAX_EVENT_ACTION_SIZE = 200;
 
 
 	/**
      * @brief 입력 처리 매니저의 이벤트 액션 배열입니다.
      */
-	static std::array<WindowEventAction, MAX_EVENT_ACTION_SIZE> windowEventActions_;
+	std::array<WindowEventAction, MAX_EVENT_ACTION_SIZE> windowEventActions_;
 };
 
 };
