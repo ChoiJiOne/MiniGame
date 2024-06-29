@@ -161,7 +161,7 @@ enum class EKey : int32_t
 	KEY_F22 = 113,
 	KEY_F23 = 114,
 	KEY_F24 = 115,
-	KEY_EXECUTE = 116,
+	KEY_EXECUTION = 116,
 	KEY_HELP = 117,
 	KEY_MENU = 118,
 	KEY_SELECT = 119,
@@ -302,7 +302,7 @@ enum class EKey : int32_t
 /**
  * @brief 윈도우 이벤트의 키 값입니다.
  */
-using WINDOW_EVENT_UID = int32_t;
+using WindowEventID = int32_t;
 
 
 /**
@@ -333,5 +333,183 @@ enum class EWindowEvent : int32_t
 	DISPLAY_CHANGED = 0x12
 };
 
+
+/**
+ * @brief 게임의 입력 상태를 관리합니다.
+ * 
+ * @note 이 클래스의 모든 멤버 함수 및 변수는 모두 정적(static) 타입입니다.
+ */
+class GameInput
+{
+public:
+	/**
+	 * @brief 가상 키의 입력 상태를 확인합니다.
+	 *
+	 * @param key 입력 상태를 확인할 키 값입니다.
+	 *
+	 * @return 키의 입력 상태를 반환합니다.
+	 */
+	static EPressState GetKeyPressState(const EKey& key);
+
+
+	/**
+	 * @brief 마우스의 입력 상태를 확인합니다.
+	 *
+	 * @param mouse 입력 상태를 확인할 마우스 버튼입니다.
+	 *
+	 * @return 마우스의 입력 상태를 반환합니다.
+	 */
+	static EPressState GetMousePressState(const EMouse& mouse);
+
+
+	/**
+	 * @brief 윈도우 이벤트 액션을 추가합니다.
+	 *
+	 * @param windowEvent 동작할 액션에 대응하는 윈도우 이벤트입니다.
+	 * @param eventAction 이벤트 액션에 대응하는 액션입니다.
+	 * @param bIsActive 윈도우 이벤트 액션 활성화 여부입니다. 기본 값은 true입니다.
+	 *
+	 * @return 윈도우 이벤트의 ID 값을 반환합니다.
+	 */
+	static WindowEventID AddWindowEventAction(const EWindowEvent& windowEvent, const std::function<void()>& eventAction, bool bIsActive = true);
+
+
+	/**
+	 * @brief 윈도우 이벤트 액션을 삭제합니다.
+	 *
+	 * @param windowEventID 윈도우 이벤트 액션의 ID 값입니다.
+	 *
+	 * @note 시그니처에 대응하는 윈도우 이벤트가 존재하지 않으면 아무 동작도 수행하지 않습니다.
+	 */
+	static void DeleteWindowEventAction(const WindowEventID& windowEventID);
+
+
+	/**
+	 * @brief 윈도우 이벤트 액션의 활성화 여부를 설정합니다.
+	 *
+	 * @param windowEventID 윈도우 이벤트 액션의 ID 값입니다.
+	 * @param bIsActive 윈도우 이벤트의 활성화 여부입니다.
+	 *
+	 * @note 시그니처에 대응하는 윈도우 이벤트가 존재하지 않으면 아무 동작도 수행하지 않습니다.
+	 */
+	static void SetActiveWindowEventAction(const WindowEventID& windowEventID, bool bIsActive);
+	
+
+private:
+	/**
+	 * @brief 게임 엔진에서 접근할 수 있도록 friend 선언을 추가합니다.
+	 */
+	friend class GameEngine;
+
+
+	/**
+	 * @brief 윈도우 이벤트에 대응하는 액션입니다.
+	 */
+	struct WindowEventAction
+	{
+		bool				  bIsActive;         // 윈도우 이벤트의 활성화 여부입니다.
+		EWindowEvent		  windowEvent;       // 윈도우 이벤트입니다.
+		std::function<void()> windowEventAction; // 윈도우 이벤트에 대응하는 액션입니다.
+	};
+
+
+	/**
+	 * @brief 키보드의 키 값 상태입니다.
+	 */
+	struct KeyboardState
+	{
+		static const int32_t BUFFER_SIZE = 512;        // 키보드의 키 값 상태를 저장하는 버퍼의 크기입니다.
+		std::array<uint8_t, BUFFER_SIZE> keybordState; // 키보드의 키 값 상태를 저장하는 버퍼입니다.
+	};
+
+
+	/**
+	 * @brief 마우스의 상태입니다.
+	 */
+	struct MouseState
+	{
+		uint32_t state; // 마우스 버튼의 상태입니다.
+		Vec2i position; // 마우스 버튼의 위치입니다.
+	};
+
+
+	/**
+	 * @brief 입력 상태를 업데이트합니다.
+	 */
+	static void Tick();
+
+
+	/**
+	 * @brief 윈도우 이벤트에 대응하는 액션들을 실행합니다.
+	 *
+	 * @param windowEvent 실행할 윈도우 이벤트입니다.
+	 */
+	static void ExecuteWindowEventAction(const EWindowEvent& windowEvent);
+
+
+	/**
+	 * @brief 특정 키가 눌렸는지 확인합니다.
+	 *
+	 * @param keyboardState 검사를 수행할 키보드 상태입니다.
+	 * @param keyCode 눌렸는지 확인할 키의 코드값입니다.
+	 *
+	 * @return 키가 눌렸다면 true, 그렇지 않으면 false를 반환합니다.
+	 */
+	static bool IsPressKey(const KeyboardState& keyboardState, const EKey& key);
+
+
+	/**
+	 * @brief 특정 마우스 버튼이 눌렸는지 확인합니다.
+	 *
+	 * @param mouseState 검사를 수행할 마우스 상태입니다.
+	 * @param mouseButton 눌렸는지 확인할 마우스 버튼입니다.
+	 *
+	 * @return 마우스 버튼이 눌렸다면 true, 그렇지 않으면 false를 반환합니다.
+	 */
+	static bool IsPressMouse(const MouseState& mouseState, const EMouse& mouse);
+
+
+private:
+	/**
+     * @brief 입력 처리 매니저의 업데이트 이전 키보드 입력 상태입니다.
+     */
+	static KeyboardState prevKeyboardState_;
+
+
+	/**
+     * @brief 입력 처리 매니저의 업데이트 이후 키보드 입력 상태입니다.
+     */
+	static KeyboardState currKeyboardState_;
+
+
+	/**
+     * @brief 입력 처리 매니저의 업데이트 이전의 마우스 상태입니다.
+     */
+	static MouseState prevMouseState_;
+
+
+	/**
+     * @brief 입력 처리 매니저의 업데이트 이후의 마우스 상태입니다.
+     */
+	static MouseState currMouseState_;
+
+
+	/**
+     * @brief 입력 처리 매니저의 이벤트 액션 배열의 크기입니다.
+     */
+	static uint32_t windowEventActionSize_;
+
+
+	/**
+     * @brief 입력 처리 매니저의 이벤트 액션 배열의 최대 크기입니다.
+     */
+	static const uint32_t MAX_EVENT_ACTION_SIZE = 100;
+
+
+	/**
+     * @brief 입력 처리 매니저의 이벤트 액션 배열입니다.
+     */
+	static std::array<WindowEventAction, MAX_EVENT_ACTION_SIZE> windowEventActions_;
+};
 
 };
