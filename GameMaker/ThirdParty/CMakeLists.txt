@@ -2,5 +2,6 @@
 cmake_minimum_required(VERSION 3.27)
 
 add_subdirectory(SDL)
+add_subdirectory(glad)
 
-set_target_properties(SDL2 SDL2main sdl_headers_copy PROPERTIES FOLDER "ThirdParty")
+set_target_properties(SDL2 SDL2main sdl_headers_copy glad PROPERTIES FOLDER "ThirdParty")
