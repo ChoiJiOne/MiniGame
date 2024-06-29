@@ -28,6 +28,7 @@ target_link_libraries(
     Pathcch.lib 
     Shlwapi.lib 
     SDL2
+    glad
 )
 
 target_compile_definitions(
