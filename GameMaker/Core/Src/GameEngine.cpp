@@ -2,8 +2,10 @@
 
 #include "Assertion.h"
 #include "GameEngine.h"
-#include "GameInput.h"
 #include "GameTimer.h"
+#include "InputManager.h"
+#include "RenderManager.h"
+#include "ResourceManager.h"
 
 using namespace GameMaker;
 
@@ -48,12 +50,20 @@ void GameEngine::Init()
 	gameWindow_ = SDL_CreateWindow("CoinDash3D", 100, 100, 800, 600, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	CHECK(gameWindow_ != nullptr);
 
+	InputManager::Get().Startup();
+	RenderManager::Get().Startup();
+	ResourceManager::Get().Startup();
+
 	bIsInit_ = true;
 }
 
 void GameEngine::Shutdown()
 {
 	ASSERT(bIsInit_, "GameEngine has already shutdown or initialization has failed.");
+
+	ResourceManager::Get().Shutdown();
+	RenderManager::Get().Shutdown();
+	InputManager::Get().Shutdown();
 
 	if (gameWindow_)
 	{
@@ -75,9 +85,11 @@ void GameEngine::RunLoop(const std::function<void(float)>& callback)
 	GameTimer timer;
 	timer.Reset();
 
+	InputManager& inputManager = InputManager::Get();
+
 	while (!bIsQuitLoop_)
 	{
-		GameInput::Tick();
+		inputManager.Tick();
 
 		timer.Tick();
 		float deltaSeconds = timer.GetDeltaSeconds();
