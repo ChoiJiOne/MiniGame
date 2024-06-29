@@ -299,4 +299,10 @@ enum class EKey : int32_t
 };
 
 
+/**
+ * @brief 윈도우 이벤트의 키 값입니다.
+ */
+using WINDOW_EVENT_UID = int32_t;
+
+
 };
