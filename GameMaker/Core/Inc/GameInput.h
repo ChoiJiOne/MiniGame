@@ -30,4 +30,16 @@ enum class EPressState : int32_t
 };
 
 
+/**
+ * @brief 마우스의 버튼의 종류입니다.
+ */
+enum class EMouse : int32_t
+{
+	LEFT   = (1 << ((1) - 1)),
+	MIDDLE = (1 << ((2) - 1)),
+	RIGHT  = (1 << ((3) - 1)),
+};
+
+
+
 };
