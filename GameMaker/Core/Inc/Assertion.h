@@ -237,3 +237,59 @@ inline void DebugPrintF(const wchar_t* format, ...)
 #endif
 #endif
 #endif
+
+
+#if defined(_WIN32) || defined(_WIN64)
+/**
+ * @brief Windows 에러 코드에 대응하는 메시지를 얻습니다.
+ * 
+ * @param errorCode 에러 메시지를 얻을 에러 코드입니다.
+ * 
+ * @return 에러 코드에 대응하는 메시지를 반환합니다.
+ * 
+ * @see https://learn.microsoft.com/ko-kr/windows/win32/api/winbase/nf-winbase-formatmessagea
+ */
+inline std::string GetWinErrorCodeMessageA(uint32_t errorCode)
+{
+	static const uint32_t MAX_BUFFER_SIZE = 1024;
+	static char buffer[MAX_BUFFER_SIZE];
+
+	uint32_t size = FormatMessageA(
+		FORMAT_MESSAGE_FROM_SYSTEM,
+		nullptr,
+		static_cast<DWORD>(errorCode),
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		buffer,
+		MAX_BUFFER_SIZE,
+		nullptr
+	);
+
+	return std::string(buffer, size);
+}
+
+
+/**
+ * @brief Windows 에러 코드에 대응하는 메시지를 얻습니다.
+ *
+ * @param errorCode 에러 메시지를 얻을 에러 코드입니다.
+ *
+ * @return 에러 코드에 대응하는 메시지를 반환합니다.
+ */
+inline std::wstring GetWinErrorCodeMessageW(uint32_t errorCode)
+{
+	static const uint32_t MAX_BUFFER_SIZE = 1024;
+	static wchar_t buffer[MAX_BUFFER_SIZE];
+
+	uint32_t size = FormatMessageW(
+		FORMAT_MESSAGE_FROM_SYSTEM,
+		nullptr,
+		static_cast<DWORD>(errorCode),
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		buffer,
+		MAX_BUFFER_SIZE,
+		nullptr
+	);
+
+	return std::wstring(buffer, size);
+}
+#endif
