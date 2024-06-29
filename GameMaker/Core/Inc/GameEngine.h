@@ -5,7 +5,6 @@
 
 namespace GameMaker
 {
-
 /**
  * @brief 게임 엔진 클래스입니다.
  *
