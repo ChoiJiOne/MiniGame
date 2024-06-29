@@ -47,7 +47,7 @@ void GameEngine::Init()
 	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, GL_MULTISAMPLEBUFFERS));
 	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, GL_MULTISAMPLESAMPLES));
 
-	gameWindow_ = SDL_CreateWindow("CoinDash3D", 100, 100, 800, 600, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+	gameWindow_ = SDL_CreateWindow("CoinDash3D", 100, 100, 800, 600, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 	CHECK(gameWindow_ != nullptr);
 
 	InputManager::Get().Startup();
