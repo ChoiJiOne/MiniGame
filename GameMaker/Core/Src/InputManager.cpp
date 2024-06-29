@@ -30,6 +30,14 @@ void InputManager::Startup()
 void InputManager::Shutdown()
 {
 	CHECK(bIsStartup_);
+	
+	// 명시적으로 비활성화.
+	for (uint32_t index = 0; index < windowEventActionSize_; ++index)
+	{
+		windowEventActions_[index].windowEvent = EWindowEvent::NONE;
+		windowEventActions_[index].windowEventAction = nullptr;
+		windowEventActions_[index].bIsActive = false;
+	}
 
 	bIsStartup_ = false;
 }
