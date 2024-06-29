@@ -19,20 +19,7 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 #if defined(DEBUG_MODE) || defined(RELEASE_MODE) || defined(DEVELOPMENT_MODE)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-
-	GameMaker::InputManager& manager = GameMaker::InputManager::Get();
-
-	manager.AddWindowEventAction(GameMaker::EWindowEvent::MOVED, [&]() { SDL_Log("MOVED"); });
-	manager.AddWindowEventAction(GameMaker::EWindowEvent::FOCUS_LOST, [&]() { SDL_Log("FOCUS_LOST"); });
-	manager.AddWindowEventAction(GameMaker::EWindowEvent::LEAVE, [&]() { SDL_Log("LEAVE"); });
-	manager.AddWindowEventAction(GameMaker::EWindowEvent::RESIZED, [&]() { SDL_Log("RESIZED"); });
-	manager.AddWindowEventAction(GameMaker::EWindowEvent::SIZE_CHANGED, [&]() { SDL_Log("SIZE_CHANGED"); });
-	manager.AddWindowEventAction(GameMaker::EWindowEvent::CLOSE, [&]() { 
-		SDL_Log("CLOSE"); 
-		});
-
-	GameMaker::FileUtils::MakeDirectory("Test");
-
+	
 	GameMaker::GameEngine::Init();
 	GameMaker::GameEngine::RunLoop(
 		[&](float deltaSeconds) 
