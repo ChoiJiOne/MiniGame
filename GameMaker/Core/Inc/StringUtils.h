@@ -5,13 +5,18 @@
 #include <cstdarg>
 
 
+namespace GameMaker
+{
 /**
  * @brief 문자열의 확장 기능을 제공합니다.
  *
- * @note 문자열은 std::string, std::wstring 표준 문자열 기준입니다.
+ * @note 
+ * - 문자열은 std::string, std::wstring 표준 문자열 기준입니다.
+ * - 이 클래스의 모든 멤버 변수와 메서드는 정적(static) 타입입니다.
  */
-namespace StringUtils
+class StringUtils
 {
+public:
 	/**
 	 * @brief 형식화된 문자열을 반환합니다.
 	 *
@@ -26,7 +31,7 @@ namespace StringUtils
 	 *
 	 * @see https://learn.microsoft.com/ko-kr/cpp/c-runtime-library/reference/vsnprintf-vsnprintf-vsnprintf-l-vsnwprintf-vsnwprintf-l?view=msvc-170
 	 */
-	std::string PrintF(const char* format, ...);
+	static std::string PrintF(const char* format, ...);
 
 
 	/**
@@ -43,7 +48,7 @@ namespace StringUtils
 	 *
 	 * @see https://learn.microsoft.com/ko-kr/cpp/c-runtime-library/reference/vsnprintf-vsnprintf-vsnprintf-l-vsnwprintf-vsnwprintf-l?view=msvc-170
 	 */
-	std::wstring PrintF(const wchar_t* format, ...);
+	static std::wstring PrintF(const wchar_t* format, ...);
 
 
 	/**
@@ -54,7 +59,7 @@ namespace StringUtils
 	 *
 	 * @return 분리된 문자열을 담고 있는 벡터(std::vector)를 반환합니다.
 	 */
-	std::vector<std::string> Split(const std::string& text, const std::string& delimiter);
+	static std::vector<std::string> Split(const std::string& text, const std::string& delimiter);
 
 
 	/**
@@ -65,7 +70,7 @@ namespace StringUtils
 	 *
 	 * @return 분리된 문자열을 담고 있는 벡터(std::vector)입니다.
 	 */
-	std::vector<std::wstring> Split(const std::wstring& text, const std::wstring& delimiter);
+	static std::vector<std::wstring> Split(const std::wstring& text, const std::wstring& delimiter);
 
 
 	/**
@@ -77,7 +82,7 @@ namespace StringUtils
 	 *
 	 * @return 변환된 문자열을 반환합니다.
 	 */
-	std::wstring Convert(const std::string& text);
+	static std::wstring Convert(const std::string& text);
 
 
 	/**
@@ -89,7 +94,7 @@ namespace StringUtils
 	 *
 	 * @return 변환된 문자열을 반환합니다.
 	 */
-	std::string Convert(const std::wstring& text);
+	static std::string Convert(const std::wstring& text);
 
 
 	/**
@@ -99,7 +104,7 @@ namespace StringUtils
 	 *
 	 * @return 문자열 내의 알파벳이 모두 소문자로 변환된 전체 문자열을 반환합니다.
 	 */
-	std::string ToLower(const std::string& text);
+	static std::string ToLower(const std::string& text);
 
 
 	/**
@@ -109,7 +114,7 @@ namespace StringUtils
 	 *
 	 * @return 문자열 내의 알파벳이 모두 소문자로 변환된 전체 문자열을 반환합니다.
 	 */
-	std::wstring ToLower(const std::wstring& text);
+	static std::wstring ToLower(const std::wstring& text);
 
 
 	/**
@@ -119,7 +124,7 @@ namespace StringUtils
 	 *
 	 * @return 문자열 내의 알파벳이 모두 대문자로 변환된 전체 문자열을 반환합니다.
 	 */
-	std::string ToUpper(const std::string& text);
+	static std::string ToUpper(const std::string& text);
 
 
 	/**
@@ -129,7 +134,7 @@ namespace StringUtils
 	 *
 	 * @return 문자열 내의 알파벳이 모두 대문자로 변환된 전체 문자열을 반환합니다.
 	 */
-	std::wstring ToUpper(const std::wstring& text);
+	static std::wstring ToUpper(const std::wstring& text);
 
 
 	/**
@@ -142,7 +147,7 @@ namespace StringUtils
 	 *
 	 * @see https://learn.microsoft.com/ko-kr/cpp/c-runtime-library/reference/strtol-wcstol-strtol-l-wcstol-l?view=msvc-170
 	 */
-	bool ToInt(const std::string& integer, int32_t& outInteger);
+	static bool ToInt(const std::string& integer, int32_t& outInteger);
 
 
 	/**
@@ -155,7 +160,7 @@ namespace StringUtils
 	 *
 	 * @see https://learn.microsoft.com/ko-kr/cpp/c-runtime-library/reference/strtol-wcstol-strtol-l-wcstol-l?view=msvc-170
 	 */
-	bool ToInt(const std::wstring& integer, int32_t& outInteger);
+	static bool ToInt(const std::wstring& integer, int32_t& outInteger);
 
 
 	/**
@@ -168,7 +173,7 @@ namespace StringUtils
 	 *
 	 * @see https://learn.microsoft.com/ko-kr/cpp/c-runtime-library/reference/strtof-strtof-l-wcstof-wcstof-l?view=msvc-170
 	 */
-	bool ToFloat(const std::string& floating, float& outFloating);
+	static bool ToFloat(const std::string& floating, float& outFloating);
 
 
 	/**
@@ -181,5 +186,26 @@ namespace StringUtils
 	 *
 	 * @see https://learn.microsoft.com/ko-kr/cpp/c-runtime-library/reference/strtof-strtof-l-wcstof-wcstof-l?view=msvc-170
 	 */
-	bool ToFloat(const std::wstring& floating, float& outFloating);
+	static bool ToFloat(const std::wstring& floating, float& outFloating);
+
+
+private:
+	/**
+	 * @brief 내부에서만 사용하는 문자열 버퍼의 최대 크기입니다.
+	 */
+	static const uint32_t MAX_STRING_BUFFER_SIZE = 1024;
+
+
+	/**
+	 * @brief char 타입의 문자열 버퍼입니다.
+	 */
+	static char charBuffer_[MAX_STRING_BUFFER_SIZE];
+
+
+	/**
+	 * @brief wchar_t 타입의 문자열 버퍼입니다.
+	 */
+	static wchar_t wcharBuffer_[MAX_STRING_BUFFER_SIZE];
 };
+
+}
