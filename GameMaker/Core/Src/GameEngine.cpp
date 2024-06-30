@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 
 #include "Assertion.h"
+#include "Config.h"
 #include "GameEngine.h"
 #include "GameTimer.h"
 #include "InputManager.h"
@@ -10,45 +11,30 @@
 using namespace GameMaker;
 
 bool GameEngine::bIsInit_ = false;
-void* GameEngine::gameWindow_ = nullptr;
-bool GameEngine::bIsQuitLoop_ = false;
+void* GameEngine::window_ = nullptr;
+bool GameEngine::bShouldCloseWindow_ = false;
 std::function<void()> GameEngine::endLoopCallback_ = nullptr;
 std::function<void(float)> GameEngine::frameCallback_ = nullptr;
 
-#define GL_MAJOR_VERSION      4
-#define GL_MINOR_VERSION      6
-#define GL_RED_SIZE           8
-#define GL_GREEN_SIZE         8
-#define GL_BLUE_SIZE          8
-#define GL_ALPHA_SIZE         8
-#define GL_DEPTH_SIZE         24
-#define GL_STENCIL_SIZE       8
-#define GL_DOUBLEBUFFER       1
-#define GL_MULTISAMPLEBUFFERS 1
-#define GL_MULTISAMPLESAMPLES 16
-
-void GameEngine::Init()
+void GameEngine::Init(const WindowParam& param)
 {
 	ASSERT(!bIsInit_, "GameEngine has already been initialized.");
 
-	SDL_FAILED(SDL_Init(SDL_INIT_EVERYTHING));
+	InitSubSystem();
 
-	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG));
-	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE));
-	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, GL_MAJOR_VERSION));
-	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, GL_MINOR_VERSION));
-	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_RED_SIZE, GL_RED_SIZE));
-	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, GL_GREEN_SIZE));
-	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, GL_BLUE_SIZE));
-	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, GL_ALPHA_SIZE));
-	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, GL_DEPTH_SIZE));
-	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, GL_STENCIL_SIZE));
-	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, GL_DOUBLEBUFFER));
-	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, GL_MULTISAMPLEBUFFERS));
-	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, GL_MULTISAMPLESAMPLES));
+	uint32_t flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+	if (param.bIsResizble)
+	{
+		flags |= SDL_WINDOW_RESIZABLE;
+	}
 
-	gameWindow_ = SDL_CreateWindow("CoinDash3D", 100, 100, 800, 600, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
-	CHECK(gameWindow_ != nullptr);
+	if (param.bIsFullscreen)
+	{
+		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+	}
+
+	window_ = SDL_CreateWindow(param.title.c_str(), param.x, param.y, param.w, param.h, flags);
+	CHECK(window_ != nullptr);
 
 	InputManager::Get().Startup();
 	RenderManager::Get().Startup();
@@ -65,12 +51,12 @@ void GameEngine::Shutdown()
 	RenderManager::Get().Shutdown();
 	InputManager::Get().Shutdown();
 
-	if (gameWindow_)
+	if (window_)
 	{
-		SDL_Window* window = reinterpret_cast<SDL_Window*>(gameWindow_);
+		SDL_Window* window = reinterpret_cast<SDL_Window*>(window_);
 		SDL_DestroyWindow(window);
 
-		gameWindow_ = nullptr;
+		window_ = nullptr;
 	}
 
 	SDL_Quit();
@@ -82,17 +68,17 @@ void GameEngine::RunLoop(const std::function<void(float)>& callback)
 {
 	frameCallback_ = callback;
 
-	GameTimer timer;
-	timer.Reset();
-
 	InputManager& inputManager = InputManager::Get();
 
-	while (!bIsQuitLoop_)
+	GameTimer globalTimer;
+	globalTimer.Reset();
+
+	while (!bShouldCloseWindow_)
 	{
 		inputManager.Tick();
 
-		timer.Tick();
-		float deltaSeconds = timer.GetDeltaSeconds();
+		globalTimer.Tick();
+		float deltaSeconds = globalTimer.GetDeltaSeconds();
 
 		if (frameCallback_)
 		{
@@ -100,8 +86,27 @@ void GameEngine::RunLoop(const std::function<void(float)>& callback)
 		}
 	}
 
-	if (bIsQuitLoop_ && endLoopCallback_)
+	if (bShouldCloseWindow_ && endLoopCallback_)
 	{
 		endLoopCallback_();
 	}
+}
+
+void GameEngine::InitSubSystem()
+{
+	SDL_FAILED(SDL_Init(SDL_INIT_EVERYTHING));
+
+	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG));
+	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE));
+	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, GL_MAJOR_VERSION));
+	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, GL_MINOR_VERSION));
+	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_RED_SIZE, GL_RED_SIZE));
+	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, GL_GREEN_SIZE));
+	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, GL_BLUE_SIZE));
+	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, GL_ALPHA_SIZE));
+	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, GL_DEPTH_SIZE));
+	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, GL_STENCIL_SIZE));
+	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, GL_DOUBLEBUFFER));
+	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, GL_MULTISAMPLEBUFFERS));
+	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, GL_MULTISAMPLESAMPLES));
 }
