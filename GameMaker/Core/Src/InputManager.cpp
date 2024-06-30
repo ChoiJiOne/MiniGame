@@ -152,7 +152,7 @@ void InputManager::Tick()
 	{
 		if (e.type == SDL_QUIT)
 		{
-			GameEngine::SetQuitLoop(true);
+			GameEngine::SetShouldCloseWindow(true);
 		}
 
 		EWindowEvent windowEvent = static_cast<EWindowEvent>(e.window.event);
