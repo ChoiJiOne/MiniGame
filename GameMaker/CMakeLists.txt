@@ -43,6 +43,7 @@ target_link_libraries(
     Shlwapi.lib 
     SDL2
     glad
+    stb
 )
 
 target_compile_definitions(
