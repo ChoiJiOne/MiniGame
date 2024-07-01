@@ -67,7 +67,7 @@ public:
 		int32_t resourceID = -1;
 		for (uint32_t index = 0; index < cacheSize_; ++index)
 		{
-			if (!cache_[index] && !usage[index])
+			if (!cache_[index] && !usage_[index])
 			{
 				resourceID = static_cast<int32_t>(index);
 				break;
@@ -79,7 +79,7 @@ public:
 			resourceID = cacheSize_++;
 		}
 
-		usage[resourceID] = true;
+		usage_[resourceID] = true;
 		cache_[resourceID] = std::make_unique<TResource>(args...);
 
 		return reinterpret_cast<TResource*>(cache_[resourceID].get());
