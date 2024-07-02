@@ -396,6 +396,22 @@ public:
 
 
 	/**
+	 * @brief 마우스의 이전 위치를 얻습니다.
+	 *
+	 * @return 마우스의 이전 위치값을 반환합니다.
+	 */
+	const Vec2i& GetPrevMousePos() { return prevMouseState_.position; }
+
+
+	/**
+	 * @brief 마우스의 현재 위치를 얻습니다.
+	 *
+	 * @return 마우스의 현재 위치값을 반환합니다.
+	 */
+	const Vec2i& GetCurrMousePos() { return currMouseState_.position; }
+
+
+	/**
 	 * @brief 윈도우 이벤트 액션을 추가합니다.
 	 *
 	 * @param windowEvent 동작할 액션에 대응하는 윈도우 이벤트입니다.
