@@ -2,6 +2,7 @@
 
 #include "Assertion.h"
 #include "Config.h"
+#include "EntityManager.h"
 #include "GameEngine.h"
 #include "GameTimer.h"
 #include "InputManager.h"
@@ -37,8 +38,9 @@ void GameEngine::Init(const WindowParam& param)
 	CHECK(window_ != nullptr);
 
 	InputManager::Get().Startup();
-	RenderManager::Get().Startup();
 	ResourceManager::Get().Startup();
+	RenderManager::Get().Startup();
+	EntityManager::Get().Startup();
 
 	bIsInit_ = true;
 }
@@ -47,6 +49,7 @@ void GameEngine::Shutdown()
 {
 	ASSERT(bIsInit_, "GameEngine has already shutdown or initialization has failed.");
 
+	EntityManager::Get().Shutdown();
 	ResourceManager::Get().Shutdown();
 	RenderManager::Get().Shutdown();
 	InputManager::Get().Shutdown();
