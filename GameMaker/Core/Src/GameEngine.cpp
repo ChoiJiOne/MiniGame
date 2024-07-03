@@ -3,6 +3,7 @@
 #include "Assertion.h"
 #include "AudioManager.h"
 #include "Config.h"
+#include "CrashUtils.h"
 #include "EntityManager.h"
 #include "GameEngine.h"
 #include "GameTimer.h"
@@ -18,9 +19,13 @@ bool GameEngine::bShouldCloseWindow_ = false;
 std::function<void()> GameEngine::endLoopCallback_ = nullptr;
 std::function<void(float)> GameEngine::frameCallback_ = nullptr;
 
+LPTOP_LEVEL_EXCEPTION_FILTER topLevelExceptionFilter;
+
 void GameEngine::Init(const WindowParam& param)
 {
 	ASSERT(!bIsInit_, "GameEngine has already been initialized.");
+
+	topLevelExceptionFilter = ::SetUnhandledExceptionFilter(CrashUtils::DetectApplicationCrash);
 
 	InitSubSystem();
 
@@ -66,6 +71,8 @@ void GameEngine::Shutdown()
 	}
 
 	SDL_Quit();
+
+	::SetUnhandledExceptionFilter(topLevelExceptionFilter);
 
 	bIsInit_ = false;
 }
