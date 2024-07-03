@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 
 #include "Assertion.h"
+#include "AudioManager.h"
 #include "Config.h"
 #include "EntityManager.h"
 #include "GameEngine.h"
@@ -38,6 +39,7 @@ void GameEngine::Init(const WindowParam& param)
 	CHECK(window_ != nullptr);
 
 	InputManager::Get().Startup();
+	AudioManager::Get().Startup();
 	ResourceManager::Get().Startup();
 	RenderManager::Get().Startup();
 	EntityManager::Get().Startup();
@@ -52,6 +54,7 @@ void GameEngine::Shutdown()
 	EntityManager::Get().Shutdown();
 	ResourceManager::Get().Shutdown();
 	RenderManager::Get().Shutdown();
+	AudioManager::Get().Shutdown();
 	InputManager::Get().Shutdown();
 
 	if (window_)
