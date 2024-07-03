@@ -44,6 +44,7 @@ target_link_libraries(
     SDL2
     glad
     stb
+    miniaudio
 )
 
 target_compile_definitions(
