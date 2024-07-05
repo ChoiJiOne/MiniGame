@@ -9,6 +9,7 @@
 
 namespace GameMaker
 {
+class Camera2D;
 class Shader;
 class TTFont;
 class VertexBuffer;
@@ -49,13 +50,13 @@ public:
 	 */
 	virtual void Release() override;
 
-
+	
 	/**
 	 * @brief 2D 렌더러의 렌더링을 시작합니다.
 	 * 
-	 * @param ortho 설정할 직교 투영 행렬입니다.
+	 * @param camera2D 설정할 2D 카메라입니다. 만약, 아무 값도 전달하지 않으면 윈도우를 기준으로 설정됩니다.
 	 */
-	void Begin(const Mat4x4& ortho);
+	void Begin(const Camera2D* camera2D = nullptr);
 
 
 	/**

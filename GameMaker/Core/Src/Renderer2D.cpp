@@ -6,6 +6,7 @@
 #include <glad/glad.h>
 
 #include "Assertion.h"
+#include "Camera2D.h"
 #include "Renderer2D.h"
 #include "ResourceManager.h"
 #include "Shader.h"
@@ -86,9 +87,25 @@ void Renderer2D::Release()
 	bIsInitialized_ = false;
 }
 
-void Renderer2D::Begin(const Mat4x4& ortho)
+void GameMaker::Renderer2D::Begin(const Camera2D* camera2D)
 {
 	CHECK(!bIsBegin_);
+
+	Mat4x4 ortho;
+	if (!camera2D)
+	{
+		float w = 0.0f;
+		float h = 0.0f;
+		static const float nearZ = -1.0f;
+		static const float farZ = 1.0f;
+		renderManager->GetScreenSize<float>(w, h);
+
+		ortho = Mat4x4::Ortho(-w * 0.5f, +w * 0.5f, -h * 0.5f, +h * 0.5f, nearZ, farZ);
+	}
+	else
+	{
+		ortho = camera2D->GetOrtho();
+	}
 
 	GLboolean originEnableDepth;
 	GL_FAILED(glGetBooleanv(GL_DEPTH_TEST, &originEnableDepth));
@@ -101,7 +118,7 @@ void Renderer2D::Begin(const Mat4x4& ortho)
 
 	renderManager->SetDepthMode(false);
 	renderManager->SetCullFaceMode(false);
-	
+
 	shader_->Bind();
 	{
 		shader_->SetUniform("ortho", ortho);
