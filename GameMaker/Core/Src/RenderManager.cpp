@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 
 #include "Assertion.h"
+#include "Config.h"
 #include "GameEngine.h"
 #include "RenderManager.h"
 
@@ -47,10 +48,10 @@ void RenderManager::Startup()
 
 	CHECK(gladLoadGLLoader((GLADloadproc)(SDL_GL_GetProcAddress)));
 
-	SetDepthMode(true);     // 기본적으로 깊이 테스트 모드는 활성화.
-	SetAlphaBlendMode(true);// 기본적으로 알파 블랜딩 모드는 활성화.
-	SetPointSizeMode(true); // 기본적으로 포인트 크기 모드는 활성화.
-	SetCullFaceMode(true);  // 기본적으로 페이스 컬링 모드는 활성화.
+	SetDepthMode(static_cast<bool>(DEPTH_MODE));
+	SetAlphaBlendMode(static_cast<bool>(ALPHA_MODE));
+	SetPointSizeMode(static_cast<bool>(POINT_SIZE_MODE));
+	SetCullFaceMode(static_cast<bool>(CULL_FACE_MODE));
 
 	bIsStartup_ = true;
 }
