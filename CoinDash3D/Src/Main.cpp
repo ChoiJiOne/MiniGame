@@ -30,8 +30,8 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	
 	GameMaker::GameEngine::Init(param);
 
-	GameMaker::Renderer2D* renderer2d = GameMaker::ResourceManager::Get().Create<GameMaker::Renderer2D>();
-	GameMaker::Renderer3D* renderer3d = GameMaker::ResourceManager::Get().Create<GameMaker::Renderer3D>();
+	GameMaker::Renderer2D* renderer2d = GameMaker::RenderManager::Get().GetRenderer2D();
+	GameMaker::Renderer3D* renderer3d = GameMaker::RenderManager::Get().GetRenderer3D();
 
 	Camera* camera = GameMaker::EntityManager::Get().Create<Camera>();
 
@@ -49,7 +49,7 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 			}
 			renderer3d->End();
 
-			renderer2d->Begin(camera->GetScreenOrtho());
+			renderer2d->Begin();
 			{
 				renderer2d->DrawRoundRectWireframe(GameMaker::Vec2f(0.0f, 0.0f), 100.0f, 100.0f, 10.0f, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
 			}
