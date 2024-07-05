@@ -7,7 +7,7 @@ Camera::Camera()
 {
 	yaw_ = GameMaker::ToRadian(-90.0f);
 	pitch_ = GameMaker::ToRadian(-30.0f);
-	eyePosition_ = GameMaker::Vec3f(0.0f, 3.0f, 4.0f);
+	position_ = GameMaker::Vec3f(0.0f, 3.0f, 4.0f);
 	UpdateState();
 
 	float screenWidth = 0;
@@ -59,25 +59,25 @@ void Camera::Tick(float deltaSeconds)
 	
 	if (GameMaker::InputManager::Get().GetKeyPressState(GameMaker::EKey::KEY_W) == GameMaker::EPressState::HELD)
 	{
-		eyePosition_ += eyeDirection_ * deltaSeconds * speed_;
+		position_ += direction_ * deltaSeconds * speed_;
 		bIsUpdateState = true;
 	}
 
 	if (GameMaker::InputManager::Get().GetKeyPressState(GameMaker::EKey::KEY_S) == GameMaker::EPressState::HELD)
 	{
-		eyePosition_ -= eyeDirection_ * deltaSeconds * speed_;
+		position_ -= direction_ * deltaSeconds * speed_;
 		bIsUpdateState = true;
 	}
 
 	if (GameMaker::InputManager::Get().GetKeyPressState(GameMaker::EKey::KEY_A) == GameMaker::EPressState::HELD)
 	{
-		eyePosition_ -= rightDirection_ * deltaSeconds * speed_;
+		position_ -= rightDirection_ * deltaSeconds * speed_;
 		bIsUpdateState = true;
 	}
 
 	if (GameMaker::InputManager::Get().GetKeyPressState(GameMaker::EKey::KEY_D) == GameMaker::EPressState::HELD)
 	{
-		eyePosition_ += rightDirection_ * deltaSeconds * speed_;
+		position_ += rightDirection_ * deltaSeconds * speed_;
 		bIsUpdateState = true;
 	}
 
@@ -102,9 +102,9 @@ void Camera::UpdateState()
 	direction.y = GameMaker::Sin(pitch_);
 	direction.z = GameMaker::Sin(yaw_) * GameMaker::Cos(pitch_);
 
-	eyeDirection_ = GameMaker::Vec3f::Normalize(direction);
-	rightDirection_ = GameMaker::Vec3f::Normalize(GameMaker::Vec3f::Cross(eyeDirection_, worldUpDirection_));
-	upDirection_ = GameMaker::Vec3f::Normalize(GameMaker::Vec3f::Cross(rightDirection_, eyeDirection_));
+	direction_ = GameMaker::Vec3f::Normalize(direction);
+	rightDirection_ = GameMaker::Vec3f::Normalize(GameMaker::Vec3f::Cross(direction_, worldUpDirection_));
+	upDirection_ = GameMaker::Vec3f::Normalize(GameMaker::Vec3f::Cross(rightDirection_, direction_));
 
-	view_ = GameMaker::Mat4x4::LookAt(eyePosition_, eyePosition_ + eyeDirection_, upDirection_);
+	view_ = GameMaker::Mat4x4::LookAt(position_, position_ + direction_, upDirection_);
 }

@@ -1,13 +1,12 @@
 #pragma once
 
-#include "GameMath.h"
-#include "IEntity.h"
+#include "Camera3D.h"
 
 
 /**
  * @brief 월드 상의 카메라 엔티티입니다.
  */
-class Camera : public GameMaker::IEntity
+class Camera : public GameMaker::Camera3D
 {
 public:
 	/**
@@ -56,22 +55,6 @@ public:
 
 
 	/**
-	 * @brief 시야 행렬을 얻습니다.
-	 *
-	 * @return 시야 행렬을 반환합니다.
-	 */
-	const GameMaker::Mat4x4& GetView() const { return view_; }
-
-
-	/**
-	 * @brief 투영 행렬을 얻습니다.
-	 *
-	 * @return 투영 행렬을 반환합니다.
-	 */
-	const GameMaker::Mat4x4& GetProjection() const { return projection_; }
-
-
-	/**
 	 * @brief 스크린에 대응하는 직교 투영 행렬을 얻습니다.
 	 *
 	 * @return 스크린에 대응하는 직교 투영 행렬을 반환합니다.
@@ -95,74 +78,6 @@ private:
 
 
 private:
-	/**
-	 * @brief 카메라의 월드 상 위치입니다.
-	 */
-	GameMaker::Vec3f eyePosition_;
-
-
-	/**
-	 * @brief 카메라의 방향입니다.
-	 */
-	GameMaker::Vec3f eyeDirection_;
-
-
-	/**
-	 * @brief 카메라의 위 방향입니다.
-	 */
-	GameMaker::Vec3f upDirection_;
-
-
-	/**
-	 * @brief 카메라의 오른쪽 방향입니다.
-	 */
-	GameMaker::Vec3f rightDirection_;
-
-
-	/**
-	 * @brief 월드 상의 카메라 위 방향입니다.
-	 */
-	GameMaker::Vec3f worldUpDirection_ = GameMaker::Vec3f(0.0f, 1.0f, 0.0f);
-
-
-	/**
-	 * @brief 하향식 보기 필드 각도(라디안)입니다.
-	 */
-	float fov_ = 0.0f;
-
-
-	/**
-	 * @brief 뷰 공간 X:Y의 가로 세로 비율입니다.
-	 */
-	float aspectRatio_ = 0.0f;
-
-
-	/**
-	 * @brief 가까운 클리핑 평면까지의 거리입니다. 0보다 커야 합니다.
-	 */
-	float nearZ_ = 0.0f;
-
-
-	/**
-	 * @brief 원거리 클리핑 평면까지의 거리입니다. 0보다 커야 합니다.
-	 */
-	float farZ_ = 0.0f;
-
-
-	/**
-	 * @brief 뷰 행렬입니다.
-	 */
-	GameMaker::Mat4x4 view_;
-
-
-	/**
-	 * @brief 투영 행렬입니다.
-	 *
-	 * @note 직교 투영행렬이 아닌 원근 투영 행렬입니다.
-	 */
-	GameMaker::Mat4x4 projection_;
-
-
 	/**
 	 * @brief 스크린에 대응하는 직교 투영 행렬입니다.
 	 */
