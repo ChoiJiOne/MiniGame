@@ -4,6 +4,8 @@
 #include "Assertion.h"
 #include "Config.h"
 #include "GameEngine.h"
+#include "Renderer2D.h"
+#include "Renderer3D.h"
 #include "RenderManager.h"
 
 using namespace GameMaker;

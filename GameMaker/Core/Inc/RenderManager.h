@@ -5,6 +5,10 @@
 
 namespace GameMaker
 {
+class Renderer2D;
+class Renderer3D;
+
+
 /**
  * @brief 기본 도형의 그리기 모드입니다.
  */
