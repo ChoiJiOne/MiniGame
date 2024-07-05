@@ -9,6 +9,7 @@
 
 namespace GameMaker
 {
+class Camera3D;
 class Shader;
 class VertexBuffer;
 
@@ -52,6 +53,14 @@ public:
 	 * @param projection 설정할 투영 행렬입니다.
 	 */
 	void Begin(const Mat4x4& view, const Mat4x4& projection);
+
+
+	/**
+	 * @brief 3D 렌더러의 렌더링을 시작합니다.
+	 * 
+	 * @param camera3D 설정할 3D 카메라입니다.
+	 */
+	void Begin(const Camera3D* camera3D);
 
 
 	/**

@@ -6,6 +6,7 @@
 #include <glad/glad.h>
 
 #include "Assertion.h"
+#include "Camera3D.h"
 #include "Renderer3D.h"
 #include "ResourceManager.h"
 #include "Shader.h"
@@ -96,6 +97,27 @@ void Renderer3D::Begin(const Mat4x4& view, const Mat4x4& projection)
 	{
 		shader_->SetUniform("view", view);
 		shader_->SetUniform("projection", projection);
+	}
+	shader_->Unbind();
+
+	bIsBegin_ = true;
+}
+
+void GameMaker::Renderer3D::Begin(const Camera3D* camera3D)
+{
+	CHECK(!bIsBegin_);
+	CHECK(camera3D != nullptr);
+
+	GLboolean originEnableDepth;
+	GL_FAILED(glGetBooleanv(GL_DEPTH_TEST, &originEnableDepth));
+
+	bIsBeforeEnableDepth_ = static_cast<bool>(originEnableDepth);
+	renderManager->SetDepthMode(false);
+
+	shader_->Bind();
+	{
+		shader_->SetUniform("view", camera3D->GetView());
+		shader_->SetUniform("projection", camera3D->GetProjection());
 	}
 	shader_->Unbind();
 
