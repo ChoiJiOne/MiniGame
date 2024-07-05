@@ -205,6 +205,22 @@ public:
 	void GetScreenSize(T& outWidth, T& outHeight);
 
 
+	/**
+	 * @brief 렌더 매니저가 관리하는 2D 렌더러를 얻습니다.
+	 * 
+	 * @return 2D 렌더러의 포인터를 반환합니다.
+	 */
+	Renderer2D* GetRenderer2D() { return renderer2D_; }
+
+
+	/**
+	 * @brief 렌더 매니저가 관리하는 3D 렌더러를 얻습니다.
+	 *
+	 * @return 3D 렌더러의 포인터를 반환합니다.
+	 */
+	Renderer3D* GetRenderer3D() { return renderer3D_; }
+
+
 private:
 	/**
 	 * @brief 렌더 매니저에 디폴트 생성자와 빈 가상 소멸자를 삽입합니다.
@@ -223,6 +239,18 @@ private:
 	 * @brief OpenGL 컨텍스트입니다.
 	 */
 	void* context_ = nullptr;
+
+
+	/**
+	 * @brief 2D 렌더러입니다.
+	 */
+	Renderer2D* renderer2D_ = nullptr;
+
+
+	/**
+	 * @brief 3D 렌더러입니다.
+	 */
+	Renderer3D* renderer3D_ = nullptr;
 };
 
 }

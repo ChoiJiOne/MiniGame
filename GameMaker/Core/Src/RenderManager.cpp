@@ -7,6 +7,7 @@
 #include "Renderer2D.h"
 #include "Renderer3D.h"
 #include "RenderManager.h"
+#include "ResourceManager.h"
 
 using namespace GameMaker;
 
@@ -55,12 +56,27 @@ void RenderManager::Startup()
 	SetPointSizeMode(static_cast<bool>(POINT_SIZE_MODE));
 	SetCullFaceMode(static_cast<bool>(CULL_FACE_MODE));
 
+	renderer2D_ = ResourceManager::Get().Create<Renderer2D>();
+	renderer3D_ = ResourceManager::Get().Create<Renderer3D>();
+
 	bIsStartup_ = true;
 }
 
 void RenderManager::Shutdown()
 {
 	CHECK(bIsStartup_);
+
+	if (renderer3D_)
+	{
+		ResourceManager::Get().Destroy(renderer3D_);
+		renderer3D_ = nullptr;
+	}
+
+	if (renderer2D_)
+	{
+		ResourceManager::Get().Destroy(renderer2D_);
+		renderer2D_ = nullptr;
+	}
 
 	if (context_)
 	{
