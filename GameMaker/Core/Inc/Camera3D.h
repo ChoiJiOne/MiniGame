@@ -160,7 +160,7 @@ protected:
 	/**
 	 * @brief 월드 상의 카메라 위 방향입니다.
 	 */
-	Vec3f worldUpDirection_;
+	Vec3f worldUpDirection_ = Vec3f(0.0f, 1.0f, 0.0f);
 
 
 	/**
