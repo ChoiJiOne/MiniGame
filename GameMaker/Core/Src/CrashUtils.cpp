@@ -59,6 +59,8 @@ std::wstring CrashUtils::GetMinidumpPath()
 	return StringUtils::PrintF(L"%s\\Crash\\", basePath.c_str());
 }
 
+// https://learn.microsoft.com/ko-kr/windows/win32/api/winnt/ns-winnt-exception_pointers
+// https://learn.microsoft.com/ko-kr/windows/win32/api/minidumpapiset/nf-minidumpapiset-minidumpwritedump
 bool CrashUtils::CreateMinidumpFile(const std::wstring& path, EXCEPTION_POINTERS* ep)
 {
 	HANDLE file = ::CreateFileW(path.c_str(), GENERIC_WRITE, FILE_SHARE_WRITE, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);

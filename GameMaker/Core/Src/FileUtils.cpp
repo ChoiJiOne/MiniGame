@@ -5,6 +5,8 @@
 
 using namespace GameMaker;
 
+// https://learn.microsoft.com/ko-kr/windows/win32/api/fileapi/nf-fileapi-createfilea
+// https://learn.microsoft.com/ko-kr/windows/win32/api/fileapi/nf-fileapi-readfile
 std::vector<uint8_t> FileUtils::ReadFile(const std::string& path)
 {
 	HANDLE file = ::CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
@@ -35,6 +37,8 @@ std::vector<uint8_t> FileUtils::ReadFile(const std::wstring& path)
 	return buffer;
 }
 
+// https://learn.microsoft.com/ko-kr/windows/win32/api/fileapi/nf-fileapi-createfilea
+// https://learn.microsoft.com/ko-kr/windows/win32/api/fileapi/nf-fileapi-writefile
 void FileUtils::WriteFile(const std::string& path, const std::vector<uint8_t>& buffer)
 {
 	HANDLE file = ::CreateFileA(path.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
@@ -55,6 +59,8 @@ void FileUtils::WriteFile(const std::wstring& path, const std::vector<uint8_t>& 
 	WINDOWS_ASSERT(::CloseHandle(file), L"failed to close %s", path.c_str());
 }
 
+// https://learn.microsoft.com/ko-kr/windows/win32/api/winbase/nf-winbase-createdirectory
+// https://learn.microsoft.com/ko-kr/windows/win32/api/fileapi/nf-fileapi-createdirectoryw
 void FileUtils::MakeDirectory(const std::string& path)
 {
 	WINDOWS_ASSERT(CreateDirectoryA(path.c_str(), nullptr), "failed to create %s", path.c_str());
