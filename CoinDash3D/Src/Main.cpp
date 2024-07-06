@@ -5,20 +5,13 @@
 #include <crtdbg.h>
 #endif
 
-#include <SDL2/SDL.h>
-
+#include "Collision2D.h"
 #include "GameEngine.h"
-#include "GameTimer.h"
 #include "GameMath.h"
 #include "InputManager.h"
-#include "RenderManager.h"
-#include "FileUtils.h"
 #include "Renderer2D.h"
-#include "Renderer3D.h"
-#include "ResourceManager.h"
-#include "EntityManager.h"
+#include "RenderManager.h"
 
-#include "Camera.h"
 
 int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR pCmdLine, _In_ int32_t nCmdShow)
 {
@@ -31,27 +24,59 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	GameMaker::GameEngine::Init(param);
 
 	GameMaker::Renderer2D* renderer2d = GameMaker::RenderManager::Get().GetRenderer2D();
-	GameMaker::Renderer3D* renderer3d = GameMaker::RenderManager::Get().GetRenderer3D();
 
-	Camera* camera = GameMaker::EntityManager::Get().Create<Camera>();
+	std::vector<GameMaker::Vec2f> positions;
+	std::vector<GameMaker::Vec4f> colors;
+
+	for (int32_t x = -1000; x <= 1000; x += 10)
+	{
+		positions.push_back(GameMaker::Vec2f(static_cast<float>(x), -1000.0f));
+		positions.push_back(GameMaker::Vec2f(static_cast<float>(x), +1000.0f));
+
+		if (x == 0)
+		{
+			colors.push_back(GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
+			colors.push_back(GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
+		}
+		else
+		{
+			colors.push_back(GameMaker::Vec4f(1.0f, 1.0f, 1.0f, 0.5f));
+			colors.push_back(GameMaker::Vec4f(1.0f, 1.0f, 1.0f, 0.5f));
+		}
+	}
+
+	for (int32_t y = -1000; y <= 1000; y += 10)
+	{
+		positions.push_back(GameMaker::Vec2f(-1000.0f, static_cast<float>(y)));
+		positions.push_back(GameMaker::Vec2f(+1000.0f, static_cast<float>(y)));
+
+		if (y == 0)
+		{
+			colors.push_back(GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+			colors.push_back(GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+		}
+		else
+		{
+			colors.push_back(GameMaker::Vec4f(1.0f, 1.0f, 1.0f, 0.5f));
+			colors.push_back(GameMaker::Vec4f(1.0f, 1.0f, 1.0f, 0.5f));
+		}
+	}
+
+	GameMaker::OrientedRect2D orientedRect(GameMaker::Vec2f(0.0f, 0.0f), GameMaker::Vec2f(200.0f, 100.0f), GameMaker::ToRadian(30.0f));
+	GameMaker::Circle2D circle(GameMaker::Vec2f(200.0f, 200.0f), 50.0f);
 
 	GameMaker::GameEngine::RunLoop(
 		[&](float deltaSeconds) 
 		{
-			camera->Tick(deltaSeconds);
+			orientedRect.rotate += deltaSeconds;
 
 			GameMaker::RenderManager::Get().BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
 
-			renderer3d->Begin(camera->GetView(), camera->GetProjection());
-			{
-				renderer3d->DrawGrid(GameMaker::Vec3f(100.0f, 100.0f, 100.0f), 1.0f);
-				renderer3d->DrawCube(GameMaker::Mat4x4::Identity(), GameMaker::Vec3f(1.0f, 1.0f, 1.0f), GameMaker::Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
-			}
-			renderer3d->End();
-
 			renderer2d->Begin();
 			{
-				renderer2d->DrawRoundRectWireframe(GameMaker::Vec2f(0.0f, 0.0f), 100.0f, 100.0f, 10.0f, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+				renderer2d->DrawLines(positions.data(), colors.data(), positions.size());
+				renderer2d->DrawCircle(circle.center, circle.radius, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+				renderer2d->DrawRect(orientedRect.center, orientedRect.size.x, orientedRect.size.y, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f), orientedRect.rotate);
 			}
 			renderer2d->End();
 
