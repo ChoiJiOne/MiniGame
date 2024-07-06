@@ -129,4 +129,42 @@ struct Rect2D : public ICollision2D /** 이 사각형은 AABB(Axis-Aligned Bounding B
 	Vec2f size;
 };
 
+struct OrientedRect2D : public ICollision2D /** 이 사각형은 OBB(Oriented Bounding Box)입니다. */
+{
+	OrientedRect2D() = default;
+	OrientedRect2D(const Vec2f& c, const Vec2f& s, float r) : center(c), size(s), rotate(r) {}
+	OrientedRect2D(OrientedRect2D&& instance) noexcept : center(instance.center), size(instance.size), rotate(instance.rotate) {}
+	OrientedRect2D(const OrientedRect2D& instance) noexcept : center(instance.center), size(instance.size), rotate(instance.rotate) {}
+	virtual ~OrientedRect2D() {}
+
+	OrientedRect2D& operator=(OrientedRect2D&& instance) noexcept
+	{
+		if (this == &instance) return *this;
+
+		center = instance.center;
+		size = instance.size;
+		rotate = instance.rotate;
+
+		return *this;
+	}
+
+	OrientedRect2D& operator=(const OrientedRect2D& instance) noexcept
+	{
+		if (this == &instance) return *this;
+
+		center = instance.center;
+		size = instance.size;
+		rotate = instance.rotate;
+
+		return *this;
+	}
+
+	virtual EType GetType() const override { return EType::ORIENTED_RECT; }
+	virtual bool Intersect(const ICollision2D* target) const override;
+
+	Vec2f center;
+	Vec2f size;
+	float rotate; /** 라디안 각도 기준 */
+};
+
 }

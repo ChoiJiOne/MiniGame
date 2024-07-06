@@ -17,3 +17,8 @@ bool Rect2D::Intersect(const ICollision2D* target) const
 {
 	return false;
 }
+
+bool OrientedRect2D::Intersect(const ICollision2D* target) const
+{
+	return false;
+}
