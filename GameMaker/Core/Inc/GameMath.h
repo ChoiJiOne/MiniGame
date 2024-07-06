@@ -8,132 +8,44 @@
 
 namespace GameMaker
 {
-/**
- * @brief 파이(π) 값입니다.
- */
 const float PI = 3.141592654f;
-
-
-/**
- * @brief 2파이(2π) 값입니다.
- */
 const float TWO_PI = 6.283185307f;
-
-
-/**
- * @brief 파이(π) 의 역수 값입니다.
- */
 const float ONE_DIV_PI = 0.318309886f;
-
-
-/**
- * @brief 2파이(2π) 의 역수 값입니다.
- */
 const float ONE_DIV_2PI = 0.159154943f;
-
-
-/**
- * @brief 파이(π) 의 반값(π/2)입니다.
- */
 const float PI_DIV_2 = 1.570796327f;
-
-
-/**
- * @brief 파이(π) 의 반의 반 값(π/4)입니다.
- */
 const float PI_DIV_4 = 0.785398163f;
-
-
-/**
- * @brief 엡실론(ε) 값입니다.
- */
 const float EPSILON = 1.192092896e-07F;
 
-
-/**
- * @brief 라디안 각을 육십분법 각으로 변환합니다.
- *
- * @param radian 변환할 라디안 각입니다.
- *
- * @return 변환된 육십분법 각입니다.
- */
 __forceinline float ToDegree(float radian)
 {
 	return (radian * 180.0f) / PI;
 }
 
-
-/**
- * @brief 육십분법 각을 라디안 각으로 변환합니다.
- *
- * @param degree 변환할 육십분법 각입니다.
- *
- * @return 변환된 라디안 각입니다.
- */
 __forceinline float ToRadian(float degree)
 {
 	return (degree * PI) / 180.0f;
 }
 
-
-/**
- * @brief 부동 소수점 값이 0에 가까운지 확인합니다.
- *
- * @param value 0에 가까운지 확인할 값입니다.
- * @param epsilon 값 확인을 위한 엡실론 값입니다.
- *
- * @return 부동 소수점 값이 0에 가깝다면 true, 그렇지 않다면 false를 반환합니다.
- */
 __forceinline bool NearZero(float value, float epsilon = EPSILON)
 {
 	return (std::fabsf(value) <= epsilon);
 }
 
-
-/**
- * @brief 두 값중 큰 값을 반환합니다.
- *
- * @param lhs 크기를 비교할 값 중 왼쪽 값입니다.
- * @param rhs 크기를 비교할 값 중 오른쪽 값입니다.
- *
- * @return 두 값 중 큰 값을 반환합니다.
- */
 template <typename T>
 __forceinline T Max(const T& lhs, const T& rhs)
 {
 	return (lhs < rhs ? rhs : lhs);
 }
 
-
-/**
- * @brief 두 값중 작은 값을 반환합니다.
- *
- * @param lhs 크기를 비교할 값 중 왼쪽 값입니다.
- * @param rhs 크기를 비교할 값 중 오른쪽 값입니다.
- *
- * @return 두 값 중 작은 값을 반환합니다.
- */
 template <typename T>
 __forceinline T Min(const T& lhs, const T& rhs)
 {
 	return (lhs < rhs ? lhs : rhs);
 }
 
-
-/**
- * @brief 라디안 각도에 대응하는 사인 값을 얻습니다.
- *
- * @param radian 사인 값을 얻을 라디안 각도입니다.
- *
- * @return 라디안 각도에 대응하는 사인값을 반환합니다.
- *
- * @note
- * - DirectXMath의 XMScalarSin 참조
- * - 알고리즘은 11차원 미니맥스(Minimax) 근사치(1th-degree Minimax approximation) 사용
- * - https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91
- */
 __forceinline float Sin(float radian)
 {
+	// https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91
 	float quotient = ONE_DIV_2PI * radian;
 	if (radian >= 0.0f)
 	{
@@ -159,21 +71,10 @@ __forceinline float Sin(float radian)
 	return (((((-2.3889859e-08f * y2 + 2.7525562e-06f) * y2 - 0.00019840874f) * y2 + 0.0083333310f) * y2 - 0.16666667f) * y2 + 1.0f) * y;
 }
 
-
-/**
- * @brief 라디안 각도에 대응하는 코사인 값을 반환합니다.
- *
- * @param radian 코사인 값을 얻을 라디안 각도입니다.
- *
- * @return 라디안 각도에 대응하는 코사인값을 반환합니다.
- *
- * @note
- * - DirectXMath의 XMScalarCos 참조
- * - 알고리즘은 10차원 미니맥스(Minimax) 근사치(1th-degree Minimax approximation) 사용
- * - https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91
- */
 __forceinline float Cos(float radian)
 {
+	// 알고리즘은 10차원 미니맥스(Minimax) 근사치(1th-degree Minimax approximation) 사용
+	// https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91
 	float quotient = ONE_DIV_2PI * radian;
 	if (radian >= 0.0f)
 	{
@@ -204,21 +105,10 @@ __forceinline float Cos(float radian)
 	return sign * p;
 }
 
-
-/**
- * @brief 부동 소수점 숫자의 아크 사인을 계산합니다.
- *
- * @param value -1.0 에서 1.0 사이의 값입니다.
- *
- * @return 입력한 값의 아크 사인(역 사인) 값을 반환합니다.
- *
- * @note
- * - DirectXMath의 XMScalarASin 참조
- * - 알고리즘은 7차원 미니맥스(Minimax) 근사치(1th-degree Minimax approximation) 사용
- * - https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91
- */
 __forceinline float ASin(float value)
 {
+	// 알고리즘은 7차원 미니맥스(Minimax) 근사치(1th-degree Minimax approximation) 사용
+	// https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91
 	float x = std::fabsf(value);
 	float omx = 1.0f - x;
 	if (omx < 0.0f)
@@ -240,21 +130,11 @@ __forceinline float ASin(float value)
 	}
 }
 
-
-/**
- * @brief 부동 소수점 숫자의 아크 코사인을 계산합니다.
- *
- * @param value -1.0 에서 1.0 사이의 값입니다.
- *
- * @return 입력한 값의 코아크 사인(역 사인) 값을 반환합니다.
- *
- * @note
- * - DirectXMath의 XMScalarACos 참조
- * - 알고리즘은 7차원 미니맥스(Minimax) 근사치(1th-degree Minimax approximation) 사용
- * - https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91
- */
 __forceinline float ACos(float value)
 {
+	// 알고리즘은 7차원 미니맥스(Minimax) 근사치(1th - degree Minimax approximation) 사용
+	// https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91
+
 	float x = std::fabsf(value);
 	float omx = 1.0f - x;
 	if (omx < 0.0f)
@@ -276,70 +156,29 @@ __forceinline float ACos(float value)
 	}
 }
 
-
-/**
- * @brief 제곱근을 계산합니다.
- *
- * @param x 제곱근을 계산할 부동소수점수입니다.
- *
- * @return 제곱근 값을 반환합니다.
- */
 __forceinline float Sqrt(float x)
 {
 	return std::sqrtf(x);
 }
 
-
-/**
- * @brief 절댓값을 계산합니다.
- *
- * @param x 절댓값을 계산할 부동소수점수입니다.
- *
- * @return 절대값을 반환합니다.
- */
 __forceinline float Abs(float x)
 {
 	return std::fabsf(x);
 }
 
-
-/**
- * @brief 부동 소수점 나머지를 계산합니다.
- *
- * @param x 부동 소수점 나머지를 계산할 왼쪽 피연산자입니다.
- * @param y 부동 소수점 나머지를 계산할 오른쪽 피연산자입니다.
- *
- * @return 계산된 부동 소수점 나머지를 반환합니다.
- */
 __forceinline float Fmod(float x, float y)
 {
 	return std::fmodf(x, y);
 }
 
-
-/**
- * @brief 값을 [lower, upper] 범위로 자릅니다.
- *
- * @param value 범위로 자를 값입니다.
- * @param lower 범위의 최소값입니다.
- * @param upper 범위의 최대값입니다.
- *
- * @return 범위로 잘려 나간 값을 반환합니다.
- */
 template <typename T>
 __forceinline T Clamp(const T& value, const T& lower, const T& upper)
 {
 	return Min<T>(upper, Max<T>(lower, value));
 }
 
-
 /**
- * @brief 임의의 정수를 생성합니다.
- *
- * @param minValue 생성할 난수 범위의 최솟값입니다.
- * @param maxValue 생성할 난수 범위의 최댓값입니다.
- *
- * @return 생성된 임의의 정수를 반환합니다.
+ * 값의 범위는 [minValue, maxValue] 입니다.
  */
 __forceinline int32_t GenerateRandomInt(int32_t minValue, int32_t maxValue)
 {
@@ -350,14 +189,8 @@ __forceinline int32_t GenerateRandomInt(int32_t minValue, int32_t maxValue)
 	return distribution(generator);
 }
 
-
 /**
- * @brief 임의의 실수를 생성합니다.
- *
- * @param minValue 생성할 난수 범위의 최솟값입니다.
- * @param maxValue 생성할 난수 범위의 최댓값입니다.
- *
- * @return 생성된 임의의 실수를 반환합니다.
+ * 값의 범위는 [minValue, maxValue] 입니다.
  */
 __forceinline float GenerateRandomFloat(float minValue, float maxValue)
 {
@@ -368,77 +201,16 @@ __forceinline float GenerateRandomFloat(float minValue, float maxValue)
 	return distribution(generator);
 }
 
-
-/**
- * @brief 원소의 데이터 타입이 정수인 2차원 벡터입니다.
- */
 struct Vec2i
 {
-	/**
-	 * @brief 2차원 벡터의 기본 생성자입니다.
-	 *
-	 * @note 모든 원소의 값을 0으로 초기화합니다.
-	 */
 	Vec2i() noexcept : x(0), y(0) {}
-
-
-	/**
-	 * @brief 2차원 벡터의 생성자입니다.
-	 *
-	 * @param xx 벡터의 x 성분입니다.
-	 * @param yy 벡터의 y 성분입니다.
-	 */
 	Vec2i(int32_t&& xx, int32_t&& yy) noexcept : x(xx), y(yy) {}
-
-
-	/**
-	 * @brief 2차원 벡터의 생성자입니다.
-	 *
-	 * @param xx 벡터의 x 성분입니다.
-	 * @param yy 벡터의 y 성분입니다.
-	 */
 	Vec2i(const int32_t& xx, const int32_t& yy) noexcept : x(xx), y(yy) {}
-
-
-	/**
-	 * @brief 2차원 벡터의 원소를 하나의 값으로 초기화합니다.
-	 *
-	 * @param e 모든 원소를 초기화 할 값입니다.
-	 */
 	Vec2i(int32_t&& e) noexcept : x(e), y(e) {}
-
-
-	/**
-	 * @brief 2차원 벡터의 원소를 하나의 값으로 초기화합니다.
-	 *
-	 * @param e 모든 원소를 초기화 할 값입니다.
-	 */
 	Vec2i(const int32_t& e) noexcept : x(e), y(e) {}
-
-
-	/**
-	 * @brief 2차원 벡터의 복사 생성자입니다.
-	 *
-	 * @param v 원소를 복사할 벡터 구조체의 인스턴스입니다.
-	 */
 	Vec2i(Vec2i&& v) noexcept : x(v.x), y(v.y) {}
-
-
-	/**
-	 * @brief 2차원 벡터의 복사 생성자입니다.
-	 *
-	 * @param v 원소를 복사할 벡터의 인스턴스입니다.
-	 */
 	Vec2i(const Vec2i& v) noexcept : x(v.x), y(v.y) {}
 
-
-	/**
-	 * @brief 2차원 벡터의 대입 연산자 입니다.
-	 *
-	 * @param v 원소를 복사할 벡터 구조체의 인스턴스입니다.
-	 *
-	 * @return 대입한 벡터의 참조자를 반환합니다.
-	 */
 	Vec2i& operator=(Vec2i&& v) noexcept
 	{
 		if (this == &v) return *this;
@@ -449,14 +221,6 @@ struct Vec2i
 		return *this;
 	}
 
-
-	/**
-	 * @brief 2차원 벡터의 대입 연산자 입니다.
-	 *
-	 * @param v 원소를 복사할 벡터 구조체의 인스턴스입니다.
-	 *
-	 * @return 대입한 벡터의 참조자를 반환합니다.
-	 */
 	Vec2i& operator=(const Vec2i& v) noexcept
 	{
 		if (this == &v) return *this;
@@ -467,107 +231,41 @@ struct Vec2i
 		return *this;
 	}
 
-
-	/**
-	 * @brief 2차원 벡터의 원소에 -부호를 취합니다.
-	 *
-	 * @return 2차원 벡터의 원소에 -부호를 취한 새로운 벡터를 반환합니다.
-	 */
 	Vec2i operator-() const
 	{
 		return Vec2i(-x, -y);
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 벡터의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 더한 결과를 반환합니다.
-	 */
 	Vec2i operator+(Vec2i&& v) const
 	{
 		return Vec2i(x + v.x, y + v.y);
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 벡터의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 더한 결과를 반환합니다.
-	 */
 	Vec2i operator+(const Vec2i& v) const
 	{
 		return Vec2i(x + v.x, y + v.y);
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 벡터의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 뺀 결과를 반환합니다.
-	 */
 	Vec2i operator-(Vec2i&& v) const
 	{
 		return Vec2i(x - v.x, y - v.y);
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 벡터의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 뺀 결과를 반환합니다.
-	 */
 	Vec2i operator-(const Vec2i& v) const
 	{
 		return Vec2i(x - v.x, y - v.y);
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터에 대응하는 원소를 각각 곱합니다.
-	 *
-	 * @note 이 연산은 벡터의 내적 연산(Dot Product)와는 다릅니다.
-	 *
-	 * @param v 벡터의 곱셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 곱한 결과를 반환합니다.
-	 */
 	Vec2i operator*(Vec2i&& v) const
 	{
 		return Vec2i(x * v.x, y * v.y);
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터에 대응하는 원소를 각각 곱합니다.
-	 *
-	 * @note 이 연산은 벡터의 내적 연산(Dot Product)와는 다릅니다.
-	 *
-	 * @param v 벡터의 곱셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 곱한 결과를 반환합니다.
-	 */
 	Vec2i operator*(const Vec2i& v) const
 	{
 		return Vec2i(x * v.x, y * v.y);
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec2i& operator+=(Vec2i&& v) noexcept
 	{
 		x += v.x;
@@ -576,14 +274,6 @@ struct Vec2i
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec2i& operator+=(const Vec2i& v) noexcept
 	{
 		x += v.x;
@@ -592,14 +282,6 @@ struct Vec2i
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec2i& operator-=(Vec2i&& v) noexcept
 	{
 		x -= v.x;
@@ -608,14 +290,6 @@ struct Vec2i
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec2i& operator-=(const Vec2i& v) noexcept
 	{
 		x -= v.x;
@@ -624,140 +298,50 @@ struct Vec2i
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터의 대응하는 원소가 동일한지 확인합니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 두 2차원 벡터의 대응하는 원소가 일치한다면 true, 그렇지 않으면 false를 반환합니다.
-	 */
 	bool operator==(Vec2i&& v) noexcept
 	{
 		return (x == v.x) && (y == v.y);
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터의 대응하는 원소가 동일한지 확인합니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 두 2차원 벡터의 대응하는 원소가 일치한다면 true, 그렇지 않으면 false를 반환합니다.
-	 */
 	bool operator==(const Vec2i& v) noexcept
 	{
 		return (x == v.x) && (y == v.y);
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터의 대응하는 원소가 동일하지 않은지 확인합니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 두 2차원 벡터의 대응하는 원소가 일치하지 않는다면 true, 그렇다면 false를 반환합니다.
-	 */
 	bool operator!=(Vec2i&& v) noexcept
 	{
 		return (x != v.x) || (y != v.y);
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터의 대응하는 원소가 동일하지 않은지 확인합니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 두 2차원 벡터의 대응하는 원소가 일치하지 않는다면 true, 그렇다면 false를 반환합니다.
-	 */
 	bool operator!=(const Vec2i& v) noexcept
 	{
 		return (x != v.x) || (y != v.y);
 	}
 
-
-	/**
-	 * @brief 2차원 벡터 원소 배열의 포인터를 얻습니다.
-	 *
-	 * @return 2차원 벡터 원소 배열의 포인터를 반환합니다.
-	 */
 	const int32_t* GetPtr() const { return &data[0]; }
-
-
-	/**
-	 * @brief 2차원 벡터 원소 배열의 포인터를 얻습니다.
-	 *
-	 * @return 2차원 벡터 원소 배열의 포인터를 반환합니다.
-	 */
 	int32_t* GetPtr() { return &data[0]; }
 
-
-	/**
-	 * @brief 2차원 백터의 내적 연산을 수행합니다.
-	 *
-	 * @param lhs 백터의 내적 연산을 수행할 좌측 피연산자입니다.
-	 * @param rhs 백터의 내적 연산을 수행할 우측 피연산자입니다.
-	 *
-	 * @return 내적 연산 결과를 반환합니다.
-	 */
 	static inline int32_t Dot(const Vec2i& lhs, const Vec2i& rhs)
 	{
 		return lhs.x * rhs.x + lhs.y * rhs.y;
 	}
 
-
-	/**
-	 * @brief 2차원 백터의 외적 연산을 수행합니다.
-	 *
-	 * @param lhs 백터의 외적 연산을 수행할 좌측 피연산자입니다.
-	 * @param rhs 백터의 외적 연산을 수행할 우측 피연산자입니다.
-	 *
-	 * @return 외적 연산 결과를 반환합니다.
-	 *
-	 * @note 일반적인 3차원 외적 연산과 다릅니다.
-	 */
 	static inline int32_t Cross(const Vec2i& lhs, const Vec2i& rhs)
 	{
 		return lhs.x * rhs.y - lhs.y * rhs.x;
 	}
 
-
-	/**
-	 * @brief 2차원 백터의 크기 제곱 값을 계산합니다.
-	 *
-	 * @param v 크기 제곱을 계산할 벡터입니다.
-	 *
-	 * @return 계산된 크기 제곱 값을 반환합니다.
-	 */
 	static inline int32_t LengthSq(const Vec2i& v)
 	{
 		return v.x * v.x + v.y * v.y;
 	}
 
-
-	/**
-	 * @brief 2차원 벡터의 크기를 얻습니다.
-	 *
-	 * @param v 크기를 계산할 벡터입니다.
-	 *
-	 * @return 계산된 크기 값을 반환합니다.
-	 */
 	static inline float Length(const Vec2i& v)
 	{
 		float lengthSq = static_cast<float>(LengthSq(v));
 		return Sqrt(lengthSq);
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터 사이의 각을 계산합니다.
-	 *
-	 * @param lhs 벡터 사이의 각을 계산할 왼쪽 피연산자 벡터입니다.
-	 * @param rhs 벡터 사이의 각을 계산할 오른쪽 피연산자 벡터입니다.
-	 *
-	 * @return 두 2차원 벡터 사이의 라디안 각도를 반환합니다.
-	 */
 	static inline float Radian(const Vec2i& lhs, const Vec2i& rhs)
 	{
 		float lengthL = Length(lhs);
@@ -767,25 +351,12 @@ struct Vec2i
 		return ACos(dot / (lengthL * lengthR));
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터 사이의 각을 계산합니다.
-	 *
-	 * @param lhs 벡터 사이의 각을 계산할 왼쪽 피연산자 벡터입니다.
-	 * @param rhs 벡터 사이의 각을 계산할 오른쪽 피연산자 벡터입니다.
-	 *
-	 * @return 두 2차원 벡터 사이의 육십분법 각도를 반환합니다.
-	 */
 	static inline float Degree(const Vec2i& lhs, const Vec2i& rhs)
 	{
 		float radian = Radian(lhs, rhs);
 		return ToDegree(radian);
 	}
 
-
-	/**
-	 * @brief 2차원 벡터의 다양한 원소 형식입니다.
-	 */
 	union
 	{
 		struct
@@ -797,77 +368,16 @@ struct Vec2i
 	};
 };
 
-
-/**
- * @brief 원소의 데이터 타입이 부동 소수점인 2차원 벡터입니다.
- */
 struct Vec2f
 {
-	/**
-	 * @brief 2차원 벡터의 기본 생성자입니다.
-	 *
-	 * @note 모든 원소의 값을 0으로 초기화합니다.
-	 */
 	Vec2f() noexcept : x(0.0f), y(0.0f) {}
-
-
-	/**
-	 * @brief 2차원 벡터의 생성자입니다.
-	 *
-	 * @param xx 벡터의 x 성분입니다.
-	 * @param yy 벡터의 y 성분입니다.
-	 */
 	Vec2f(float&& xx, float&& yy) noexcept : x(xx), y(yy) {}
-
-
-	/**
-	 * @brief 2차원 벡터의 생성자입니다.
-	 *
-	 * @param xx 벡터의 x 성분입니다.
-	 * @param yy 벡터의 y 성분입니다.
-	 */
 	Vec2f(const float& xx, const float& yy) noexcept : x(xx), y(yy) {}
-
-
-	/**
-	 * @brief 2차원 벡터의 원소를 하나의 값으로 초기화합니다.
-	 *
-	 * @param e 모든 원소를 초기화 할 값입니다.
-	 */
 	Vec2f(float&& e) noexcept : x(e), y(e) {}
-
-
-	/**
-	 * @brief 2차원 벡터의 원소를 하나의 값으로 초기화합니다.
-	 *
-	 * @param e 모든 원소를 초기화 할 값입니다.
-	 */
 	Vec2f(const float& e) noexcept : x(e), y(e) {}
-
-
-	/**
-	 * @brief 2차원 벡터의 복사 생성자입니다.
-	 *
-	 * @param v 원소를 복사할 벡터 구조체의 인스턴스입니다.
-	 */
 	Vec2f(Vec2f&& v) noexcept : x(v.x), y(v.y) {}
-
-
-	/**
-	 * @brief 2차원 벡터의 복사 생성자입니다.
-	 *
-	 * @param v 원소를 복사할 벡터의 인스턴스입니다.
-	 */
 	Vec2f(const Vec2f& v) noexcept : x(v.x), y(v.y) {}
 
-
-	/**
-	 * @brief 2차원 벡터의 대입 연산자 입니다.
-	 *
-	 * @param v 원소를 복사할 벡터 구조체의 인스턴스입니다.
-	 *
-	 * @return 대입한 벡터의 참조자를 반환합니다.
-	 */
 	Vec2f& operator=(Vec2f&& v) noexcept
 	{
 		if (this == &v) return *this;
@@ -878,14 +388,6 @@ struct Vec2f
 		return *this;
 	}
 
-
-	/**
-	 * @brief 2차원 벡터의 대입 연산자 입니다.
-	 *
-	 * @param v 원소를 복사할 벡터 구조체의 인스턴스입니다.
-	 *
-	 * @return 대입한 벡터의 참조자를 반환합니다.
-	 */
 	Vec2f& operator=(const Vec2f& v) noexcept
 	{
 		if (this == &v) return *this;
@@ -896,107 +398,41 @@ struct Vec2f
 		return *this;
 	}
 
-
-	/**
-	 * @brief 2차원 벡터의 원소에 -부호를 취합니다.
-	 *
-	 * @return 2차원 벡터의 원소에 -부호를 취한 새로운 벡터를 반환합니다.
-	 */
 	Vec2f operator-() const
 	{
 		return Vec2f(-x, -y);
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 벡터의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 더한 결과를 반환합니다.
-	 */
 	Vec2f operator+(Vec2f&& v) const
 	{
 		return Vec2f(x + v.x, y + v.y);
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 벡터의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 더한 결과를 반환합니다.
-	 */
 	Vec2f operator+(const Vec2f& v) const
 	{
 		return Vec2f(x + v.x, y + v.y);
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 벡터의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 뺀 결과를 반환합니다.
-	 */
 	Vec2f operator-(Vec2f&& v) const
 	{
 		return Vec2f(x - v.x, y - v.y);
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 벡터의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 뺀 결과를 반환합니다.
-	 */
 	Vec2f operator-(const Vec2f& v) const
 	{
 		return Vec2f(x - v.x, y - v.y);
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터에 대응하는 원소를 각각 곱합니다.
-	 *
-	 * @note 이 연산은 벡터의 내적 연산(Dot Product)와는 다릅니다.
-	 *
-	 * @param v 벡터의 곱셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 곱한 결과를 반환합니다.
-	 */
 	Vec2f operator*(Vec2f&& v) const
 	{
 		return Vec2f(x * v.x, y * v.y);
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터에 대응하는 원소를 각각 곱합니다.
-	 *
-	 * @note 이 연산은 벡터의 내적 연산(Dot Product)와는 다릅니다.
-	 *
-	 * @param v 벡터의 곱셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 곱한 결과를 반환합니다.
-	 */
 	Vec2f operator*(const Vec2f& v) const
 	{
 		return Vec2f(x * v.x, y * v.y);
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec2f& operator+=(Vec2f&& v) noexcept
 	{
 		x += v.x;
@@ -1005,14 +441,6 @@ struct Vec2f
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec2f& operator+=(const Vec2f& v) noexcept
 	{
 		x += v.x;
@@ -1021,14 +449,6 @@ struct Vec2f
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec2f& operator-=(Vec2f&& v) noexcept
 	{
 		x -= v.x;
@@ -1037,14 +457,6 @@ struct Vec2f
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec2f& operator-=(const Vec2f& v) noexcept
 	{
 		x -= v.x;
@@ -1053,139 +465,50 @@ struct Vec2f
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터의 대응하는 원소가 동일한지 확인합니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 두 2차원 벡터의 대응하는 원소가 일치한다면 true, 그렇지 않으면 false를 반환합니다.
-	 */
 	bool operator==(Vec2f&& v) noexcept
 	{
 		return Abs(x - v.x) <= EPSILON && Abs(y - v.y) <= EPSILON;
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터의 대응하는 원소가 동일한지 확인합니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 두 2차원 벡터의 대응하는 원소가 일치한다면 true, 그렇지 않으면 false를 반환합니다.
-	 */
 	bool operator==(const Vec2f& v) noexcept
 	{
 		return Abs(x - v.x) <= EPSILON && Abs(y - v.y) <= EPSILON;
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터의 대응하는 원소가 동일하지 않은지 확인합니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 두 2차원 벡터의 대응하는 원소가 일치하지 않는다면 true, 그렇다면 false를 반환합니다.
-	 */
 	bool operator!=(Vec2f&& v) noexcept
 	{
 		return Abs(x - v.x) > EPSILON || Abs(y - v.y) > EPSILON;
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터의 대응하는 원소가 동일하지 않은지 확인합니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 두 2차원 벡터의 대응하는 원소가 일치하지 않는다면 true, 그렇다면 false를 반환합니다.
-	 */
 	bool operator!=(const Vec2f& v) noexcept
 	{
 		return Abs(x - v.x) > EPSILON || Abs(y - v.y) > EPSILON;
 	}
 
-
-	/**
-	 * @brief 2차원 벡터 원소 배열의 포인터를 얻습니다.
-	 *
-	 * @return 2차원 벡터 원소 배열의 포인터를 반환합니다.
-	 */
 	const float* GetPtr() const { return &data[0]; }
-
-
-	/**
-	 * @brief 2차원 벡터 원소 배열의 포인터를 얻습니다.
-	 *
-	 * @return 2차원 벡터 원소 배열의 포인터를 반환합니다.
-	 */
 	float* GetPtr() { return &data[0]; }
 
-
-	/**
-	 * @brief 2차원 백터의 내적 연산을 수행합니다.
-	 *
-	 * @param lhs 백터의 내적 연산을 수행할 좌측 피연산자입니다.
-	 * @param rhs 백터의 내적 연산을 수행할 우측 피연산자입니다.
-	 *
-	 * @return 내적 연산 결과를 반환합니다.
-	 */
 	static inline float Dot(const Vec2f& lhs, const Vec2f& rhs)
 	{
 		return lhs.x * rhs.x + lhs.y * rhs.y;
 	}
 
-
-	/**
-	 * @brief 2차원 백터의 외적 연산을 수행합니다.
-	 *
-	 * @param lhs 백터의 외적 연산을 수행할 좌측 피연산자입니다.
-	 * @param rhs 백터의 외적 연산을 수행할 우측 피연산자입니다.
-	 *
-	 * @return 외적 연산 결과를 반환합니다.
-	 *
-	 * @note 일반적인 3차원 외적 연산과 다릅니다.
-	 */
 	static inline float Cross(const Vec2f& lhs, const Vec2f& rhs)
 	{
 		return lhs.x * rhs.y - lhs.y * rhs.x;
 	}
 
-
-	/**
-	 * @brief 2차원 백터의 크기 제곱 값을 계산합니다.
-	 *
-	 * @param v 크기 제곱을 계산할 벡터입니다.
-	 *
-	 * @return 계산된 크기 제곱 값을 반환합니다.
-	 */
 	static inline float LengthSq(const Vec2f& v)
 	{
 		return v.x * v.x + v.y * v.y;
 	}
 
-
-	/**
-	 * @brief 2차원 벡터의 크기를 얻습니다.
-	 *
-	 * @param v 크기를 계산할 벡터입니다.
-	 *
-	 * @return 계산된 크기 값을 반환합니다.
-	 */
 	static inline float Length(const Vec2f& v)
 	{
 		float lengthSq = LengthSq(v);
 		return Sqrt(lengthSq);
 	}
 
-
-	/**
-	 * @brief 2차원 벡터를 정규화합니다.
-	 *
-	 * @param v 정규화 할 벡터입니다.
-	 *
-	 * @return 정규화된 벡터를 반환합니다.
-	 */
 	static inline Vec2f Normalize(const Vec2f& v)
 	{
 		float length = Length(v);
@@ -1199,15 +522,6 @@ struct Vec2f
 		return Vec2f(v.x * invLength, v.y * invLength);
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터 사이의 각을 계산합니다.
-	 *
-	 * @param lhs 벡터 사이의 각을 계산할 왼쪽 피연산자 벡터입니다.
-	 * @param rhs 벡터 사이의 각을 계산할 오른쪽 피연산자 벡터입니다.
-	 *
-	 * @return 두 2차원 벡터 사이의 라디안 각도를 반환합니다.
-	 */
 	static inline float Radian(const Vec2f& lhs, const Vec2f& rhs)
 	{
 		float lengthL = Length(lhs);
@@ -1217,30 +531,12 @@ struct Vec2f
 		return ACos(dot / (lengthL * lengthR));
 	}
 
-
-	/**
-	 * @brief 두 2차원 벡터 사이의 각을 계산합니다.
-	 *
-	 * @param lhs 벡터 사이의 각을 계산할 왼쪽 피연산자 벡터입니다.
-	 * @param rhs 벡터 사이의 각을 계산할 오른쪽 피연산자 벡터입니다.
-	 *
-	 * @return 두 2차원 벡터 사이의 육십분법 각도를 반환합니다.
-	 */
 	static inline float Degree(const Vec2f& lhs, const Vec2f& rhs)
 	{
 		float radian = Radian(lhs, rhs);
 		return ToDegree(radian);
 	}
 
-
-	/**
-	 * @brief Base 2차원 벡터에 Target 2차원 벡터를 투영합니다.
-	 *
-	 * @param target 투영 대상에 투영할 벡터입니다.
-	 * @param base 투영 대상이 되는 벡터입니다.
-	 *
-	 * @return base에 투영된 target 벡터를 반환합니다.
-	 */
 	static inline Vec2f Project(const Vec2f& target, const Vec2f& base)
 	{
 		float dot = Dot(target, base);
@@ -1250,46 +546,17 @@ struct Vec2f
 		return Vec2f(base.x * scale, base.y * scale);
 	}
 
-
-	/**
-	 * @brief Base 2차원 벡터에 Target 2차원 벡터를 투영한 벡터에 수직인 벡터를 계산합니다.
-	 *
-	 * @param target 투영 대상에 투영할 벡터입니다.
-	 * @param base 투영 대상이 되는 벡터입니다.
-	 *
-	 * @return 투영된 벡터의 수직인 벡터를 반환합니다.
-	 */
 	static inline Vec2f Reject(const Vec2f& target, const Vec2f& base)
 	{
 		Vec2f project = Project(target, base);
 		return target - project;
 	}
 
-
-	/**
-	 * @brief 두 벡터를 선형 보간한 벡터를 계산합니다.
-	 *
-	 * @param s 보간의 시작 벡터입니다.
-	 * @param e 보간의 끝 벡터입니다.
-	 * @param t 두 벡터의 보간 비율입니다.
-	 *
-	 * @return 보간된 벡터를 반환합니다.
-	 */
 	static inline Vec2f Lerp(const Vec2f& s, const Vec2f& e, const float& t)
 	{
 		return s * (1.0f - t) + e * t;
 	}
 
-
-	/**
-	 * @brief 두 벡터를 구면 선형 보간한 벡터를 계산합니다.
-	 *
-	 * @param s 보간의 시작 벡터입니다.
-	 * @param e 보간의 끝 벡터입니다.
-	 * @param t 두 벡터의 보간 비율입니다.
-	 *
-	 * @return 보간된 벡터를 반환합니다.
-	 */
 	static inline Vec2f Slerp(const Vec2f& s, const Vec2f& e, const float& t)
 	{
 		Vec2f start = Normalize(s);
@@ -1303,11 +570,7 @@ struct Vec2f
 
 		return s * a + e * b;
 	}
-
-
-	/**
-	 * @brief 2차원 벡터의 다양한 원소 형식입니다.
-	 */
+	
 	union
 	{
 		struct
@@ -1319,79 +582,16 @@ struct Vec2f
 	};
 };
 
-
-/**
- * @brief 원소의 데이터 타입이 정수인 3차원 벡터입니다.
- */
 struct Vec3i
 {
-	/**
-	 * @brief 3차원 벡터의 기본 생성자입니다.
-	 *
-	 * @note 모든 원소의 값을 0으로 초기화합니다.
-	 */
 	Vec3i() noexcept : x(0), y(0), z(0) {}
-
-
-	/**
-	 * @brief 3차원 벡터의 생성자입니다.
-	 *
-	 * @param xx 벡터의 x 성분입니다.
-	 * @param yy 벡터의 y 성분입니다.
-	 * @param zz 벡터의 z 성분입니다.
-	 */
 	Vec3i(int32_t&& xx, int32_t&& yy, int32_t&& zz) noexcept : x(xx), y(yy), z(zz) {}
-
-
-	/**
-	 * @brief 3차원 벡터의 생성자입니다.
-	 *
-	 * @param xx 벡터의 x 성분입니다.
-	 * @param yy 벡터의 y 성분입니다.
-	 * @param zz 벡터의 z 성분입니다.
-	 */
 	Vec3i(const int32_t& xx, const int32_t& yy, const int32_t& zz) noexcept : x(xx), y(yy), z(zz) {}
-
-
-	/**
-	 * @brief 3차원 벡터의 원소를 하나의 값으로 초기화합니다.
-	 *
-	 * @param e 모든 원소를 초기화 할 값입니다.
-	 */
 	Vec3i(int32_t&& e) noexcept : x(e), y(e), z(e) {}
-
-
-	/**
-	 * @brief 3차원 벡터의 원소를 하나의 값으로 초기화합니다.
-	 *
-	 * @param e 모든 원소를 초기화 할 값입니다.
-	 */
 	Vec3i(const int32_t& e) noexcept : x(e), y(e), z(e) {}
-
-
-	/**
-	 * @brief 3차원 벡터의 복사 생성자입니다.
-	 *
-	 * @param v 원소를 복사할 벡터 구조체의 인스턴스입니다.
-	 */
 	Vec3i(Vec3i&& v) noexcept : x(v.x), y(v.y), z(v.z) {}
-
-
-	/**
-	 * @brief 3차원 벡터의 복사 생성자입니다.
-	 *
-	 * @param v 원소를 복사할 벡터의 인스턴스입니다.
-	 */
 	Vec3i(const Vec3i& v) noexcept : x(v.x), y(v.y), z(v.z) {}
 
-
-	/**
-	 * @brief 3차원 벡터의 대입 연산자 입니다.
-	 *
-	 * @param v 원소를 복사할 벡터 구조체의 인스턴스입니다.
-	 *
-	 * @return 대입한 벡터의 참조자를 반환합니다.
-	 */
 	Vec3i& operator=(Vec3i&& v) noexcept
 	{
 		if (this == &v) return *this;
@@ -1402,15 +602,7 @@ struct Vec3i
 
 		return *this;
 	}
-
-
-	/**
-	 * @brief 3차원 벡터의 대입 연산자 입니다.
-	 *
-	 * @param v 원소를 복사할 벡터 구조체의 인스턴스입니다.
-	 *
-	 * @return 대입한 벡터의 참조자를 반환합니다.
-	 */
+	
 	Vec3i& operator=(const Vec3i& v) noexcept
 	{
 		if (this == &v) return *this;
@@ -1422,107 +614,41 @@ struct Vec3i
 		return *this;
 	}
 
-
-	/**
-	 * @brief 3차원 벡터의 원소에 -부호를 취합니다.
-	 *
-	 * @return 3차원 벡터의 원소에 -부호를 취한 새로운 벡터를 반환합니다.
-	 */
 	Vec3i operator-() const
 	{
 		return Vec3i(-x, -y, -z);
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 벡터의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 더한 결과를 반환합니다.
-	 */
 	Vec3i operator+(Vec3i&& v) const
 	{
 		return Vec3i(x + v.x, y + v.y, z + v.z);
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 벡터의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 더한 결과를 반환합니다.
-	 */
 	Vec3i operator+(const Vec3i& v) const
 	{
 		return Vec3i(x + v.x, y + v.y, z + v.z);
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 벡터의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 뺀 결과를 반환합니다.
-	 */
 	Vec3i operator-(Vec3i&& v) const
 	{
 		return Vec3i(x - v.x, y - v.y, z - v.z);
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 벡터의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 뺀 결과를 반환합니다.
-	 */
 	Vec3i operator-(const Vec3i& v) const
 	{
 		return Vec3i(x - v.x, y - v.y, z - v.z);
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터에 대응하는 원소를 각각 곱합니다.
-	 *
-	 * @note 이 연산은 벡터의 내적 연산(Dot Product)와는 다릅니다.
-	 *
-	 * @param v 벡터의 곱셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 곱한 결과를 반환합니다.
-	 */
 	Vec3i operator*(Vec3i&& v) const
 	{
 		return Vec3i(x * v.x, y * v.y, z * v.z);
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터에 대응하는 원소를 각각 곱합니다.
-	 *
-	 * @note 이 연산은 벡터의 내적 연산(Dot Product)와는 다릅니다.
-	 *
-	 * @param v 벡터의 곱셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 곱한 결과를 반환합니다.
-	 */
 	Vec3i operator*(const Vec3i& v) const
 	{
 		return Vec3i(x * v.x, y * v.y, z * v.z);
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec3i& operator+=(Vec3i&& v) noexcept
 	{
 		x += v.x;
@@ -1532,14 +658,6 @@ struct Vec3i
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec3i& operator+=(const Vec3i& v) noexcept
 	{
 		x += v.x;
@@ -1549,14 +667,6 @@ struct Vec3i
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec3i& operator-=(Vec3i&& v) noexcept
 	{
 		x -= v.x;
@@ -1566,14 +676,6 @@ struct Vec3i
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec3i& operator-=(const Vec3i& v) noexcept
 	{
 		x -= v.x;
@@ -1583,97 +685,34 @@ struct Vec3i
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터가 동일한지 검사합니다.
-	 *
-	 * @param v 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터가 동일하다면 true, 그렇지 않으면 false를 반환합니다.
-	 */
 	bool operator==(Vec3i&& v) const
 	{
 		return (x == v.x) && (y == v.y) && (z == v.z);
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터가 동일한지 검사합니다.
-	 *
-	 * @param v 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터가 동일하다면 true, 그렇지 않으면 false를 반환합니다.
-	 */
 	bool operator==(const Vec3i& v) const
 	{
 		return (x == v.x) && (y == v.y) && (z == v.z);
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터가 동일하지 않은지 검사합니다.
-	 *
-	 * @param v 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터가 동일하지 않다면 true, 그렇다면 false를 반환합니다.
-	 */
 	bool operator!=(Vec3i&& v) const
 	{
 		return (x != v.x) || (y != v.y) || (z != v.z);
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터가 동일하지 않은지 검사합니다.
-	 *
-	 * @param v 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터가 동일하지 않다면 true, 그렇다면 false를 반환합니다.
-	 */
 	bool operator!=(const Vec3i& v) const
 	{
 		return (x != v.x) || (y != v.y) || (z != v.z);
 	}
 
-
-	/**
-	 * @brief 3차원 벡터 원소 배열의 포인터를 얻습니다.
-	 *
-	 * @return 3차원 벡터 원소 배열의 포인터를 반환합니다.
-	 */
 	const int32_t* GetPtr() const { return &data[0]; }
-
-
-	/**
-	 * @brief 3차원 벡터 원소 배열의 포인터를 얻습니다.
-	 *
-	 * @return 3차원 벡터 원소 배열의 포인터를 반환합니다.
-	 */
 	int32_t* GetPtr() { return &data[0]; }
 
-
-	/**
-	 * @brief 3차원 백터의 내적 연산을 수행합니다.
-	 *
-	 * @param lhs 백터의 내적 연산을 수행할 좌측 피연산자입니다.
-	 * @param rhs 백터의 내적 연산을 수행할 우측 피연산자입니다.
-	 *
-	 * @return 내적 연산 결과를 반환합니다.
-	 */
 	static inline int32_t Dot(const Vec3i& lhs, const Vec3i& rhs)
 	{
 		return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
 	}
 
-
-	/**
-	 * @brief 3차원 벡터의 외적 연산을 수행합니다.
-	 *
-	 * @param lhs 백터의 외적 연산을 수행할 좌측 피연산자입니다.
-	 * @param rhs 백터의 외적 연산을 수행할 우측 피연산자입니다.
-	 *
-	 * @return 외적 연산 결과를 반환합니다.
-	 */
 	static inline Vec3i Cross(const Vec3i& lhs, const Vec3i& rhs)
 	{
 		return Vec3i(
@@ -1683,42 +722,17 @@ struct Vec3i
 		);
 	}
 
-
-	/**
-	 * @brief 3차원 백터의 크기 제곱 값을 계산합니다.
-	 *
-	 * @param v 크기 제곱을 계산할 벡터입니다.
-	 *
-	 * @return 계산된 크기 제곱 값을 반환합니다.
-	 */
 	static inline int32_t LengthSq(const Vec3i& v)
 	{
 		return v.x * v.x + v.y * v.y + v.z * v.z;
 	}
 
-
-	/**
-	 * @brief 3차원 벡터의 크기를 얻습니다.
-	 *
-	 * @param v 크기를 계산할 벡터입니다.
-	 *
-	 * @return 계산된 크기 값을 반환합니다.
-	 */
 	static inline float Length(const Vec3i& v)
 	{
 		float lengthSq = static_cast<float>(LengthSq(v));
 		return Sqrt(lengthSq);
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터 사이의 각을 계산합니다.
-	 *
-	 * @param lhs 벡터 사이의 각을 계산할 왼쪽 피연산자 벡터입니다.
-	 * @param rhs 벡터 사이의 각을 계산할 오른쪽 피연산자 벡터입니다.
-	 *
-	 * @return 두 3차원 벡터 사이의 라디안 각도를 반환합니다.
-	 */
 	static inline float Radian(const Vec3i& lhs, const Vec3i& rhs)
 	{
 		float lengthL = Length(lhs);
@@ -1728,25 +742,12 @@ struct Vec3i
 		return ACos(dot / (lengthL * lengthR));
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터 사이의 각을 계산합니다.
-	 *
-	 * @param lhs 벡터 사이의 각을 계산할 왼쪽 피연산자 벡터입니다.
-	 * @param rhs 벡터 사이의 각을 계산할 오른쪽 피연산자 벡터입니다.
-	 *
-	 * @return 두 3차원 벡터 사이의 육십분법 각도를 반환합니다.
-	 */
 	static inline float Degree(const Vec3i& lhs, const Vec3i& rhs)
 	{
 		float radian = Radian(lhs, rhs);
 		return ToDegree(radian);
 	}
 
-
-	/**
-	 * @brief 3차원 벡터의 다양한 원소 형식입니다.
-	 */
 	union
 	{
 		struct
@@ -1759,79 +760,16 @@ struct Vec3i
 	};
 };
 
-
-/**
- * @brief 원소의 데이터 타입이 부동 소수점인 3차원 벡터입니다.
- */
 struct Vec3f
 {
-	/**
-	 * @brief 3차원 벡터의 기본 생성자입니다.
-	 *
-	 * @note 모든 원소의 값을 0으로 초기화합니다.
-	 */
 	Vec3f() noexcept : x(0.0f), y(0.0f), z(0.0f) {}
-
-
-	/**
-	 * @brief 3차원 벡터의 생성자입니다.
-	 *
-	 * @param xx 벡터의 x 성분입니다.
-	 * @param yy 벡터의 y 성분입니다.
-	 * @param zz 벡터의 z 성분입니다.
-	 */
 	Vec3f(float&& xx, float&& yy, float&& zz) noexcept : x(xx), y(yy), z(zz) {}
-
-
-	/**
-	 * @brief 3차원 벡터의 생성자입니다.
-	 *
-	 * @param xx 벡터의 x 성분입니다.
-	 * @param yy 벡터의 y 성분입니다.
-	 * @param zz 벡터의 z 성분입니다.
-	 */
 	Vec3f(const float& xx, const float& yy, const float& zz) noexcept : x(xx), y(yy), z(zz) {}
-
-
-	/**
-	 * @brief 3차원 벡터의 원소를 하나의 값으로 초기화합니다.
-	 *
-	 * @param e 모든 원소를 초기화 할 값입니다.
-	 */
 	Vec3f(float&& e) noexcept : x(e), y(e), z(e) {}
-
-
-	/**
-	 * @brief 3차원 벡터의 원소를 하나의 값으로 초기화합니다.
-	 *
-	 * @param e 모든 원소를 초기화 할 값입니다.
-	 */
 	Vec3f(const float& e) noexcept : x(e), y(e), z(e) {}
-
-
-	/**
-	 * @brief 3차원 벡터의 복사 생성자입니다.
-	 *
-	 * @param v 원소를 복사할 벡터 구조체의 인스턴스입니다.
-	 */
 	Vec3f(Vec3f&& v) noexcept : x(v.x), y(v.y), z(v.z) {}
-
-
-	/**
-	 * @brief 3차원 벡터의 복사 생성자입니다.
-	 *
-	 * @param v 원소를 복사할 벡터의 인스턴스입니다.
-	 */
 	Vec3f(const Vec3f& v) noexcept : x(v.x), y(v.y), z(v.z) {}
 
-
-	/**
-	 * @brief 3차원 벡터의 대입 연산자 입니다.
-	 *
-	 * @param v 원소를 복사할 벡터 구조체의 인스턴스입니다.
-	 *
-	 * @return 대입한 벡터의 참조자를 반환합니다.
-	 */
 	Vec3f& operator=(Vec3f&& v) noexcept
 	{
 		if (this == &v) return *this;
@@ -1843,14 +781,6 @@ struct Vec3f
 		return *this;
 	}
 
-
-	/**
-	 * @brief 3차원 벡터의 대입 연산자 입니다.
-	 *
-	 * @param v 원소를 복사할 벡터 구조체의 인스턴스입니다.
-	 *
-	 * @return 대입한 벡터의 참조자를 반환합니다.
-	 */
 	Vec3f& operator=(const Vec3f& v) noexcept
 	{
 		if (this == &v) return *this;
@@ -1862,107 +792,41 @@ struct Vec3f
 		return *this;
 	}
 
-
-	/**
-	 * @brief 3차원 벡터의 원소에 -부호를 취합니다.
-	 *
-	 * @return 3차원 벡터의 원소에 -부호를 취한 새로운 벡터를 반환합니다.
-	 */
 	Vec3f operator-() const
 	{
 		return Vec3f(-x, -y, -z);
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 벡터의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 더한 결과를 반환합니다.
-	 */
 	Vec3f operator+(Vec3f&& v) const
 	{
 		return Vec3f(x + v.x, y + v.y, z + v.z);
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 벡터의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 더한 결과를 반환합니다.
-	 */
 	Vec3f operator+(const Vec3f& v) const
 	{
 		return Vec3f(x + v.x, y + v.y, z + v.z);
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 벡터의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 뺀 결과를 반환합니다.
-	 */
 	Vec3f operator-(Vec3f&& v) const
 	{
 		return Vec3f(x - v.x, y - v.y, z - v.z);
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 벡터의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 뺀 결과를 반환합니다.
-	 */
 	Vec3f operator-(const Vec3f& v) const
 	{
 		return Vec3f(x - v.x, y - v.y, z - v.z);
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터에 대응하는 원소를 각각 곱합니다.
-	 *
-	 * @note 이 연산은 벡터의 내적 연산(Dot Product)와는 다릅니다.
-	 *
-	 * @param v 벡터의 곱셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 곱한 결과를 반환합니다.
-	 */
 	Vec3f operator*(Vec3f&& v) const
 	{
 		return Vec3f(x * v.x, y * v.y, z * v.z);
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터에 대응하는 원소를 각각 곱합니다.
-	 *
-	 * @note 이 연산은 벡터의 내적 연산(Dot Product)와는 다릅니다.
-	 *
-	 * @param v 벡터의 곱셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 곱한 결과를 반환합니다.
-	 */
 	Vec3f operator*(const Vec3f& v) const
 	{
 		return Vec3f(x * v.x, y * v.y, z * v.z);
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec3f& operator+=(Vec3f&& v) noexcept
 	{
 		x += v.x;
@@ -1972,14 +836,6 @@ struct Vec3f
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec3f& operator+=(const Vec3f& v) noexcept
 	{
 		x += v.x;
@@ -1989,14 +845,6 @@ struct Vec3f
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec3f& operator-=(Vec3f&& v) noexcept
 	{
 		x -= v.x;
@@ -2006,14 +854,6 @@ struct Vec3f
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec3f& operator-=(const Vec3f& v) noexcept
 	{
 		x -= v.x;
@@ -2023,97 +863,34 @@ struct Vec3f
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터가 동일한지 검사합니다.
-	 *
-	 * @param v 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터가 동일하다면 true, 그렇지 않으면 false를 반환합니다.
-	 */
 	bool operator==(Vec3f&& v) const
 	{
 		return Abs(x - v.x) <= EPSILON && Abs(y - v.y) <= EPSILON && Abs(z - v.z) <= EPSILON;
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터가 동일한지 검사합니다.
-	 *
-	 * @param v 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터가 동일하다면 true, 그렇지 않으면 false를 반환합니다.
-	 */
 	bool operator==(const Vec3f& v) const
 	{
 		return Abs(x - v.x) <= EPSILON && Abs(y - v.y) <= EPSILON && Abs(z - v.z) <= EPSILON;
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터가 동일하지 않은지 검사합니다.
-	 *
-	 * @param v 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터가 동일하지 않다면 true, 그렇다면 false를 반환합니다.
-	 */
 	bool operator!=(Vec3f&& v) const
 	{
 		return Abs(x - v.x) > EPSILON || Abs(y - v.y) > EPSILON || Abs(z - v.z) > EPSILON;
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터가 동일하지 않은지 검사합니다.
-	 *
-	 * @param v 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터가 동일하지 않다면 true, 그렇다면 false를 반환합니다.
-	 */
 	bool operator!=(const Vec3f& v) const
 	{
 		return Abs(x - v.x) > EPSILON || Abs(y - v.y) > EPSILON || Abs(z - v.z) > EPSILON;
 	}
 
-
-	/**
-	 * @brief 3차원 벡터 원소 배열의 포인터를 얻습니다.
-	 *
-	 * @return 3차원 벡터 원소 배열의 포인터를 반환합니다.
-	 */
 	const float* GetPtr() const { return &data[0]; }
-
-
-	/**
-	 * @brief 3차원 벡터 원소 배열의 포인터를 얻습니다.
-	 *
-	 * @return 3차원 벡터 원소 배열의 포인터를 반환합니다.
-	 */
 	float* GetPtr() { return &data[0]; }
 
-
-	/**
-	 * @brief 3차원 백터의 내적 연산을 수행합니다.
-	 *
-	 * @param lhs 백터의 내적 연산을 수행할 좌측 피연산자입니다.
-	 * @param rhs 백터의 내적 연산을 수행할 우측 피연산자입니다.
-	 *
-	 * @return 내적 연산 결과를 반환합니다.
-	 */
 	static inline float Dot(const Vec3f& lhs, const Vec3f& rhs)
 	{
 		return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
 	}
 
-
-	/**
-	 * @brief 3차원 벡터의 외적 연산을 수행합니다.
-	 *
-	 * @param lhs 백터의 외적 연산을 수행할 좌측 피연산자입니다.
-	 * @param rhs 백터의 외적 연산을 수행할 우측 피연산자입니다.
-	 *
-	 * @return 외적 연산 결과를 반환합니다.
-	 */
 	static inline Vec3f Cross(const Vec3f& lhs, const Vec3f& rhs)
 	{
 		return Vec3f(
@@ -2123,41 +900,17 @@ struct Vec3f
 		);
 	}
 
-
-	/**
-	 * @brief 3차원 백터의 크기 제곱 값을 계산합니다.
-	 *
-	 * @param v 크기 제곱을 계산할 벡터입니다.
-	 *
-	 * @return 계산된 크기 제곱 값을 반환합니다.
-	 */
 	static inline float LengthSq(const Vec3f& v)
 	{
 		return v.x * v.x + v.y * v.y + v.z * v.z;
 	}
 
-
-	/**
-	 * @brief 3차원 벡터의 크기를 얻습니다.
-	 *
-	 * @param v 크기를 계산할 벡터입니다.
-	 *
-	 * @return 계산된 크기 값을 반환합니다.
-	 */
 	static inline float Length(const Vec3f& v)
 	{
 		float lengthSq = LengthSq(v);
 		return Sqrt(lengthSq);
 	}
 
-
-	/**
-	 * @brief 3차원 벡터를 정규화합니다.
-	 *
-	 * @param v 정규화 할 벡터입니다.
-	 *
-	 * @return 정규화된 벡터를 반환합니다.
-	 */
 	static inline Vec3f Normalize(const Vec3f& v)
 	{
 		float length = Length(v);
@@ -2171,15 +924,6 @@ struct Vec3f
 		return Vec3f(v.x * invLength, v.y * invLength, v.z * invLength);
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터 사이의 각을 계산합니다.
-	 *
-	 * @param lhs 벡터 사이의 각을 계산할 왼쪽 피연산자 벡터입니다.
-	 * @param rhs 벡터 사이의 각을 계산할 오른쪽 피연산자 벡터입니다.
-	 *
-	 * @return 두 3차원 벡터 사이의 라디안 각도를 반환합니다.
-	 */
 	static inline float Radian(const Vec3f& lhs, const Vec3f& rhs)
 	{
 		float lengthL = Length(lhs);
@@ -2189,30 +933,12 @@ struct Vec3f
 		return ACos(dot / (lengthL * lengthR));
 	}
 
-
-	/**
-	 * @brief 두 3차원 벡터 사이의 각을 계산합니다.
-	 *
-	 * @param lhs 벡터 사이의 각을 계산할 왼쪽 피연산자 벡터입니다.
-	 * @param rhs 벡터 사이의 각을 계산할 오른쪽 피연산자 벡터입니다.
-	 *
-	 * @return 두 3차원 벡터 사이의 육십분법 각도를 반환합니다.
-	 */
 	static inline float Degree(const Vec3f& lhs, const Vec3f& rhs)
 	{
 		float radian = Radian(lhs, rhs);
 		return ToDegree(radian);
 	}
 
-
-	/**
-	 * @brief Base 3차원 벡터에 Target 3차원 벡터를 투영합니다.
-	 *
-	 * @param target 투영 대상에 투영할 벡터입니다.
-	 * @param base 투영 대상이 되는 벡터입니다.
-	 *
-	 * @return base에 투영된 target 벡터를 반환합니다.
-	 */
 	static inline Vec3f Project(const Vec3f& target, const Vec3f& base)
 	{
 		float dot = Dot(target, base);
@@ -2222,46 +948,17 @@ struct Vec3f
 		return Vec3f(base.x * scale, base.y * scale, base.z * scale);
 	}
 
-
-	/**
-	 * @brief Base 3차원 벡터에 Target 3차원 벡터를 투영한 벡터에 수직인 벡터를 계산합니다.
-	 *
-	 * @param target 투영 대상에 투영할 벡터입니다.
-	 * @param base 투영 대상이 되는 벡터입니다.
-	 *
-	 * @return 투영된 벡터의 수직인 벡터를 반환합니다.
-	 */
 	static inline Vec3f Reject(const Vec3f& target, const Vec3f& base)
 	{
 		Vec3f project = Project(target, base);
 		return target - project;
 	}
 
-
-	/**
-	 * @brief 두 벡터를 선형 보간한 벡터를 계산합니다.
-	 *
-	 * @param s 보간의 시작 벡터입니다.
-	 * @param e 보간의 끝 벡터입니다.
-	 * @param t 두 벡터의 보간 비율입니다.
-	 *
-	 * @return 보간된 벡터를 반환합니다.
-	 */
 	static inline Vec3f Lerp(const Vec3f& s, const Vec3f& e, const float& t)
 	{
 		return s * (1.0f - t) + e * t;
 	}
 
-
-	/**
-	 * @brief 두 벡터를 구면 선형 보간한 벡터를 계산합니다.
-	 *
-	 * @param s 보간의 시작 벡터입니다.
-	 * @param e 보간의 끝 벡터입니다.
-	 * @param t 두 벡터의 보간 비율입니다.
-	 *
-	 * @return 보간된 벡터를 반환합니다.
-	 */
 	static inline Vec3f Slerp(const Vec3f& s, const Vec3f& e, const float& t)
 	{
 		Vec3f start = Normalize(s);
@@ -2275,11 +972,7 @@ struct Vec3f
 
 		return s * a + e * b;
 	}
-
-
-	/**
-	 * @brief 3차원 벡터의 다양한 원소 형식입니다.
-	 */
+	
 	union
 	{
 		struct
@@ -2292,81 +985,16 @@ struct Vec3f
 	};
 };
 
-
-/**
- * @brief 원소의 데이터 타입이 정수인 3차원 벡터입니다.
- */
 struct Vec4i
 {
-	/**
-	 * @brief 4차원 벡터의 기본 생성자입니다.
-	 *
-	 * @note 모든 원소의 값을 0으로 초기화합니다.
-	 */
 	Vec4i() noexcept : x(0), y(0), z(0), w(0) {}
-
-
-	/**
-	 * @brief 4차원 벡터의 생성자입니다.
-	 *
-	 * @param xx 벡터의 x 성분입니다.
-	 * @param yy 벡터의 y 성분입니다.
-	 * @param zz 벡터의 z 성분입니다.
-	 * @param ww 벡터의 w 성분입니다.
-	 */
 	Vec4i(int32_t&& xx, int32_t&& yy, int32_t&& zz, int32_t&& ww) noexcept : x(xx), y(yy), z(zz), w(ww) {}
-
-
-	/**
-	 * @brief 4차원 벡터의 생성자입니다.
-	 *
-	 * @param xx 벡터의 x 성분입니다.
-	 * @param yy 벡터의 y 성분입니다.
-	 * @param zz 벡터의 z 성분입니다.
-	 * @param ww 벡터의 w 성분입니다.
-	 */
 	Vec4i(const int32_t& xx, const int32_t& yy, const int32_t& zz, const int32_t& ww) noexcept : x(xx), y(yy), z(zz), w(ww) {}
-
-
-	/**
-	 * @brief 4차원 벡터의 원소를 하나의 값으로 초기화합니다.
-	 *
-	 * @param e 모든 원소를 초기화 할 값입니다.
-	 */
 	Vec4i(int32_t&& e) noexcept : x(e), y(e), z(e), w(e) {}
-
-
-	/**
-	 * @brief 4차원 벡터의 원소를 하나의 값으로 초기화합니다.
-	 *
-	 * @param e 모든 원소를 초기화 할 값입니다.
-	 */
 	Vec4i(const int32_t& e) noexcept : x(e), y(e), z(e), w(e) {}
-
-
-	/**
-	 * @brief 4차원 벡터의 복사 생성자입니다.
-	 *
-	 * @param v 원소를 복사할 벡터 구조체의 인스턴스입니다.
-	 */
 	Vec4i(Vec4i&& v) noexcept : x(v.x), y(v.y), z(v.z), w(v.w) {}
-
-
-	/**
-	 * @brief 4차원 벡터의 복사 생성자입니다.
-	 *
-	 * @param v 원소를 복사할 벡터의 인스턴스입니다.
-	 */
 	Vec4i(const Vec4i& v) noexcept : x(v.x), y(v.y), z(v.z), w(v.w) {}
 
-
-	/**
-	 * @brief 4차원 벡터의 대입 연산자 입니다.
-	 *
-	 * @param v 원소를 복사할 벡터 구조체의 인스턴스입니다.
-	 *
-	 * @return 대입한 벡터의 참조자를 반환합니다.
-	 */
 	Vec4i& operator=(Vec4i&& v) noexcept
 	{
 		if (this == &v) return *this;
@@ -2379,14 +1007,6 @@ struct Vec4i
 		return *this;
 	}
 
-
-	/**
-	 * @brief 4차원 벡터의 대입 연산자 입니다.
-	 *
-	 * @param v 원소를 복사할 벡터 구조체의 인스턴스입니다.
-	 *
-	 * @return 대입한 벡터의 참조자를 반환합니다.
-	 */
 	Vec4i& operator=(const Vec4i& v) noexcept
 	{
 		if (this == &v) return *this;
@@ -2399,107 +1019,41 @@ struct Vec4i
 		return *this;
 	}
 
-
-	/**
-	 * @brief 4차원 벡터의 원소에 -부호를 취합니다.
-	 *
-	 * @return 4차원 벡터의 원소에 -부호를 취한 새로운 벡터를 반환합니다.
-	 */
 	Vec4i operator-() const
 	{
 		return Vec4i(-x, -y, -z, -w);
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 벡터의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 더한 결과를 반환합니다.
-	 */
 	Vec4i operator+(Vec4i&& v) const
 	{
 		return Vec4i(x + v.x, y + v.y, z + v.z, w + v.w);
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 벡터의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 더한 결과를 반환합니다.
-	 */
 	Vec4i operator+(const Vec4i& v) const
 	{
 		return Vec4i(x + v.x, y + v.y, z + v.z, w + v.w);
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 벡터의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 뺀 결과를 반환합니다.
-	 */
 	Vec4i operator-(Vec4i&& v) const
 	{
 		return Vec4i(x - v.x, y - v.y, z - v.z, w - v.w);
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 벡터의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 뺀 결과를 반환합니다.
-	 */
 	Vec4i operator-(const Vec4i& v) const
 	{
 		return Vec4i(x - v.x, y - v.y, z - v.z, w - v.w);
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터에 대응하는 원소를 각각 곱합니다.
-	 *
-	 * @note 이 연산은 벡터의 내적 연산(Dot Product)와는 다릅니다.
-	 *
-	 * @param v 벡터의 곱셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 곱한 결과를 반환합니다.
-	 */
 	Vec4i operator*(Vec4i&& v) const
 	{
 		return Vec4i(x * v.x, y * v.y, z * v.z, w * v.w);
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터에 대응하는 원소를 각각 곱합니다.
-	 *
-	 * @note 이 연산은 벡터의 내적 연산(Dot Product)와는 다릅니다.
-	 *
-	 * @param v 벡터의 곱셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 곱한 결과를 반환합니다.
-	 */
 	Vec4i operator*(const Vec4i& v) const
 	{
 		return Vec4i(x * v.x, y * v.y, z * v.z, w * v.w);
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec4i& operator+=(Vec4i&& v) noexcept
 	{
 		x += v.x;
@@ -2510,14 +1064,6 @@ struct Vec4i
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec4i& operator+=(const Vec4i& v) noexcept
 	{
 		x += v.x;
@@ -2528,14 +1074,6 @@ struct Vec4i
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec4i& operator-=(Vec4i&& v) noexcept
 	{
 		x -= v.x;
@@ -2546,14 +1084,6 @@ struct Vec4i
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec4i& operator-=(const Vec4i& v) noexcept
 	{
 		x -= v.x;
@@ -2564,124 +1094,45 @@ struct Vec4i
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터가 동일한지 검사합니다.
-	 *
-	 * @param v 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터가 동일하다면 true, 그렇지 않으면 false를 반환합니다.
-	 */
 	bool operator==(Vec4i&& v) const
 	{
 		return (x == v.x) && (y == v.y) && (z == v.z) && (w == v.w);
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터가 동일한지 검사합니다.
-	 *
-	 * @param v 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터가 동일하다면 true, 그렇지 않으면 false를 반환합니다.
-	 */
 	bool operator==(const Vec4i& v) const
 	{
 		return (x == v.x) && (y == v.y) && (z == v.z) && (w == v.w);
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터가 동일하지 않은지 검사합니다.
-	 *
-	 * @param v 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터가 동일하지 않다면 true, 그렇다면 false를 반환합니다.
-	 */
 	bool operator!=(Vec4i&& v) const
 	{
 		return (x != v.x) || (y != v.y) || (z != v.z) || (w != v.w);
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터가 동일하지 않은지 검사합니다.
-	 *
-	 * @param v 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터가 동일하지 않다면 true, 그렇다면 false를 반환합니다.
-	 */
 	bool operator!=(const Vec4i& v) const
 	{
 		return (x != v.x) || (y != v.y) || (z != v.z) || (w != v.w);
 	}
 
-
-	/**
-	 * @brief 4차원 벡터 원소 배열의 포인터를 얻습니다.
-	 *
-	 * @return 4차원 벡터 원소 배열의 포인터를 반환합니다.
-	 */
 	const int32_t* GetPtr() const { return &data[0]; }
-
-
-	/**
-	 * @brief 4차원 벡터 원소 배열의 포인터를 얻습니다.
-	 *
-	 * @return 4차원 벡터 원소 배열의 포인터를 반환합니다.
-	 */
 	int32_t* GetPtr() { return &data[0]; }
 
-
-	/**
-	 * @brief 4차원 백터의 내적 연산을 수행합니다.
-	 *
-	 * @param lhs 백터의 내적 연산을 수행할 좌측 피연산자입니다.
-	 * @param rhs 백터의 내적 연산을 수행할 우측 피연산자입니다.
-	 *
-	 * @return 내적 연산 결과를 반환합니다.
-	 */
 	static inline int32_t Dot(const Vec4i& lhs, const Vec4i& rhs)
 	{
 		return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z + lhs.w * rhs.w;
 	}
 
-
-	/**
-	 * @brief 4차원 백터의 크기 제곱 값을 계산합니다.
-	 *
-	 * @param v 크기 제곱을 계산할 벡터입니다.
-	 *
-	 * @return 계산된 크기 제곱 값을 반환합니다.
-	 */
 	static inline int32_t LengthSq(const Vec4i& v)
 	{
 		return v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;
 	}
 
-
-	/**
-	 * @brief 4차원 벡터의 크기를 얻습니다.
-	 *
-	 * @param v 크기를 계산할 벡터입니다.
-	 *
-	 * @return 계산된 크기 값을 반환합니다.
-	 */
 	static inline float Length(const Vec4i& v)
 	{
 		float lengthSq = static_cast<float>(LengthSq(v));
 		return Sqrt(lengthSq);
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터 사이의 각을 계산합니다.
-	 *
-	 * @param lhs 벡터 사이의 각을 계산할 왼쪽 피연산자 벡터입니다.
-	 * @param rhs 벡터 사이의 각을 계산할 오른쪽 피연산자 벡터입니다.
-	 *
-	 * @return 두 4차원 벡터 사이의 라디안 각도를 반환합니다.
-	 */
 	static inline float Radian(const Vec4i& lhs, const Vec4i& rhs)
 	{
 		float lengthL = Length(lhs);
@@ -2691,25 +1142,12 @@ struct Vec4i
 		return ACos(dot / (lengthL * lengthR));
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터 사이의 각을 계산합니다.
-	 *
-	 * @param lhs 벡터 사이의 각을 계산할 왼쪽 피연산자 벡터입니다.
-	 * @param rhs 벡터 사이의 각을 계산할 오른쪽 피연산자 벡터입니다.
-	 *
-	 * @return 두 4차원 벡터 사이의 육십분법 각도를 반환합니다.
-	 */
 	static inline float Degree(const Vec4i& lhs, const Vec4i& rhs)
 	{
 		float radian = Radian(lhs, rhs);
 		return ToDegree(radian);
 	}
 
-
-	/**
-	 * @brief 4차원 벡터의 다양한 원소 형식입니다.
-	 */
 	union
 	{
 		struct
@@ -2723,81 +1161,16 @@ struct Vec4i
 	};
 };
 
-
-/**
- * @brief 원소의 데이터 타입이 부동 소수점인 4차원 벡터입니다.
- */
 struct Vec4f
 {
-	/**
-	 * @brief 4차원 벡터의 기본 생성자입니다.
-	 *
-	 * @note 모든 원소의 값을 0으로 초기화합니다.
-	 */
 	Vec4f() noexcept : x(0.0f), y(0.0f), z(0.0f), w(0.0f) {}
-
-
-	/**
-	 * @brief 4차원 벡터의 생성자입니다.
-	 *
-	 * @param xx 벡터의 x 성분입니다.
-	 * @param yy 벡터의 y 성분입니다.
-	 * @param zz 벡터의 z 성분입니다.
-	 * @param ww 벡터의 w 성분입니다.
-	 */
 	Vec4f(float&& xx, float&& yy, float&& zz, float&& ww) noexcept : x(xx), y(yy), z(zz), w(ww) {}
-
-
-	/**
-	 * @brief 4차원 벡터의 생성자입니다.
-	 *
-	 * @param xx 벡터의 x 성분입니다.
-	 * @param yy 벡터의 y 성분입니다.
-	 * @param zz 벡터의 z 성분입니다.
-	 * @param ww 벡터의 w 성분입니다.
-	 */
 	Vec4f(const float& xx, const float& yy, const float& zz, const float& ww) noexcept : x(xx), y(yy), z(zz), w(ww) {}
-
-
-	/**
-	 * @brief 4차원 벡터의 원소를 하나의 값으로 초기화합니다.
-	 *
-	 * @param e 모든 원소를 초기화 할 값입니다.
-	 */
 	Vec4f(float&& e) noexcept : x(e), y(e), z(e), w(e) {}
-
-
-	/**
-	 * @brief 4차원 벡터의 원소를 하나의 값으로 초기화합니다.
-	 *
-	 * @param e 모든 원소를 초기화 할 값입니다.
-	 */
 	Vec4f(const float& e) noexcept : x(e), y(e), z(e), w(e) {}
-
-
-	/**
-	 * @brief 4차원 벡터의 복사 생성자입니다.
-	 *
-	 * @param v 원소를 복사할 벡터 구조체의 인스턴스입니다.
-	 */
 	Vec4f(Vec4f&& v) noexcept : x(v.x), y(v.y), z(v.z), w(v.w) {}
-
-
-	/**
-	 * @brief 4차원 벡터의 복사 생성자입니다.
-	 *
-	 * @param v 원소를 복사할 벡터의 인스턴스입니다.
-	 */
 	Vec4f(const Vec4f& v) noexcept : x(v.x), y(v.y), z(v.z), w(v.w) {}
 
-
-	/**
-	 * @brief 4차원 벡터의 대입 연산자 입니다.
-	 *
-	 * @param v 원소를 복사할 벡터 구조체의 인스턴스입니다.
-	 *
-	 * @return 대입한 벡터의 참조자를 반환합니다.
-	 */
 	Vec4f& operator=(Vec4f&& v) noexcept
 	{
 		if (this == &v) return *this;
@@ -2810,14 +1183,6 @@ struct Vec4f
 		return *this;
 	}
 
-
-	/**
-	 * @brief 4차원 벡터의 대입 연산자 입니다.
-	 *
-	 * @param v 원소를 복사할 벡터 구조체의 인스턴스입니다.
-	 *
-	 * @return 대입한 벡터의 참조자를 반환합니다.
-	 */
 	Vec4f& operator=(const Vec4f& v) noexcept
 	{
 		if (this == &v) return *this;
@@ -2830,107 +1195,41 @@ struct Vec4f
 		return *this;
 	}
 
-
-	/**
-	 * @brief 4차원 벡터의 원소에 -부호를 취합니다.
-	 *
-	 * @return 4차원 벡터의 원소에 -부호를 취한 새로운 벡터를 반환합니다.
-	 */
 	Vec4f operator-() const
 	{
 		return Vec4f(-x, -y, -z, -w);
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 벡터의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 더한 결과를 반환합니다.
-	 */
 	Vec4f operator+(Vec4f&& v) const
 	{
 		return Vec4f(x + v.x, y + v.y, z + v.z, w + v.w);
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 벡터의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 더한 결과를 반환합니다.
-	 */
 	Vec4f operator+(const Vec4f& v) const
 	{
 		return Vec4f(x + v.x, y + v.y, z + v.z, w + v.w);
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 벡터의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 뺀 결과를 반환합니다.
-	 */
 	Vec4f operator-(Vec4f&& v) const
 	{
 		return Vec4f(x - v.x, y - v.y, z - v.z, w - v.w);
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 벡터의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 뺀 결과를 반환합니다.
-	 */
 	Vec4f operator-(const Vec4f& v) const
 	{
 		return Vec4f(x - v.x, y - v.y, z - v.z, w - v.w);
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터에 대응하는 원소를 각각 곱합니다.
-	 *
-	 * @note 이 연산은 벡터의 내적 연산(Dot Product)와는 다릅니다.
-	 *
-	 * @param v 벡터의 곱셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 곱한 결과를 반환합니다.
-	 */
 	Vec4f operator*(Vec4f&& v) const
 	{
 		return Vec4f(x * v.x, y * v.y, z * v.z, w * v.w);
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터에 대응하는 원소를 각각 곱합니다.
-	 *
-	 * @note 이 연산은 벡터의 내적 연산(Dot Product)와는 다릅니다.
-	 *
-	 * @param v 벡터의 곱셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터에 대응하는 원소를 곱한 결과를 반환합니다.
-	 */
 	Vec4f operator*(const Vec4f& v) const
 	{
 		return Vec4f(x * v.x, y * v.y, z * v.z, w * v.w);
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec4f& operator+=(Vec4f&& v) noexcept
 	{
 		x += v.x;
@@ -2941,14 +1240,6 @@ struct Vec4f
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터에 대응하는 원소를 더합니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec4f& operator+=(const Vec4f& v) noexcept
 	{
 		x += v.x;
@@ -2959,14 +1250,6 @@ struct Vec4f
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec4f& operator-=(Vec4f&& v) noexcept
 	{
 		x -= v.x;
@@ -2977,14 +1260,6 @@ struct Vec4f
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터에 대응하는 원소를 뺍니다.
-	 *
-	 * @param v 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 벡터의 참조자를 반환합니다.
-	 */
 	Vec4f& operator-=(const Vec4f& v) noexcept
 	{
 		x -= v.x;
@@ -2995,123 +1270,45 @@ struct Vec4f
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터가 동일한지 검사합니다.
-	 *
-	 * @param v 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터가 동일하다면 true, 그렇지 않으면 false를 반환합니다.
-	 */
 	bool operator==(Vec4f&& v) const
 	{
 		return Abs(x - v.x) <= EPSILON && Abs(y - v.y) <= EPSILON && Abs(z - v.z) <= EPSILON && Abs(w - v.w) <= EPSILON;
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터가 동일한지 검사합니다.
-	 *
-	 * @param v 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터가 동일하다면 true, 그렇지 않으면 false를 반환합니다.
-	 */
 	bool operator==(const Vec4f& v) const
 	{
 		return Abs(x - v.x) <= EPSILON && Abs(y - v.y) <= EPSILON && Abs(z - v.z) <= EPSILON && Abs(w - v.w) <= EPSILON;
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터가 동일하지 않은지 검사합니다.
-	 *
-	 * @param v 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터가 동일하지 않다면 true, 그렇다면 false를 반환합니다.
-	 */
 	bool operator!=(Vec4f&& v) const
 	{
 		return Abs(x - v.x) > EPSILON || Abs(y - v.y) > EPSILON || Abs(z - v.z) > EPSILON || Abs(w - v.w) > EPSILON;
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터가 동일하지 않은지 검사합니다.
-	 *
-	 * @param v 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 벡터가 동일하지 않다면 true, 그렇다면 false를 반환합니다.
-	 */
 	bool operator!=(const Vec4f& v) const
 	{
 		return Abs(x - v.x) > EPSILON || Abs(y - v.y) > EPSILON || Abs(z - v.z) > EPSILON || Abs(w - v.w) > EPSILON;
 	}
 
-
-	/**
-	 * @brief 4차원 벡터 원소 배열의 포인터를 얻습니다.
-	 *
-	 * @return 4차원 벡터 원소 배열의 포인터를 반환합니다.
-	 */
 	const float* GetPtr() const { return &data[0]; }
-
-
-	/**
-	 * @brief 4차원 벡터 원소 배열의 포인터를 얻습니다.
-	 *
-	 * @return 4차원 벡터 원소 배열의 포인터를 반환합니다.
-	 */
 	float* GetPtr() { return &data[0]; }
 
-
-	/**
-	 * @brief 4차원 백터의 내적 연산을 수행합니다.
-	 *
-	 * @param lhs 백터의 내적 연산을 수행할 좌측 피연산자입니다.
-	 * @param rhs 백터의 내적 연산을 수행할 우측 피연산자입니다.
-	 *
-	 * @return 내적 연산 결과를 반환합니다.
-	 */
 	static inline float Dot(const Vec4f& lhs, const Vec4f& rhs)
 	{
 		return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z + lhs.w * rhs.w;
 	}
 
-
-	/**
-	 * @brief 4차원 백터의 크기 제곱 값을 계산합니다.
-	 *
-	 * @param v 크기 제곱을 계산할 벡터입니다.
-	 *
-	 * @return 계산된 크기 제곱 값을 반환합니다.
-	 */
 	static inline float LengthSq(const Vec4f& v)
 	{
 		return v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;
 	}
 
-
-	/**
-	 * @brief 4차원 벡터의 크기를 얻습니다.
-	 *
-	 * @param v 크기를 계산할 벡터입니다.
-	 *
-	 * @return 계산된 크기 값을 반환합니다.
-	 */
 	static inline float Length(const Vec4f& v)
 	{
 		float lengthSq = LengthSq(v);
 		return Sqrt(lengthSq);
 	}
 
-
-	/**
-	 * @brief 4차원 벡터를 정규화합니다.
-	 *
-	 * @param v 정규화 할 벡터입니다.
-	 *
-	 * @return 정규화된 벡터를 반환합니다.
-	 */
 	static inline Vec4f Normalize(const Vec4f& v)
 	{
 		float length = Length(v);
@@ -3125,15 +1322,6 @@ struct Vec4f
 		return Vec4f(v.x * invLength, v.y * invLength, v.z * invLength, v.w * invLength);
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터 사이의 각을 계산합니다.
-	 *
-	 * @param lhs 벡터 사이의 각을 계산할 왼쪽 피연산자 벡터입니다.
-	 * @param rhs 벡터 사이의 각을 계산할 오른쪽 피연산자 벡터입니다.
-	 *
-	 * @return 두 4차원 벡터 사이의 라디안 각도를 반환합니다.
-	 */
 	static inline float Radian(const Vec4f& lhs, const Vec4f& rhs)
 	{
 		float lengthL = Length(lhs);
@@ -3143,30 +1331,12 @@ struct Vec4f
 		return ACos(dot / (lengthL * lengthR));
 	}
 
-
-	/**
-	 * @brief 두 4차원 벡터 사이의 각을 계산합니다.
-	 *
-	 * @param lhs 벡터 사이의 각을 계산할 왼쪽 피연산자 벡터입니다.
-	 * @param rhs 벡터 사이의 각을 계산할 오른쪽 피연산자 벡터입니다.
-	 *
-	 * @return 두 4차원 벡터 사이의 육십분법 각도를 반환합니다.
-	 */
 	static inline float Degree(const Vec4f& lhs, const Vec4f& rhs)
 	{
 		float radian = Radian(lhs, rhs);
 		return ToDegree(radian);
 	}
 
-
-	/**
-	 * @brief Base 4차원 벡터에 Target 4차원 벡터를 투영합니다.
-	 *
-	 * @param target 투영 대상에 투영할 벡터입니다.
-	 * @param base 투영 대상이 되는 벡터입니다.
-	 *
-	 * @return base에 투영된 target 벡터를 반환합니다.
-	 */
 	static inline Vec4f Project(const Vec4f& target, const Vec4f& base)
 	{
 		float dot = Dot(target, base);
@@ -3176,46 +1346,17 @@ struct Vec4f
 		return Vec4f(base.x * scale, base.y * scale, base.z * scale, base.w * scale);
 	}
 
-
-	/**
-	 * @brief Base 4차원 벡터에 Target 4차원 벡터를 투영한 벡터에 수직인 벡터를 계산합니다.
-	 *
-	 * @param target 투영 대상에 투영할 벡터입니다.
-	 * @param base 투영 대상이 되는 벡터입니다.
-	 *
-	 * @return 투영된 벡터의 수직인 벡터를 반환합니다.
-	 */
 	static inline Vec4f Reject(const Vec4f& target, const Vec4f& base)
 	{
 		Vec4f project = Project(target, base);
 		return target - project;
 	}
 
-
-	/**
-	 * @brief 두 벡터를 선형 보간한 벡터를 계산합니다.
-	 *
-	 * @param s 보간의 시작 벡터입니다.
-	 * @param e 보간의 끝 벡터입니다.
-	 * @param t 두 벡터의 보간 비율입니다.
-	 *
-	 * @return 보간된 벡터를 반환합니다.
-	 */
 	static inline Vec4f Lerp(const Vec4f& s, const Vec4f& e, const float& t)
 	{
 		return s * (1.0f - t) + e * t;
 	}
 
-
-	/**
-	 * @brief 두 벡터를 구면 선형 보간한 벡터를 계산합니다.
-	 *
-	 * @param s 보간의 시작 벡터입니다.
-	 * @param e 보간의 끝 벡터입니다.
-	 * @param t 두 벡터의 보간 비율입니다.
-	 *
-	 * @return 보간된 벡터를 반환합니다.
-	 */
 	static inline Vec4f Slerp(const Vec4f& s, const Vec4f& e, const float& t)
 	{
 		Vec4f start = Normalize(s);
@@ -3230,10 +1371,6 @@ struct Vec4f
 		return s * a + e * b;
 	}
 
-
-	/**
-	 * @brief 4차원 벡터의 다양한 원소 형식입니다.
-	 */
 	union
 	{
 		struct
@@ -3247,32 +1384,14 @@ struct Vec4f
 	};
 };
 
-
-/**
- * @brief 2x2 행렬입니다.
- */
 struct Mat2x2
 {
-	/**
-	 * @brief 2x2 행렬의 기본 생성자입니다.
-	 *
-	 * @note 모든 원소의 값을 0으로 초기화합니다.
-	 */
 	Mat2x2() noexcept
 	{
 		e00 = 0.0f; e01 = 0.0f;
 		e10 = 0.0f; e11 = 0.0f;
 	}
 
-
-	/**
-	 * @brief 2x2 행렬의 생성자입니다.
-	 *
-	 * @param ee00 행렬의 (0, 0) 성분입니다.
-	 * @param ee01 행렬의 (0, 1) 성분입니다.
-	 * @param ee10 행렬의 (1, 0) 성분입니다.
-	 * @param ee11 행렬의 (1, 1) 성분입니다.
-	 */
 	Mat2x2(
 		float&& ee00, float&& ee01,
 		float&& ee10, float&& ee11
@@ -3282,15 +1401,6 @@ struct Mat2x2
 		e10 = ee10; e11 = ee11;
 	}
 
-
-	/**
-	 * @brief 2x2 행렬의 생성자입니다.
-	 *
-	 * @param e00 행렬의 (0, 0) 성분입니다.
-	 * @param e01 행렬의 (0, 1) 성분입니다.
-	 * @param e10 행렬의 (1, 0) 성분입니다.
-	 * @param e11 행렬의 (1, 1) 성분입니다.
-	 */
 	Mat2x2(
 		const float& ee00, const float& ee01,
 		const float& ee10, const float& ee11
@@ -3300,62 +1410,30 @@ struct Mat2x2
 		e10 = ee10; e11 = ee11;
 	}
 
-
-	/**
-	 * @brief 2x2 행렬의 원소를 하나의 값으로 초기화합니다.
-	 *
-	 * @param e 모든 원소를 초기화 할 값입니다.
-	 */
 	Mat2x2(float&& e) noexcept
 	{
 		e00 = e; e01 = e;
 		e10 = e; e11 = e;
 	}
 
-
-	/**
-	 * @brief 2x2 행렬의 원소를 하나의 값으로 초기화합니다.
-	 *
-	 * @param e 모든 원소를 초기화 할 값입니다.
-	 */
 	Mat2x2(const float& e) noexcept
 	{
 		e00 = e; e01 = e;
 		e10 = e; e11 = e;
 	}
 
-
-	/**
-	 * @brief 2x2 행렬의 복사 생성자입니다.
-	 *
-	 * @param m 원소를 복사할 행렬의 인스턴스입니다.
-	 */
 	Mat2x2(Mat2x2&& m) noexcept
 	{
 		e00 = m.e00; e01 = m.e01;
 		e10 = m.e10; e11 = m.e11;
 	}
 
-
-	/**
-	 * @brief 2x2 행렬의 복사 생성자입니다.
-	 *
-	 * @param m 원소를 복사할 행렬의 인스턴스입니다.
-	 */
 	Mat2x2(const Mat2x2& m) noexcept
 	{
 		e00 = m.e00; e01 = m.e01;
 		e10 = m.e10; e11 = m.e11;
 	}
 
-
-	/**
-	 * @brief 2x2 행렬의 대입 연산자입니다.
-	 *
-	 * @param m 원소를 복사할 행렬의 인스턴스입니다.
-	 *
-	 * @return 대입한 행렬의 참조자를 반환합니다.
-	 */
 	Mat2x2& operator=(Mat2x2&& m) noexcept
 	{
 		if (this == &m) return *this;
@@ -3366,14 +1444,6 @@ struct Mat2x2
 		return *this;
 	}
 
-
-	/**
-	 * @brief 2x2 행렬의 대입 연산자입니다.
-	 *
-	 * @param m 원소를 복사할 행렬의 인스턴스입니다.
-	 *
-	 * @return 대입한 행렬의 참조자를 반환합니다.
-	 */
 	Mat2x2& operator=(const Mat2x2& m) noexcept
 	{
 		if (this == &m) return *this;
@@ -3384,12 +1454,6 @@ struct Mat2x2
 		return *this;
 	}
 
-
-	/**
-	 * @brief 2x2 행렬의 모든 원소에 -부호를 취합니다.
-	 *
-	 * @return 모든 원소에 -부호를 취한 새로운 행렬을 반환합니다.
-	 */
 	Mat2x2 operator-() const
 	{
 		return Mat2x2(
@@ -3398,14 +1462,6 @@ struct Mat2x2
 		);
 	}
 
-
-	/**
-	 * @brief 두 2x2 행렬의 대응하는 원소를 더합니다.
-	 *
-	 * @param m 행렬의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬의 대응하는 원소를 더한 결과를 반환합니다.
-	 */
 	Mat2x2 operator+(Mat2x2&& m) const
 	{
 		return Mat2x2(
@@ -3414,14 +1470,6 @@ struct Mat2x2
 		);
 	}
 
-
-	/**
-	 * @brief 두 2x2 행렬의 대응하는 원소를 더합니다.
-	 *
-	 * @param m 행렬의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬의 대응하는 원소를 더한 결과를 반환합니다.
-	 */
 	Mat2x2 operator+(const Mat2x2& m) const
 	{
 		return Mat2x2(
@@ -3430,14 +1478,6 @@ struct Mat2x2
 		);
 	}
 
-
-	/**
-	 * @brief 두 2x2 행렬의 대응하는 원소를 뺍니다.
-	 *
-	 * @param m 행렬의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬의 대응하는 원소를 뺀 결과를 반환합니다.
-	 */
 	Mat2x2 operator-(Mat2x2&& m) const
 	{
 		return Mat2x2(
@@ -3446,14 +1486,6 @@ struct Mat2x2
 		);
 	}
 
-
-	/**
-	 * @brief 두 2x2 행렬의 대응하는 원소를 뺍니다.
-	 *
-	 * @param m 행렬의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬의 대응하는 원소를 뺀 결과를 반환합니다.
-	 */
 	Mat2x2 operator-(const Mat2x2& m) const
 	{
 		return Mat2x2(
@@ -3462,14 +1494,6 @@ struct Mat2x2
 		);
 	}
 
-
-	/**
-	 * @brief 2x2 행렬에 부동소수점을 곱합니다.
-	 *
-	 * @param scalar 2x2 행렬에 부동수소점 수를 곱할 스칼라 값입니다.
-	 *
-	 * @return 2x2 행렬에 부동소수점을 곱합 결과를 반환합니다.
-	 */
 	Mat2x2 operator*(float&& scalar) const
 	{
 		return Mat2x2(
@@ -3478,14 +1502,6 @@ struct Mat2x2
 		);
 	}
 
-
-	/**
-	 * @brief 2x2 행렬에 부동소수점을 곱합니다.
-	 *
-	 * @param scalar 2x2 행렬에 부동수소점 수를 곱할 스칼라 값입니다.
-	 *
-	 * @return 2x2 행렬에 부동소수점을 곱합 결과를 반환합니다.
-	 */
 	Mat2x2 operator*(const float& scalar) const
 	{
 		return Mat2x2(
@@ -3494,14 +1510,6 @@ struct Mat2x2
 		);
 	}
 
-
-	/**
-	 * @brief 두 2x2 행렬을 곱합니다.
-	 *
-	 * @param m 행렬의 곱셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬을 곱한 결과를 반환합니다.
-	 */
 	Mat2x2 operator*(Mat2x2&& m) const
 	{
 		return Mat2x2(
@@ -3512,14 +1520,6 @@ struct Mat2x2
 		);
 	}
 
-
-	/**
-	 * @brief 두 2x2 행렬을 곱합니다.
-	 *
-	 * @param m 행렬의 곱셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬을 곱한 결과를 반환합니다.
-	 */
 	Mat2x2 operator*(const Mat2x2& m) const
 	{
 		return Mat2x2(
@@ -3530,14 +1530,6 @@ struct Mat2x2
 		);
 	}
 
-
-	/**
-	 * @brief 두 2x2 행렬에 대응하는 원소를 더합니다.
-	 *
-	 * @param m 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 행렬의 참조자를 반환합니다.
-	 */
 	Mat2x2& operator+=(Mat2x2&& m) noexcept
 	{
 		e00 += m.e00; e01 += m.e01;
@@ -3546,14 +1538,6 @@ struct Mat2x2
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 2x2 행렬에 대응하는 원소를 더합니다.
-	 *
-	 * @param m 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 행렬의 참조자를 반환합니다.
-	 */
 	Mat2x2& operator+=(const Mat2x2& m) noexcept
 	{
 		e00 += m.e00; e01 += m.e01;
@@ -3562,14 +1546,6 @@ struct Mat2x2
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 2x2 행렬에 대응하는 원소를 뺍니다.
-	 *
-	 * @param m 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 행렬의 참조자를 반환합니다.
-	 */
 	Mat2x2& operator-=(Mat2x2&& m) noexcept
 	{
 		e00 -= m.e00; e01 -= m.e01;
@@ -3578,14 +1554,6 @@ struct Mat2x2
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 2x2 행렬에 대응하는 원소를 뺍니다.
-	 *
-	 * @param m 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 행렬의 참조자를 반환합니다.
-	 */
 	Mat2x2& operator-=(const Mat2x2& m) noexcept
 	{
 		e00 -= m.e00; e01 -= m.e01;
@@ -3594,14 +1562,6 @@ struct Mat2x2
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 2x2행렬이 동일한지 검사합니다.
-	 *
-	 * @param m 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬이 동일하다면 true, 그렇지 않으면 false를 반환합니다.
-	 */
 	bool operator==(Mat2x2&& m) const
 	{
 		return Abs(e00 - m.e00) <= EPSILON
@@ -3610,14 +1570,6 @@ struct Mat2x2
 			&& Abs(e11 - m.e11) <= EPSILON;
 	}
 
-
-	/**
-	 * @brief 두 2x2행렬이 동일한지 검사합니다.
-	 *
-	 * @param m 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬이 동일하다면 true, 그렇지 않으면 false를 반환합니다.
-	 */
 	bool operator==(const Mat2x2& m) const
 	{
 		return Abs(e00 - m.e00) <= EPSILON
@@ -3626,14 +1578,6 @@ struct Mat2x2
 			&& Abs(e11 - m.e11) <= EPSILON;
 	}
 
-
-	/**
-	 * @brief 두 2x2행렬이 동일하지 않은지 검사합니다.
-	 *
-	 * @param m 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬이 동일하지 않다면 true, 그렇다면 false를 반환합니다.
-	 */
 	bool operator!=(Mat2x2&& m) const
 	{
 		return Abs(e00 - m.e00) > EPSILON
@@ -3642,14 +1586,6 @@ struct Mat2x2
 			|| Abs(e11 - m.e11) > EPSILON;
 	}
 
-
-	/**
-	 * @brief 두 2x2행렬이 동일하지 않은지 검사합니다.
-	 *
-	 * @param m 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬이 동일하지 않다면 true, 그렇다면 false를 반환합니다.
-	 */
 	bool operator!=(const Mat2x2& m) const
 	{
 		return Abs(e00 - m.e00) > EPSILON
@@ -3658,28 +1594,9 @@ struct Mat2x2
 			|| Abs(e11 - m.e11) > EPSILON;
 	}
 
-
-	/**
-	 * @brief 2x2 행렬 원소 배열의 포인터를 얻습니다.
-	 *
-	 * @return 2x2 행렬 원소 배열의 포인터를 반환합니다.
-	 */
 	const float* GetPtr() const { return &data[0]; }
-
-
-	/**
-	 * @brief 2x2 행렬 원소 배열의 포인터를 얻습니다.
-	 *
-	 * @return 2x2 행렬 원소 배열의 포인터를 반환합니다.
-	 */
 	float* GetPtr() { return &data[0]; }
 
-
-	/**
-	 * @brief 2x2 행렬의 모든 원소가 0인 행렬을 얻습니다.
-	 *
-	 * @return 모든 원소가 0인 2x2 행렬을 반환합니다.
-	 */
 	static inline Mat2x2 Zero()
 	{
 		return Mat2x2(
@@ -3688,12 +1605,6 @@ struct Mat2x2
 		);
 	}
 
-
-	/**
-	 * @brief 2x2 행렬의 단위 행렬을 얻습니다.
-	 *
-	 * @return 2x2 행렬의 단위 행렬를 반환합니다.
-	 */
 	static inline Mat2x2 Identity()
 	{
 		return Mat2x2(
@@ -3702,14 +1613,6 @@ struct Mat2x2
 		);
 	}
 
-
-	/**
-	 * @brief 2x2 행렬의 전치 행렬을 얻습니다.
-	 *
-	 * @param m 원소들을 전치할 2x2 행렬입니다.
-	 *
-	 * @return 원소가 전치된 2x2 행렬을 반환합니다.
-	 */
 	static inline Mat2x2 Transpose(const Mat2x2& m)
 	{
 		return Mat2x2(
@@ -3718,27 +1621,11 @@ struct Mat2x2
 		);
 	}
 
-
-	/**
-	 * @brief 2x2 행렬의 행렬식 값을 얻습니다.
-	 *
-	 * @param m 행렬식 값을 계산할 2x2 행렬입니다.
-	 *
-	 * @return 2x2 행렬의 행렬식 값을 반환합니다.
-	 */
 	static inline float Determinant(const Mat2x2& m)
 	{
 		return m.e00 * m.e11 - m.e01 * m.e10;
 	}
 
-
-	/**
-	 * @brief 2x2 행렬의 역행렬을 얻습니다.
-	 *
-	 * @param m 역행렬을 계산할 2x2 행렬입니다.
-	 *
-	 * @return 2x2 행렬의 역행렬을 반환합니다.
-	 */
 	static inline Mat2x2 Inverse(const Mat2x2& m)
 	{
 		float oneOverDeterminant = 1.0f / Determinant(m);
@@ -3751,10 +1638,6 @@ struct Mat2x2
 		);
 	}
 
-
-	/**
-	 * @brief 2x2 행렬의 원소입니다.
-	 */
 	union
 	{
 		struct
@@ -3766,17 +1649,8 @@ struct Mat2x2
 	};
 };
 
-
-/**
- * @brief 3x3 행렬입니다.
- */
 struct Mat3x3
 {
-	/**
-	 * @brief 3x3 행렬의 기본 생성자입니다.
-	 *
-	 * @note 모든 원소의 값을 0으로 초기화합니다.
-	 */
 	Mat3x3() noexcept
 	{
 		e00 = 0.0f; e01 = 0.0f; e02 = 0.0f;
@@ -3784,20 +1658,6 @@ struct Mat3x3
 		e20 = 0.0f; e21 = 0.0f; e22 = 0.0f;
 	}
 
-
-	/**
-	 * @brief 3x3 행렬의 생성자입니다.
-	 *
-	 * @param ee00 행렬의 (0, 0) 성분입니다.
-	 * @param ee01 행렬의 (0, 1) 성분입니다.
-	 * @param ee02 행렬의 (0, 2) 성분입니다.
-	 * @param ee10 행렬의 (1, 0) 성분입니다.
-	 * @param ee11 행렬의 (1, 1) 성분입니다.
-	 * @param ee12 행렬의 (1, 2) 성분입니다.
-	 * @param ee20 행렬의 (2, 0) 성분입니다.
-	 * @param ee21 행렬의 (2, 1) 성분입니다.
-	 * @param ee22 행렬의 (2, 2) 성분입니다.
-	 */
 	Mat3x3(
 		float&& ee00, float&& ee01, float&& ee02,
 		float&& ee10, float&& ee11, float&& ee12,
@@ -3809,20 +1669,6 @@ struct Mat3x3
 		e20 = ee20; e21 = ee21; e22 = ee22;
 	}
 
-
-	/**
-	 * @brief 3x3 행렬의 생성자입니다.
-	 *
-	 * @param ee00 행렬의 (0, 0) 성분입니다.
-	 * @param ee01 행렬의 (0, 1) 성분입니다.
-	 * @param ee02 행렬의 (0, 2) 성분입니다.
-	 * @param ee10 행렬의 (1, 0) 성분입니다.
-	 * @param ee11 행렬의 (1, 1) 성분입니다.
-	 * @param ee12 행렬의 (1, 2) 성분입니다.
-	 * @param ee20 행렬의 (2, 0) 성분입니다.
-	 * @param ee21 행렬의 (2, 1) 성분입니다.
-	 * @param ee22 행렬의 (2, 2) 성분입니다.
-	 */
 	Mat3x3(
 		const float& ee00, const float& ee01, const float& ee02,
 		const float& ee10, const float& ee11, const float& ee12,
@@ -3834,12 +1680,6 @@ struct Mat3x3
 		e20 = ee20; e21 = ee21; e22 = ee22;
 	}
 
-
-	/**
-	 * @brief 3x3 행렬의 원소를 하나의 값으로 초기화합니다.
-	 *
-	 * @param e 모든 원소를 초기화 할 값입니다.
-	 */
 	Mat3x3(float&& e) noexcept
 	{
 		e00 = e; e01 = e; e02 = e;
@@ -3847,12 +1687,6 @@ struct Mat3x3
 		e20 = e; e21 = e; e22 = e;
 	}
 
-
-	/**
-	 * @brief 3x3 행렬의 원소를 하나의 값으로 초기화합니다.
-	 *
-	 * @param e 모든 원소를 초기화 할 값입니다.
-	 */
 	Mat3x3(const float& e) noexcept
 	{
 		e00 = e; e01 = e; e02 = e;
@@ -3860,12 +1694,6 @@ struct Mat3x3
 		e20 = e; e21 = e; e22 = e;
 	}
 
-
-	/**
-	 * @brief 3x3 행렬의 복사 생성자입니다.
-	 *
-	 * @param m 원소를 복사할 행렬의 인스턴스입니다.
-	 */
 	Mat3x3(Mat3x3&& m) noexcept
 	{
 		e00 = m.e00; e01 = m.e01; e02 = m.e02;
@@ -3873,12 +1701,6 @@ struct Mat3x3
 		e20 = m.e20; e21 = m.e21; e22 = m.e22;
 	}
 
-
-	/**
-	 * @brief 3x3 행렬의 복사 생성자입니다.
-	 *
-	 * @param m 원소를 복사할 행렬의 인스턴스입니다.
-	 */
 	Mat3x3(const Mat3x3& m) noexcept
 	{
 		e00 = m.e00; e01 = m.e01; e02 = m.e02;
@@ -3886,14 +1708,6 @@ struct Mat3x3
 		e20 = m.e20; e21 = m.e21; e22 = m.e22;
 	}
 
-
-	/**
-	 * @brief 3x3 행렬의 대입 연산자입니다.
-	 *
-	 * @param m 원소를 복사할 행렬의 인스턴스입니다.
-	 *
-	 * @return 대입한 행렬의 참조자를 반환합니다.
-	 */
 	Mat3x3& operator=(Mat3x3&& m) noexcept
 	{
 		if (this == &m) return *this;
@@ -3905,14 +1719,6 @@ struct Mat3x3
 		return *this;
 	}
 
-
-	/**
-	 * @brief 3x3 행렬의 대입 연산자입니다.
-	 *
-	 * @param m 원소를 복사할 행렬의 인스턴스입니다.
-	 *
-	 * @return 대입한 행렬의 참조자를 반환합니다.
-	 */
 	Mat3x3& operator=(const Mat3x3& m) noexcept
 	{
 		if (this == &m) return *this;
@@ -3924,12 +1730,6 @@ struct Mat3x3
 		return *this;
 	}
 
-
-	/**
-	 * @brief 3x3 행렬의 모든 원소에 -부호를 취합니다.
-	 *
-	 * @return 모든 원소에 -부호를 취한 새로운 행렬을 반환합니다.
-	 */
 	Mat3x3 operator-() const
 	{
 		return Mat3x3(
@@ -3939,14 +1739,6 @@ struct Mat3x3
 		);
 	}
 
-
-	/**
-	 * @brief 두 3x3 행렬의 대응하는 원소를 더합니다.
-	 *
-	 * @param m 행렬의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬의 대응하는 원소를 더한 결과를 반환합니다.
-	 */
 	Mat3x3 operator+(Mat3x3&& m) const
 	{
 		return Mat3x3(
@@ -3956,14 +1748,6 @@ struct Mat3x3
 		);
 	}
 
-
-	/**
-	 * @brief 두 3x3 행렬의 대응하는 원소를 더합니다.
-	 *
-	 * @param m 행렬의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬의 대응하는 원소를 더한 결과를 반환합니다.
-	 */
 	Mat3x3 operator+(const Mat3x3& m) const
 	{
 		return Mat3x3(
@@ -3973,14 +1757,6 @@ struct Mat3x3
 		);
 	}
 
-
-	/**
-	 * @brief 두 3x3 행렬의 대응하는 원소를 뺍니다.
-	 *
-	 * @param m 행렬의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬의 대응하는 원소를 뺀 결과를 반환합니다.
-	 */
 	Mat3x3 operator-(Mat3x3&& m) const
 	{
 		return Mat3x3(
@@ -3990,14 +1766,6 @@ struct Mat3x3
 		);
 	}
 
-
-	/**
-	 * @brief 두 3x3 행렬의 대응하는 원소를 뺍니다.
-	 *
-	 * @param m 행렬의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬의 대응하는 원소를 뺀 결과를 반환합니다.
-	 */
 	Mat3x3 operator-(const Mat3x3& m) const
 	{
 		return Mat3x3(
@@ -4007,14 +1775,6 @@ struct Mat3x3
 		);
 	}
 
-
-	/**
-	 * @brief 3x3 행렬에 부동소수점을 곱합니다.
-	 *
-	 * @param scalar 3x3 행렬에 부동수소점 수를 곱할 스칼라 값입니다.
-	 *
-	 * @return 3x3 행렬에 부동소수점을 곱합 결과를 반환합니다.
-	 */
 	Mat3x3 operator*(float&& scalar) const
 	{
 		return Mat3x3(
@@ -4024,14 +1784,6 @@ struct Mat3x3
 		);
 	}
 
-
-	/**
-	 * @brief 3x3 행렬에 부동소수점을 곱합니다.
-	 *
-	 * @param scalar 3x3 행렬에 부동수소점 수를 곱할 스칼라 값입니다.
-	 *
-	 * @return 3x3 행렬에 부동소수점을 곱합 결과를 반환합니다.
-	 */
 	Mat3x3 operator*(const float& scalar) const
 	{
 		return Mat3x3(
@@ -4041,14 +1793,6 @@ struct Mat3x3
 		);
 	}
 
-
-	/**
-	 * @brief 두 3x3 행렬을 곱합니다.
-	 *
-	 * @param m 행렬의 곱셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬을 곱한 결과를 반환합니다.
-	 */
 	Mat3x3 operator*(Mat3x3&& m) const
 	{
 		return Mat3x3(
@@ -4064,14 +1808,6 @@ struct Mat3x3
 		);
 	}
 
-
-	/**
-	 * @brief 두 3x3 행렬을 곱합니다.
-	 *
-	 * @param m 행렬의 곱셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬을 곱한 결과를 반환합니다.
-	 */
 	Mat3x3 operator*(const Mat3x3& m) const
 	{
 		return Mat3x3(
@@ -4087,14 +1823,6 @@ struct Mat3x3
 		);
 	}
 
-
-	/**
-	 * @brief 두 3x3 행렬에 대응하는 원소를 더합니다.
-	 *
-	 * @param m 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 행렬의 참조자를 반환합니다.
-	 */
 	Mat3x3& operator+=(Mat3x3&& m) noexcept
 	{
 		e00 += m.e00; e01 += m.e01; e02 += m.e02;
@@ -4104,14 +1832,6 @@ struct Mat3x3
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 3x3 행렬에 대응하는 원소를 더합니다.
-	 *
-	 * @param m 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 행렬의 참조자를 반환합니다.
-	 */
 	Mat3x3& operator+=(const Mat3x3& m) noexcept
 	{
 		e00 += m.e00; e01 += m.e01; e02 += m.e02;
@@ -4121,14 +1841,6 @@ struct Mat3x3
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 3x3 행렬에 대응하는 원소를 뺍니다.
-	 *
-	 * @param m 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 행렬의 참조자를 반환합니다.
-	 */
 	Mat3x3& operator-=(Mat3x3&& m) noexcept
 	{
 		e00 -= m.e00; e01 -= m.e01; e02 -= m.e02;
@@ -4138,14 +1850,6 @@ struct Mat3x3
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 3x3 행렬에 대응하는 원소를 뺍니다.
-	 *
-	 * @param m 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 행렬의 참조자를 반환합니다.
-	 */
 	Mat3x3& operator-=(const Mat3x3& m) noexcept
 	{
 		e00 -= m.e00; e01 -= m.e01; e02 -= m.e02;
@@ -4155,14 +1859,6 @@ struct Mat3x3
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 3x3행렬이 동일한지 검사합니다.
-	 *
-	 * @param m 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬이 동일하다면 true, 그렇지 않으면 false를 반환합니다.
-	 */
 	bool operator==(Mat3x3&& m) const
 	{
 		return Abs(e00 - m.e00) <= EPSILON
@@ -4176,14 +1872,6 @@ struct Mat3x3
 			&& Abs(e22 - m.e22) <= EPSILON;
 	}
 
-
-	/**
-	 * @brief 두 3x3행렬이 동일한지 검사합니다.
-	 *
-	 * @param m 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬이 동일하다면 true, 그렇지 않으면 false를 반환합니다.
-	 */
 	bool operator==(const Mat3x3& m) const
 	{
 		return Abs(e00 - m.e00) <= EPSILON
@@ -4197,14 +1885,6 @@ struct Mat3x3
 			&& Abs(e22 - m.e22) <= EPSILON;
 	}
 
-
-	/**
-	 * @brief 두 3x3행렬이 동일하지 않은지 검사합니다.
-	 *
-	 * @param m 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬이 동일하지 않다면 true, 그렇다면 false를 반환합니다.
-	 */
 	bool operator!=(Mat3x3&& m) const
 	{
 		return Abs(e00 - m.e00) > EPSILON
@@ -4218,14 +1898,6 @@ struct Mat3x3
 			|| Abs(e22 - m.e22) > EPSILON;
 	}
 
-
-	/**
-	 * @brief 두 3x3행렬이 동일하지 않은지 검사합니다.
-	 *
-	 * @param m 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬이 동일하지 않다면 true, 그렇다면 false를 반환합니다.
-	 */
 	bool operator!=(const Mat3x3& m) const
 	{
 		return Abs(e00 - m.e00) > EPSILON
@@ -4239,28 +1911,9 @@ struct Mat3x3
 			|| Abs(e22 - m.e22) > EPSILON;
 	}
 
-
-	/**
-	 * @brief 3x3 행렬 원소 배열의 포인터를 얻습니다.
-	 *
-	 * @return 3x3 행렬 원소 배열의 포인터를 반환합니다.
-	 */
 	const float* GetPtr() const { return &data[0]; }
-
-
-	/**
-	 * @brief 3x3 행렬 원소 배열의 포인터를 얻습니다.
-	 *
-	 * @return 3x3 행렬 원소 배열의 포인터를 반환합니다.
-	 */
 	float* GetPtr() { return &data[0]; }
 
-
-	/**
-	 * @brief 3x3 행렬의 모든 원소가 0인 행렬을 얻습니다.
-	 *
-	 * @return 모든 원소가 0인 3x3 행렬을 반환합니다.
-	 */
 	static inline Mat3x3 Zero()
 	{
 		return Mat3x3(
@@ -4270,12 +1923,6 @@ struct Mat3x3
 		);
 	}
 
-
-	/**
-	 * @brief 3x3 행렬의 단위 행렬을 얻습니다.
-	 *
-	 * @return 3x3 행렬의 단위 행렬를 반환합니다.
-	 */
 	static inline Mat3x3 Identity()
 	{
 		return Mat3x3(
@@ -4285,14 +1932,6 @@ struct Mat3x3
 		);
 	}
 
-
-	/**
-	 * @brief 3x3 행렬의 전치 행렬을 얻습니다.
-	 *
-	 * @param m 원소들을 전치할 3x3 행렬입니다.
-	 *
-	 * @return 원소가 전치된 3x3 행렬을 반환합니다.
-	 */
 	static inline Mat3x3 Transpose(const Mat3x3& m)
 	{
 		return Mat3x3(
@@ -4302,27 +1941,11 @@ struct Mat3x3
 		);
 	}
 
-
-	/**
-	 * @brief 3x3 행렬의 행렬식 값을 얻습니다.
-	 *
-	 * @param m 행렬식 값을 계산할 3x3 행렬입니다.
-	 *
-	 * @return 3x3 행렬의 행렬식 값을 반환합니다.
-	 */
 	static inline float Determinant(const Mat3x3& m)
 	{
 		return m.e00 * (m.e11 * m.e22 - m.e21 * m.e12) - m.e10 * (m.e01 * m.e22 - m.e21 * m.e02) + m.e20 * (m.e01 * m.e12 - m.e11 * m.e02);
 	}
 
-
-	/**
-	 * @brief 3x3 행렬의 역행렬을 얻습니다.
-	 *
-	 * @param m 역행렬을 계산할 3x3 행렬입니다.
-	 *
-	 * @return 3x3 행렬의 역행렬을 반환합니다.
-	 */
 	static inline Mat3x3 Inverse(const Mat3x3& m)
 	{
 		float oneOverDeterminant = 1.0f / Determinant(m);
@@ -4340,10 +1963,6 @@ struct Mat3x3
 		);
 	}
 
-
-	/**
-	 * @brief 3x3 행렬의 원소입니다.
-	 */
 	union
 	{
 		struct
@@ -4356,17 +1975,8 @@ struct Mat3x3
 	};
 };
 
-
-/**
- * @brief 4x4 행렬입니다.
- */
 struct Mat4x4
 {
-	/**
-	 * @brief 4x4 행렬의 기본 생성자입니다.
-	 *
-	 * @note 모든 원소의 값을 0으로 초기화합니다.
-	 */
 	Mat4x4() noexcept
 	{
 		e00 = 0.0f; e01 = 0.0f; e02 = 0.0f; e03 = 0.0f;
@@ -4375,27 +1985,6 @@ struct Mat4x4
 		e30 = 0.0f; e31 = 0.0f; e32 = 0.0f; e33 = 0.0f;
 	}
 
-
-	/**
-	 * @brief 4x4 행렬의 생성자입니다.
-	 *
-	 * @param ee00 행렬의 (0, 0) 성분입니다.
-	 * @param ee01 행렬의 (0, 1) 성분입니다.
-	 * @param ee02 행렬의 (0, 2) 성분입니다.
-	 * @param ee03 행렬의 (0, 3) 성분입니다.
-	 * @param ee10 행렬의 (1, 0) 성분입니다.
-	 * @param ee11 행렬의 (1, 1) 성분입니다.
-	 * @param ee12 행렬의 (1, 2) 성분입니다.
-	 * @param ee13 행렬의 (1, 3) 성분입니다.
-	 * @param ee20 행렬의 (2, 0) 성분입니다.
-	 * @param ee21 행렬의 (2, 1) 성분입니다.
-	 * @param ee22 행렬의 (2, 2) 성분입니다.
-	 * @param ee23 행렬의 (2, 3) 성분입니다.
-	 * @param ee30 행렬의 (3, 0) 성분입니다.
-	 * @param ee31 행렬의 (3, 1) 성분입니다.
-	 * @param ee32 행렬의 (3, 2) 성분입니다.
-	 * @param ee33 행렬의 (3, 3) 성분입니다.
-	 */
 	Mat4x4(
 		float&& ee00, float&& ee01, float&& ee02, float&& ee03,
 		float&& ee10, float&& ee11, float&& ee12, float&& ee13,
@@ -4409,27 +1998,6 @@ struct Mat4x4
 		e30 = ee30; e31 = ee31; e32 = ee32; e33 = ee33;
 	}
 
-
-	/**
-	 * @brief 4x4 행렬의 생성자입니다.
-	 *
-	 * @param ee00 행렬의 (0, 0) 성분입니다.
-	 * @param ee01 행렬의 (0, 1) 성분입니다.
-	 * @param ee02 행렬의 (0, 2) 성분입니다.
-	 * @param ee03 행렬의 (0, 3) 성분입니다.
-	 * @param ee10 행렬의 (1, 0) 성분입니다.
-	 * @param ee11 행렬의 (1, 1) 성분입니다.
-	 * @param ee12 행렬의 (1, 2) 성분입니다.
-	 * @param ee13 행렬의 (1, 3) 성분입니다.
-	 * @param ee20 행렬의 (2, 0) 성분입니다.
-	 * @param ee21 행렬의 (2, 1) 성분입니다.
-	 * @param ee22 행렬의 (2, 2) 성분입니다.
-	 * @param ee23 행렬의 (2, 3) 성분입니다.
-	 * @param ee30 행렬의 (3, 0) 성분입니다.
-	 * @param ee31 행렬의 (3, 1) 성분입니다.
-	 * @param ee32 행렬의 (3, 2) 성분입니다.
-	 * @param ee33 행렬의 (3, 3) 성분입니다.
-	 */
 	Mat4x4(
 		const float& ee00, const float& ee01, const float& ee02, const float& ee03,
 		const float& ee10, const float& ee11, const float& ee12, const float& ee13,
@@ -4443,12 +2011,6 @@ struct Mat4x4
 		e30 = ee30; e31 = ee31; e32 = ee32; e33 = ee33;
 	}
 
-
-	/**
-	 * @brief 4x4 행렬의 원소를 하나의 값으로 초기화합니다.
-	 *
-	 * @param e 모든 원소를 초기화 할 값입니다.
-	 */
 	Mat4x4(float&& e) noexcept
 	{
 		e00 = e; e01 = e; e02 = e; e03 = e;
@@ -4457,12 +2019,6 @@ struct Mat4x4
 		e30 = e; e31 = e; e32 = e; e33 = e;
 	}
 
-
-	/**
-	 * @brief 4x4 행렬의 원소를 하나의 값으로 초기화합니다.
-	 *
-	 * @param e 모든 원소를 초기화 할 값입니다.
-	 */
 	Mat4x4(const float& e) noexcept
 	{
 		e00 = e; e01 = e; e02 = e; e03 = e;
@@ -4471,12 +2027,6 @@ struct Mat4x4
 		e30 = e; e31 = e; e32 = e; e33 = e;
 	}
 
-
-	/**
-	 * @brief 4x4 행렬의 복사 생성자입니다.
-	 *
-	 * @param m 원소를 복사할 행렬의 인스턴스입니다.
-	 */
 	Mat4x4(Mat4x4&& m) noexcept
 	{
 		e00 = m.e00; e01 = m.e01; e02 = m.e02; e03 = m.e03;
@@ -4485,12 +2035,6 @@ struct Mat4x4
 		e30 = m.e30; e31 = m.e31; e32 = m.e32; e33 = m.e33;
 	}
 
-
-	/**
-	 * @brief 4x4 행렬의 복사 생성자입니다.
-	 *
-	 * @param m 원소를 복사할 행렬의 인스턴스입니다.
-	 */
 	Mat4x4(const Mat4x4& m) noexcept
 	{
 		e00 = m.e00; e01 = m.e01; e02 = m.e02; e03 = m.e03;
@@ -4499,14 +2043,6 @@ struct Mat4x4
 		e30 = m.e30; e31 = m.e31; e32 = m.e32; e33 = m.e33;
 	}
 
-
-	/**
-	 * @brief 4x4 행렬의 대입 연산자입니다.
-	 *
-	 * @param m 원소를 복사할 행렬의 인스턴스입니다.
-	 *
-	 * @return 대입한 행렬의 참조자를 반환합니다.
-	 */
 	Mat4x4& operator=(Mat4x4&& m) noexcept
 	{
 		if (this == &m) return *this;
@@ -4519,14 +2055,6 @@ struct Mat4x4
 		return *this;
 	}
 
-
-	/**
-	 * @brief 4x4 행렬의 대입 연산자입니다.
-	 *
-	 * @param m 원소를 복사할 행렬의 인스턴스입니다.
-	 *
-	 * @return 대입한 행렬의 참조자를 반환합니다.
-	 */
 	Mat4x4& operator=(const Mat4x4& m) noexcept
 	{
 		if (this == &m) return *this;
@@ -4539,12 +2067,6 @@ struct Mat4x4
 		return *this;
 	}
 
-
-	/**
-	 * @brief 4x4 행렬의 모든 원소에 -부호를 취합니다.
-	 *
-	 * @return 모든 원소에 -부호를 취한 새로운 행렬을 반환합니다.
-	 */
 	Mat4x4 operator-() const
 	{
 		return Mat4x4(
@@ -4555,14 +2077,6 @@ struct Mat4x4
 		);
 	}
 
-
-	/**
-	 * @brief 두 4x4 행렬의 대응하는 원소를 더합니다.
-	 *
-	 * @param m 행렬의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬의 대응하는 원소를 더한 결과를 반환합니다.
-	 */
 	Mat4x4 operator+(Mat4x4&& m) const
 	{
 		return Mat4x4(
@@ -4573,14 +2087,6 @@ struct Mat4x4
 		);
 	}
 
-
-	/**
-	 * @brief 두 4x4 행렬의 대응하는 원소를 더합니다.
-	 *
-	 * @param m 행렬의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬의 대응하는 원소를 더한 결과를 반환합니다.
-	 */
 	Mat4x4 operator+(const Mat4x4& m) const
 	{
 		return Mat4x4(
@@ -4591,14 +2097,6 @@ struct Mat4x4
 		);
 	}
 
-
-	/**
-	 * @brief 두 4x4 행렬의 대응하는 원소를 뺍니다.
-	 *
-	 * @param m 행렬의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬의 대응하는 원소를 뺀 결과를 반환합니다.
-	 */
 	Mat4x4 operator-(Mat4x4&& m) const
 	{
 		return Mat4x4(
@@ -4609,14 +2107,6 @@ struct Mat4x4
 		);
 	}
 
-
-	/**
-	 * @brief 두 4x4 행렬의 대응하는 원소를 뺍니다.
-	 *
-	 * @param m 행렬의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬의 대응하는 원소를 뺀 결과를 반환합니다.
-	 */
 	Mat4x4 operator-(const Mat4x4& m) const
 	{
 		return Mat4x4(
@@ -4627,14 +2117,6 @@ struct Mat4x4
 		);
 	}
 
-
-	/**
-	 * @brief 4x4 행렬에 부동소수점을 곱합니다.
-	 *
-	 * @param scalar 4x4 행렬에 부동수소점 수를 곱할 스칼라 값입니다.
-	 *
-	 * @return 4x4 행렬에 부동소수점을 곱합 결과를 반환합니다.
-	 */
 	Mat4x4 operator*(float&& scalar) const
 	{
 		return Mat4x4(
@@ -4645,14 +2127,6 @@ struct Mat4x4
 		);
 	}
 
-
-	/**
-	 * @brief 4x4 행렬에 부동소수점을 곱합니다.
-	 *
-	 * @param scalar 4x4 행렬에 부동수소점 수를 곱할 스칼라 값입니다.
-	 *
-	 * @return 4x4 행렬에 부동소수점을 곱합 결과를 반환합니다.
-	 */
 	Mat4x4 operator*(const float& scalar) const
 	{
 		return Mat4x4(
@@ -4663,14 +2137,6 @@ struct Mat4x4
 		);
 	}
 
-
-	/**
-	 * @brief 두 4x4 행렬을 곱합니다.
-	 *
-	 * @param m 행렬의 곱셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬을 곱한 결과를 반환합니다.
-	 */
 	Mat4x4 operator*(Mat4x4&& m) const
 	{
 		return Mat4x4(
@@ -4693,14 +2159,6 @@ struct Mat4x4
 		);
 	}
 
-
-	/**
-	 * @brief 두 4x4 행렬을 곱합니다.
-	 *
-	 * @param m 행렬의 곱셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬을 곱한 결과를 반환합니다.
-	 */
 	Mat4x4 operator*(const Mat4x4& m) const
 	{
 		return Mat4x4(
@@ -4723,14 +2181,6 @@ struct Mat4x4
 		);
 	}
 
-
-	/**
-	 * @brief 두 4x4 행렬에 대응하는 원소를 더합니다.
-	 *
-	 * @param m 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 행렬의 참조자를 반환합니다.
-	 */
 	Mat4x4& operator+=(Mat4x4&& m) noexcept
 	{
 		e00 += m.e00; e01 += m.e01; e02 += m.e02; e03 += m.e03;
@@ -4741,14 +2191,6 @@ struct Mat4x4
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 4x4 행렬에 대응하는 원소를 더합니다.
-	 *
-	 * @param m 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 행렬의 참조자를 반환합니다.
-	 */
 	Mat4x4& operator+=(const Mat4x4& m) noexcept
 	{
 		e00 += m.e00; e01 += m.e01; e02 += m.e02; e03 += m.e03;
@@ -4759,14 +2201,6 @@ struct Mat4x4
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 4x4 행렬에 대응하는 원소를 뺍니다.
-	 *
-	 * @param m 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 행렬의 참조자를 반환합니다.
-	 */
 	Mat4x4& operator-=(Mat4x4&& m) noexcept
 	{
 		e00 -= m.e00; e01 -= m.e01; e02 -= m.e02; e03 -= m.e03;
@@ -4777,14 +2211,6 @@ struct Mat4x4
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 4x4 행렬에 대응하는 원소를 뺍니다.
-	 *
-	 * @param m 연산을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 행렬의 참조자를 반환합니다.
-	 */
 	Mat4x4& operator-=(const Mat4x4& m) noexcept
 	{
 		e00 -= m.e00; e01 -= m.e01; e02 -= m.e02; e03 -= m.e03;
@@ -4795,14 +2221,6 @@ struct Mat4x4
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 4x4행렬이 동일한지 검사합니다.
-	 *
-	 * @param m 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬이 동일하다면 true, 그렇지 않으면 false를 반환합니다.
-	 */
 	bool operator==(Mat4x4&& m) const
 	{
 		return Abs(e00 - m.e00) <= EPSILON
@@ -4823,14 +2241,6 @@ struct Mat4x4
 			&& Abs(e33 - m.e33) <= EPSILON;
 	}
 
-
-	/**
-	 * @brief 두 4x4행렬이 동일한지 검사합니다.
-	 *
-	 * @param m 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬이 동일하다면 true, 그렇지 않으면 false를 반환합니다.
-	 */
 	bool operator==(const Mat4x4& m) const
 	{
 		return Abs(e00 - m.e00) <= EPSILON
@@ -4851,14 +2261,6 @@ struct Mat4x4
 			&& Abs(e33 - m.e33) <= EPSILON;
 	}
 
-
-	/**
-	 * @brief 두 4x4행렬이 동일하지 않은지 검사합니다.
-	 *
-	 * @param m 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬이 동일하지 않다면 true, 그렇다면 false를 반환합니다.
-	 */
 	bool operator!=(Mat4x4&& m) const
 	{
 		return Abs(e00 - m.e00) > EPSILON
@@ -4879,14 +2281,6 @@ struct Mat4x4
 			|| Abs(e33 - m.e33) > EPSILON;
 	}
 
-
-	/**
-	 * @brief 두 4x4행렬이 동일하지 않은지 검사합니다.
-	 *
-	 * @param m 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 행렬이 동일하지 않다면 true, 그렇다면 false를 반환합니다.
-	 */
 	bool operator!=(const Mat4x4& m) const
 	{
 		return Abs(e00 - m.e00) > EPSILON
@@ -4907,28 +2301,9 @@ struct Mat4x4
 			|| Abs(e33 - m.e33) > EPSILON;
 	}
 
-
-	/**
-	 * @brief 4x4 행렬 원소 배열의 포인터를 얻습니다.
-	 *
-	 * @return 4x4 행렬 원소 배열의 포인터를 반환합니다.
-	 */
 	const float* GetPtr() const { return &e00; }
-
-
-	/**
-	 * @brief 4x4 행렬 원소 배열의 포인터를 얻습니다.
-	 *
-	 * @return 4x4 행렬 원소 배열의 포인터를 반환합니다.
-	 */
 	float* GetPtr() { return &e00; }
 
-
-	/**
-	 * @brief 4x4 행렬의 모든 원소가 0인 행렬을 얻습니다.
-	 *
-	 * @return 모든 원소가 0인 4x4 행렬을 반환합니다.
-	 */
 	static inline Mat4x4 Zero()
 	{
 		return Mat4x4(
@@ -4939,12 +2314,6 @@ struct Mat4x4
 		);
 	}
 
-
-	/**
-	 * @brief 4x4 행렬의 단위 행렬을 얻습니다.
-	 *
-	 * @return 4x4 행렬의 단위 행렬를 반환합니다.
-	 */
 	static inline Mat4x4 Identity()
 	{
 		return Mat4x4(
@@ -4955,14 +2324,6 @@ struct Mat4x4
 		);
 	}
 
-
-	/**
-	 * @brief 4x4 행렬의 전치 행렬을 얻습니다.
-	 *
-	 * @param m 원소들을 전치할 4x4 행렬입니다.
-	 *
-	 * @return 원소가 전치된 4x4 행렬을 반환합니다.
-	 */
 	static inline Mat4x4 Transpose(const Mat4x4& m)
 	{
 		return Mat4x4(
@@ -4973,14 +2334,6 @@ struct Mat4x4
 		);
 	}
 
-
-	/**
-	 * @brief 4x4 행렬의 행렬식 값을 얻습니다.
-	 *
-	 * @param m 행렬식 값을 계산할 4x4 행렬입니다.
-	 *
-	 * @return 4x4 행렬의 행렬식 값을 반환합니다.
-	 */
 	static float inline Determinant(const Mat4x4& m)
 	{
 		float subFactor00 = m.e22 * m.e33 - m.e32 * m.e23;
@@ -4998,14 +2351,6 @@ struct Mat4x4
 		return m.e00 * cof0 + m.e01 * cof1 + m.e02 * cof2 + m.e03 * cof3;
 	}
 
-
-	/**
-	 * @brief 4x4 행렬의 역행렬을 얻습니다.
-	 *
-	 * @param m 역행렬을 계산할 4x4 행렬입니다.
-	 *
-	 * @return 4x4 행렬의 역행렬을 반환합니다.
-	 */
 	static inline Mat4x4 Inverse(const Mat4x4& m)
 	{
 		float oneOverDeterminant = 1.0f / Determinant(m);
@@ -5067,16 +2412,6 @@ struct Mat4x4
 		);
 	}
 
-
-	/**
-	 * @brief 이동 변환 행렬을 생성합니다.
-	 *
-	 * @param x 이동할 x 좌표값입니다.
-	 * @param y 이동할 y 좌표값입니다.
-	 * @param z 이동할 z 좌표값입니다.
-	 *
-	 * @return 생성된 이동 변환 행렬을 반환합니다.
-	 */
 	static inline Mat4x4 Translation(float x, float y, float z)
 	{
 		return Mat4x4(
@@ -5087,70 +2422,36 @@ struct Mat4x4
 		);
 	}
 
-
-	/**
-	 * @brief 이동 변환 행렬을 생성합니다.
-	 *
-	 * @param p 이동할 위치 좌표입니다.
-	 *
-	 * @return 생성된 이동 변환 행렬을 반환합니다.
-	 */
 	static inline Mat4x4 Translation(const Vec3f& p)
 	{
 		return Mat4x4(
 			1.0f, 0.0f, 0.0f, 0.0f,
 			0.0f, 1.0f, 0.0f, 0.0f,
 			0.0f, 0.0f, 1.0f, 0.0f,
-			p.x, p.y, p.z, 1.0f
+			 p.x,  p.y,  p.z, 1.0f
 		);
 	}
 
-
-	/**
-	 * @brief 스케일 변환 행렬을 생성합니다.
-	 *
-	 * @param xScale 변환할 x축 방향의 스케일입니다.
-	 * @param yScale 변환할 y축 방향의 스케일입니다.
-	 * @param zScale 변환할 z축 방향의 스케일입니다.
-	 *
-	 * @return 생성된 스케일 변환 행렬을 반환합니다.
-	 */
 	static inline Mat4x4 Scale(float xScale, float yScale, float zScale)
 	{
 		return Mat4x4(
-			xScale, 0.0f, 0.0f, 0.0f,
-			0.0f, yScale, 0.0f, 0.0f,
-			0.0f, 0.0f, zScale, 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f
+			xScale,   0.0f,   0.0f, 0.0f,
+			  0.0f, yScale,   0.0f, 0.0f,
+			  0.0f,   0.0f, zScale, 0.0f,
+			  0.0f,   0.0f,   0.0f, 1.0f
 		);
 	}
 
-
-	/**
-	 * @brief 스케일 변환 행렬을 생성합니다.
-	 *
-	 * @param scale 변환할 스케일 벡터입니다.
-	 *
-	 * @return 생성된 스케일 변환 행렬을 반환합니다.
-	 */
 	static inline Mat4x4 Scale(const Vec3f& scale)
 	{
 		return Mat4x4(
-			scale.x, 0.0f, 0.0f, 0.0f,
-			0.0f, scale.y, 0.0f, 0.0f,
-			0.0f, 0.0f, scale.z, 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f
+			scale.x,    0.0f,    0.0f, 0.0f,
+			   0.0f, scale.y,    0.0f, 0.0f,
+			   0.0f,    0.0f, scale.z, 0.0f,
+			   0.0f,    0.0f,    0.0f, 1.0f
 		);
 	}
 
-
-	/**
-	 * @brief X축으로 회전시키는 회전 행렬을 생성합니다.
-	 *
-	 * @param radian 회전할 라디안 각도입니다.
-	 *
-	 * @return 생성된 회전 행렬을 반환합니다.
-	 */
 	static inline Mat4x4 RotateX(float radian)
 	{
 		float c = Cos(radian);
@@ -5164,14 +2465,6 @@ struct Mat4x4
 		);
 	}
 
-
-	/**
-	 * @brief Y축으로 회전시키는 회전 행렬을 생성합니다.
-	 *
-	 * @param radian 회전할 라디안 각도입니다.
-	 *
-	 * @return 생성된 회전 행렬을 반환합니다.
-	 */
 	static inline Mat4x4 RotateY(float radian)
 	{
 		float c = Cos(radian);
@@ -5185,14 +2478,6 @@ struct Mat4x4
 		);
 	}
 
-
-	/**
-	 * @brief Z축으로 회전시키는 회전 행렬을 생성합니다.
-	 *
-	 * @param radian 회전할 라디안 각도입니다.
-	 *
-	 * @return 생성된 회전 행렬을 반환합니다.
-	 */
 	static inline Mat4x4 RotateZ(float radian)
 	{
 		float c = Cos(radian);
@@ -5206,21 +2491,9 @@ struct Mat4x4
 		);
 	}
 
-
-	/**
-	 * @brief 임의의 벡터를 기준으로 회전 행렬을 생성합니다.
-	 *
-	 * @param radian 회전할 회전 각도입니다.
-	 * @param axis 회전축입니다.
-	 *
-	 * @return 생성된 회전 행렬을 반환합니다.
-	 *
-	 * @see
-	 * - 로드리게스 회전 공식 참조
-	 * - https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
-	 */
 	static inline Mat4x4 Rotate(float radian, const Vec3f& axis)
 	{
+		// 로드리게스 회전 공식 https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
 		float c = Cos(radian);
 		float s = Sin(radian);
 		Vec3f r = Vec3f::Normalize(axis);
@@ -5233,19 +2506,6 @@ struct Mat4x4
 		);
 	}
 
-
-	/**
-	 * @brief 직교 투영 행렬을 생성합니다.
-	 *
-	 * @param left   투영 공간의 좌측 경계 평면 값
-	 * @param right  투영 공간의 우측 경계 평면 값
-	 * @param bottom 투영 공간의 하단 경계 평면 값
-	 * @param top    투영 공간의 상단 경계 평면 값
-	 * @param zNear  투영 공간의 전방 경계 평면 값
-	 * @param zFar   투영 공간의 후방 경계 평면 값
-	 *
-	 * @return 생성된 직교 투영 행렬을 반환합니다.
-	 */
 	static inline Mat4x4 Ortho(float left, float right, float bottom, float top, float zNear, float zFar)
 	{
 		float width = (right - left);
@@ -5263,17 +2523,6 @@ struct Mat4x4
 		);
 	}
 
-
-	/**
-	 * @brief 원근 투영 행렬을 생성합니다.
-	 *
-	 * @param fov 라디안 단위의 시야 각도입니다.
-	 * @param aspect 뷰 공간의 가로/세로 비율입니다.
-	 * @param nearZ 가까운 클리핑 평면 사이의 거리입니다. 0보다 커야 합니다.
-	 * @param farZ 원거리 클리핑 평면 사이의 거리입니다. 0보다 커야 합니다.
-	 *
-	 * @return 생성된 원근 투영 행렬을 반환합니다.
-	 */
 	static inline Mat4x4 Perspective(float fov, float aspect, float nearZ, float farZ)
 	{
 		float halfFov = fov / 2.0f;
@@ -5287,16 +2536,6 @@ struct Mat4x4
 		);
 	}
 
-
-	/**
-	 * @brief 시야 행렬을 생성합니다.
-	 *
-	 * @param eyePosition 카메라의 위치입니다.
-	 * @param focusPosition 초점의 위치입니다.
-	 * @param upDirection 카메라의 위쪽 방향입니다. 일반적으로 <0.0f, 1.0f, 0.0f> 입니다.
-	 *
-	 * @return 생성된 시야 행렬을 반환합니다.
-	 */
 	static inline Mat4x4 LookAt(const Vec3f& eyePosition, const Vec3f& focusPosition, const Vec3f& upDirection)
 	{
 		Vec3f f = -Vec3f::Normalize(focusPosition - eyePosition);
@@ -5312,10 +2551,6 @@ struct Mat4x4
 		);
 	}
 
-
-	/**
-	 * @brief 4x4 행렬의 원소입니다.
-	 */
 	union
 	{
 		struct
@@ -5329,13 +2564,6 @@ struct Mat4x4
 	};
 };
 
-
-/**
- * @brief 2차원 벡터와 2x2행렬을 곱합니다.
- *
- * @param v 곱셈을 수행할 2차원 벡터입니다.
- * @param m 곱셈을 수행할 2x2 행렬입니다.
- */
 static inline Vec2f operator*(const Vec2f& v, const Mat2x2& m)
 {
 	return Vec2f(
@@ -5344,13 +2572,6 @@ static inline Vec2f operator*(const Vec2f& v, const Mat2x2& m)
 	);
 }
 
-
-/**
- * @brief 2차원 벡터와 2x2행렬을 곱합니다.
- *
- * @param m 곱셈을 수행할 2x2 행렬입니다.
- * @param v 곱셈을 수행할 2차원 벡터입니다.
- */
 static inline Vec2f operator*(const Mat2x2& m, const Vec2f& v)
 {
 	return Vec2f(
@@ -5359,13 +2580,6 @@ static inline Vec2f operator*(const Mat2x2& m, const Vec2f& v)
 	);
 }
 
-
-/**
- * @brief 3차원 벡터와 3x3행렬을 곱합니다.
- *
- * @param v 곱셈을 수행할 3차원 벡터입니다.
- * @param m 곱셈을 수행할 3x3 행렬입니다.
- */
 static inline Vec3f operator*(const Vec3f& v, const Mat3x3& m)
 {
 	return Vec3f(
@@ -5375,13 +2589,6 @@ static inline Vec3f operator*(const Vec3f& v, const Mat3x3& m)
 	);
 }
 
-
-/**
- * @brief 3차원 벡터와 3x3행렬을 곱합니다.
- *
- * @param m 곱셈을 수행할 3x3 행렬입니다.
- * @param v 곱셈을 수행할 3차원 벡터입니다.
- */
 static inline Vec3f operator*(const Mat3x3& m, const Vec3f& v)
 {
 	return Vec3f(
@@ -5391,13 +2598,6 @@ static inline Vec3f operator*(const Mat3x3& m, const Vec3f& v)
 	);
 }
 
-
-/**
- * @brief 4차원 벡터와 4x4행렬을 곱합니다.
- *
- * @param v 곱셈을 수행할 4차원 벡터입니다.
- * @param m 곱셈을 수행할 4x4 행렬입니다.
- */
 static inline Vec4f operator*(const Vec4f& v, const Mat4x4& m)
 {
 	return Vec4f(
@@ -5408,13 +2608,6 @@ static inline Vec4f operator*(const Vec4f& v, const Mat4x4& m)
 	);
 }
 
-
-/**
- * @brief 4차원 벡터와 4x4행렬을 곱합니다.
- *
- * @param m 곱셈을 수행할 4x4 행렬입니다.
- * @param v 곱셈을 수행할 4차원 벡터입니다.
- */
 static inline Vec4f operator*(const Mat4x4& m, const Vec4f& v)
 {
 	return Vec4f(
@@ -5425,70 +2618,17 @@ static inline Vec4f operator*(const Mat4x4& m, const Vec4f& v)
 	);
 }
 
-
-/**
- * @brief 쿼터니언입니다.
- *
- * @see
- * - https://gabormakesgames.com/quaternions.html
- * - https://en.wikipedia.org/wiki/Quaternion
- * - https://github.com/mmp/pbrt-v3/blob/master/src/core/quaternion.h
- */
+// https://gabormakesgames.com/quaternions.html
+// https ://en.wikipedia.org/wiki/Quaternion
+// https ://github.com/mmp/pbrt-v3/blob/master/src/core/quaternion.h
 struct Quat
 {
-	/**
-	 * @brief 쿼터니언의 기본 생성자입니다.
-	 *
-	 * @note 모든 원소의 값을 0으로 초기화합니다.
-	 */
 	Quat() noexcept : x(0.0f), y(0.0f), z(0.0f), w(1.0f) {}
-
-
-	/**
-	 * @brief 쿼터니언의 생성자입니다.
-	 *
-	 * @param xx 쿼터니언의 x 성분입니다.
-	 * @param yy 쿼터니언의 y 성분입니다.
-	 * @param zz 쿼터니언의 z 성분입니다.
-	 * @param ww 쿼터니언의 w 성분입니다.
-	 */
 	Quat(float&& xx, float&& yy, float&& zz, float&& ww) noexcept : x(xx), y(yy), z(zz), w(ww) {}
-
-
-	/**
-	 * @brief 쿼터니언의 생성자입니다.
-	 *
-	 * @param xx 쿼터니언의 x 성분입니다.
-	 * @param yy 쿼터니언의 y 성분입니다.
-	 * @param zz 쿼터니언의 z 성분입니다.
-	 * @param ww 쿼터니언의 w 성분입니다.
-	 */
 	Quat(const float& xx, const float& yy, const float& zz, const float& ww) noexcept : x(xx), y(yy), z(zz), w(ww) {}
-
-
-	/**
-	 * @brief 쿼터니언의 복사 생성자입니다.
-	 *
-	 * @param q 원소를 복사할 쿼터니언 구조체의 인스턴스입니다.
-	 */
 	Quat(Quat&& q) noexcept : x(q.x), y(q.y), z(q.z), w(q.w) {}
-
-
-	/**
-	 * @brief 쿼터니언의 복사 생성자입니다.
-	 *
-	 * @param q 원소를 복사할 쿼터니언 구조체의 인스턴스입니다.
-	 */
 	Quat(const Quat& q) noexcept : x(q.x), y(q.y), z(q.z), w(q.w) {}
 
-
-	/**
-	 * @brief 쿼터니언의 대입 연산자입니다.
-	 *
-	 * @param q 원소를 복사할 쿼터니언 구조체의 인스턴스입니다.
-	 *
-	 * @return 대입한 쿼터니언의 참조자를 반환합니다.
-	 */
 	Quat& operator=(Quat&& q) noexcept
 	{
 		if (this == &q) return *this;
@@ -5501,14 +2641,6 @@ struct Quat
 		return *this;
 	}
 
-
-	/**
-	 * @brief 쿼터니언의 대입 연산자입니다.
-	 *
-	 * @param q 원소를 복사할 쿼터니언 구조체의 인스턴스입니다.
-	 *
-	 * @return 대입한 쿼터니언의 참조자를 반환합니다.
-	 */
 	Quat& operator=(const Quat& q) noexcept
 	{
 		if (this == &q) return *this;
@@ -5521,90 +2653,36 @@ struct Quat
 		return *this;
 	}
 
-
-	/**
-	 * @brief 쿼터니언에 -부호를 취합니다.
-	 *
-	 * @return 쿼터니언에 -부호를 취한 새로운 벡터를 반환합니다.
-	 */
 	Quat operator-() const
 	{
 		return Quat(-x, -y, -z, -w);
 	}
 
-
-	/**
-	 * @brief 두 쿼터니언에 대응하는 원소를 더합니다.
-	 *
-	 * @param q 쿼터니언의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 쿼터니언에 대응하는 원소를 더한 결과를 반환합니다.
-	 */
 	Quat operator+(Quat&& q) const
 	{
 		return Quat(x + q.x, y + q.y, z + q.z, w + q.w);
 	}
 
-
-	/**
-	 * @brief 두 쿼터니언에 대응하는 원소를 더합니다.
-	 *
-	 * @param q 쿼터니언의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 쿼터니언에 대응하는 원소를 더한 결과를 반환합니다.
-	 */
 	Quat operator+(const Quat& q) const
 	{
 		return Quat(x + q.x, y + q.y, z + q.z, w + q.w);
 	}
 
-
-	/**
-	 * @brief 두 쿼터니언에 대응하는 원소를 뺍니다.
-	 *
-	 * @param q 쿼터니언의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 쿼터니언에 대응하는 원소를 뺀 결과를 반환합니다.
-	 */
 	Quat operator-(Quat&& q) const
 	{
 		return Quat(x - q.x, y - q.y, z - q.z, w - q.w);
 	}
 
-
-	/**
-	 * @brief 두 쿼터니언에 대응하는 원소를 뺍니다.
-	 *
-	 * @param q 쿼터니언의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 두 쿼터니언에 대응하는 원소를 뺀 결과를 반환합니다.
-	 */
 	Quat operator-(const Quat& q) const
 	{
 		return Quat(x - q.x, y - q.y, z - q.z, w - q.w);
 	}
 
-
-	/**
-	 * @brief 쿼터니언의 스케일 연산을 수행합니다.
-	 *
-	 * @param s 스케일 연산을 수행할 값입니다.
-	 *
-	 * @return 스케일 연산을 수행한 결과를 반환합니다.
-	 */
 	Quat operator*(float s) const
 	{
 		return Quat(x * s, y * s, z * s, w * s);
 	}
 
-
-	/**
-	 * @brief 쿼터니언 곱셈 연산을 수행합니다.
-	 *
-	 * @param q 곱셈 연산을 수행할 쿼터니언 값입니다.
-	 *
-	 * @return 곱셈 연산을 수행한 결과를 반환합니다.
-	 */
 	Quat operator*(Quat&& q) const
 	{
 		return Quat(
@@ -5615,14 +2693,6 @@ struct Quat
 		);
 	}
 
-
-	/**
-	 * @brief 쿼터니언 곱셈 연산을 수행합니다.
-	 *
-	 * @param q 곱셈 연산을 수행할 쿼터니언 값입니다.
-	 *
-	 * @return 곱셈 연산을 수행한 결과를 반환합니다.
-	 */
 	Quat operator*(const Quat& q) const
 	{
 		return Quat(
@@ -5633,40 +2703,16 @@ struct Quat
 		);
 	}
 
-
-	/**
-	 * @brief 쿼터니언과 벡터의 곱셈 연산을 수행합니다.
-	 *
-	 * @param vec 곱셈 연산을 수행할 벡터 값입니다.
-	 *
-	 * @return 곱셈 연산을 수행한 결과를 반환합니다.
-	 */
 	Vec3f operator*(Vec3f&& vec) const
 	{
 		return v * 2.0f * Vec3f::Dot(v, vec) + vec * (w * w - Vec3f::Dot(v, v)) + Vec3f::Cross(v, vec) * 2.0f * w;
 	}
 
-
-	/**
-	 * @brief 쿼터니언과 벡터의 곱셈 연산을 수행합니다.
-	 *
-	 * @param vec 곱셈 연산을 수행할 벡터 값입니다.
-	 *
-	 * @return 곱셈 연산을 수행한 결과를 반환합니다.
-	 */
 	Vec3f operator*(const Vec3f& vec) const
 	{
 		return v * 2.0f * Vec3f::Dot(v, vec) + vec * (w * w - Vec3f::Dot(v, v)) + Vec3f::Cross(v, vec) * 2.0f * w;
 	}
 
-
-	/**
-	 * @brief 두 쿼터니언에 대응하는 원소를 더합니다.
-	 *
-	 * @param q 쿼터니언의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 쿼터니언의 참조자를 반환합니다.
-	 */
 	Quat& operator+=(Quat&& q) noexcept
 	{
 		x += q.x;
@@ -5677,14 +2723,6 @@ struct Quat
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 쿼터니언에 대응하는 원소를 더합니다.
-	 *
-	 * @param q 쿼터니언의 덧셈을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 쿼터니언의 참조자를 반환합니다.
-	 */
 	Quat& operator+=(const Quat& q) noexcept
 	{
 		x += q.x;
@@ -5695,14 +2733,6 @@ struct Quat
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 쿼터니언에 대응하는 원소를 뺍니다.
-	 *
-	 * @param q 쿼터니언의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 쿼터니언의 참조자를 반환합니다.
-	 */
 	Quat& operator-=(Quat&& q) noexcept
 	{
 		x -= q.x;
@@ -5713,14 +2743,6 @@ struct Quat
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 쿼터니언에 대응하는 원소를 뺍니다.
-	 *
-	 * @param q 쿼터니언의 뺄셈을 수행할 피연산자입니다.
-	 *
-	 * @return 연산을 수행한 쿼터니언의 참조자를 반환합니다.
-	 */
 	Quat& operator-=(const Quat& q) noexcept
 	{
 		x -= q.x;
@@ -5731,14 +2753,6 @@ struct Quat
 		return *this;
 	}
 
-
-	/**
-	 * @brief 쿼터니언의 스케일 연산을 수행합니다.
-	 *
-	 * @param s 스케일 연산을 수행할 값입니다.
-	 *
-	 * @return 연산을 수행한 쿼터니언의 참조자를 반환합니다.
-	 */
 	Quat& operator*=(float s) noexcept
 	{
 		x *= s;
@@ -5749,65 +2763,26 @@ struct Quat
 		return *this;
 	}
 
-
-	/**
-	 * @brief 두 쿼터니언 동일한지 검사합니다.
-	 *
-	 * @param  q 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 쿼터니언이 동일하다면 true, 그렇지 않으면 false를 반환합니다.
-	 */
 	bool operator==(Quat&& q) const
 	{
 		return Abs(x - q.x) <= EPSILON && Abs(y - q.y) <= EPSILON && Abs(z - q.z) <= EPSILON && Abs(w - q.w) <= EPSILON;
 	}
 
-
-	/**
-	 * @brief 두 쿼터니언 동일한지 검사합니다.
-	 *
-	 * @param q 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 쿼터니언이 동일하다면 true, 그렇지 않으면 false를 반환합니다.
-	 */
 	bool operator==(const Quat& q) const
 	{
 		return Abs(x - q.x) <= EPSILON && Abs(y - q.y) <= EPSILON && Abs(z - q.z) <= EPSILON && Abs(w - q.w) <= EPSILON;
 	}
 
-
-	/**
-	 * @brief 두 쿼터니언 동일하지 않은지 검사합니다.
-	 *
-	 * @param q 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 쿼터니언이 동일하지 않다면 true, 그렇다면 false를 반환합니다.
-	 */
 	bool operator!=(Quat&& q) const
 	{
 		return Abs(x - q.x) > EPSILON || Abs(y - q.y) > EPSILON || Abs(z - q.z) > EPSILON || Abs(w - q.w) > EPSILON;
 	}
 
-
-	/**
-	 * @brief 두 쿼터니언 동일하지 않은지 검사합니다.
-	 *
-	 * @param q 검사를 수행할 피연산자입니다.
-	 *
-	 * @return 두 쿼터니언이 동일하지 않다면 true, 그렇다면 false를 반환합니다.
-	 */
 	bool operator!=(const Quat& q) const
 	{
 		return Abs(x - q.x) > EPSILON || Abs(y - q.y) > EPSILON || Abs(z - q.z) > EPSILON || Abs(w - q.w) > EPSILON;
 	}
 
-
-	/**
-	 * @brief 각도와 축을 이용해서 쿼터니언을 얻습니다.
-	 *
-	 * @parma axis 축 입니다.
-	 * @param radian 라디안 단위의 각도입니다.
-	 */
 	static inline Quat AxisRadian(const Vec3f& axis, float radian)
 	{
 		float s = Sin(radian * 0.5f);
@@ -5817,13 +2792,6 @@ struct Quat
 		return Quat(norm.x * s, norm.y * s, norm.z * s, c);
 	}
 
-
-	/**
-	 * @brief 각도와 축을 이용해서 쿼터니언을 얻습니다.
-	 *
-	 * @parma axis 축 입니다.
-	 * @param angle 육십분법 단위의 각도입니다.
-	 */
 	static inline Quat AxisAngle(const Vec3f& axis, float angle)
 	{
 		float radian = ToRadian(angle);
@@ -5835,94 +2803,37 @@ struct Quat
 		return Quat(norm.x * s, norm.y * s, norm.z * s, c);
 	}
 
-
-	/**
-	 * @brief 쿼터니언의 축을 얻습니다.
-	 *
-	 * @param q 축을 얻을 쿼터니언입니다.
-	 *
-	 * @return 쿼터니언의 축을 반환합니다.
-	 */
 	static inline Vec3f Axis(const Quat& q)
 	{
 		return Vec3f::Normalize(Vec3f(q.x, q.y, q.z));
 	}
 
-
-	/**
-	 * @brief 쿼터니언의 라디안 각을 얻습니다.
-	 *
-	 * @param q 라디안 각도를 얻을 쿼터니언입니다.
-	 *
-	 * @return 쿼터니언의 라디안 각을 반환합니다.
-	 */
 	static inline float Radian(const Quat& q)
 	{
 		return 2.0f * ACos(q.w);
 	}
 
-
-	/**
-	 * @brief 쿼터니언의 육십분법 각을 얻습니다.
-	 *
-	 * @param q 육십분법 각도를 얻을 쿼터니언입니다.
-	 *
-	 * @return 쿼터니언의 육십분법 각을 반환합니다.
-	 */
 	static inline float Angle(const Quat& q)
 	{
 		return ToDegree(2.0f * ACos(q.w));
 	}
 
-
-	/**
-	 * @brief 두 쿼터니언의 내적 연산을 수행합니다.
-	 *
-	 * @param lhs 쿼터니언의 내적 연산을 수행할 좌측 피연산자입니다.
-	 * @param rhs 쿼터니언의 내적 연산을 수행할 우측 피연산자입니다.
-	 *
-	 * @return 내적 연산 결과를 반환합니다.
-	 */
 	static inline float Dot(const Quat& lhs, const Quat& rhs)
 	{
 		return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z + lhs.w * rhs.w;
 	}
 
-
-	/**
-	 * @brief 쿼터니언의 크기 제곱 값을 계산합니다.
-	 *
-	 * @param q 크기 제곱을 계산할 쿼터니언입니다.
-	 *
-	 * @return 계산된 크기 제곱 값을 반환합니다.
-	 */
 	static inline float LengthSq(const Quat& q)
 	{
 		return q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w;
 	}
 
-
-	/**
-	 * @brief 쿼터니언의 크기를 얻습니다.
-	 *
-	 * @param q 크기를 계산할 벡터입니다.
-	 *
-	 * @return 계산된 크기 값을 반환합니다.
-	 */
 	static inline float Length(const Quat& q)
 	{
 		float lengthSq = Quat::LengthSq(q);
 		return Sqrt(lengthSq);
 	}
 
-
-	/**
-	 * @brief 쿼터니언을 정규화합니다.
-	 *
-	 * @param q 정규화 할 쿼터니언입니다.
-	 *
-	 * @return 정규화된 쿼터니언을 반환합니다.
-	 */
 	static inline Quat Normalize(const Quat& q)
 	{
 		float length = Quat::Length(q);
@@ -5936,64 +2847,27 @@ struct Quat
 		return Quat(q.x * invLength, q.y * invLength, q.z * invLength, q.w * invLength);
 	}
 
-
-	/**
-	 * @brief 켤레 쿼터니언을 얻습니다.
-	 *
-	 * @param q 켤러 값을 계산할 쿼터니언입니다.
-	 *
-	 * @return 켤레 쿼터니언을 반환합니다.
-	 */
 	static inline Quat Conjugate(const Quat& q)
 	{
 		return Quat(-q.x, -q.y, -q.z, q.w);
 	}
 
-
-	/**
-	 * @brief 쿼터니언의 곱의 역원을 얻습니다.
-	 *
-	 * @param 곱의 역원을 계산할 쿼터니언입니다.
-	 *
-	 * @return 쿼터니언의 곱의 역원을 반환합니다.
-	 */
 	static inline Quat Inverse(const Quat& q)
 	{
 		float invLengthSq = 1.0f / Quat::LengthSq(q);
 		return Quat(-q.x * invLengthSq, -q.y * invLengthSq, -q.z * invLengthSq, q.w * invLengthSq);
 	}
 
-
-	/**
-	 * @brief 모든 원소가 0인 쿼터니언을 얻습니다.
-	 *
-	 * @return 모든 원소가 0인 쿼터니언을 반환합니다.
-	 */
 	static inline Quat Zero()
 	{
 		return Quat(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
-
-	/**
-	 * @brief w의 값이 1인 쿼터니언을 얻습니다.
-	 *
-	 * @return w의 값이 1인 쿼터니언을 얻습니다.
-	 */
 	static inline Quat Identity()
 	{
 		return Quat(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 
-
-	/**
-	 * @brief 두 벡터 간의 회전 쿼터니언을 얻습니다.
-	 *
-	 * @param s 회전 시작 방향입니다.
-	 * @param e 회전 끝 방향입니다.
-	 *
-	 * @return 두 벡터 간의 회전 쿼터니언을 반환합니다.
-	 */
 	static inline Quat Rotate(const Vec3f& s, const Vec3f& e)
 	{
 		Vec3f start = Vec3f::Normalize(s);
@@ -6031,75 +2905,26 @@ struct Quat
 		return Quat(axis.x, axis.y, axis.z, Vec3f::Dot(start, half));
 	}
 
-
-	/**
-	 * @brief 두 쿼터니언을 선형 보간합니다.
-	 *
-	 * @param s 보간의 시작 쿼터니언입니다.
-	 * @param e 보간의 끝 쿼터니언입니다.
-	 * @param t 두 쿼터니언의 보간 비율입니다.
-	 *
-	 * @return 보간된 쿼터니언을 반환합니다.
-	 */
 	static inline Quat Lerp(const Quat& s, const Quat& e, const float& t)
 	{
 		return s * (1.0f - t) + e * t;
 	}
 
-
-	/**
-	 * @brief 두 쿼터니언의 정규화된 선형 보간값을 계산합니다.
-	 *
-	 * @param s 보간의 시작 쿼터니언입니다.
-	 * @param e 보간의 끝 쿼터니언입니다.
-	 * @param t 두 쿼터니언의 보간 비율입니다.
-	 *
-	 * @return 정규화된 선형 보간 값을 반환합니다.
-	 */
 	static inline Quat Nlerp(const Quat& s, const Quat& e, const float& t)
 	{
 		return Normalize(Lerp(s, e, t));
 	}
 
-
-	/**
-	 * @brief 두 쿼터니언을 구면 선형 보간합니다.
-	 *
-	 * @param s 보간의 시작 쿼터니언입니다.
-	 * @param e 보간의 끝 쿼터니언입니다.
-	 * @param t 두 쿼터니언의 보간 비율입니다.
-	 *
-	 * @return 보간된 쿼터니언을 반환합니다.
-	 */
 	static inline Quat Slerp(const Quat& s, const Quat& e, const float& t)
 	{
 		return Pow(Inverse(s) * e, t) * s;
 	}
 
-
-	/**
-	 * @brief 두 쿼터니언의 정규화된 구면 선형 보간값을 계산합니다.
-	 *
-	 * @param s 보간의 시작 쿼터니언입니다.
-	 * @param e 보간의 끝 쿼터니언입니다.
-	 * @param t 두 쿼터니언의 보간 비율입니다.
-	 *
-	 * @return 정규화된 선형 보간 값을 반환합니다.
-	 */
 	static inline Quat Nslerp(const Quat& s, const Quat& e, const float& t)
 	{
 		return Normalize(Slerp(s, e, t));
 	}
 
-
-	/**
-	 * @brief 쿼터니언의 거듭 제곱을 수행합니다.
-	 *
-	 * @param q 거듭 제곱 연산을 수행할 쿼터니언입니다.
-	 * @param power 거듭제곱 값입니다.
-	 *
-	 * @return 거듭 제곱이 수행된 쿼터니언 값을 반환합니다.
-	 */
 	static inline Quat Pow(const Quat& q, const float power)
 	{
 		float radian = Quat::Radian(q);
@@ -6111,15 +2936,6 @@ struct Quat
 		return Quat(axis.x * s, axis.y * s, axis.z * s, c);
 	}
 
-
-	/**
-	 * @brief 방향과 위를 기준으로 쿼터니언을 생성합니다.
-	 *
-	 * @param direction 쿼터니언 생성에 사용할 방향입니다.
-	 * @param up  쿼터니언 생성에 사용할 위 방향입니다.
-	 *
-	 * @return 생성된 쿼터니언을 반환합니다.
-	 */
 	static inline Quat LookRotate(const Vec3f& direction, const Vec3f& up)
 	{
 		Vec3f f = Vec3f::Normalize(direction);
@@ -6135,14 +2951,6 @@ struct Quat
 		return Quat::Normalize(f2d * u2u);
 	}
 
-
-	/**
-	 * @brief 쿼터니언을 행렬로 변환합니다.
-	 *
-	 * @param q 행렬로 변환할 쿼터니언입니다.
-	 *
-	 * @return 변환된 행렬을 반환합니다.
-	 */
 	static inline Mat4x4 ToMat(const Quat& q)
 	{
 		Vec3f r = q * Vec3f(1.0f, 0.0f, 0.0f);
@@ -6157,14 +2965,6 @@ struct Quat
 		);
 	}
 
-
-	/**
-	 * @brief 행렬을 쿼터니언으로 변환합니다.
-	 *
-	 * @param m 쿼터니언으로 변환할 행렬입니다.
-	 *
-	 * @return 변환된 쿼터니언을 반환합니다.
-	 */
 	static inline Quat ToQuat(const Mat4x4& m)
 	{
 		Vec3f u = Vec3f::Normalize(Vec3f(m.e10, m.e11, m.e12));
@@ -6175,23 +2975,12 @@ struct Quat
 		return LookRotate(f, u);
 	}
 
-
-	/**
-	 * @brief 두 쿼터니언의 방향이 같은지 확인합니다.
-	 *
-	 * @param lhs 방향이 같은지 비교할 쿼터니언입니다.
-	 * @param rhs 방향이 같은지 비교할 또 다른 쿼터니언입니다.
-	 */
 	bool IsSameOrientation(const Quat& lhs, const Quat& rhs)
 	{
 		return (Abs(lhs.x - rhs.x) <= EPSILON && Abs(lhs.y - rhs.y) <= EPSILON && Abs(lhs.z - rhs.z) <= EPSILON && Abs(lhs.w - rhs.w) <= EPSILON)
 			|| (Abs(lhs.x + rhs.x) <= EPSILON && Abs(lhs.y + rhs.y) <= EPSILON && Abs(lhs.z + rhs.z) <= EPSILON && Abs(lhs.w + rhs.w) <= EPSILON);
 	}
-
-
-	/**
-	 * @brief 쿼터니언의 다양한 원소 형식입니다.
-	 */
+	
 	union
 	{
 		struct
