@@ -94,4 +94,39 @@ struct Circle2D : public ICollision2D
 	float radius;
 };
 
+struct Rect2D : public ICollision2D /** 이 사각형은 AABB(Axis-Aligned Bounding Box)입니다. */
+{
+	Rect2D() = default;
+	Rect2D(const Vec2f& c, const Vec2f& s) : center(c), size(s) {}
+	Rect2D(Rect2D&& instance) noexcept : center(instance.center), size(instance.size) {}
+	Rect2D(const Rect2D& instance) noexcept : center(instance.center), size(instance.size) {}
+	virtual ~Rect2D() {}
+
+	Rect2D& operator=(Rect2D&& instance) noexcept
+	{
+		if (this == &instance) return *this;
+
+		center = instance.center;
+		size = instance.size;
+
+		return *this;
+	}
+
+	Rect2D& operator=(const Rect2D& instance) noexcept
+	{
+		if (this == &instance) return *this;
+
+		center = instance.center;
+		size = instance.size;
+
+		return *this;
+	}
+
+	virtual EType GetType() const override { return EType::RECT; }
+	virtual bool Intersect(const ICollision2D* target) const override;
+
+	Vec2f center;
+	Vec2f size;
+};
+
 }

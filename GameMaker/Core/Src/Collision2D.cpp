@@ -12,3 +12,8 @@ bool Circle2D::Intersect(const ICollision2D* target) const
 {
 	return false;
 }
+
+bool Rect2D::Intersect(const ICollision2D* target) const
+{
+	return false;
+}
