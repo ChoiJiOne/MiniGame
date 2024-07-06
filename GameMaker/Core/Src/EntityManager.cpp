@@ -37,3 +37,28 @@ void EntityManager::Shutdown()
 
 	bIsStartup_ = false;
 }
+
+void EntityManager::Destroy(const IEntity* entity)
+{
+	int32_t entityID = -1;
+	for (uint32_t index = 0; index < cacheSize_; ++index)
+	{
+		IEntity* cache = cache_[index].get();
+		if (entity == cache)
+		{
+			entityID = static_cast<int32_t>(index);
+			break;
+		}
+	}
+
+	if (entityID != -1 && cache_[entityID])
+	{
+		if (cache_[entityID]->IsInitialized())
+		{
+			cache_[entityID]->Release();
+		}
+
+		cache_[entityID].reset();
+		usage_[entityID] = false;
+	}
+}
