@@ -82,14 +82,7 @@ void Texture2D::Active(uint32_t unit) const
 	GL_FAILED(glBindTexture(GL_TEXTURE_2D, textureID_));
 }
 
-void Texture2D::ReadPixelBufferFromFile(
-	const std::string& path,
-	int32_t& outWidth,
-	int32_t& outHeight,
-	int32_t& outChannels,
-	std::vector<uint8_t>& outPixelBuffer,
-	bool bIsVerticallyFlip
-)
+void Texture2D::ReadPixelBufferFromFile(const std::string& path, int32_t& outWidth, int32_t& outHeight, int32_t& outChannels, std::vector<uint8_t>& outPixels, bool bIsVerticallyFlip)
 {
 	stbi_set_flip_vertically_on_load(static_cast<int32_t>(bIsVerticallyFlip));
 
@@ -97,9 +90,9 @@ void Texture2D::ReadPixelBufferFromFile(
 	ASSERT(bufferPtr != nullptr, "failed to load %s file", path.c_str());
 
 	std::size_t bufferSize = static_cast<std::size_t>(outWidth * outHeight * outChannels);
-	outPixelBuffer.resize(bufferSize);
+	outPixels.resize(bufferSize);
 
-	std::copy(bufferPtr, bufferPtr + bufferSize, outPixelBuffer.data());
+	std::copy(bufferPtr, bufferPtr + bufferSize, outPixels.data());
 
 	stbi_image_free(bufferPtr);
 	bufferPtr = nullptr;
