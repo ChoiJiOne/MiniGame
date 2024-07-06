@@ -64,10 +64,22 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 
 	GameMaker::OrientedRect2D orientedRect(GameMaker::Vec2f(0.0f, 0.0f), GameMaker::Vec2f(200.0f, 100.0f), GameMaker::ToRadian(30.0f));
 	GameMaker::Circle2D circle(GameMaker::Vec2f(200.0f, 200.0f), 50.0f);
+	GameMaker::Point2D point;
 
 	GameMaker::GameEngine::RunLoop(
 		[&](float deltaSeconds) 
 		{
+			float w = 0.0f;
+			float h = 0.0f;
+			GameMaker::RenderManager::Get().GetScreenSize<float>(w, h);
+			GameMaker::Vec2i mousePos = GameMaker::InputManager::Get().GetCurrMousePos();
+			GameMaker::Vec2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+
+			point.center = GameMaker::Vec2f(
+				-w * 0.5f + mousePosF.x,
+				+h * 0.5f - mousePosF.y
+			);
+
 			orientedRect.rotate += deltaSeconds;
 
 			GameMaker::RenderManager::Get().BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
@@ -75,6 +87,7 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 			renderer2d->Begin();
 			{
 				renderer2d->DrawLines(positions.data(), colors.data(), positions.size());
+				renderer2d->DrawPoint(&point.center, 1, GameMaker::Vec4f(1.0f, 1.0f, 1.0f, 1.0f), 5.0f);
 				renderer2d->DrawCircle(circle.center, circle.radius, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
 				renderer2d->DrawRect(orientedRect.center, orientedRect.size.x, orientedRect.size.y, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f), orientedRect.rotate);
 			}
