@@ -312,7 +312,7 @@ int32_t Shader::GetUniformLocation(const std::string& name)
 	}
 }
 
-uint32_t Shader::CreateShader(const EType& type, const std::string& path, const char* entryPoint)
+uint32_t Shader::CreateShader(const EType& type, const std::string& path)
 {
 	uint32_t shaderID = glCreateShader(static_cast<GLenum>(type));
 
