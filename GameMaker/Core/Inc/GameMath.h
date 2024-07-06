@@ -298,22 +298,22 @@ struct Vec2i
 		return *this;
 	}
 
-	bool operator==(Vec2i&& v) noexcept
+	bool operator==(Vec2i&& v) const noexcept
 	{
 		return (x == v.x) && (y == v.y);
 	}
 
-	bool operator==(const Vec2i& v) noexcept
+	bool operator==(const Vec2i& v) const noexcept
 	{
 		return (x == v.x) && (y == v.y);
 	}
 
-	bool operator!=(Vec2i&& v) noexcept
+	bool operator!=(Vec2i&& v) const noexcept
 	{
 		return (x != v.x) || (y != v.y);
 	}
 
-	bool operator!=(const Vec2i& v) noexcept
+	bool operator!=(const Vec2i& v) const noexcept
 	{
 		return (x != v.x) || (y != v.y);
 	}
@@ -465,22 +465,22 @@ struct Vec2f
 		return *this;
 	}
 
-	bool operator==(Vec2f&& v) noexcept
+	bool operator==(Vec2f&& v) const noexcept
 	{
 		return Abs(x - v.x) <= EPSILON && Abs(y - v.y) <= EPSILON;
 	}
 
-	bool operator==(const Vec2f& v) noexcept
+	bool operator==(const Vec2f& v) const noexcept
 	{
 		return Abs(x - v.x) <= EPSILON && Abs(y - v.y) <= EPSILON;
 	}
 
-	bool operator!=(Vec2f&& v) noexcept
+	bool operator!=(Vec2f&& v) const noexcept
 	{
 		return Abs(x - v.x) > EPSILON || Abs(y - v.y) > EPSILON;
 	}
 
-	bool operator!=(const Vec2f& v) noexcept
+	bool operator!=(const Vec2f& v) const noexcept
 	{
 		return Abs(x - v.x) > EPSILON || Abs(y - v.y) > EPSILON;
 	}
