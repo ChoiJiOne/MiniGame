@@ -37,3 +37,28 @@ void ResourceManager::Shutdown()
 
 	bIsStartup_ = false;
 }
+
+void ResourceManager::Destroy(const IResource* resource)
+{
+	int32_t resourceID = -1;
+	for (uint32_t index = 0; index < cacheSize_; ++index)
+	{
+		IResource* cacheResource = cache_[index].get();
+		if (resource == cacheResource)
+		{
+			resourceID = static_cast<int32_t>(index);
+			break;
+		}
+	}
+
+	if (resourceID != -1 && cache_[resourceID])
+	{
+		if (cache_[resourceID]->IsInitialized())
+		{
+			cache_[resourceID]->Release();
+		}
+
+		cache_[resourceID].reset();
+		usage_[resourceID] = false;
+	}
+}
