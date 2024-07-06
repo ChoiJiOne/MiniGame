@@ -7,3 +7,8 @@ bool Line2D::Intersect(const ICollision2D* target) const
 {
 	return false;
 }
+
+bool Circle2D::Intersect(const ICollision2D* target) const
+{
+	return false;
+}
