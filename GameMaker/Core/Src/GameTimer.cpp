@@ -5,6 +5,50 @@
 
 using namespace GameMaker;
 
+GameTimer::GameTimer(GameTimer&& instance) noexcept
+	: bIsStop_(instance.bIsStop_)
+	, baseTime_(instance.baseTime_)
+	, pausedTime_(instance.pausedTime_)
+	, stopTime_(instance.stopTime_)
+	, prevTime_(instance.prevTime_)
+	, currTime_(instance.currTime_) {}
+
+GameTimer::GameTimer(const GameTimer& instance) noexcept
+	: bIsStop_(instance.bIsStop_)
+	, baseTime_(instance.baseTime_)
+	, pausedTime_(instance.pausedTime_)
+	, stopTime_(instance.stopTime_)
+	, prevTime_(instance.prevTime_)
+	, currTime_(instance.currTime_) {}
+
+GameTimer& GameTimer::operator=(GameTimer&& instance) noexcept
+{
+	if (this == &instance) return *this;
+
+	bIsStop_ = instance.bIsStop_;
+	baseTime_ = instance.baseTime_;
+	pausedTime_ = instance.pausedTime_;
+	stopTime_ = instance.stopTime_;
+	prevTime_ = instance.prevTime_;
+	currTime_ = instance.currTime_;
+
+	return *this;
+}
+
+GameTimer& GameTimer::operator=(const GameTimer& instance) noexcept
+{
+	if (this == &instance) return *this;
+
+	bIsStop_ = instance.bIsStop_;
+	baseTime_ = instance.baseTime_;
+	pausedTime_ = instance.pausedTime_;
+	stopTime_ = instance.stopTime_;
+	prevTime_ = instance.prevTime_;
+	currTime_ = instance.currTime_;
+
+	return *this;
+}
+
 float GameTimer::GetDeltaSeconds() const
 {
 	if (bIsStop_)
