@@ -24,6 +24,38 @@ struct ICollision2D
 	virtual bool Intersect(const ICollision2D* target) const = 0;
 };
 
+struct Point2D : public ICollision2D
+{
+	Point2D() = default;
+	Point2D(const Vec2f& c) : center(c) {}
+	Point2D(Point2D&& instance) noexcept : center(instance.center) {}
+	Point2D(const Point2D& instance) noexcept : center(instance.center) {}
+	virtual ~Point2D() {}
+
+	Point2D& operator=(Point2D&& instance) noexcept
+	{
+		if (this == &instance) return *this;
+
+		center = instance.center;
+
+		return *this;
+	}
+
+	Point2D& operator=(const Point2D& instance) noexcept
+	{
+		if (this == &instance) return *this;
+
+		center = instance.center;
+
+		return *this;
+	}
+
+	virtual EType GetType() const override { return EType::POINT; }
+	virtual bool Intersect(const ICollision2D* target) const override;
+
+	Vec2f center;
+};
+
 struct Line2D : public ICollision2D
 {
 	Line2D() = default;
