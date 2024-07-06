@@ -3,3 +3,7 @@
 
 using namespace GameMaker;
 
+bool Line2D::Intersect(const ICollision2D* target) const
+{
+	return false;
+}
