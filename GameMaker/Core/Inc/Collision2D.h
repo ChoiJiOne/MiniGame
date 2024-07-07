@@ -154,6 +154,9 @@ struct Rect2D : public ICollision2D /** 이 사각형은 AABB(Axis-Aligned Bounding B
 		return *this;
 	}
 
+	Vec2f GetMin() const { return center - size * 0.5f; }
+	Vec2f GetMax() const { return center + size * 0.5f; }
+
 	virtual EType GetType() const override { return EType::RECT; }
 	virtual bool Intersect(const ICollision2D* target) const override;
 
