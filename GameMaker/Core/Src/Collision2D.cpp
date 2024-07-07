@@ -26,6 +26,11 @@ bool Point2D::Intersect(const ICollision2D* target) const
 
 	case ICollision2D::EType::CIRCLE: 
 	{
+		const Circle2D* other = reinterpret_cast<const Circle2D*>(target);
+		float d2 = Vec2f::LengthSq(center - other->center);
+		float r2 = other->radius * other->radius;
+
+		bIsIntersect = (d2 <= r2);
 		break;
 	}
 
