@@ -21,6 +21,29 @@ bool Point2D::Intersect(const ICollision2D* target) const
 
 	case ICollision2D::EType::LINE:
 	{
+		const Line2D* other = reinterpret_cast<const Line2D*>(target);
+
+		if (NearZero(other->start.x - other->end.x)) /** Case 1. 직선이 y축과 평행 */
+		{
+			float minY = Min<float>(other->start.y, other->end.y);
+			float maxY = Max<float>(other->start.y, other->end.y);
+
+			bIsIntersect = NearZero(other->start.x - center.x) && (minY <= center.y && center.y <= maxY);
+		}
+		else if (NearZero(other->start.y - other->end.y)) /** Case 2. 직선이 x축과 평행 */
+		{
+			float minX = Min<float>(other->start.x, other->end.x);
+			float maxX = Max<float>(other->start.x, other->end.x);
+
+			bIsIntersect = NearZero(other->start.y - center.y) && (minX <= center.x && center.x <= maxX);
+		}
+		else /** Case 3. 그 이외의 모든 경우 */
+		{
+			float m = (other->end.y - other->start.y) / (other->end.x - other->start.x);
+			float y = other->start.y + m * (center.x - other->start.x); /** 직선의 방정식에 대입 */
+
+			bIsIntersect = NearZero(y - center.y);
+		}
 		break;
 	}
 
