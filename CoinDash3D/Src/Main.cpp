@@ -66,8 +66,13 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	//GameMaker::Circle2D circle(GameMaker::Vec2f(200.0f, 200.0f), 50.0f);
 
 
-	GameMaker::Point2D point(GameMaker::Vec2f(100.0f, 100.0f));
-	GameMaker::Line2D line(GameMaker::Vec2f(-300.0f, -100.0f), GameMaker::Vec2f(+300.0f, +100.0f));
+	//GameMaker::Point2D point(GameMaker::Vec2f(100.0f, 100.0f));
+	GameMaker::Line2D line0(GameMaker::Vec2f(-100.0f, -200.0f), GameMaker::Vec2f(+100.0f, +200.0f));
+	GameMaker::Line2D line1(GameMaker::Vec2f(-200.0f, -100.0f), GameMaker::Vec2f(-200.0f, +100.0f));
+	GameMaker::Line2D line2(GameMaker::Vec2f(-300.0f, -150.0f), GameMaker::Vec2f(+300.0f, -150.0f));
+	GameMaker::Circle2D circle(GameMaker::Vec2f(200.0f, 200.0f), 50.0f);
+	//GameMaker::Rect2D rect(GameMaker::Vec2f(-200.0f, 200.0f), GameMaker::Vec2f(151.0f, 100.0f));
+	//GameMaker::OrientedRect2D orientedRect(GameMaker::Vec2f(200.0f, -100.0f), GameMaker::Vec2f(200.0f, 100.0f), GameMaker::ToRadian(30.0f));
 
 	GameMaker::Point2D mousePoint;
 
@@ -81,31 +86,44 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 			GameMaker::Vec2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 
 			mousePoint.center = GameMaker::Vec2f(-w * 0.5f + mousePosF.x, +h * 0.5f - mousePosF.y);
+			circle.center = mousePoint.center;
 
 			GameMaker::RenderManager::Get().BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
 
 			renderer2d->Begin();
 			{
 				renderer2d->DrawLines(positions.data(), colors.data(), positions.size());
-				renderer2d->DrawPoint(&mousePoint.center, 1, GameMaker::Vec4f(1.0f, 1.0f, 1.0f, 1.0f), 10.0f);
+				//renderer2d->DrawPoint(&mousePoint.center, 1, GameMaker::Vec4f(1.0f, 1.0f, 1.0f, 1.0f), 10.0f);
 
-				if (mousePoint.Intersect(&point))
+				renderer2d->DrawCircle(circle.center, circle.radius, GameMaker::Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
+
+				if (line0.Intersect(&circle))
 				{
-					renderer2d->DrawPoint(&point.center, 1, GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f), 10.0f);
+					renderer2d->DrawLine(line0.start, line0.end, GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
 				}
 				else
 				{
-					renderer2d->DrawPoint(&point.center, 1, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f), 10.0f);
+					renderer2d->DrawLine(line0.start, line0.end, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
 				}
 
-				if (mousePoint.Intersect(&line))
+				if (line1.Intersect(&circle))
 				{
-					renderer2d->DrawLine(line.start, line.end, GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
+					renderer2d->DrawLine(line1.start, line1.end, GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
 				}
 				else
 				{
-					renderer2d->DrawLine(line.start, line.end, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+					renderer2d->DrawLine(line1.start, line1.end, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
 				}
+
+				if (line2.Intersect(&circle))
+				{
+					renderer2d->DrawLine(line2.start, line2.end, GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
+				}
+				else
+				{
+					renderer2d->DrawLine(line2.start, line2.end, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+				}
+
 			}
 			renderer2d->End();
 
