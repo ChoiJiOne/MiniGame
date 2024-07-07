@@ -46,6 +46,17 @@ bool Point2D::Intersect(const ICollision2D* target) const
 
 	case ICollision2D::EType::ORIENTED_RECT:
 	{
+		const OrientedRect2D* other = reinterpret_cast<const OrientedRect2D*>(target);
+		Vec2f targetPos = center - other->center;
+		float rotate = -other->rotate;
+
+		Mat2x2 roateMat(Cos(rotate), -Sin(rotate), Sin(rotate), Cos(rotate));
+		targetPos = roateMat * targetPos;
+
+		Vec2f minPos = -other->size * 0.5f;
+		Vec2f maxPos = other->size * 0.5f;
+
+		bIsIntersect = (minPos.x <= targetPos.x && targetPos.x <= maxPos.x) && (minPos.y <= targetPos.y && targetPos.y <= maxPos.y);
 		break;
 	}
 	break;
