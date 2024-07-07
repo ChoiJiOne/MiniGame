@@ -36,6 +36,11 @@ bool Point2D::Intersect(const ICollision2D* target) const
 
 	case ICollision2D::EType::RECT:
 	{
+		const Rect2D* other = reinterpret_cast<const Rect2D*>(target);
+		Vec2f minPos = other->GetMin();
+		Vec2f maxPos = other->GetMax();
+
+		bIsIntersect = (minPos.x <= center.x && center.x <= maxPos.x) && (minPos.y <= center.y && center.y <= maxPos.y);
 		break;
 	}
 
