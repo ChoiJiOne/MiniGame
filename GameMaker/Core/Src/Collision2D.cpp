@@ -92,20 +92,175 @@ bool Point2D::Intersect(const ICollision2D* target) const
 
 bool Line2D::Intersect(const ICollision2D* target) const
 {
-	return false;
+	CHECK(target != nullptr);
+
+	EType type = target->GetType();
+	bool bIsIntersect = false;
+
+	switch (type)
+	{
+	case ICollision2D::EType::POINT:
+	{
+		const Point2D* other = reinterpret_cast<const Point2D*>(target);
+		bIsIntersect = other->Intersect(this);
+		break;
+	}
+
+	case ICollision2D::EType::LINE:
+	{
+		break;
+	}
+
+	case ICollision2D::EType::CIRCLE:
+	{
+		const Circle2D* other = reinterpret_cast<const Circle2D*>(target);
+		Vec2f d = end - start;
+
+		float t = Vec2f::Dot(other->center - start, d) / Vec2f::Dot(d, d);
+		if (0.0f <= t && t <= 1.0f)
+		{
+			Vec2f pos = start + d * t;
+			pos = pos - other->center;
+
+			float r2 = other->radius * other->radius;
+
+			bIsIntersect = Vec2f::LengthSq(pos) <= r2;
+		}
+		break;
+	}
+
+	case ICollision2D::EType::RECT:
+	{
+		break;
+	}
+
+	case ICollision2D::EType::ORIENTED_RECT:
+	{
+		break;
+	}
+
+	default: break;// ICollision2D::EType::NONE:
+	}
+
+	return bIsIntersect;
 }
 
 bool Circle2D::Intersect(const ICollision2D* target) const
 {
-	return false;
+	CHECK(target != nullptr);
+
+	EType type = target->GetType();
+	bool bIsIntersect = false;
+
+	switch (type)
+	{
+	case ICollision2D::EType::POINT:
+	{
+		break;
+	}
+
+	case ICollision2D::EType::LINE:
+	{
+		break;
+	}
+
+	case ICollision2D::EType::CIRCLE:
+	{
+		break;
+	}
+
+	case ICollision2D::EType::RECT:
+	{
+		break;
+	}
+
+	case ICollision2D::EType::ORIENTED_RECT:
+	{
+		break;
+	}
+
+	default: break;// ICollision2D::EType::NONE:
+	}
+
+	return bIsIntersect;
 }
 
 bool Rect2D::Intersect(const ICollision2D* target) const
 {
-	return false;
+	CHECK(target != nullptr);
+
+	EType type = target->GetType();
+	bool bIsIntersect = false;
+
+	switch (type)
+	{
+	case ICollision2D::EType::POINT:
+	{
+		break;
+	}
+
+	case ICollision2D::EType::LINE:
+	{
+		break;
+	}
+
+	case ICollision2D::EType::CIRCLE:
+	{
+		break;
+	}
+
+	case ICollision2D::EType::RECT:
+	{
+		break;
+	}
+
+	case ICollision2D::EType::ORIENTED_RECT:
+	{
+		break;
+	}
+
+	default: break;// ICollision2D::EType::NONE:
+	}
+
+	return bIsIntersect;
 }
 
 bool OrientedRect2D::Intersect(const ICollision2D* target) const
 {
-	return false;
+	CHECK(target != nullptr);
+
+	EType type = target->GetType();
+	bool bIsIntersect = false;
+
+	switch (type)
+	{
+	case ICollision2D::EType::POINT:
+	{
+		break;
+	}
+
+	case ICollision2D::EType::LINE:
+	{
+		break;
+	}
+
+	case ICollision2D::EType::CIRCLE:
+	{
+		break;
+	}
+
+	case ICollision2D::EType::RECT:
+	{
+		break;
+	}
+
+	case ICollision2D::EType::ORIENTED_RECT:
+	{
+		break;
+	}
+
+	default: break;// ICollision2D::EType::NONE:
+	}
+
+	return bIsIntersect;
 }
