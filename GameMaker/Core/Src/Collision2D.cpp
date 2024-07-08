@@ -1,3 +1,5 @@
+#include <array>
+
 #include "Assertion.h"
 #include "Collision2D.h"
 
@@ -132,6 +134,36 @@ bool IsCollision(const Line2D* line, const Circle2D* circle)
 	return Vec2f::LengthSq(pos) <= r2;
 }
 
+/** 선과 AABB 끼리의 충돌 처리 */
+bool IsCollision(const Line2D* line, const Rect2D* rect)
+{
+	Vec2f minPos = rect->GetMin();
+	Vec2f maxPos = rect->GetMax();
+	std::array<Line2D, 4> targetLines =
+	{
+		Line2D(Vec2f(minPos.x, minPos.y), Vec2f(maxPos.x, minPos.y)),
+		Line2D(Vec2f(maxPos.x, minPos.y), Vec2f(maxPos.x, maxPos.y)),
+		Line2D(Vec2f(maxPos.x, maxPos.y), Vec2f(minPos.x, maxPos.y)),
+		Line2D(Vec2f(minPos.x, maxPos.y), Vec2f(minPos.x, minPos.y)),
+	};
+
+	for (const auto& targetLine : targetLines)
+	{
+		if (IsCollision(line, &targetLine))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/** 선과 OBB 끼리의 충돌 처리 */
+bool IsCollision(const Line2D* line, const OrientedRect2D* orientedRect)
+{
+	return false;
+}
+
 bool Point2D::Intersect(const ICollision2D* target) const
 {
 	CHECK(target != nullptr);
@@ -215,11 +247,15 @@ bool Line2D::Intersect(const ICollision2D* target) const
 
 	case ICollision2D::EType::RECT:
 	{
+		const Rect2D* other = reinterpret_cast<const Rect2D*>(target);
+		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
 	case ICollision2D::EType::ORIENTED_RECT:
 	{
+		const OrientedRect2D* other = reinterpret_cast<const OrientedRect2D*>(target);
+		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
