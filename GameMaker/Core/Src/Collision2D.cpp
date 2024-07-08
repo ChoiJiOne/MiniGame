@@ -1,4 +1,6 @@
 #include <array>
+#include <algorithm>
+#include <limits>
 
 #include "Assertion.h"
 #include "Collision2D.h"
@@ -223,6 +225,40 @@ bool IsCollision(const Rect2D* rect0, const Rect2D* rect1)
 	return bIsOverlapX && bIsOverlapY;
 }
 
+/** AABB客 OBB 尝府狼 面倒 贸府 */
+bool IsCollision(const Rect2D* rect, const OrientedRect2D* orientedRect)
+{
+	float rotate = orientedRect->rotate;
+	Mat2x2 roateMat(Cos(rotate), -Sin(rotate), Sin(rotate), Cos(rotate));
+
+	Vec2f axis0(orientedRect->size.x * 0.5f, 0.0f);
+	Vec2f axis1(0.0f, orientedRect->size.y * 0.5f);
+
+	axis0 = roateMat * Vec2f::Normalize(axis0);
+	axis1 = roateMat * Vec2f::Normalize(axis1);
+
+	std::array<Vec2f, 4> separateAxis =
+	{
+		Vec2f(1.0f, 0.0f),
+		Vec2f(0.0f, 1.0f),
+		roateMat * Vec2f::Normalize(axis0),
+		roateMat * Vec2f::Normalize(axis1),
+	};
+
+	//for (const auto& axis : separateAxis)
+	//{
+
+	//}
+
+	return false;
+}
+
+/** OBB客 OBB 尝府狼 面倒 贸府 */
+bool IsCollision(const OrientedRect2D* orientedRect0, const OrientedRect2D* orientedRect1)
+{
+	return false;
+}
+
 bool Point2D::Intersect(const ICollision2D* target) const
 {
 	CHECK(target != nullptr);
@@ -413,6 +449,8 @@ bool Rect2D::Intersect(const ICollision2D* target) const
 
 	case ICollision2D::EType::ORIENTED_RECT:
 	{
+		const OrientedRect2D* other = reinterpret_cast<const OrientedRect2D*>(target);
+		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
@@ -433,26 +471,36 @@ bool OrientedRect2D::Intersect(const ICollision2D* target) const
 	{
 	case ICollision2D::EType::POINT:
 	{
+		const Point2D* other = reinterpret_cast<const Point2D*>(target);
+		bIsIntersect = IsCollision(other, this);
 		break;
 	}
 
 	case ICollision2D::EType::LINE:
 	{
+		const Line2D* other = reinterpret_cast<const Line2D*>(target);
+		bIsIntersect = IsCollision(other, this);
 		break;
 	}
 
 	case ICollision2D::EType::CIRCLE:
 	{
+		const Circle2D* other = reinterpret_cast<const Circle2D*>(target);
+		bIsIntersect = IsCollision(other, this);
 		break;
 	}
 
 	case ICollision2D::EType::RECT:
 	{
+		const Rect2D* other = reinterpret_cast<const Rect2D*>(target);
+		bIsIntersect = IsCollision(other, this);
 		break;
 	}
 
 	case ICollision2D::EType::ORIENTED_RECT:
 	{
+		const OrientedRect2D* other = reinterpret_cast<const OrientedRect2D*>(target);
+		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
