@@ -3,6 +3,135 @@
 
 using namespace GameMaker;
 
+/** 점과 점 끼리의 충돌 처리 */
+bool IsCollision(const Point2D* point0, const Point2D* point1)
+{
+	return point0->center == point1->center;
+}
+
+/** 점과 선 끼리의 충돌 처리 */
+bool IsCollision(const Point2D* point, const Line2D* line)
+{
+	if (NearZero(line->start.x - line->end.x)) /** Case 1. 직선이 y축과 평행 */
+	{
+		float minY = Min<float>(line->start.y, line->end.y);
+		float maxY = Max<float>(line->start.y, line->end.y);
+
+		return NearZero(line->start.x - point->center.x) && (minY <= point->center.y && point->center.y <= maxY);
+	}
+	else if (NearZero(line->start.y - line->end.y)) /** Case 2. 직선이 x축과 평행 */
+	{
+		float minX = Min<float>(line->start.x, line->end.x);
+		float maxX = Max<float>(line->start.x, line->end.x);
+
+		return NearZero(line->start.y - point->center.y) && (minX <= point->center.x && point->center.x <= maxX);
+	}
+	else /** Case 3. 그 이외의 모든 경우 */
+	{
+		float m = (line->end.y - line->start.y) / (line->end.x - line->start.x);
+		float y = line->start.y + m * (point->center.x - line->start.x); /** 직선의 방정식에 대입 */
+
+		return NearZero(y - point->center.y);
+	}
+}
+
+/** 점과 원 끼리의 충돌 처리 */
+bool IsCollision(const Point2D* point, const Circle2D* circle)
+{
+	float d2 = Vec2f::LengthSq(point->center - circle->center);
+	float r2 = circle->radius * circle->radius;
+
+	return (d2 <= r2);
+}
+
+/** 점과 AABB 끼리의 충돌 처리 */
+bool IsCollision(const Point2D* point, const Rect2D* rect)
+{
+	Vec2f minPos = rect->GetMin();
+	Vec2f maxPos = rect->GetMax();
+
+	return (minPos.x <= point->center.x && point->center.x <= maxPos.x) && (minPos.y <= point->center.y && point->center.y <= maxPos.y);
+}
+
+/** 점과 OBB 끼리의 충돌 처리 */
+bool IsCollision(const Point2D* point, const OrientedRect2D* orientedRect)
+{
+	Vec2f targetPos = point->center - orientedRect->center;
+	float rotate = -orientedRect->rotate;
+
+	Mat2x2 roateMat(Cos(rotate), -Sin(rotate), Sin(rotate), Cos(rotate));
+	targetPos = roateMat * targetPos;
+
+	Vec2f minPos = -orientedRect->size * 0.5f;
+	Vec2f maxPos = orientedRect->size * 0.5f;
+
+	return (minPos.x <= targetPos.x && targetPos.x <= maxPos.x) && (minPos.y <= targetPos.y && targetPos.y <= maxPos.y);
+}
+
+/** 선과 선 끼리의 충돌 처리 */
+bool IsCollision(const Line2D* line0, const Line2D* line1)
+{
+	Vec2f p1 = line0->start;
+	Vec2f p2 = line0->end;
+	Vec2f p3 = line1->start;
+	Vec2f p4 = line1->end;
+
+	Vec2f p12 = p2 - p1;
+	Vec2f p34 = p4 - p3;
+	Vec2f p31 = p1 - p3;
+
+	float cross = Vec2f::Cross(p12, p34);
+	if (NearZero(cross)) /** 두 직선이 서로 평행한 경우. */
+	{
+		static auto checkBound = [](const Vec2f& minPos, const Vec2f& maxPos, const Vec2f& pos)->bool
+			{
+				float minX = Min<float>(minPos.x, maxPos.x);
+				float minY = Min<float>(minPos.y, maxPos.y);
+				float maxX = Max<float>(minPos.x, maxPos.x);
+				float maxY = Max<float>(minPos.y, maxPos.y);
+
+				return (minX <= pos.x && pos.x <= maxX) && (minY <= pos.y && pos.y <= maxY);
+			};
+
+		return (checkBound(p1, p2, p3) || checkBound(p1, p2, p4) || checkBound(p3, p4, p1) || checkBound(p3, p4, p2));
+	}
+	else /** 그렇지 않은 모든 경우 */
+	{
+		float uA = Vec2f::Cross(p34, p31) / cross;
+		float uB = Vec2f::Cross(p12, p31) / cross;
+		return (uA >= 0.0f && uA <= 1.0f && uB >= 0.0f && uB <= 1.0f);
+	}
+}
+
+/** 선과 원 사이의 충돌 처리 */
+bool IsCollision(const Line2D* line, const Circle2D* circle)
+{
+	static auto checkCircleBound = [](const Circle2D* circle, const Vec2f& pos)->bool
+		{
+			float dist2 = Vec2f::LengthSq(pos - circle->center);
+			float r2 = circle->radius * circle->radius;
+			return dist2 <= r2;
+		};
+
+	if (checkCircleBound(circle, line->start) || checkCircleBound(circle, line->end))
+	{
+		return true;
+	}
+
+	Vec2f d = line->end - line->start;
+	float t = Vec2f::Dot(circle->center - line->start, d) / Vec2f::Dot(d, d);
+	if (t < 0.0f || t > 1.0f)
+	{
+		return false;
+	}
+
+	Vec2f pos = line->start + d * t;
+	pos = pos - circle->center;
+	float r2 = circle->radius * circle->radius;
+
+	return Vec2f::LengthSq(pos) <= r2;
+}
+
 bool Point2D::Intersect(const ICollision2D* target) const
 {
 	CHECK(target != nullptr);
@@ -15,71 +144,35 @@ bool Point2D::Intersect(const ICollision2D* target) const
 	case ICollision2D::EType::POINT:
 	{
 		const Point2D* other = reinterpret_cast<const Point2D*>(target);
-		bIsIntersect = (center == other->center);
+		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
 	case ICollision2D::EType::LINE:
 	{
 		const Line2D* other = reinterpret_cast<const Line2D*>(target);
-
-		if (NearZero(other->start.x - other->end.x)) /** Case 1. 직선이 y축과 평행 */
-		{
-			float minY = Min<float>(other->start.y, other->end.y);
-			float maxY = Max<float>(other->start.y, other->end.y);
-
-			bIsIntersect = NearZero(other->start.x - center.x) && (minY <= center.y && center.y <= maxY);
-		}
-		else if (NearZero(other->start.y - other->end.y)) /** Case 2. 직선이 x축과 평행 */
-		{
-			float minX = Min<float>(other->start.x, other->end.x);
-			float maxX = Max<float>(other->start.x, other->end.x);
-
-			bIsIntersect = NearZero(other->start.y - center.y) && (minX <= center.x && center.x <= maxX);
-		}
-		else /** Case 3. 그 이외의 모든 경우 */
-		{
-			float m = (other->end.y - other->start.y) / (other->end.x - other->start.x);
-			float y = other->start.y + m * (center.x - other->start.x); /** 직선의 방정식에 대입 */
-
-			bIsIntersect = NearZero(y - center.y);
-		}
+		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
 	case ICollision2D::EType::CIRCLE: 
 	{
 		const Circle2D* other = reinterpret_cast<const Circle2D*>(target);
-		float d2 = Vec2f::LengthSq(center - other->center);
-		float r2 = other->radius * other->radius;
-
-		bIsIntersect = (d2 <= r2);
+		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
 	case ICollision2D::EType::RECT:
 	{
 		const Rect2D* other = reinterpret_cast<const Rect2D*>(target);
-		Vec2f minPos = other->GetMin();
-		Vec2f maxPos = other->GetMax();
-
-		bIsIntersect = (minPos.x <= center.x && center.x <= maxPos.x) && (minPos.y <= center.y && center.y <= maxPos.y);
+		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
 	case ICollision2D::EType::ORIENTED_RECT:
 	{
 		const OrientedRect2D* other = reinterpret_cast<const OrientedRect2D*>(target);
-		Vec2f targetPos = center - other->center;
-		float rotate = -other->rotate;
-
-		Mat2x2 roateMat(Cos(rotate), -Sin(rotate), Sin(rotate), Cos(rotate));
-		targetPos = roateMat * targetPos;
-
-		Vec2f minPos = -other->size * 0.5f;
-		Vec2f maxPos = other->size * 0.5f;
-
-		bIsIntersect = (minPos.x <= targetPos.x && targetPos.x <= maxPos.x) && (minPos.y <= targetPos.y && targetPos.y <= maxPos.y);
+		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 	break;
@@ -102,50 +195,21 @@ bool Line2D::Intersect(const ICollision2D* target) const
 	case ICollision2D::EType::POINT:
 	{
 		const Point2D* other = reinterpret_cast<const Point2D*>(target);
-		bIsIntersect = other->Intersect(this);
+		bIsIntersect = IsCollision(other, this);
 		break;
 	}
 
 	case ICollision2D::EType::LINE:
 	{
 		const Line2D* other = reinterpret_cast<const Line2D*>(target);
-
-		Vec2f p1 = start;
-		Vec2f p2 = end;
-		Vec2f p3 = other->start;
-		Vec2f p4 = other->end;
-
-		Vec2f p12 = p2 - p1;
-		Vec2f p34 = p4 - p3;
-		Vec2f p31 = p1 - p3;
-
-		float cross = Vec2f::Cross(p12, p34);
-		if (NearZero(cross))
-		{
-			static auto checkBound = [](const Vec2f& minPos, const Vec2f& maxPos, const Vec2f& pos) -> bool
-				{
-					float minX = Min<float>(minPos.x, maxPos.x);
-					float minY = Min<float>(minPos.y, maxPos.y);
-					float maxX = Max<float>(minPos.x, maxPos.x);
-					float maxY = Max<float>(minPos.y, maxPos.y);
-
-					return (minX <= pos.x && pos.x <= maxX) && (minY <= pos.y && pos.y <= maxY);
-				};
-
-			bIsIntersect = (checkBound(p1, p2, p3) || checkBound(p1, p2, p4) || checkBound(p3, p4, p1) || checkBound(p3, p4, p2));
-
-		}
-		else
-		{
-			float uA = Vec2f::Cross(p34, p31) / cross;
-			float uB = Vec2f::Cross(p12, p31) / cross;
-			bIsIntersect = (uA >= 0.0f && uA <= 1.0f && uB >= 0.0f && uB <= 1.0f);
-		}
+		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
 	case ICollision2D::EType::CIRCLE:
 	{
+		const Circle2D* other = reinterpret_cast<const Circle2D*>(target);
+		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
