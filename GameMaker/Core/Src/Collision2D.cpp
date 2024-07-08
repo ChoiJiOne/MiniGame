@@ -209,6 +209,20 @@ bool IsCollision(const Circle2D* circle, const OrientedRect2D* orientedRect)
 	return IsCollision(&targetCircle, &targetRect);
 }
 
+/** AABB客 AABB 尝府狼 面倒 贸府 */
+bool IsCollision(const Rect2D* rect0, const Rect2D* rect1)
+{
+	Vec2f minPos0 = rect0->GetMin();
+	Vec2f maxPos0 = rect0->GetMax();
+	Vec2f minPos1 = rect1->GetMin();
+	Vec2f maxPos1 = rect1->GetMax();
+
+	bool bIsOverlapX = ((minPos1.x <= maxPos0.x) && (minPos0.x <= maxPos1.x));
+	bool bIsOverlapY = ((minPos1.y <= maxPos0.y) && (minPos0.y <= maxPos1.y));
+
+	return bIsOverlapX && bIsOverlapY;
+}
+
 bool Point2D::Intersect(const ICollision2D* target) const
 {
 	CHECK(target != nullptr);
@@ -371,21 +385,29 @@ bool Rect2D::Intersect(const ICollision2D* target) const
 	{
 	case ICollision2D::EType::POINT:
 	{
+		const Point2D* other = reinterpret_cast<const Point2D*>(target);
+		bIsIntersect = IsCollision(other, this);
 		break;
 	}
 
 	case ICollision2D::EType::LINE:
 	{
+		const Line2D* other = reinterpret_cast<const Line2D*>(target);
+		bIsIntersect = IsCollision(other, this);
 		break;
 	}
 
 	case ICollision2D::EType::CIRCLE:
 	{
+		const Circle2D* other = reinterpret_cast<const Circle2D*>(target);
+		bIsIntersect = IsCollision(other, this);
 		break;
 	}
 
 	case ICollision2D::EType::RECT:
 	{
+		const Rect2D* other = reinterpret_cast<const Rect2D*>(target);
+		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
