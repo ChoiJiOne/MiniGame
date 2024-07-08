@@ -195,6 +195,20 @@ bool IsCollision(const Circle2D* circle, const Rect2D* rect)
 	return dist <= r2;
 }
 
+/** 원과 OBB 끼리의 충돌 처리 */
+bool IsCollision(const Circle2D* circle, const OrientedRect2D* orientedRect)
+{
+	float rotate = -orientedRect->rotate;
+	Mat2x2 roateMat(Cos(rotate), -Sin(rotate), Sin(rotate), Cos(rotate));
+
+	Vec2f center = roateMat * (circle->center - orientedRect->center);
+
+	Circle2D targetCircle(center, circle->radius);
+	Rect2D targetRect(Vec2f(0.0f, 0.0f), orientedRect->size);
+	
+	return IsCollision(&targetCircle, &targetRect);
+}
+
 bool Point2D::Intersect(const ICollision2D* target) const
 {
 	CHECK(target != nullptr);
@@ -335,6 +349,8 @@ bool Circle2D::Intersect(const ICollision2D* target) const
 
 	case ICollision2D::EType::ORIENTED_RECT:
 	{
+		const OrientedRect2D* other = reinterpret_cast<const OrientedRect2D*>(target);
+		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
