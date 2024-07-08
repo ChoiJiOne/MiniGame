@@ -108,24 +108,44 @@ bool Line2D::Intersect(const ICollision2D* target) const
 
 	case ICollision2D::EType::LINE:
 	{
+		const Line2D* other = reinterpret_cast<const Line2D*>(target);
+
+		Vec2f p1 = start;
+		Vec2f p2 = end;
+		Vec2f p3 = other->start;
+		Vec2f p4 = other->end;
+
+		Vec2f p12 = p2 - p1;
+		Vec2f p34 = p4 - p3;
+		Vec2f p31 = p1 - p3;
+
+		float cross = Vec2f::Cross(p12, p34);
+		if (NearZero(cross))
+		{
+			static auto checkBound = [](const Vec2f& minPos, const Vec2f& maxPos, const Vec2f& pos) -> bool
+				{
+					float minX = Min<float>(minPos.x, maxPos.x);
+					float minY = Min<float>(minPos.y, maxPos.y);
+					float maxX = Max<float>(minPos.x, maxPos.x);
+					float maxY = Max<float>(minPos.y, maxPos.y);
+
+					return (minX <= pos.x && pos.x <= maxX) && (minY <= pos.y && pos.y <= maxY);
+				};
+
+			bIsIntersect = (checkBound(p1, p2, p3) || checkBound(p1, p2, p4) || checkBound(p3, p4, p1) || checkBound(p3, p4, p2));
+
+		}
+		else
+		{
+			float uA = Vec2f::Cross(p34, p31) / cross;
+			float uB = Vec2f::Cross(p12, p31) / cross;
+			bIsIntersect = (uA >= 0.0f && uA <= 1.0f && uB >= 0.0f && uB <= 1.0f);
+		}
 		break;
 	}
 
 	case ICollision2D::EType::CIRCLE:
 	{
-		const Circle2D* other = reinterpret_cast<const Circle2D*>(target);
-		Vec2f d = end - start;
-
-		float t = Vec2f::Dot(other->center - start, d) / Vec2f::Dot(d, d);
-		if (0.0f <= t && t <= 1.0f)
-		{
-			Vec2f pos = start + d * t;
-			pos = pos - other->center;
-
-			float r2 = other->radius * other->radius;
-
-			bIsIntersect = Vec2f::LengthSq(pos) <= r2;
-		}
 		break;
 	}
 
