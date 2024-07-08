@@ -62,19 +62,19 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 		}
 	}
 
-	//GameMaker::OrientedRect2D orientedRect(GameMaker::Vec2f(0.0f, 0.0f), GameMaker::Vec2f(200.0f, 100.0f), GameMaker::ToRadian(30.0f));
-	//GameMaker::Circle2D circle(GameMaker::Vec2f(200.0f, 200.0f), 50.0f);
-
-
-	//GameMaker::Point2D point(GameMaker::Vec2f(100.0f, 100.0f));
-	GameMaker::Line2D line0(GameMaker::Vec2f(-100.0f, -200.0f), GameMaker::Vec2f(+100.0f, +200.0f));
-	GameMaker::Line2D line1(GameMaker::Vec2f(-200.0f, -100.0f), GameMaker::Vec2f(-200.0f, +100.0f));
-	GameMaker::Line2D line2(GameMaker::Vec2f(-300.0f, -150.0f), GameMaker::Vec2f(+300.0f, -150.0f));
-	GameMaker::Circle2D circle(GameMaker::Vec2f(200.0f, 200.0f), 50.0f);
-	//GameMaker::Rect2D rect(GameMaker::Vec2f(-200.0f, 200.0f), GameMaker::Vec2f(151.0f, 100.0f));
-	//GameMaker::OrientedRect2D orientedRect(GameMaker::Vec2f(200.0f, -100.0f), GameMaker::Vec2f(200.0f, 100.0f), GameMaker::ToRadian(30.0f));
 
 	GameMaker::Point2D mousePoint;
+
+	GameMaker::Line2D line(GameMaker::Vec2f(-100.0f, -200.0f), GameMaker::Vec2f(+100.0f, +200.0f));
+	//GameMaker::Circle2D circle(GameMaker::Vec2f(200.0f, 200.0f), 50.0f);
+	GameMaker::Rect2D rect(GameMaker::Vec2f(200.0f, -10.0f), GameMaker::Vec2f(200.0f, 100.0f));
+	GameMaker::OrientedRect2D orientedRect(GameMaker::Vec2f(-200.0f, -100.0f), GameMaker::Vec2f(200.0f, 100.0f), GameMaker::ToRadian(30.0f));
+
+	GameMaker::Circle2D circle0(GameMaker::Vec2f(0.0f, 0.0f), 50.0f);
+	GameMaker::Circle2D circle1(GameMaker::Vec2f(200.0f, 200.0f), 500.0f);
+
+	GameMaker::Rect2D rect0(GameMaker::Vec2f(0.0f, 0.0f), GameMaker::Vec2f(200.0f, 100.0f));
+	GameMaker::Rect2D rect1(GameMaker::Vec2f(200.0f, -10.0f), GameMaker::Vec2f(100.0f, 200.0f));
 
 	GameMaker::GameEngine::RunLoop(
 		[&](float deltaSeconds) 
@@ -86,44 +86,82 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 			GameMaker::Vec2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 
 			mousePoint.center = GameMaker::Vec2f(-w * 0.5f + mousePosF.x, +h * 0.5f - mousePosF.y);
-			circle.center = mousePoint.center;
+			//line.end = mousePoint.center;
+			rect0.center = mousePoint.center;
 
 			GameMaker::RenderManager::Get().BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
 
 			renderer2d->Begin();
 			{
 				renderer2d->DrawLines(positions.data(), colors.data(), positions.size());
-				//renderer2d->DrawPoint(&mousePoint.center, 1, GameMaker::Vec4f(1.0f, 1.0f, 1.0f, 1.0f), 10.0f);
 
-				renderer2d->DrawCircle(circle.center, circle.radius, GameMaker::Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
-
-				if (line0.Intersect(&circle))
+				if (rect0.Intersect(&rect1))
 				{
-					renderer2d->DrawLine(line0.start, line0.end, GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
+					renderer2d->DrawRect(rect0.center, rect0.size.x, rect0.size.y, GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
+					renderer2d->DrawRect(rect1.center, rect1.size.x, rect1.size.y, GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
 				}
 				else
 				{
-					renderer2d->DrawLine(line0.start, line0.end, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+					renderer2d->DrawRect(rect0.center, rect0.size.x, rect0.size.y, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+					renderer2d->DrawRect(rect1.center, rect1.size.x, rect1.size.y, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
 				}
 
-				if (line1.Intersect(&circle))
-				{
-					renderer2d->DrawLine(line1.start, line1.end, GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
-				}
-				else
-				{
-					renderer2d->DrawLine(line1.start, line1.end, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
-				}
+				//if (circle0.Intersect(&circle1))
+				//{
+				//	renderer2d->DrawCircle(circle0.center, circle0.radius, GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
+				//	renderer2d->DrawCircle(circle1.center, circle1.radius, GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
+				//}
+				//else
+				//{
+				//	renderer2d->DrawCircle(circle0.center, circle0.radius, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+				//	renderer2d->DrawCircle(circle1.center, circle1.radius, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+				//}
 
-				if (line2.Intersect(&circle))
-				{
-					renderer2d->DrawLine(line2.start, line2.end, GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
-				}
-				else
-				{
-					renderer2d->DrawLine(line2.start, line2.end, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
-				}
+				//if (circle0.Intersect(&rect))
+				//{
 
+				//	renderer2d->DrawRect(rect.center, rect.size.x, rect.size.y, GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
+				//	renderer2d->DrawCircle(circle0.center, circle0.radius, GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
+				//}
+				//else
+				//{
+				//	renderer2d->DrawRect(rect.center, rect.size.x, rect.size.y, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+				//	renderer2d->DrawCircle(circle0.center, circle0.radius, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+				//}
+
+				//orientedRect.rotate += deltaSeconds;
+				//if (circle0.Intersect(&orientedRect))
+				//{
+				//	renderer2d->DrawRect(orientedRect.center, orientedRect.size.x, orientedRect.size.y, GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f), orientedRect.rotate);
+				//	renderer2d->DrawCircle(circle0.center, circle0.radius, GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
+				//}
+				//else
+				//{
+				//	renderer2d->DrawRect(orientedRect.center, orientedRect.size.x, orientedRect.size.y, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f), orientedRect.rotate);
+				//	renderer2d->DrawCircle(circle0.center, circle0.radius, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+				//}
+
+				//if (line.Intersect(&rect))
+				//{
+				//	renderer2d->DrawRect(rect.center, rect.size.x, rect.size.y, GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
+				//	renderer2d->DrawLine(line.start, line.end, GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
+				//}
+				//else
+				//{
+				//	renderer2d->DrawRect(rect.center, rect.size.x, rect.size.y, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+				//	renderer2d->DrawLine(line.start, line.end, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+				//}
+
+				//if (line.Intersect(&orientedRect))
+				//{
+				//	renderer2d->DrawRect(orientedRect.center, orientedRect.size.x, orientedRect.size.y, GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f), orientedRect.rotate);
+				//	renderer2d->DrawLine(line.start, line.end, GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
+				//}
+				//else
+				//{
+				//	renderer2d->DrawRect(orientedRect.center, orientedRect.size.x, orientedRect.size.y, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f), orientedRect.rotate);
+				//	renderer2d->DrawLine(line.start, line.end, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+				//}
 			}
 			renderer2d->End();
 
