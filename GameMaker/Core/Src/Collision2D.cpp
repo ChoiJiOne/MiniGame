@@ -161,7 +161,16 @@ bool IsCollision(const Line2D* line, const Rect2D* rect)
 /** 선과 OBB 끼리의 충돌 처리 */
 bool IsCollision(const Line2D* line, const OrientedRect2D* orientedRect)
 {
-	return false;
+	float rotate = -orientedRect->rotate;
+	Mat2x2 roateMat(Cos(rotate), -Sin(rotate), Sin(rotate), Cos(rotate));
+
+	Vec2f start = roateMat * (line->start - orientedRect->center);
+	Vec2f end = roateMat * (line->end - orientedRect->center);
+
+	Line2D targetLine(start, end);
+	Rect2D targetRect(Vec2f(0.0f, 0.0f), orientedRect->size);
+
+	return IsCollision(&targetLine, &targetRect);
 }
 
 bool Point2D::Intersect(const ICollision2D* target) const
