@@ -173,6 +173,15 @@ bool IsCollision(const Line2D* line, const OrientedRect2D* orientedRect)
 	return IsCollision(&targetLine, &targetRect);
 }
 
+/** 원과 원 끼리의 충돌 처리 */
+bool IsCollision(const Circle2D* circle0, const Circle2D* circle1)
+{
+	float dist = Vec2f::LengthSq(circle1->center - circle0->center);
+	float radiusSum = circle0->radius + circle1->radius;
+
+	return dist <= radiusSum * radiusSum;
+}
+
 bool Point2D::Intersect(const ICollision2D* target) const
 {
 	CHECK(target != nullptr);
@@ -285,16 +294,22 @@ bool Circle2D::Intersect(const ICollision2D* target) const
 	{
 	case ICollision2D::EType::POINT:
 	{
+		const Point2D* other = reinterpret_cast<const Point2D*>(target);
+		bIsIntersect = IsCollision(other, this);
 		break;
 	}
 
 	case ICollision2D::EType::LINE:
 	{
+		const Line2D* other = reinterpret_cast<const Line2D*>(target);
+		bIsIntersect = IsCollision(other, this);
 		break;
 	}
 
 	case ICollision2D::EType::CIRCLE:
 	{
+		const Circle2D* other = reinterpret_cast<const Circle2D*>(target);
+		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
