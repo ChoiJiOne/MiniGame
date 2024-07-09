@@ -265,10 +265,48 @@ bool IsCollision(const Rect2D* rect, const OrientedRect2D* orientedRect)
 	return true;
 }
 
+/** 축을 기준으로 OBB와 OBB가 오버랩(겹치는지) 확인 */
+bool IsOverlapOnAxis(const OrientedRect2D* orientedRect0, const OrientedRect2D* orientedRect1, const Vec2f& axis)
+{
+	float orientedRectMin0 = 0.0f;
+	float orientedRectMax0 = 0.0f;
+	orientedRect0->GetInterval(axis, orientedRectMin0, orientedRectMax0);
+
+	float orientedRectMin1 = 0.0f;
+	float orientedRectMax1 = 0.0f;
+	orientedRect1->GetInterval(axis, orientedRectMin1, orientedRectMax1);
+
+	return ((orientedRectMin1 <= orientedRectMax0) && (orientedRectMin0 <= orientedRectMax1));
+}
+
 /** OBB와 OBB 끼리의 충돌 처리 */
 bool IsCollision(const OrientedRect2D* orientedRect0, const OrientedRect2D* orientedRect1)
 {
-	return false;
+	float rotate0 = orientedRect0->rotate;
+	Mat2x2 roateMat0(Cos(rotate0), -Sin(rotate0), Sin(rotate0), Cos(rotate0));
+
+	float rotate1 = orientedRect1->rotate;
+	Mat2x2 roateMat1(Cos(rotate1), -Sin(rotate1), Sin(rotate1), Cos(rotate1));
+
+	std::array<Vec2f, 6> separateAxis =
+	{ 
+		Vec2f(1.0f, 0.0f),
+		Vec2f(0.0f, 1.0f),
+		roateMat0 * Vec2f::Normalize(Vec2f(orientedRect0->size.x * 0.5f, 0.0f)),
+		roateMat0 * Vec2f::Normalize(Vec2f(0.0f, orientedRect0->size.y * 0.5f)),
+		roateMat1 * Vec2f::Normalize(Vec2f(orientedRect1->size.x * 0.5f, 0.0f)),
+		roateMat1 * Vec2f::Normalize(Vec2f(0.0f, orientedRect1->size.y * 0.5f)),
+	};
+
+	for (const auto& axis : separateAxis)
+	{
+		if (!IsOverlapOnAxis(orientedRect0, orientedRect1, axis))
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 bool Point2D::Intersect(const ICollision2D* target) const
