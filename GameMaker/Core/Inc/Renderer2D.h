@@ -15,6 +15,7 @@ class Shader;
 class TTFont;
 class VertexBuffer;
 
+
 /** 
  * 2D 렌더링을 수행하는 렌더러로, 좌표계 기준은 다음과 같습니다.
  *     +y
@@ -55,7 +56,10 @@ public:
 	void DrawEllipse(const Vec2f& center, float xAxis, float yAxis, const Vec4f& color, float rotate = 0.0f, int32_t sliceCount = 300);
 	void DrawEllipseWireframe(const Vec2f& center, float xAxis, float yAxis, const Vec4f& color, float rotate = 0.0f, int32_t sliceCount = 300);
 	void DrawString(const TTFont* font, const std::wstring& text, const Vec2f& pos, const Vec4f& color);
-	void DrawSprite(const ITexture* texture, const Vec2f& center, float w, float h, float rotate = 0.0f);
+	void DrawSprite(const ITexture* texture, const Vec2f& center, float w, float h, float rotate = 0.0f, bool bFlipH = false, bool bFlipV = false);
+
+	/** factor의 값이 0.0 이면 blend 값에 영향을 받지 않고, 1.0이면 blend 색상만 렌더링합니다. */
+	void DrawSprite(const ITexture* texture, const Vec2f& center, float w, float h, const Vec4f& blend, float factor = 0.0f, float rotate = 0.0f, bool bFlipH = false, bool bFlipV = false);
 
 private:
 	struct Vertex
@@ -121,6 +125,7 @@ private:
 	std::array<Vertex, MAX_VERTEX_SIZE> vertices_;
 	bool bIsBegin_ = false;
 	float pointSize_ = 1.0f;
+	float factor_ = 0.0f;
 	uint32_t vertexArrayObject_ = 0;
 	VertexBuffer* vertexBuffer_ = nullptr;
 	Shader* shader_ = nullptr;

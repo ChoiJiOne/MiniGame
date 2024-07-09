@@ -573,7 +573,7 @@ void Renderer2D::DrawString(const TTFont* font, const std::wstring& text, const 
 	Draw(Mat4x4::Identity(), EDrawMode::TRIANGLES, vertexCount, EMode::STRING);
 }
 
-void Renderer2D::DrawSprite(const ITexture* texture, const Vec2f& center, float w, float h, float rotate)
+void Renderer2D::DrawSprite(const ITexture* texture, const Vec2f& center, float w, float h, float rotate, bool bFlipH, bool bFlipV)
 {
 	CHECK(texture);
 
@@ -595,7 +595,63 @@ void Renderer2D::DrawSprite(const ITexture* texture, const Vec2f& center, float 
 	vertices_[vertexCount].position = c + Vec2f(-w2, +h2);
 	vertices_[vertexCount++].uv = Vec2f(0.0f, 1.0f);
 
-	Mat4x4 transform = Mat4x4::Translation(-c.x, -c.y, 0.0f) * Mat4x4::RotateZ(rotate) * Mat4x4::Translation(+c.x, +c.y, 0.0f);
+	Mat4x4 transform = Mat4x4::Translation(-c.x, -c.y, 0.0f);
+	if (bFlipH)
+	{
+		transform = transform * Mat4x4::RotateY(PI);
+	}
+	if (bFlipV)
+	{
+		transform = transform * Mat4x4::RotateX(PI);
+	}
+	transform = transform * Mat4x4::RotateZ(rotate);
+	transform = transform * Mat4x4::Translation(+c.x, +c.y, 0.0f);
+	
+	factor_ = 0.0f;
+
+	texture->Active(SPRITE_BIND_SLOT);
+	Draw(transform, EDrawMode::TRIANGLE_FAN, vertexCount, EMode::SPRITE);
+}
+
+void Renderer2D::DrawSprite(const ITexture* texture, const Vec2f& center, float w, float h, const Vec4f& blend, float factor, float rotate, bool bFlipH, bool bFlipV)
+{
+	CHECK(texture);
+
+	uint32_t vertexCount = 0;
+
+	Vec2f c = center + Vec2f(0.375f, 0.375f);
+	float w2 = w * 0.5f;
+	float h2 = h * 0.5f;
+
+	vertices_[vertexCount].position = c + Vec2f(-w2, -h2);
+	vertices_[vertexCount].uv = Vec2f(0.0f, 0.0f);
+	vertices_[vertexCount++].color = blend;
+
+	vertices_[vertexCount].position = c + Vec2f(+w2, -h2);
+	vertices_[vertexCount].uv = Vec2f(1.0f, 0.0f);
+	vertices_[vertexCount++].color = blend;
+
+	vertices_[vertexCount].position = c + Vec2f(+w2, +h2);
+	vertices_[vertexCount].uv = Vec2f(1.0f, 1.0f);
+	vertices_[vertexCount++].color = blend;
+
+	vertices_[vertexCount].position = c + Vec2f(-w2, +h2);
+	vertices_[vertexCount].uv = Vec2f(0.0f, 1.0f);
+	vertices_[vertexCount++].color = blend;
+	
+	Mat4x4 transform = Mat4x4::Translation(-c.x, -c.y, 0.0f);
+	if (bFlipH)
+	{
+		transform = transform * Mat4x4::RotateY(PI);
+	}
+	if (bFlipV)
+	{
+		transform = transform * Mat4x4::RotateX(PI);
+	}
+	transform = transform * Mat4x4::RotateZ(rotate);
+	transform = transform * Mat4x4::Translation(+c.x, +c.y, 0.0f);
+	
+	factor_ = Clamp<float>(factor, 0.0f, 1.0f);
 
 	texture->Active(SPRITE_BIND_SLOT);
 	Draw(transform, EDrawMode::TRIANGLE_FAN, vertexCount, EMode::SPRITE);
@@ -660,12 +716,18 @@ void Renderer2D::Draw(const Mat4x4& transform, const EDrawMode& drawMode, uint32
 
 	shader_->Bind();
 	{
+		/** 공통적으로 설정. */
 		shader_->SetUniform("transform", transform);
 		shader_->SetUniform("mode", static_cast<int32_t>(mode));
 
 		if (drawMode == EDrawMode::POINTS)
 		{
 			shader_->SetUniform("pointSize", pointSize_);
+		}
+
+		if (mode == EMode::SPRITE)
+		{
+			shader_->SetUniform("factor", factor_);
 		}
 
 		GL_FAILED(glBindVertexArray(vertexArrayObject_));
