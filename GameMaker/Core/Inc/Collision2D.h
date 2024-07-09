@@ -160,6 +160,8 @@ struct Rect2D : public ICollision2D /** 이 사각형은 AABB(Axis-Aligned Bounding B
 	virtual EType GetType() const override { return EType::RECT; }
 	virtual bool Intersect(const ICollision2D* target) const override;
 
+	void GetInterval(const Vec2f& axis, float& outMin, float& outMax);
+
 	Vec2f center;
 	Vec2f size;
 };
@@ -196,6 +198,8 @@ struct OrientedRect2D : public ICollision2D /** 이 사각형은 OBB(Oriented Boundin
 
 	virtual EType GetType() const override { return EType::ORIENTED_RECT; }
 	virtual bool Intersect(const ICollision2D* target) const override;
+
+	void GetInterval(const Vec2f& axis, float& outMin, float& outMax);
 
 	Vec2f center;
 	Vec2f size;

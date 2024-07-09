@@ -1,6 +1,4 @@
 #include <array>
-#include <algorithm>
-#include <limits>
 
 #include "Assertion.h"
 #include "Collision2D.h"
@@ -460,6 +458,38 @@ bool Rect2D::Intersect(const ICollision2D* target) const
 	return bIsIntersect;
 }
 
+void Rect2D::GetInterval(const Vec2f& axis, float& outMin, float& outMax)
+{
+	Vec2f minPos = GetMin();
+	Vec2f maxPos = GetMax();
+
+	std::array<Vec2f, 4> vertices =
+	{
+		Vec2f(minPos.x, minPos.y),
+		Vec2f(minPos.x, maxPos.y),
+		Vec2f(maxPos.x, maxPos.y),
+		Vec2f(maxPos.x, minPos.y),
+	};
+	
+	outMin = +FLT_MAX;
+	outMax = -FLT_MAX;
+
+	for (int32_t index = 0; index < vertices.size(); ++index)
+	{
+		float projection = Vec2f::Dot(axis, vertices[index]);
+
+		if (projection < outMin)
+		{
+			outMin = projection;
+		}
+
+		if (projection > outMax)
+		{
+			outMax = projection;
+		}
+	}
+}
+
 bool OrientedRect2D::Intersect(const ICollision2D* target) const
 {
 	CHECK(target != nullptr);
@@ -508,4 +538,45 @@ bool OrientedRect2D::Intersect(const ICollision2D* target) const
 	}
 
 	return bIsIntersect;
+}
+
+void OrientedRect2D::GetInterval(const Vec2f& axis, float& outMin, float& outMax)
+{
+	Rect2D rect(center, size);
+	Vec2f minPos = rect.GetMin();
+	Vec2f maxPos = rect.GetMax();
+
+	std::array<Vec2f, 4> vertices =
+	{
+		Vec2f(minPos.x, minPos.y),
+		Vec2f(minPos.x, maxPos.y),
+		Vec2f(maxPos.x, maxPos.y),
+		Vec2f(maxPos.x, minPos.y),
+	};
+
+	Mat2x2 roateMat(Cos(rotate), -Sin(rotate), Sin(rotate), Cos(rotate));
+	for (int32_t index = 0; index < vertices.size(); ++index)
+	{
+		Vec2f targetPos = roateMat * (vertices[index] - center);
+		vertices[index] = targetPos + center;
+	}
+
+	outMin = +FLT_MAX;
+	outMax = -FLT_MAX;
+
+	for (int32_t index = 0; index < vertices.size(); ++index)
+	{
+		float projection = Vec2f::Dot(axis, vertices[index]);
+
+		if (projection < outMin)
+		{
+			outMin = projection;
+		}
+
+		if (projection > outMax)
+		{
+			outMax = projection;
+		}
+	}
+
 }
