@@ -7,6 +7,7 @@
 
 #include "Assertion.h"
 #include "Camera2D.h"
+#include "ITexture.h"
 #include "Renderer2D.h"
 #include "ResourceManager.h"
 #include "Shader.h"
@@ -566,10 +567,38 @@ void Renderer2D::DrawString(const TTFont* font, const std::wstring& text, const 
 {
 	uint32_t vertexCount = SetGlyphVertexBuffer(font, text, pos, color);
 
-	GL_FAILED(glActiveTexture(GL_TEXTURE0));
+	GL_FAILED(glActiveTexture(GL_TEXTURE0 + GLYPH_ATLAS_BIND_SLOT));
 	GL_FAILED(glBindTexture(GL_TEXTURE_2D, font->GetGlyphAtlasID()));
 
 	Draw(Mat4x4::Identity(), EDrawMode::TRIANGLES, vertexCount, EMode::STRING);
+}
+
+void Renderer2D::DrawSprite(const ITexture* texture, const Vec2f& center, float w, float h, float rotate)
+{
+	CHECK(texture);
+
+	uint32_t vertexCount = 0;
+
+	Vec2f c = center + Vec2f(0.375f, 0.375f);
+	float w2 = w * 0.5f;
+	float h2 = h * 0.5f;
+
+	vertices_[vertexCount].position = c + Vec2f(-w2, -h2);
+	vertices_[vertexCount++].uv = Vec2f(0.0f, 0.0f);
+
+	vertices_[vertexCount].position = c + Vec2f(+w2, -h2);
+	vertices_[vertexCount++].uv = Vec2f(1.0f, 0.0f);
+
+	vertices_[vertexCount].position = c + Vec2f(+w2, +h2);
+	vertices_[vertexCount++].uv = Vec2f(1.0f, 1.0f);
+
+	vertices_[vertexCount].position = c + Vec2f(-w2, +h2);
+	vertices_[vertexCount++].uv = Vec2f(0.0f, 1.0f);
+
+	Mat4x4 transform = Mat4x4::Translation(-c.x, -c.y, 0.0f) * Mat4x4::RotateZ(rotate) * Mat4x4::Translation(+c.x, +c.y, 0.0f);
+
+	texture->Active(SPRITE_BIND_SLOT);
+	Draw(transform, EDrawMode::TRIANGLE_FAN, vertexCount, EMode::SPRITE);
 }
 
 uint32_t Renderer2D::SetGlyphVertexBuffer(const TTFont* font, const std::wstring& text, const Vec2f& pos, const Vec4f& color)

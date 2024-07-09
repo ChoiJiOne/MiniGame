@@ -10,6 +10,7 @@
 namespace GameMaker
 {
 class Camera2D;
+class ITexture;
 class Shader;
 class TTFont;
 class VertexBuffer;
@@ -54,6 +55,7 @@ public:
 	void DrawEllipse(const Vec2f& center, float xAxis, float yAxis, const Vec4f& color, float rotate = 0.0f, int32_t sliceCount = 300);
 	void DrawEllipseWireframe(const Vec2f& center, float xAxis, float yAxis, const Vec4f& color, float rotate = 0.0f, int32_t sliceCount = 300);
 	void DrawString(const TTFont* font, const std::wstring& text, const Vec2f& pos, const Vec4f& color);
+	void DrawSprite(const ITexture* texture, const Vec2f& center, float w, float h, float rotate = 0.0f);
 
 private:
 	struct Vertex
@@ -101,19 +103,20 @@ private:
 	{
 		GEOMETRY = 0x00,
 		STRING   = 0x01,
+		SPRITE   = 0x02,
 	};
 
 
 private:
-	/**
-	 * 텍스트 영역 설정 시 좌표는 왼쪽 상단 좌표 기준입니다.
-	 */
+	/** 텍스트 영역 설정 시 좌표는 왼쪽 상단 좌표 기준입니다. */
 	uint32_t SetGlyphVertexBuffer(const TTFont* font, const std::wstring& text, const Vec2f& pos, const Vec4f& color);
 	void Draw(const Mat4x4& transform, const EDrawMode& drawMode, uint32_t vertexCount, const EMode& mode);
 
 private:
 	static const int32_t MAX_VERTEX_SIZE = 10000;
 	static const int32_t MAX_SLICE_SIZE = 20;
+	static const int32_t GLYPH_ATLAS_BIND_SLOT = 0;
+	static const int32_t SPRITE_BIND_SLOT = 1;
 
 	std::array<Vertex, MAX_VERTEX_SIZE> vertices_;
 	bool bIsBegin_ = false;
