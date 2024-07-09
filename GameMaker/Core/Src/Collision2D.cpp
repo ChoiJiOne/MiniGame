@@ -223,6 +223,20 @@ bool IsCollision(const Rect2D* rect0, const Rect2D* rect1)
 	return bIsOverlapX && bIsOverlapY;
 }
 
+/** 축을 기준으로 AABB와 OBB가 오버랩(겹치는지) 확인 */
+bool IsOverlapOnAxis(const Rect2D* rect, const OrientedRect2D* orientedRect, const Vec2f& axis)
+{
+	float rectMin = 0.0f;
+	float rectMax = 0.0f;
+	rect->GetInterval(axis, rectMin, rectMax);
+
+	float orientedRectMin = 0.0f;
+	float orientedRectMax = 0.0f;
+	orientedRect->GetInterval(axis, orientedRectMin, orientedRectMax);
+
+	return ((orientedRectMin <= rectMax) && (rectMin <= orientedRectMax));
+}
+
 /** AABB와 OBB 끼리의 충돌 처리 */
 bool IsCollision(const Rect2D* rect, const OrientedRect2D* orientedRect)
 {
@@ -232,9 +246,6 @@ bool IsCollision(const Rect2D* rect, const OrientedRect2D* orientedRect)
 	Vec2f axis0(orientedRect->size.x * 0.5f, 0.0f);
 	Vec2f axis1(0.0f, orientedRect->size.y * 0.5f);
 
-	axis0 = roateMat * Vec2f::Normalize(axis0);
-	axis1 = roateMat * Vec2f::Normalize(axis1);
-
 	std::array<Vec2f, 4> separateAxis =
 	{
 		Vec2f(1.0f, 0.0f),
@@ -243,12 +254,15 @@ bool IsCollision(const Rect2D* rect, const OrientedRect2D* orientedRect)
 		roateMat * Vec2f::Normalize(axis1),
 	};
 
-	//for (const auto& axis : separateAxis)
-	//{
+	for (const auto& axis : separateAxis)
+	{
+		if (!IsOverlapOnAxis(rect, orientedRect, axis))
+		{
+			return false;
+		}
+	}
 
-	//}
-
-	return false;
+	return true;
 }
 
 /** OBB와 OBB 끼리의 충돌 처리 */
@@ -458,7 +472,7 @@ bool Rect2D::Intersect(const ICollision2D* target) const
 	return bIsIntersect;
 }
 
-void Rect2D::GetInterval(const Vec2f& axis, float& outMin, float& outMax)
+void Rect2D::GetInterval(const Vec2f& axis, float& outMin, float& outMax) const
 {
 	Vec2f minPos = GetMin();
 	Vec2f maxPos = GetMax();
@@ -540,7 +554,7 @@ bool OrientedRect2D::Intersect(const ICollision2D* target) const
 	return bIsIntersect;
 }
 
-void OrientedRect2D::GetInterval(const Vec2f& axis, float& outMin, float& outMax)
+void OrientedRect2D::GetInterval(const Vec2f& axis, float& outMin, float& outMax) const
 {
 	Rect2D rect(center, size);
 	Vec2f minPos = rect.GetMin();
