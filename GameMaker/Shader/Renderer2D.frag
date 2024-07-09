@@ -10,6 +10,7 @@ layout(location = 0) out vec4 outFragColor;
 #define SPRITE_MODE 2
 
 uniform int mode;
+uniform float factor;
 
 layout(binding = 0) uniform sampler2D glyphAtlasMap;
 layout(binding = 1) uniform sampler2D spriteMap;
@@ -24,7 +25,11 @@ void main()
 	}
 	else if (mode == SPRITE_MODE)
 	{
-		outFragColor = texture(spriteMap, inTexCoords);
+		vec3 fragColor = texture(spriteMap, inTexCoords).rgb;
+		float alpha = texture(spriteMap, inTexCoords).a;
+		fragColor = mix(fragColor, inColor.rgb, factor);
+
+		outFragColor = vec4(fragColor, alpha);
 	}
 	else // mode == GEOMETRY_MODE
 	{
