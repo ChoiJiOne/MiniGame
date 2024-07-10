@@ -17,6 +17,7 @@ file(GLOB_RECURSE LIB_SOURCE_FILE "${LIB_SOURCE}/*")
 add_library(${LIB_NAME} STATIC ${LIB_INCLUDE_FILE} ${LIB_SOURCE_FILE})
 
 target_include_directories(${LIB_NAME} PUBLIC ${LIB_INCLUDE})
+target_link_libraries(${LIB_NAME} SDL2)
 
 set_property(TARGET ${LIB_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
