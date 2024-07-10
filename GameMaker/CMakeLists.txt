@@ -45,10 +45,12 @@ target_link_libraries(
     Dbghelp.lib 
     Pathcch.lib 
     Shlwapi.lib 
-    SDL2
     glad
-    stb
+    imgui
+    jsoncpp
     miniaudio
+    SDL2
+    stb
 )
 
 target_compile_definitions(
