@@ -1,5 +1,7 @@
 #include <SDL2/SDL.h>
 #include <glad/glad.h>
+#include <imgui.h>
+#include <imgui_impl_opengl3.h>
 
 #include "Assertion.h"
 #include "Config.h"
@@ -100,6 +102,10 @@ void RenderManager::BeginFrame(float red, float green, float blue, float alpha, 
 
 void RenderManager::EndFrame()
 {
+	/** 모든 렌더링이 끝나면 ImGui 렌더링 수행. */
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 	SDL_GL_SwapWindow(reinterpret_cast<SDL_Window*>(window_));
 }
 
