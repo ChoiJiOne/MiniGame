@@ -16,8 +16,7 @@ if %ERRORLEVEL% EQU 0 (
 SET visualstudio="Visual Studio 17 2022"
 
 SET PROJECT_NAME=%1
-
-if %PROJECT_NAME% == "" (
+if "%PROJECT_NAME%" == "" (
     ECHO Project name is empty...
     GOTO:EOF
 ) else (
