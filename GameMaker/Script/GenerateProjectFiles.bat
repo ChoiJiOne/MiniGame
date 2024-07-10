@@ -4,7 +4,6 @@ ECHO =============================
 ECHO Start Generate Project Files
 ECHO =============================
 
-@REM CMake가 설치되었는지 확인합니다.
 @ECHO OFF
 where cmake > nul 2>&1
 if %ERRORLEVEL% EQU 0 (
@@ -14,14 +13,10 @@ if %ERRORLEVEL% EQU 0 (
     GOTO:EOF
 )
 
-@REM Visual Studio 버전입니다. 
-@REM 엔진은 Visual Studio 2022만 지원합니다.
 SET visualstudio="Visual Studio 17 2022"
 
-@REM 프로젝트 이름입니다.
 SET PROJECT_NAME=%1
 
-@REM 프로젝트 이름의 유효성을 검사합니다.
 if %PROJECT_NAME% == "" (
     ECHO Project name is empty...
     GOTO:EOF
@@ -29,7 +24,6 @@ if %PROJECT_NAME% == "" (
     ECHO Project name is "%PROJECT_NAME%"...
 )
 
-@REM 프로젝트 생성 후 Visual Studio를 실행할 지 여부입니다.
 SET RUN_OPTION=%2
 if "%RUN_OPTION%" == "on" (
     SET RUN="on"
