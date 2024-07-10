@@ -29,7 +29,8 @@ public:
 	static void SetShouldCloseWindow(bool bShouldCloseWindow) { bShouldCloseWindow_ = bShouldCloseWindow; }
 
 private:
-	static void InitSubSystem();
+	static void PreInit(); /** Init 호출 이전에 적절한 초기화 수행 */
+	static void PostInit(); /** Init 호출 이후에 적절한 초기화 수행 */
 	
 private:
 	static bool bIsInit_;

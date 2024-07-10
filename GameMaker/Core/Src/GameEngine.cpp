@@ -1,3 +1,6 @@
+#include <imgui.h>
+#include <imgui_impl_sdl2.h>
+#include <imgui_impl_opengl3.h>
 #include <SDL2/SDL.h>
 
 #include "Assertion.h"
@@ -20,6 +23,7 @@ std::function<void()> GameEngine::endLoopCallback_ = nullptr;
 std::function<void(float)> GameEngine::frameCallback_ = nullptr;
 
 LPTOP_LEVEL_EXCEPTION_FILTER topLevelExceptionFilter;
+static InputManager* inputManager = nullptr;
 
 void GameEngine::Init(const WindowParam& param)
 {
@@ -27,7 +31,7 @@ void GameEngine::Init(const WindowParam& param)
 
 	topLevelExceptionFilter = ::SetUnhandledExceptionFilter(CrashUtils::DetectApplicationCrash);
 
-	InitSubSystem();
+	PreInit();
 
 	uint32_t flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 	if (param.bIsResizble)
@@ -42,19 +46,25 @@ void GameEngine::Init(const WindowParam& param)
 
 	window_ = SDL_CreateWindow(param.title.c_str(), param.x, param.y, param.w, param.h, flags);
 	CHECK(window_ != nullptr);
-
+		
 	InputManager::Get().Startup();
 	AudioManager::Get().Startup();
 	ResourceManager::Get().Startup();
 	RenderManager::Get().Startup();
 	EntityManager::Get().Startup();
 
+	PostInit();
+	
 	bIsInit_ = true;
 }
 
 void GameEngine::Shutdown()
 {
 	ASSERT(bIsInit_, "GameEngine has already shutdown or initialization has failed.");
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
 
 	EntityManager::Get().Shutdown();
 	ResourceManager::Get().Shutdown();
@@ -81,14 +91,16 @@ void GameEngine::RunLoop(const std::function<void(float)>& callback)
 {
 	frameCallback_ = callback;
 
-	InputManager& inputManager = InputManager::Get();
-
 	GameTimer globalTimer;
 	globalTimer.Reset();
 
 	while (!bShouldCloseWindow_)
 	{
-		inputManager.Tick();
+		inputManager->ProcessInputEvents();
+
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplSDL2_NewFrame();
+		ImGui::NewFrame();
 
 		globalTimer.Tick();
 		float deltaSeconds = globalTimer.GetDeltaSeconds();
@@ -105,7 +117,7 @@ void GameEngine::RunLoop(const std::function<void(float)>& callback)
 	}
 }
 
-void GameEngine::InitSubSystem()
+void GameEngine::PreInit()
 {
 	SDL_FAILED(SDL_Init(SDL_INIT_EVERYTHING));
 
@@ -122,4 +134,21 @@ void GameEngine::InitSubSystem()
 	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, GL_DOUBLE_BUFFER));
 	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, GL_MULTISAMPLE_BUFFERS));
 	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, GL_MULTISAMPLE_SAMPLES));
+}
+
+void GameEngine::PostInit()
+{
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.IniFilename = nullptr;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;
+
+	SDL_Window* window = reinterpret_cast<SDL_Window*>(window_);
+	void* context = RenderManager::Get().GetContext();
+
+	ASSERT(ImGui_ImplSDL2_InitForOpenGL(window, context), "Failed to initialize ImGui for SDL2.");
+	ASSERT(ImGui_ImplOpenGL3_Init(), "Failed to initialize ImGui OpenGL.");
+
+	inputManager = &InputManager::Get();
 }
