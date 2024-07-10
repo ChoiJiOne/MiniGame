@@ -355,7 +355,7 @@ private:
 		Vec2i position; // 마우스 버튼의 위치입니다.
 	};
 
-	void Tick();
+	void ProcessInputEvents();
 	void ExecuteWindowEventAction(const EWindowEvent& windowEvent);
 	bool IsPressKey(const KeyboardState& keyboardState, const EKey& key);
 	bool IsPressMouse(const MouseState& mouseState, const EMouse& mouse);

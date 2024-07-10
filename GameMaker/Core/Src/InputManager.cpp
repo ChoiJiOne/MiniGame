@@ -146,7 +146,7 @@ void InputManager::SetActiveWindowEventAction(const WindowEventID& windowEventID
 	windowEventActions_[windowEventID].bIsActive = bIsActive;
 }
 
-void InputManager::Tick()
+void InputManager::ProcessInputEvents()
 {
 	SDL_Event e;
 
