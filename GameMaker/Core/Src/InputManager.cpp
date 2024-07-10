@@ -1,3 +1,5 @@
+#include <imgui.h>
+#include <imgui_impl_sdl2.h>
 #include <SDL2/SDL.h>
 
 #include "Assertion.h"
@@ -150,6 +152,8 @@ void InputManager::Tick()
 
 	while (SDL_PollEvent(&e))
 	{
+		ImGui_ImplSDL2_ProcessEvent(&e);
+
 		if (e.type == SDL_QUIT)
 		{
 			GameEngine::SetShouldCloseWindow(true);
