@@ -9,6 +9,3 @@
 - [Visual Studio 2022](https://visualstudio.microsoft.com/ko/)
 - [CMake 3.27 or later](https://cmake.org/)
 - [NSIS](https://nsis.sourceforge.io/Download)
-
-## Feature
-- 
