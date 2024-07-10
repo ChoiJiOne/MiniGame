@@ -46,6 +46,8 @@ public:
 	void ExecuteDrawIndex(uint32_t indexCount, const EDrawMode& drawMode);
 	void ExecuteDrawIndexInstanced(uint32_t indexCount, const EDrawMode& drawMode, uint32_t instanceCounts);
 
+	void* GetContext() { return context_; }
+
 	template <typename T>
 	void GetScreenSize(T& outWidth, T& outHeight);
 
@@ -57,7 +59,7 @@ private:
 
 private:
 	void* window_ = nullptr;
-	void* context_ = nullptr;
+	void* context_ = nullptr; /** OpenGL Context. */
 	Renderer2D* renderer2D_ = nullptr;
 	Renderer3D* renderer3D_ = nullptr;
 };
