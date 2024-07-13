@@ -32,6 +32,22 @@ if "%PROJECT_NAME%" == "" (
     ECHO Project name is "%PROJECT_NAME%"...
 )
 
+if not exist "%PROJECT_NAME%" (
+    mkdir "%PROJECT_NAME%"
+)
+
+if not exist "%PROJECT_NAME%\\Inc" (
+    mkdir "%PROJECT_NAME%\\Inc"
+)
+
+if not exist "%PROJECT_NAME%\\Src" (
+    mkdir "%PROJECT_NAME%\\Src"
+)
+
+if not exist "%PROJECT_NAME%\\Res" (
+    mkdir "%PROJECT_NAME%\\Res"
+)
+
 SET OPTION=%2
 if "%OPTION%" == "" (
     SET OPTION="NONE"
