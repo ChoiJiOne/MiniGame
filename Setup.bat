@@ -22,7 +22,14 @@ if "%PROJECT_NAME%" == "" (
     ECHO Done Setup Project
     ECHO ====================
     GOTO:EOF
-) else (
+) else if "%PROJECT_NAME%" == "GameMaker" (
+    ECHO Project name "%PROJECT_NAME%" is invalid...
+    ECHO ====================
+    ECHO Done Setup Project
+    ECHO ====================
+    GOTO:EOF
+)
+else (
     ECHO Project name is "%PROJECT_NAME%"...
 )
 
