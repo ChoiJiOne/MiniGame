@@ -43,6 +43,22 @@ if not exist "%SOLUTION_PATH%" (
     mkdir "%SOLUTION_PATH%"
 )
 
+if not exist "%~dp0..\..\Cache" (
+    mkdir "%~dp0..\..\Cache"
+)
+
+if not exist "%PROJECT_NAME%\\Inc" (
+    mkdir "%PROJECT_NAME%\\Inc"
+)
+
+if not exist "%PROJECT_NAME%\\Src" (
+    mkdir "%PROJECT_NAME%\\Src"
+)
+
+if not exist "%PROJECT_NAME%\\Res" (
+    mkdir "%PROJECT_NAME%\\Res"
+)
+
 SET CURRENT_PATH=%~dp0
 
 PUSHD "%CURRENT_PATH%"
