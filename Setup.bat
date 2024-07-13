@@ -26,8 +26,13 @@ if "%PROJECT_NAME%" == "" (
     ECHO Project name is "%PROJECT_NAME%"...
 )
 
+SET OPTION=%2
+if "%OPTION%" == "" (
+    SET OPTION="NONE"
+)
+
 SET SETUP_SCRIPT_PATH=%~dp0GameMaker\Script\Setup.py
-python "%SETUP_SCRIPT_PATH%" "%PROJECT_NAME%"
+python "%SETUP_SCRIPT_PATH%" "%PROJECT_NAME%" "%OPTION%"
 
 ECHO ====================
 ECHO Done Setup Project
