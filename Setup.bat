@@ -32,6 +32,10 @@ if "%PROJECT_NAME%" == "" (
     ECHO Project name is "%PROJECT_NAME%"...
 )
 
+if not exist "%~dp0\\Cache" (
+    mkdir "%~dp0\\Cache"
+)
+
 if not exist "%PROJECT_NAME%" (
     mkdir "%PROJECT_NAME%"
 )
