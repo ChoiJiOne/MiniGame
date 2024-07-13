@@ -235,6 +235,24 @@ SOFTWARE.
         print(f"Failed setup {project_name}!")
         sys.exit()
 
+    gitignore_file = setup_target_files[f"{root_path}\\.gitignore"]
+    if option == "--ignore":
+        gitignore_file += f"\n\n{project_name}\n"
+        gitignore_file += "Build_Debug.bat\n"
+        gitignore_file += "Build_MinSizeRel.bat\n"
+        gitignore_file += "Build_RelWithDebInfo.bat\n"
+        gitignore_file += "Build_Release.bat\n"
+        gitignore_file += "CMakeLists.txt\n"
+        gitignore_file += "GenerateProjectFiles.bat\n"
+        gitignore_file += "HotReload.bat\n"
+        gitignore_file += "LICENSE.txt\n"
+        gitignore_file += "Package_Debug.bat\n"
+        gitignore_file += "Package_MinSizeRel.bat\n"
+        gitignore_file += "Package_RelWithDebInfo.bat\n"
+        gitignore_file += "Package_Release.bat"
+        
+        setup_target_files[f"{root_path}\\.gitignore"] = gitignore_file
+
     for path, text in setup_target_files.items():
         write_text_file(path, text)
 
