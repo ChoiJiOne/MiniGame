@@ -10,4 +10,4 @@
 - [CMake 3.27 or later](https://cmake.org/)
 - [Python 3.x](https://www.python.org/)
 - [NSIS](https://nsis.sourceforge.io/Download)
-- [KTX-Software](https://github.com/KhronosGroup/KTX-Software/releases)
+- [KTX-Software 3.4 or later](https://github.com/KhronosGroup/KTX-Software/releases)
