@@ -27,7 +27,7 @@ project(KTX-Software
     DESCRIPTION "Libraries and tools to create and read KTX image texture files."
 )
 
-include(CTest)
+# include(CTest)
 
 include(GNUInstallDirs)
 include(CMakeDependentOption)
