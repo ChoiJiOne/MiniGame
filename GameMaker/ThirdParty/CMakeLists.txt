@@ -7,5 +7,22 @@ add_subdirectory(jsoncpp)
 add_subdirectory(miniaudio)
 add_subdirectory(SDL)
 add_subdirectory(stb)
+add_subdirectory(ktx)
 
-set_target_properties(glad imgui jsoncpp miniaudio SDL2 SDL2main sdl_headers_copy stb PROPERTIES FOLDER "ThirdParty")
+set_target_properties(
+    glad 
+    imgui 
+    jsoncpp 
+    miniaudio 
+    SDL2 
+    SDL2main 
+    sdl_headers_copy 
+    stb 
+    astcenc-avx2-static
+    ktx
+    ktx_read
+    ktx_version
+    obj_basisu_cbind
+    objUtil
+    PROPERTIES FOLDER "ThirdParty"
+)
