@@ -51,7 +51,6 @@ target_link_libraries(
     miniaudio
     SDL2
     stb
-    ktx
 )
 
 target_compile_definitions(
