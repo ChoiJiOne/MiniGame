@@ -14,9 +14,7 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	GameMaker::WindowParam param{ "01.Initialize", 100, 100, 800, 600, false, false };
-	GameMaker::GameEngine::Init(param);
-
+	GameMaker::GameEngine::Init({ "01.Initialize", 100, 100, 800, 600, false, false });
 	GameMaker::GameEngine::RunLoop(
 		[&](float deltaSeconds)
 		{
