@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_subdirectory(ThirdParty)
+add_subdirectory(Sample)
 
 set(PROJECT_NAME "GameMaker")
 
