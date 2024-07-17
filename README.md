@@ -28,3 +28,24 @@ To develop a game using `GameMaker`, you need to follow the steps below.
   ```
   GenerateProjectFiles.bat
   ```
+
+## Sample
+
+<table>
+  <tr>
+    <td>
+    <a href="./GameMaker/Sample/01.Initialize/">01.Initialize</a>
+    </td>
+    <td>
+    <img src="./GameMaker/Sample/Image/01.Initialize.png" alt="01.Initialize" width="200" height="150">
+    </td>
+  </tr>
+  <tr>
+    <td>
+    <a href="./GameMaker/Sample/02.Triangle/">02.Triangle</a>
+    </td>
+    <td>
+    <img src="./GameMaker/Sample/Image/02.Triangle.png" alt="02.Triangle" width="200" height="150">
+    </td>
+  </tr>
+</table>
