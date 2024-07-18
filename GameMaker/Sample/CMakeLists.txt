@@ -4,11 +4,13 @@ add_subdirectory(01.Initialize)
 add_subdirectory(02.Triangle)
 add_subdirectory(03.Texture)
 add_subdirectory(04.MultiTexture)
+add_subdirectory(05.KTX)
 
 set_target_properties(
     01.Initialize
     02.Triangle
     03.Texture
     04.MultiTexture
+    05.KTX
     PROPERTIES FOLDER "Sample"
 )
