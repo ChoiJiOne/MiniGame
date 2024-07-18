@@ -63,4 +63,12 @@ To develop a game using `GameMaker`, you need to follow the steps below.
     <img src="./GameMaker/Sample/Image/04.MultiTexture.png" alt="04.MultiTexture" width="200" height="150">
     </td>
   </tr>
+  <tr>
+    <td>
+    <a href="./GameMaker/Sample/05.KTX/">05.KTX</a>
+    </td>
+    <td>
+    <img src="./GameMaker/Sample/Image/05.KTX.png" alt="05.KTX" width="200" height="150">
+    </td>
+  </tr>
 </table>
