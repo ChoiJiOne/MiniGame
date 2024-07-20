@@ -86,7 +86,8 @@ private:
 
 private:
 	static const int32_t MAX_VERTEX_SIZE = 20000;
-
+	std::array<Vertex, MAX_VERTEX_SIZE> vertices_;
+	
 	uint32_t vertexArrayObject_ = 0;
 	VertexBuffer* vertexBuffer_ = nullptr;
 };
