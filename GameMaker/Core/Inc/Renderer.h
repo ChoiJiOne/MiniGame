@@ -90,6 +90,9 @@ private:
 	
 	uint32_t vertexArrayObject_ = 0;
 	VertexBuffer* vertexBuffer_ = nullptr;
+
+	bool bIsBegin_ = false;
+	Mat4x4 ortho_; /** 직교 투영 행렬 */
 };
 
 }
