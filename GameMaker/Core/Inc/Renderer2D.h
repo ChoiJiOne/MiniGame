@@ -39,6 +39,8 @@ public:
 	void End();
 
 	void DrawPoint(const Vec2f& point, const Vec4f& color, float pointSize = 1.0f);
+	void DrawLine(const Vec2f& startPos, const Vec2f& endPos, const Vec4f& color);
+	void DrawLine(const Vec2f& startPos, const Vec4f& startColor, const Vec2f& endPos, const Vec4f& endColor);
 	void DrawRect(const Vec2f& center, float w, float h, const Vec4f& color, float rotate = 0.0f);
 
 private:
