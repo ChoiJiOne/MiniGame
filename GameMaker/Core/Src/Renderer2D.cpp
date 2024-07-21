@@ -721,4 +721,78 @@ void Renderer2D::DrawRect(const Vec2f& center, float w, float h, const Vec4f& co
 	}
 }
 
+void Renderer2D::DrawRectWireframe(const Vec2f& center, float w, float h, const Vec4f& color, float rotate)
+{
+	float w2 = w * 0.5f;
+	float h2 = h * 0.5f;
+
+	std::array<Vec2f, 8> vertices =
+	{
+		Vec2f(-w2, -h2), Vec2f(+w2, -h2),
+		Vec2f(+w2, -h2), Vec2f(+w2, +h2),
+		Vec2f(+w2, +h2), Vec2f(-w2, +h2),
+		Vec2f(-w2, +h2), Vec2f(-w2, -h2),
+	};
+
+	Mat2x2 rotateMat = Mat2x2(Cos(rotate), -Sin(rotate), Sin(rotate), Cos(rotate));
+	for (auto& vertex : vertices)
+	{
+		vertex = rotateMat * vertex;
+		vertex += (center + Vec2f(0.375f, 0.375f));
+	}
+	
+	if (commandQueue_.empty())
+	{
+		RenderCommand command;
+		command.drawMode = EDrawMode::LINES;
+		command.startVertexIndex = 0;
+		command.vertexCount = static_cast<uint32_t>(vertices.size());
+		command.type = EType::GEOMETRY;
+		command.texture = nullptr;
+		command.font = nullptr;
+
+		for (uint32_t index = 0; index < command.vertexCount; ++index)
+		{
+			vertices_[command.startVertexIndex + index].position = vertices[index];
+			vertices_[command.startVertexIndex + index].color = color;
+		}
+
+		commandQueue_.push(command);
+	}
+	else
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+
+		if (prevCommand.drawMode == EDrawMode::LINES && prevCommand.type == EType::GEOMETRY)
+		{
+			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
+
+			for (uint32_t index = 0; index < vertices.size(); ++index)
+			{
+				vertices_[startVertexIndex + index].position = vertices[index];
+				vertices_[startVertexIndex + index].color = color;
+			}
+		}
+		else
+		{
+			RenderCommand command;
+			command.drawMode = EDrawMode::LINES;
+			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			command.vertexCount = static_cast<uint32_t>(vertices.size());
+			command.type = EType::GEOMETRY;
+			command.texture = nullptr;
+			command.font = nullptr;
+
+			for (uint32_t index = 0; index < command.vertexCount; ++index)
+			{
+				vertices_[command.startVertexIndex + index].position = vertices[index];
+				vertices_[command.startVertexIndex + index].color = color;
+			}
+
+			commandQueue_.push(command);
+		}
+	}
+}
+
 #pragma warning(pop)
