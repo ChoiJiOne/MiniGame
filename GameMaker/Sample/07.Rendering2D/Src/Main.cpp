@@ -27,8 +27,19 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 			GameMaker::RenderManager::Get().BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
 			renderer->Begin();
 			{
-				renderer->DrawPoint(&center, 1, GameMaker::Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
-				renderer->DrawRect(center, 1.0f, 1.0f, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+				//renderer->DrawRect(GameMaker::Vec2f(0.0f, 400.0f), 200.0f, 50.0f, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+				//renderer->DrawRect(GameMaker::Vec2f(0.0f, 300.0f), 200.0f, 50.0f, GameMaker::Vec4f(1.0f, 1.0f, 0.0f, 1.0f));
+				//renderer->DrawRect(GameMaker::Vec2f(0.0f, 200.0f), 200.0f, 50.0f, GameMaker::Vec4f(1.0f, 0.0f, 1.0f, 1.0f));
+				//renderer->DrawRect(GameMaker::Vec2f(0.0f, 100.0f), 200.0f, 50.0f, GameMaker::Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
+				//renderer->DrawRect(GameMaker::Vec2f(0.0f, 0.0f), 200.0f, 50.0f, GameMaker::Vec4f(0.5f, 0.5f, 0.5f, 1.0f));
+
+				//renderer->DrawRect(GameMaker::Vec2f(0.0f, -400.0f), 200.0f, 50.0f, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+				//renderer->DrawRect(GameMaker::Vec2f(0.0f, -300.0f), 200.0f, 50.0f, GameMaker::Vec4f(1.0f, 1.0f, 0.0f, 1.0f));
+				//renderer->DrawRect(GameMaker::Vec2f(0.0f, -200.0f), 200.0f, 50.0f, GameMaker::Vec4f(1.0f, 0.0f, 1.0f, 1.0f));
+				//renderer->DrawRect(GameMaker::Vec2f(0.0f, -100.0f), 200.0f, 50.0f, GameMaker::Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
+				renderer->DrawRect(GameMaker::Vec2f(0.0f, 100.0f), 200.0f, 100.0f, GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+				renderer->DrawRect(GameMaker::Vec2f(0.0f, 50.0f), 200.0f, 100.0f, GameMaker::Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
+				renderer->DrawRect(GameMaker::Vec2f(0.0f, 0.0f), 200.0f, 100.0f, GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
 			}
 			renderer->End();
 			GameMaker::RenderManager::Get().EndFrame();
