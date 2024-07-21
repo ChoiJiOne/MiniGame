@@ -38,6 +38,7 @@ public:
 	void Begin(const Camera2D* camera2D = nullptr);
 	void End();
 
+	void DrawPoint(const Vec2f& point, const Vec4f& color, float pointSize = 1.0f);
 	void DrawRect(const Vec2f& center, float w, float h, const Vec4f& color, float rotate = 0.0f);
 
 private:
