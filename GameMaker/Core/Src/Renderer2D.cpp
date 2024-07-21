@@ -54,8 +54,12 @@ Renderer2D::Renderer2D()
 	GL_FAILED(glBindVertexArray(0));
 
 	Shader* geometry2D = resourceManagerPtr->Create<Shader>("GameMaker/Shader/Geometry2D.vert", "GameMaker/Shader/Geometry2D.frag");
+	Shader* sprite2D = resourceManagerPtr->Create<Shader>("GameMaker/Shader/Sprite2D.vert", "GameMaker/Shader/Sprite2D.frag");
+	Shader* string2D = resourceManagerPtr->Create<Shader>("GameMaker/Shader/String2D.vert", "GameMaker/Shader/String2D.frag");
 
-	shader_.insert({ EType::GEOMETRY, geometry2D });
+	shaders_.insert({ EType::GEOMETRY, geometry2D });
+	shaders_.insert({ EType::SPRITE,   sprite2D   });
+	shaders_.insert({ EType::STRING,   string2D   });
 
 	bIsInitialized_ = true;
 }
@@ -78,6 +82,11 @@ void Renderer2D::Release()
 		vertexBuffer_ = nullptr;
 	}
 
+	for (auto& shader : shaders_)
+	{
+		resourceManagerPtr->Destroy(shader.second);
+	}
+
 	GL_FAILED(glDeleteVertexArrays(1, &vertexArrayObject_));
 
 	bIsInitialized_ = false;
@@ -87,6 +96,7 @@ void Renderer2D::Begin(const Camera2D* camera2D)
 {
 	CHECK(!bIsBegin_);
 
+	Mat4x4 ortho;
 	if (!camera2D)
 	{
 		float w = 0.0f;
@@ -95,13 +105,24 @@ void Renderer2D::Begin(const Camera2D* camera2D)
 		static const float farZ = 1.0f;
 		renderManagerPtr->GetScreenSize<float>(w, h);
 
-		ortho_ = Mat4x4::Ortho(-w * 0.5f, +w * 0.5f, -h * 0.5f, +h * 0.5f, nearZ, farZ);
+		ortho = Mat4x4::Ortho(-w * 0.5f, +w * 0.5f, -h * 0.5f, +h * 0.5f, nearZ, farZ);
 	}
 	else
 	{
-		ortho_ = camera2D->GetOrtho();
+		ortho = camera2D->GetOrtho();
 	}
 
+	for (auto& shader : shaders_)
+	{
+		Shader* shaderPtr = shader.second;
+
+		shaderPtr->Bind();
+		{
+			shaderPtr->SetUniform("ortho", ortho);
+		}
+		shaderPtr->Unbind();
+	}
+	
 	bIsBegin_ = true;
 }
 
@@ -118,53 +139,118 @@ void Renderer2D::End()
 	renderManagerPtr->SetDepthMode(false);
 	renderManagerPtr->SetCullFaceMode(false);
 	{
-		//const void* vertexPtr = reinterpret_cast<const void*>(vertices_.data());
-		//uint32_t bufferByteSize = static_cast<uint32_t>(Vertex::GetStride() * vertices_.size());
-		//vertexBuffer_->SetBufferData(vertexPtr, bufferByteSize);
+		const void* vertexPtr = reinterpret_cast<const void*>(vertices_.data());
+		uint32_t bufferByteSize = static_cast<uint32_t>(Vertex::GetStride() * vertices_.size());
+		vertexBuffer_->SetBufferData(vertexPtr, bufferByteSize);
 
-		//GL_FAILED(glBindVertexArray(vertexArrayObject_));
+		GL_FAILED(glBindVertexArray(vertexArrayObject_));
 
-		//while (commandQueue_.empty())
-		//{
-		//	RenderCommand command = commandQueue_.front();
-		//	commandQueue_.pop();
+		while (!commandQueue_.empty())
+		{
+			RenderCommand command = commandQueue_.front();
+			commandQueue_.pop();
 
-		//	Shader* shader = shader_.at(command.type);
-		//	shader->Bind();
+			switch (command.type)
+			{
+			case Renderer2D::EType::SPRITE:
+				command.texture->Active(0);
+				break;
 
-		//	GL_FAILED(glDrawArrays(static_cast<GLenum>(command.drawMode), command.startVertexIndex, command.vertexCount));
+			case Renderer2D::EType::STRING:
+				GL_FAILED(glActiveTexture(GL_TEXTURE0));
+				GL_FAILED(glBindTexture(GL_TEXTURE_2D, command.font->GetGlyphAtlasID()));
+				break;
+			}
 
-		//	shader->Unbind();
-		//}
+			Shader* shader = shaders_.at(command.type);
+			shader->Bind();
+			{
+				GL_FAILED(glDrawArrays(static_cast<GLenum>(command.drawMode), command.startVertexIndex, command.vertexCount));
+			}
+			shader->Unbind();
+		}
 
-		//GL_FAILED(glBindVertexArray(0));
+		GL_FAILED(glBindVertexArray(0));
 	}
 	renderManagerPtr->SetCullFaceMode(static_cast<bool>(originEnableCull));
 	renderManagerPtr->SetDepthMode(static_cast<bool>(originEnableDepth));
 
 	bIsBegin_ = false;
 }
-//
-//void GameMaker::Renderer::DrawRect(const Vec2f& center, float w, float h, const Vec4f& color, float rotate)
-//{
-//	//if (commandQueue_.empty())
-//	//{
-//	//	RenderCommand command;
-//
-//	//	command.drawMode = EDrawMode::TRIANGLES;
-//	//	command.startVertexIndex = 0;
-//	//	command.vertexCount = 6;
-//	//	command.type = EType::GEOMETRY;
-//	//	command.texture = nullptr;
-//	//	command.font = nullptr;
-//	//}
-//	//else
-//	//{
-//	//	RenderCommand& beforeCommand = commandQueue_.back();
-//
-//	//}
-//
-//
-//}
+void GameMaker::Renderer2D::DrawRect(const Vec2f& center, float w, float h, const Vec4f& color, float rotate)
+{
+	float w2 = w * 0.5f;
+	float h2 = h * 0.5f;
+	
+	std::array<Vec2f, 6> vertices =
+	{
+		Vec2f(-w2, -h2),
+		Vec2f(+w2, +h2),
+		Vec2f(-w2, +h2),
+		Vec2f(-w2, -h2),
+		Vec2f(+w2, -h2),
+		Vec2f(+w2, +h2),
+	};
+	
+	Mat2x2 rotateMat = Mat2x2(Cos(rotate), -Sin(rotate), Sin(rotate), Cos(rotate));
+	for (auto& vertex : vertices)
+	{
+		vertex = rotateMat * vertex;
+		vertex += (center + Vec2f(0.375f, 0.375f));
+	}
+		
+	if (commandQueue_.empty())
+	{
+		RenderCommand command;
+		command.drawMode = EDrawMode::TRIANGLES;
+		command.startVertexIndex = 0;
+		command.vertexCount = static_cast<uint32_t>(vertices.size());
+		command.type = EType::GEOMETRY;
+		command.texture = nullptr;
+		command.font = nullptr;
+
+		for (uint32_t index = 0; index < command.vertexCount; ++index)
+		{
+			vertices_[command.startVertexIndex + index].position = vertices[index];
+			vertices_[command.startVertexIndex + index].color = color;
+		}
+
+		commandQueue_.push(command);
+	}
+	else
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+
+		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == EType::GEOMETRY)
+		{
+			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
+
+			for (uint32_t index = 0; index < vertices.size(); ++index)
+			{
+				vertices_[startVertexIndex + index].position = vertices[index];
+				vertices_[startVertexIndex + index].color = color;
+			}
+		}
+		else
+		{
+			RenderCommand command;
+			command.drawMode = EDrawMode::TRIANGLES;
+			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			command.vertexCount = static_cast<uint32_t>(vertices.size());
+			command.type = EType::GEOMETRY;
+			command.texture = nullptr;
+			command.font = nullptr;
+
+			for (uint32_t index = 0; index < command.vertexCount; ++index)
+			{
+				vertices_[command.startVertexIndex + index].position = vertices[index];
+				vertices_[command.startVertexIndex + index].color = color;
+			}
+
+			commandQueue_.push(command);
+		}
+	}
+}
 
 #pragma warning(pop)

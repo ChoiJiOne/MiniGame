@@ -108,8 +108,7 @@ private:
 	uint32_t vertexArrayObject_ = 0;
 	VertexBuffer* vertexBuffer_ = nullptr;
 
-	Mat4x4 ortho_; /** 직교 투영 행렬 */
-	std::map<EType, Shader*> shader_;
+	std::map<EType, Shader*> shaders_;
 	std::queue<RenderCommand> commandQueue_;
 };
 
