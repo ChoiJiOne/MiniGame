@@ -570,6 +570,14 @@ struct Vec2f
 
 		return s * a + e * b;
 	}
+
+	static inline Vec2f Bezier(const Vec2f& s, const Vec2f& e, const Vec2f& c, const float& t)
+	{
+		Vec2f p = s * (1.0f - t) + c * t;
+		Vec2f q = c * (1.0f - t) + e * t;
+		
+		return p * (1.0f - t) + q * t;
+	}
 	
 	union
 	{
