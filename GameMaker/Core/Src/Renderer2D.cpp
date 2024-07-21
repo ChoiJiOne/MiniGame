@@ -177,7 +177,7 @@ void Renderer2D::End()
 
 	bIsBegin_ = false;
 }
-void GameMaker::Renderer2D::DrawPoint(const Vec2f& point, const Vec4f& color, float pointSize)
+void Renderer2D::DrawPoint(const Vec2f& point, const Vec4f& color, float pointSize)
 {
 	float w = pointSize * 0.5f;
 	std::array<Vec2f, 6> vertices =
@@ -249,7 +249,7 @@ void GameMaker::Renderer2D::DrawPoint(const Vec2f& point, const Vec4f& color, fl
 	}
 }
 
-void GameMaker::Renderer2D::DrawLine(const Vec2f& startPos, const Vec2f& endPos, const Vec4f& color)
+void Renderer2D::DrawLine(const Vec2f& startPos, const Vec2f& endPos, const Vec4f& color)
 {
 	std::array<Vec2f, 2> vertices = 
 	{ 
@@ -311,7 +311,7 @@ void GameMaker::Renderer2D::DrawLine(const Vec2f& startPos, const Vec2f& endPos,
 	}
 }
 
-void GameMaker::Renderer2D::DrawLine(const Vec2f& startPos, const Vec4f& startColor, const Vec2f& endPos, const Vec4f& endColor)
+void Renderer2D::DrawLine(const Vec2f& startPos, const Vec4f& startColor, const Vec2f& endPos, const Vec4f& endColor)
 {
 	std::array<Vec2f, 2> vertices = 
 	{ 
@@ -379,7 +379,7 @@ void GameMaker::Renderer2D::DrawLine(const Vec2f& startPos, const Vec4f& startCo
 	}
 }
 
-void GameMaker::Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec2f& byPos, const Vec2f& toPos, const Vec4f& color)
+void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec2f& byPos, const Vec2f& toPos, const Vec4f& color)
 {
 	std::array<Vec2f, 3> vertices =
 	{
@@ -442,7 +442,7 @@ void GameMaker::Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec2f& byPo
 	}
 }
 
-void GameMaker::Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec4f& fromColor, const Vec2f& byPos, const Vec4f& byColor, const Vec2f& toPos, const Vec4f& toColor)
+void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec4f& fromColor, const Vec2f& byPos, const Vec4f& byColor, const Vec2f& toPos, const Vec4f& toColor)
 {
 	std::array<Vec2f, 3> vertices =
 	{
@@ -512,7 +512,140 @@ void GameMaker::Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec4f& from
 	}
 }
 
-void GameMaker::Renderer2D::DrawRect(const Vec2f& center, float w, float h, const Vec4f& color, float rotate)
+void Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Vec2f& byPos, const Vec2f& toPos, const Vec4f& color)
+{
+	std::array<Vec2f, 6> vertices =
+	{
+		fromPos + Vec2f(0.375f, 0.375f),   byPos + Vec2f(0.375f, 0.375f),
+		byPos   + Vec2f(0.375f, 0.375f),   toPos + Vec2f(0.375f, 0.375f),
+		toPos   + Vec2f(0.375f, 0.375f), fromPos + Vec2f(0.375f, 0.375f),
+	};
+
+	if (commandQueue_.empty())
+	{
+		RenderCommand command;
+		command.drawMode = EDrawMode::LINES;
+		command.startVertexIndex = 0;
+		command.vertexCount = static_cast<uint32_t>(vertices.size());
+		command.type = EType::GEOMETRY;
+		command.texture = nullptr;
+		command.font = nullptr;
+
+		for (uint32_t index = 0; index < command.vertexCount; ++index)
+		{
+			vertices_[command.startVertexIndex + index].position = vertices[index];
+			vertices_[command.startVertexIndex + index].color = color;
+		}
+
+		commandQueue_.push(command);
+	}
+	else
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+
+		if (prevCommand.drawMode == EDrawMode::LINES && prevCommand.type == EType::GEOMETRY)
+		{
+			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
+
+			for (uint32_t index = 0; index < vertices.size(); ++index)
+			{
+				vertices_[startVertexIndex + index].position = vertices[index];
+				vertices_[startVertexIndex + index].color = color;
+			}
+		}
+		else
+		{
+			RenderCommand command;
+			command.drawMode = EDrawMode::LINES;
+			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			command.vertexCount = static_cast<uint32_t>(vertices.size());
+			command.type = EType::GEOMETRY;
+			command.texture = nullptr;
+			command.font = nullptr;
+
+			for (uint32_t index = 0; index < command.vertexCount; ++index)
+			{
+				vertices_[command.startVertexIndex + index].position = vertices[index];
+				vertices_[command.startVertexIndex + index].color = color;
+			}
+
+			commandQueue_.push(command);
+		}
+	}
+}
+
+void GameMaker::Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Vec4f& fromColor, const Vec2f& byPos, const Vec4f& byColor, const Vec2f& toPos, const Vec4f& toColor)
+{
+	std::array<Vec2f, 6> vertices =
+	{
+		fromPos + Vec2f(0.375f, 0.375f),   byPos + Vec2f(0.375f, 0.375f),
+		byPos + Vec2f(0.375f, 0.375f),   toPos + Vec2f(0.375f, 0.375f),
+		toPos + Vec2f(0.375f, 0.375f), fromPos + Vec2f(0.375f, 0.375f),
+	};
+
+	std::array<Vec4f, 6> colors =
+	{
+		fromColor, byColor,
+		byColor,   toColor,
+		toColor,   fromColor,
+	};
+
+	if (commandQueue_.empty())
+	{
+		RenderCommand command;
+		command.drawMode = EDrawMode::LINES;
+		command.startVertexIndex = 0;
+		command.vertexCount = static_cast<uint32_t>(vertices.size());
+		command.type = EType::GEOMETRY;
+		command.texture = nullptr;
+		command.font = nullptr;
+
+		for (uint32_t index = 0; index < command.vertexCount; ++index)
+		{
+			vertices_[command.startVertexIndex + index].position = vertices[index];
+			vertices_[command.startVertexIndex + index].color = colors[index];
+		}
+
+		commandQueue_.push(command);
+	}
+	else
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+
+		if (prevCommand.drawMode == EDrawMode::LINES && prevCommand.type == EType::GEOMETRY)
+		{
+			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
+
+			for (uint32_t index = 0; index < vertices.size(); ++index)
+			{
+				vertices_[startVertexIndex + index].position = vertices[index];
+				vertices_[startVertexIndex + index].color = colors[index];
+			}
+		}
+		else
+		{
+			RenderCommand command;
+			command.drawMode = EDrawMode::LINES;
+			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			command.vertexCount = static_cast<uint32_t>(vertices.size());
+			command.type = EType::GEOMETRY;
+			command.texture = nullptr;
+			command.font = nullptr;
+
+			for (uint32_t index = 0; index < command.vertexCount; ++index)
+			{
+				vertices_[command.startVertexIndex + index].position = vertices[index];
+				vertices_[command.startVertexIndex + index].color = colors[index];
+			}
+
+			commandQueue_.push(command);
+		}
+	}
+}
+
+void Renderer2D::DrawRect(const Vec2f& center, float w, float h, const Vec4f& color, float rotate)
 {
 	float w2 = w * 0.5f;
 	float h2 = h * 0.5f;
