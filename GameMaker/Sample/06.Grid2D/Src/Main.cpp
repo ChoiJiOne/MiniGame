@@ -19,41 +19,12 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 
 	GameMaker::Renderer2D* renderer = GameMaker::RenderManager::Get().GetRenderer2D();
 
-	std::vector<GameMaker::Vec2f> positions;
-	std::vector<GameMaker::Vec4f> colors;
-	for (float x = -400.0f; x <= 400.0f; x += 10.0f)
-	{
-		positions.push_back(GameMaker::Vec2f(x, +300.0f));
-		positions.push_back(GameMaker::Vec2f(x, -300.0f));
-
-		if (x == 0.0f)
-		{
-			colors.push_back(GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
-			colors.push_back(GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
-		}
-		else
-		{
-			colors.push_back(GameMaker::Vec4f(0.5f, 0.5f, 0.5f, 0.5f));
-			colors.push_back(GameMaker::Vec4f(0.5f, 0.5f, 0.5f, 0.5f));
-		}
-	}
-
-	for (float y = -300.0f; y <= 300.0f; y += 10.0f)
-	{
-		positions.push_back(GameMaker::Vec2f(+400.0f, y));
-		positions.push_back(GameMaker::Vec2f(-400.0f, y));
-
-		if (y == 0.0f)
-		{
-			colors.push_back(GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
-			colors.push_back(GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
-		}
-		else
-		{
-			colors.push_back(GameMaker::Vec4f(0.5f, 0.5f, 0.5f, 0.5f));
-			colors.push_back(GameMaker::Vec4f(0.5f, 0.5f, 0.5f, 0.5f));
-		}
-	}
+	float minX = -400.0f;
+	float maxX = +400.0f;
+	float strideX = 10.0f;
+	float minY = -300.0f;
+	float maxY = +300.0f;
+	float strideY = 10.0f;
 
 	GameMaker::GameEngine::RunLoop(
 		[&](float deltaSeconds)
@@ -61,7 +32,17 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 			GameMaker::RenderManager::Get().BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
 			renderer->Begin();
 			{
-				renderer->DrawLines(positions.data(), colors.data(), positions.size());
+				for (float x = minX; x <= maxX; x += strideX)
+				{
+					GameMaker::Vec4f color = (x == 0.0f) ? GameMaker::Vec4f(0.0f, 0.0f, 1.0f, 1.0f) : GameMaker::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
+					renderer->DrawLine(GameMaker::Vec2f(x, minX), GameMaker::Vec2f(x, maxY), color);
+				}
+
+				for (float y = minY; y <= maxY; y += strideY)
+				{
+					GameMaker::Vec4f color = (y == 0.0f) ? GameMaker::Vec4f(1.0f, 0.0f, 0.0f, 1.0f) : GameMaker::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
+					renderer->DrawLine(GameMaker::Vec2f(minX, y), GameMaker::Vec2f(maxX, y), color);
+				}
 			}
 			renderer->End();
 			GameMaker::RenderManager::Get().EndFrame();
