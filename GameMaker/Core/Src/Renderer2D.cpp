@@ -804,7 +804,7 @@ void Renderer2D::DrawRoundRect(const Vec2f& center, float w, float h, float side
 
 	uint32_t vertexCount = 0;
 	
-	static const uint32_t MAX_VERTEX_SIZE = 360;
+	static const uint32_t MAX_VERTEX_SIZE = 252;
 	static const uint32_t MAX_SLICE_SIZE = 20;
 	std::array<Vec2f, MAX_VERTEX_SIZE> vertices;
 
@@ -829,8 +829,8 @@ void Renderer2D::DrawRoundRect(const Vec2f& center, float w, float h, float side
 	calculateBezierCurve(start, end, control, MAX_SLICE_SIZE);
 
 	vertices[vertexCount + 0] = Vec2f();
-	vertices[vertexCount + 1] = control + Vec2f(0.0f, -side);
-	vertices[vertexCount + 2] = control + Vec2f(0.0f, +side);
+	vertices[vertexCount + 1] = Vec2f(-w2, +h2) + Vec2f(0.0f, -side);
+	vertices[vertexCount + 2] = Vec2f(-w2, -h2) + Vec2f(0.0f, +side);
 	vertexCount += 3;
 
 	control = Vec2f(-w2, -h2);
@@ -838,16 +838,42 @@ void Renderer2D::DrawRoundRect(const Vec2f& center, float w, float h, float side
 	end = control + Vec2f(+side, 0.0f);
 	calculateBezierCurve(start, end, control, MAX_SLICE_SIZE);
 
+	vertices[vertexCount + 0] = Vec2f();
+	vertices[vertexCount + 1] = Vec2f(-w2, -h2) + Vec2f(+side, 0.0f);
+	vertices[vertexCount + 2] = Vec2f(+w2, -h2) + Vec2f(-side, 0.0f);
+	vertexCount += 3;
+
 	control = Vec2f(+w2, -h2);
 	start = control + Vec2f(-side, 0.0f);
 	end = control + Vec2f(0.0f, +side);
 	calculateBezierCurve(start, end, control, MAX_SLICE_SIZE);
+
+	vertices[vertexCount + 0] = Vec2f();
+	vertices[vertexCount + 1] = Vec2f(+w2, -h2) + Vec2f(0.0f, +side);
+	vertices[vertexCount + 2] = Vec2f(+w2, +h2) + Vec2f(0.0f, -side);
+	vertexCount += 3;
 
 	control = Vec2f(+w2, +h2);
 	start = control + Vec2f(0.0f, -side);
 	end = control + Vec2f(-side, 0.0f);
 	calculateBezierCurve(start, end, control, MAX_SLICE_SIZE);
 
+	vertices[vertexCount + 0] = Vec2f();
+	vertices[vertexCount + 1] = Vec2f(+w2, +h2) + Vec2f(-side, 0.0f);
+	vertices[vertexCount + 2] = Vec2f(-w2, +h2) + Vec2f(+side, 0.0f);
+	vertexCount += 3;
+
+	Mat2x2 rotateMat = Mat2x2(Cos(rotate), -Sin(rotate), Sin(rotate), Cos(rotate));
+	for (uint32_t index = 0; index < vertexCount; index += 3)
+	{
+		vertices[index + 1] = rotateMat * vertices[index + 1];
+		vertices[index + 2] = rotateMat * vertices[index + 2];
+
+		vertices[index + 0] += (center + Vec2f(0.375f, 0.375f));
+		vertices[index + 1] += (center + Vec2f(0.375f, 0.375f));
+		vertices[index + 2] += (center + Vec2f(0.375f, 0.375f));
+	}
+	
 	if (commandQueue_.empty())
 	{
 		RenderCommand command;
