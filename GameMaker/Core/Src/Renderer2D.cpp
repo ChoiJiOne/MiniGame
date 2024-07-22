@@ -1053,4 +1053,78 @@ void Renderer2D::DrawRoundRectWireframe(const Vec2f& center, float w, float h, f
 	}
 }
 
+void Renderer2D::DrawCircle(const Vec2f& center, float radius, const Vec4f& color)
+{
+	uint32_t vertexCount = 0;
+
+	static const uint32_t MAX_VERTEX_SIZE = 300;
+	static const uint32_t MAX_SLICE_SIZE = 100;
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices;
+
+	for (int32_t slice = 0; slice < MAX_SLICE_SIZE; ++slice)
+	{
+		float radian0 = (static_cast<float>(slice + 0) * TWO_PI) / static_cast<float>(MAX_SLICE_SIZE);
+		float radian1 = (static_cast<float>(slice + 1) * TWO_PI) / static_cast<float>(MAX_SLICE_SIZE);
+
+		vertices[vertexCount + 0] = center + Vec2f(0.375f, 0.375f);
+		vertices[vertexCount + 1] = center + Vec2f(radius * Cos(radian0), radius * Sin(radian0)) + Vec2f(0.375f, 0.375f);
+		vertices[vertexCount + 2] = center + Vec2f(radius * Cos(radian1), radius * Sin(radian1)) + Vec2f(0.375f, 0.375f);
+		
+		vertexCount += 3;
+	}
+
+	if (commandQueue_.empty())
+	{
+		RenderCommand command;
+		command.drawMode = EDrawMode::TRIANGLES;
+		command.startVertexIndex = 0;
+		command.vertexCount = static_cast<uint32_t>(vertices.size());
+		command.type = EType::GEOMETRY;
+		command.texture = nullptr;
+		command.font = nullptr;
+
+		for (uint32_t index = 0; index < command.vertexCount; ++index)
+		{
+			vertices_[command.startVertexIndex + index].position = vertices[index];
+			vertices_[command.startVertexIndex + index].color = color;
+		}
+
+		commandQueue_.push(command);
+	}
+	else
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+
+		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == EType::GEOMETRY)
+		{
+			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
+
+			for (uint32_t index = 0; index < vertices.size(); ++index)
+			{
+				vertices_[startVertexIndex + index].position = vertices[index];
+				vertices_[startVertexIndex + index].color = color;
+			}
+		}
+		else
+		{
+			RenderCommand command;
+			command.drawMode = EDrawMode::TRIANGLES;
+			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			command.vertexCount = static_cast<uint32_t>(vertices.size());
+			command.type = EType::GEOMETRY;
+			command.texture = nullptr;
+			command.font = nullptr;
+
+			for (uint32_t index = 0; index < command.vertexCount; ++index)
+			{
+				vertices_[command.startVertexIndex + index].position = vertices[index];
+				vertices_[command.startVertexIndex + index].color = color;
+			}
+
+			commandQueue_.push(command);
+		}
+	}
+}
+
 #pragma warning(pop)
