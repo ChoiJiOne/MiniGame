@@ -51,6 +51,7 @@ public:
 	void DrawRoundRectWireframe(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate = 0.0f);
 	void DrawCircle(const Vec2f& center, float radius, const Vec4f& color);
 	void DrawCircleWireframe(const Vec2f& center, float radius, const Vec4f& color);
+	void DrawString(TTFont* font, const std::wstring& text, const Vec2f& pos, const Vec4f& color);
 
 private:
 	enum class EType

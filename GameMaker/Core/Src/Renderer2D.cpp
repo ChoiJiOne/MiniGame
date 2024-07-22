@@ -1200,4 +1200,96 @@ void GameMaker::Renderer2D::DrawCircleWireframe(const Vec2f& center, float radiu
 	}
 }
 
+void Renderer2D::DrawString(TTFont* font, const std::wstring& text, const Vec2f& pos, const Vec4f& color)
+{
+	/** 문자 하나당 정점 6개. */
+	uint32_t vertexCount = 6 * static_cast<uint32_t>(text.size());
+
+	float w = 0.0f;
+	float h = 0.0f;
+	font->MeasureText(text, w, h);
+
+	float atlasSize = static_cast<float>(font->GetGlyphAtlasSize());
+	Vec2f currPos = Vec2f(pos.x, pos.y - h);
+
+	auto composeVertexData = [&](uint32_t vertexIndex)
+		{
+			for (const auto& unicode : text)
+			{
+				const Glyph& glyph = font->GetGlyph(static_cast<int32_t>(unicode));
+
+				float uw = static_cast<float>(glyph.pos1.x - glyph.pos0.x);
+				float uh = static_cast<float>(glyph.pos1.y - glyph.pos0.y);
+
+				vertices_[vertexIndex + 0].position = Vec2f(currPos.x + glyph.xoff, currPos.y - glyph.yoff);
+				vertices_[vertexIndex + 0].uv = Vec2f(static_cast<float>(glyph.pos0.x) / atlasSize, static_cast<float>(glyph.pos0.y) / atlasSize);
+				vertices_[vertexIndex + 0].color = color;
+
+				vertices_[vertexIndex + 1].position = Vec2f(currPos.x + glyph.xoff, currPos.y - uh - glyph.yoff);
+				vertices_[vertexIndex + 1].uv = Vec2f(static_cast<float>(glyph.pos0.x) / atlasSize, static_cast<float>(glyph.pos1.y) / atlasSize);
+				vertices_[vertexIndex + 1].color = color;
+
+				vertices_[vertexIndex + 2].position = Vec2f(currPos.x + glyph.xoff + uw, currPos.y - glyph.yoff);
+				vertices_[vertexIndex + 2].uv = Vec2f(static_cast<float>(glyph.pos1.x) / atlasSize, static_cast<float>(glyph.pos0.y) / atlasSize);
+				vertices_[vertexIndex + 2].color = color;
+
+				vertices_[vertexIndex + 3].position = Vec2f(currPos.x + glyph.xoff + uw, currPos.y - glyph.yoff);
+				vertices_[vertexIndex + 3].uv = Vec2f(static_cast<float>(glyph.pos1.x) / atlasSize, static_cast<float>(glyph.pos0.y) / atlasSize);
+				vertices_[vertexIndex + 3].color = color;
+
+				vertices_[vertexIndex + 4].position = Vec2f(currPos.x + glyph.xoff, currPos.y - uh - glyph.yoff);
+				vertices_[vertexIndex + 4].uv = Vec2f(static_cast<float>(glyph.pos0.x) / atlasSize, static_cast<float>(glyph.pos1.y) / atlasSize);
+				vertices_[vertexIndex + 4].color = color;
+
+				vertices_[vertexIndex + 5].position = Vec2f(currPos.x + glyph.xoff + uw, currPos.y - uh - glyph.yoff);
+				vertices_[vertexIndex + 5].uv = Vec2f(static_cast<float>(glyph.pos1.x) / atlasSize, static_cast<float>(glyph.pos1.y) / atlasSize);
+				vertices_[vertexIndex + 5].color = color;
+
+				currPos.x += glyph.xadvance;
+				vertexIndex += 6;
+			}
+		};
+	
+	if (commandQueue_.empty())
+	{
+		RenderCommand command;
+		command.drawMode = EDrawMode::TRIANGLES;
+		command.startVertexIndex = 0;
+		command.vertexCount = vertexCount;
+		command.type = EType::STRING;
+		command.texture = nullptr;
+		command.font = font;
+
+		composeVertexData(command.startVertexIndex);
+
+		commandQueue_.push(command);
+	}
+	else
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+
+		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == EType::STRING && prevCommand.font == font)
+		{
+			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			prevCommand.vertexCount += vertexCount;
+
+			composeVertexData(startVertexIndex);
+		}
+		else
+		{
+			RenderCommand command;
+			command.drawMode = EDrawMode::TRIANGLES;
+			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			command.vertexCount = vertexCount;
+			command.type = EType::STRING;
+			command.texture = nullptr;
+			command.font = font;
+
+			composeVertexData(command.startVertexIndex);
+
+			commandQueue_.push(command);
+		}
+	}
+}
+
 #pragma warning(pop)
