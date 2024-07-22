@@ -47,7 +47,7 @@ public:
 	void DrawTriangleWireframe(const Vec2f& fromPos, const Vec4f& fromColor, const Vec2f& byPos, const Vec4f& byColor, const Vec2f& toPos, const Vec4f& toColor);
 	void DrawRect(const Vec2f& center, float w, float h, const Vec4f& color, float rotate = 0.0f);
 	void DrawRectWireframe(const Vec2f& center, float w, float h, const Vec4f& color, float rotate = 0.0f);
-	//void DrawRoundRect(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate = 0.0f);
+	void DrawRoundRect(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate = 0.0f);
 	//void DrawRoundRectWireframe(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate = 0.0f);
 	//void DrawCircle(const Vec2f& center, float radius, const Vec4f& color, int32_t sliceCount = 300);
 	//void DrawCircleWireframe(const Vec2f& center, float radius, const Vec4f& color, int32_t sliceCount = 300);
