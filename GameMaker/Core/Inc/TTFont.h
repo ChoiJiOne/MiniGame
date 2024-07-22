@@ -22,10 +22,7 @@ struct Glyph
 	float xadvance;
 };
 
-
-/**
- * 트루 타입 폰트는 .ttf 만 지원합니다.
- */
+/** 트루 타입 폰트는 .ttf 만 지원합니다. */
 class TTFont : public IResource
 {
 public:
