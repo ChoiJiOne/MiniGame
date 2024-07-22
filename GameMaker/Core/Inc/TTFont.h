@@ -13,12 +13,12 @@ namespace GameMaker
 struct Glyph
 {
 	int32_t codePoint;
-	Vec2i position0;
-	Vec2i position1;
-	float xoffset;
-	float yoffset;
-	float xoffset2;
-	float yoffset2;
+	Vec2i pos0;
+	Vec2i pos1;
+	float xoff;
+	float yoff;
+	float xoff2;
+	float yoff2;
 	float xadvance;
 };
 

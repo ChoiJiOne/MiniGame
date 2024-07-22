@@ -69,15 +69,15 @@ void TTFont::MeasureText(const std::wstring& text, float& outWidth, float& outHe
 
 		if (index == text.size() - 1)
 		{
-			width += static_cast<float>(glyph.position1.x - glyph.position0.x) + glyph.xoffset;
+			width += static_cast<float>(glyph.pos1.x - glyph.pos0.x) + glyph.xoff;
 		}
 		else
 		{
 			width += glyph.xadvance;
 		}
 
-		float y0 = glyph.yoffset;
-		float y1 = static_cast<float>(glyph.position1.y - glyph.position0.y) + glyph.yoffset;
+		float y0 = glyph.yoff;
+		float y1 = static_cast<float>(glyph.pos1.y - glyph.pos0.y) + glyph.yoff;
 
 		minY = GameMaker::Min<float>(y0, minY);
 		maxY = GameMaker::Max<float>(y1, maxY);
@@ -119,12 +119,12 @@ std::shared_ptr<uint8_t[]> TTFont::GenerateGlyphAtlasBitmap(const std::vector<ui
 	for (std::size_t index = 0; index < packedchars.size(); ++index)
 	{
 		outGlyphs[index].codePoint = static_cast<int32_t>(index + beginCodePoint);
-		outGlyphs[index].position0 = Vec2i(packedchars[index].x0, packedchars[index].y0);
-		outGlyphs[index].position1 = Vec2i(packedchars[index].x1, packedchars[index].y1);
-		outGlyphs[index].xoffset = packedchars[index].xoff;
-		outGlyphs[index].yoffset = packedchars[index].yoff;
-		outGlyphs[index].xoffset2 = packedchars[index].xoff2;
-		outGlyphs[index].yoffset2 = packedchars[index].yoff2;
+		outGlyphs[index].pos0 = Vec2i(packedchars[index].x0, packedchars[index].y0);
+		outGlyphs[index].pos1 = Vec2i(packedchars[index].x1, packedchars[index].y1);
+		outGlyphs[index].xoff = packedchars[index].xoff;
+		outGlyphs[index].yoff = packedchars[index].yoff;
+		outGlyphs[index].xoff2 = packedchars[index].xoff2;
+		outGlyphs[index].yoff2 = packedchars[index].yoff2;
 		outGlyphs[index].xadvance = packedchars[index].xadvance;
 	}
 
