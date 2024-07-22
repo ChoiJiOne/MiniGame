@@ -928,4 +928,129 @@ void Renderer2D::DrawRoundRect(const Vec2f& center, float w, float h, float side
 	}
 }
 
+void Renderer2D::DrawRoundRectWireframe(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate)
+{
+	float w2 = w * 0.5f;
+	float h2 = h * 0.5f;
+	side = Min<float>(side, Min<float>(h2, h2));
+
+	uint32_t vertexCount = 0;
+
+	static const uint32_t MAX_VERTEX_SIZE = 168;
+	static const uint32_t MAX_SLICE_SIZE = 20;
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices;
+
+	auto calculateBezierCurve = [&](const Vec2f& startPos, const Vec2f& endPos, const Vec2f& controlPos, uint32_t sliceCount)
+		{
+			for (int32_t slice = 0; slice < sliceCount; ++slice)
+			{
+				float t0 = static_cast<float>(slice + 0) / static_cast<float>(sliceCount);
+				float t1 = static_cast<float>(slice + 1) / static_cast<float>(sliceCount);
+
+				vertices[vertexCount + 0] = Vec2f::Bezier(startPos, endPos, controlPos, t0);
+				vertices[vertexCount + 1] = Vec2f::Bezier(startPos, endPos, controlPos, t1);
+				vertexCount += 2;
+			}
+		};
+
+	Vec2f control = Vec2f(-w2, +h2);
+	Vec2f start = control + Vec2f(+side, 0.0f);
+	Vec2f end = control + Vec2f(0.0f, -side);
+	calculateBezierCurve(start, end, control, MAX_SLICE_SIZE);
+
+	vertices[vertexCount + 0] = Vec2f(-w2, +h2) + Vec2f(0.0f, -side);
+	vertices[vertexCount + 1] = Vec2f(-w2, -h2) + Vec2f(0.0f, +side);
+	vertexCount += 2;
+
+	control = Vec2f(-w2, -h2);
+	start = control + Vec2f(0.0f, +side);
+	end = control + Vec2f(+side, 0.0f);
+	calculateBezierCurve(start, end, control, MAX_SLICE_SIZE);
+
+	vertices[vertexCount + 0] = Vec2f(-w2, -h2) + Vec2f(+side, 0.0f);
+	vertices[vertexCount + 1] = Vec2f(+w2, -h2) + Vec2f(-side, 0.0f);
+	vertexCount += 2;
+
+	control = Vec2f(+w2, -h2);
+	start = control + Vec2f(-side, 0.0f);
+	end = control + Vec2f(0.0f, +side);
+	calculateBezierCurve(start, end, control, MAX_SLICE_SIZE);
+
+	vertices[vertexCount + 0] = Vec2f(+w2, -h2) + Vec2f(0.0f, +side);
+	vertices[vertexCount + 1] = Vec2f(+w2, +h2) + Vec2f(0.0f, -side);
+	vertexCount += 2;
+
+	control = Vec2f(+w2, +h2);
+	start = control + Vec2f(0.0f, -side);
+	end = control + Vec2f(-side, 0.0f);
+	calculateBezierCurve(start, end, control, MAX_SLICE_SIZE);
+
+	vertices[vertexCount + 0] = Vec2f(+w2, +h2) + Vec2f(-side, 0.0f);
+	vertices[vertexCount + 1] = Vec2f(-w2, +h2) + Vec2f(+side, 0.0f);
+	vertexCount += 2;
+
+	Mat2x2 rotateMat = Mat2x2(Cos(rotate), -Sin(rotate), Sin(rotate), Cos(rotate));
+	for (uint32_t index = 0; index < vertexCount; index += 2)
+	{
+		vertices[index + 0] = rotateMat * vertices[index + 0];
+		vertices[index + 1] = rotateMat * vertices[index + 1];
+
+		vertices[index + 0] += (center + Vec2f(0.375f, 0.375f));
+		vertices[index + 1] += (center + Vec2f(0.375f, 0.375f));
+	}
+
+	if (commandQueue_.empty())
+	{
+		RenderCommand command;
+		command.drawMode = EDrawMode::LINES;
+		command.startVertexIndex = 0;
+		command.vertexCount = static_cast<uint32_t>(vertices.size());
+		command.type = EType::GEOMETRY;
+		command.texture = nullptr;
+		command.font = nullptr;
+
+		for (uint32_t index = 0; index < command.vertexCount; ++index)
+		{
+			vertices_[command.startVertexIndex + index].position = vertices[index];
+			vertices_[command.startVertexIndex + index].color = color;
+		}
+
+		commandQueue_.push(command);
+	}
+	else
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+
+		if (prevCommand.drawMode == EDrawMode::LINES && prevCommand.type == EType::GEOMETRY)
+		{
+			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
+
+			for (uint32_t index = 0; index < vertices.size(); ++index)
+			{
+				vertices_[startVertexIndex + index].position = vertices[index];
+				vertices_[startVertexIndex + index].color = color;
+			}
+		}
+		else
+		{
+			RenderCommand command;
+			command.drawMode = EDrawMode::LINES;
+			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			command.vertexCount = static_cast<uint32_t>(vertices.size());
+			command.type = EType::GEOMETRY;
+			command.texture = nullptr;
+			command.font = nullptr;
+
+			for (uint32_t index = 0; index < command.vertexCount; ++index)
+			{
+				vertices_[command.startVertexIndex + index].position = vertices[index];
+				vertices_[command.startVertexIndex + index].color = color;
+			}
+
+			commandQueue_.push(command);
+		}
+	}
+}
+
 #pragma warning(pop)

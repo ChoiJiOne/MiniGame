@@ -48,7 +48,7 @@ public:
 	void DrawRect(const Vec2f& center, float w, float h, const Vec4f& color, float rotate = 0.0f);
 	void DrawRectWireframe(const Vec2f& center, float w, float h, const Vec4f& color, float rotate = 0.0f);
 	void DrawRoundRect(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate = 0.0f);
-	//void DrawRoundRectWireframe(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate = 0.0f);
+	void DrawRoundRectWireframe(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate = 0.0f);
 	//void DrawCircle(const Vec2f& center, float radius, const Vec4f& color);
 	//void DrawCircleWireframe(const Vec2f& center, float radius, const Vec4f& color);
 
