@@ -55,7 +55,7 @@ public:
 	void DrawSprite(ITexture* texture, const Vec2f& center, float w, float h, float rotate = 0.0f, bool bFlipH = false, bool bFlipV = false);
 
 	/** factor의 값이 0.0 이면 blend 값에 영향을 받지 않고, 1.0이면 blend 색상만 렌더링합니다. */
-	//void DrawSprite(const ITexture* texture, const Vec2f& center, float w, float h, const Vec4f& blend, float factor = 0.0f, float rotate = 0.0f, bool bFlipH = false, bool bFlipV = false);
+	void DrawSprite(ITexture* texture, const Vec2f& center, float w, float h, const Vec3f& blend, float factor = 0.0f, float rotate = 0.0f, bool bFlipH = false, bool bFlipV = false);
 
 private:
 	enum class EType

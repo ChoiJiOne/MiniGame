@@ -1354,6 +1354,7 @@ void Renderer2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, flo
 		{
 			vertices_[command.startVertexIndex + index].position = vertices[index];
 			vertices_[command.startVertexIndex + index].uv = uvs[index];
+			vertices_[command.startVertexIndex + index].color = Vec4f();
 		}
 
 		commandQueue_.push(command);
@@ -1371,6 +1372,7 @@ void Renderer2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, flo
 			{
 				vertices_[startVertexIndex + index].position = vertices[index];
 				vertices_[startVertexIndex + index].uv = uvs[index];
+				vertices_[startVertexIndex + index].color = Vec4f();
 			}
 		}
 		else
@@ -1387,6 +1389,112 @@ void Renderer2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, flo
 			{
 				vertices_[command.startVertexIndex + index].position = vertices[index];
 				vertices_[command.startVertexIndex + index].uv = uvs[index];
+				vertices_[command.startVertexIndex + index].color = Vec4f();
+			}
+
+			commandQueue_.push(command);
+		}
+	}
+}
+
+void Renderer2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, float h, const Vec3f& blend, float factor, float rotate, bool bFlipH, bool bFlipV)
+{
+	float w2 = w * 0.5f;
+	float h2 = h * 0.5f;
+
+	std::array<Vec2f, 6> vertices =
+	{
+		Vec2f(-w2, -h2),
+		Vec2f(+w2, +h2),
+		Vec2f(-w2, +h2),
+		Vec2f(-w2, -h2),
+		Vec2f(+w2, -h2),
+		Vec2f(+w2, +h2),
+	};
+
+	std::array<Vec2f, 6> uvs =
+	{
+		Vec2f(0.0f, 0.0f),
+		Vec2f(1.0f, 1.0f),
+		Vec2f(0.0f, 1.0f),
+		Vec2f(0.0f, 0.0f),
+		Vec2f(1.0f, 0.0f),
+		Vec2f(1.0f, 1.0f),
+	};
+
+	Mat2x2 rotateMat = Mat2x2(Cos(rotate), -Sin(rotate), Sin(rotate), Cos(rotate));
+	for (auto& vertex : vertices)
+	{
+		vertex = rotateMat * vertex;
+		vertex += (center + Vec2f(0.375f, 0.375f));
+	}
+
+	if (bFlipH)
+	{
+		for (auto& uv : uvs)
+		{
+			uv.y = (1.0f - uv.y);
+		}
+	}
+
+	if (bFlipV)
+	{
+		for (auto& uv : uvs)
+		{
+			uv.x = (1.0f - uv.x);
+		}
+	}
+
+	if (commandQueue_.empty())
+	{
+		RenderCommand command;
+		command.drawMode = EDrawMode::TRIANGLES;
+		command.startVertexIndex = 0;
+		command.vertexCount = static_cast<uint32_t>(vertices.size());
+		command.type = EType::SPRITE;
+		command.texture = texture;
+		command.font = nullptr;
+
+		for (uint32_t index = 0; index < command.vertexCount; ++index)
+		{
+			vertices_[command.startVertexIndex + index].position = vertices[index];
+			vertices_[command.startVertexIndex + index].uv = uvs[index];
+			vertices_[command.startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
+		}
+
+		commandQueue_.push(command);
+	}
+	else
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+
+		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == EType::SPRITE && prevCommand.texture == texture)
+		{
+			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
+
+			for (uint32_t index = 0; index < vertices.size(); ++index)
+			{
+				vertices_[startVertexIndex + index].position = vertices[index];
+				vertices_[startVertexIndex + index].uv = uvs[index];
+				vertices_[startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
+			}
+		}
+		else
+		{
+			RenderCommand command;
+			command.drawMode = EDrawMode::TRIANGLES;
+			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			command.vertexCount = static_cast<uint32_t>(vertices.size());
+			command.type = EType::SPRITE;
+			command.texture = texture;
+			command.font = nullptr;
+
+			for (uint32_t index = 0; index < command.vertexCount; ++index)
+			{
+				vertices_[command.startVertexIndex + index].position = vertices[index];
+				vertices_[command.startVertexIndex + index].uv = uvs[index];
+				vertices_[command.startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
 			}
 
 			commandQueue_.push(command);
