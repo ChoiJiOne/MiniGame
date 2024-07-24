@@ -7,7 +7,7 @@ add_subdirectory(04.MultiTexture)
 add_subdirectory(05.KTX)
 add_subdirectory(06.Grid2D)
 add_subdirectory(07.Rendering2D)
-add_subdirectory(08.Cube)
+add_subdirectory(08.Rendering3D)
 
 set_target_properties(
     01.Initialize
@@ -17,6 +17,6 @@ set_target_properties(
     05.KTX
     06.Grid2D
     07.Rendering2D
-    08.Cube
+    08.Rendering3D
     PROPERTIES FOLDER "Sample"
 )
