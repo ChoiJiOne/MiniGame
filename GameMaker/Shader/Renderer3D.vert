@@ -8,11 +8,9 @@ layout(location = 0) out vec4 outColor;
 uniform mat4 world;
 uniform mat4 view;
 uniform mat4 projection;
-uniform float pointSize;
 
 void main()
 {
 	gl_Position = projection * view * world * vec4(inPosition, 1.0f);
-	gl_PointSize = pointSize;
 	outColor = inColor;
 }
