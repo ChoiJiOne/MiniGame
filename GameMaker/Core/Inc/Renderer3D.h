@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <queue>
 
 #include "GameMath.h"
 #include "IResource.h"
@@ -23,17 +24,11 @@ public:
 
 	virtual void Release() override;
 
-	void Begin(const Mat4x4& view, const Mat4x4& projection);
 	void Begin(const Camera3D* camera3D);
 	void End();
 
-	void DrawPoint(const Vec3f* positions, uint32_t size, const Vec4f& color, float pointSize = 1.0f); /** 3D 점들의 개수는 MAX_VERTEX_SIZE(10000)의 크기를 넘을 수 없습니다. */
-	void DrawPoint(const Vec3f* positions, const Vec4f* colors, uint32_t size, float pointSize = 1.0f);
-	void DrawLine(const Vec3f* positions, const Vec4f* colors, uint32_t size);
 	void DrawLine(const Vec3f& startPos, const Vec3f& endPos, const Vec4f& color);
 	void DrawLine(const Vec3f& startPos, const Vec4f& startColor, const Vec3f& endPos, const Vec4f& endColor);
-	void DrawLines(const Vec3f* positions, uint32_t size, const Vec4f& color);
-	void DrawLines(const Vec3f* positions, const Vec4f* colors, uint32_t size);
 	void DrawQuad(const Mat4x4& world, float width, float height, const Vec4f& color);
 	void DrawCube(const Mat4x4& world, const Vec3f& extents, const Vec4f& color);
 	void DrawSphere(const Mat4x4& world, float radius, const Vec4f& color);
@@ -79,21 +74,28 @@ private:
 		Vec4f color;
 	};
 
+	struct RenderCommand
+	{
+		EDrawMode drawMode;
+		uint32_t startVertexIndex;
+		uint32_t vertexCount;
+		Mat4x4 world;
+	};
 
 private:
 	void Draw(const Mat4x4& world, const EDrawMode& drawMode, uint32_t vertexCount);
 
 private:
-	static const int32_t MAX_VERTEX_SIZE = 10000;
-	static const int32_t MAX_SLICE_SIZE = 7;
-
-	std::array<Vertex, MAX_VERTEX_SIZE> vertices_;
 	bool bIsBegin_ = false;
-	float pointSize_ = 1.0f;
+
+	static const int32_t MAX_VERTEX_SIZE = 20000;
+	std::array<Vertex, MAX_VERTEX_SIZE> vertices_;
+	
 	uint32_t vertexArrayObject_ = 0;
-	VertexBuffer* vertexBuffer_;
+	VertexBuffer* vertexBuffer_ = nullptr;
+
 	Shader* shader_ = nullptr;
-	bool bIsBeforeEnableDepth_ = true;
+	std::queue<RenderCommand> commandQueue_;
 };
 
 }

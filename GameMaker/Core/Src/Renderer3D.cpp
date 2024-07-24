@@ -14,14 +14,19 @@
 
 using namespace GameMaker;
 
-static RenderManager* renderManager = nullptr;
-
+static RenderManager* renderManagerPtr = nullptr;
+static ResourceManager* resourceManagerPtr = nullptr;
 
 Renderer3D::Renderer3D()
 {
-	if (!renderManager)
+	if (!renderManagerPtr)
 	{
-		renderManager = &RenderManager::Get();
+		renderManagerPtr = &RenderManager::Get();
+	}
+
+	if (!resourceManagerPtr)
+	{
+		resourceManagerPtr = &ResourceManager::Get();
 	}
 
 	ResourceManager& resourceManager = ResourceManager::Get();
@@ -81,26 +86,6 @@ void Renderer3D::Release()
 	GL_FAILED(glDeleteVertexArrays(1, &vertexArrayObject_));
 
 	bIsInitialized_ = false;
-}
-
-void Renderer3D::Begin(const Mat4x4& view, const Mat4x4& projection)
-{
-	CHECK(!bIsBegin_);
-
-	GLboolean originEnableDepth;
-	GL_FAILED(glGetBooleanv(GL_DEPTH_TEST, &originEnableDepth));
-
-	bIsBeforeEnableDepth_ = static_cast<bool>(originEnableDepth);
-	renderManager->SetDepthMode(false);
-
-	shader_->Bind();
-	{
-		shader_->SetUniform("view", view);
-		shader_->SetUniform("projection", projection);
-	}
-	shader_->Unbind();
-
-	bIsBegin_ = true;
 }
 
 void GameMaker::Renderer3D::Begin(const Camera3D* camera3D)
