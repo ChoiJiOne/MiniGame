@@ -123,7 +123,7 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 		GL_FAILED(glEnableVertexAttribArray(0));
 		
 		GL_FAILED(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)(offsetof(Vertex, uv))));
-		GL_FAILED(glEnableVertexAttribArray(2));
+		GL_FAILED(glEnableVertexAttribArray(1));
 
 		vertexBuffer->Unbind();
 	}
