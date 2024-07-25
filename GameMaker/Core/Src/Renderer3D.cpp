@@ -234,33 +234,81 @@ void GameMaker::Renderer3D::DrawLine(const Vec3f& startPos, const Vec4f& startCo
 	}
 }
 
-/*
-void Renderer3D::DrawLine(const Vec3f& startPos, const Vec4f& startColor, const Vec3f& endPos, const Vec4f& endColor)
+void GameMaker::Renderer3D::DrawQuad(const Mat4x4& world, float width, float height, const Vec4f& color)
 {
-	uint32_t vertexCount = 0;
+	float w2 = width * 0.5f;
+	float h2 = height * 0.5f;
 
-	vertices_[vertexCount].position = startPos;
-	vertices_[vertexCount++].color = startColor;
-
-	vertices_[vertexCount].position = endPos;
-	vertices_[vertexCount++].color = endColor;
-
-	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
-}
-
-void Renderer3D::DrawLines(const Vec3f* positions, uint32_t size, const Vec4f& color)
-{
-	CHECK(size <= MAX_VERTEX_SIZE);
-
-	for (std::size_t index = 0; index < size; ++index)
+	if (commandQueue_.empty())
 	{
-		vertices_[index].position = positions[index];
-		vertices_[index].color = color;
-	}
+		RenderCommand command;
+		command.drawMode = EDrawMode::TRIANGLES;
+		command.startVertexIndex = 0;
+		command.vertexCount = 6;
 
-	Draw(Mat4x4::Identity(), EDrawMode::LINES, size);
+		vertices_[command.startVertexIndex + 0] = Vertex(Vec4f(-w2, -h2, 0.0f, 1.0f), color);
+		vertices_[command.startVertexIndex + 1] = Vertex(Vec4f(+w2, -h2, 0.0f, 1.0f), color);
+		vertices_[command.startVertexIndex + 2] = Vertex(Vec4f(+w2, +h2, 0.0f, 1.0f), color);
+
+		vertices_[command.startVertexIndex + 3] = Vertex(Vec4f(-w2, -h2, 0.0f, 1.0f), color);
+		vertices_[command.startVertexIndex + 4] = Vertex(Vec4f(+w2, +h2, 0.0f, 1.0f), color);
+		vertices_[command.startVertexIndex + 5] = Vertex(Vec4f(-w2, +h2, 0.0f, 1.0f), color);
+
+		for (uint32_t index = 0; index < 6; ++index)
+		{
+			vertices_[command.startVertexIndex + index].position = vertices_[command.startVertexIndex + index].position * world;
+		}
+
+		commandQueue_.push(command);
+	}
+	else
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+
+		if (prevCommand.drawMode == EDrawMode::TRIANGLES)
+		{
+			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			prevCommand.vertexCount += 6;
+
+			vertices_[startVertexIndex + 0] = Vertex(Vec4f(-w2, -h2, 0.0f, 1.0f), color);
+			vertices_[startVertexIndex + 1] = Vertex(Vec4f(+w2, -h2, 0.0f, 1.0f), color);
+			vertices_[startVertexIndex + 2] = Vertex(Vec4f(+w2, +h2, 0.0f, 1.0f), color);
+
+			vertices_[startVertexIndex + 3] = Vertex(Vec4f(-w2, -h2, 0.0f, 1.0f), color);
+			vertices_[startVertexIndex + 4] = Vertex(Vec4f(+w2, +h2, 0.0f, 1.0f), color);
+			vertices_[startVertexIndex + 5] = Vertex(Vec4f(-w2, +h2, 0.0f, 1.0f), color);
+
+			for (uint32_t index = 0; index < 6; ++index)
+			{
+				vertices_[startVertexIndex + index].position = vertices_[startVertexIndex + index].position * world;
+			}
+		}
+		else
+		{
+			RenderCommand command;
+			command.drawMode = EDrawMode::TRIANGLES;
+			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			command.vertexCount = 6;
+
+			vertices_[command.startVertexIndex + 0] = Vertex(Vec4f(-w2, -h2, 0.0f, 1.0f), color);
+			vertices_[command.startVertexIndex + 1] = Vertex(Vec4f(+w2, -h2, 0.0f, 1.0f), color);
+			vertices_[command.startVertexIndex + 2] = Vertex(Vec4f(+w2, +h2, 0.0f, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 3] = Vertex(Vec4f(-w2, -h2, 0.0f, 1.0f), color);
+			vertices_[command.startVertexIndex + 4] = Vertex(Vec4f(+w2, +h2, 0.0f, 1.0f), color);
+			vertices_[command.startVertexIndex + 5] = Vertex(Vec4f(-w2, +h2, 0.0f, 1.0f), color);
+
+			for (uint32_t index = 0; index < 6; ++index)
+			{
+				vertices_[command.startVertexIndex + index].position = vertices_[command.startVertexIndex + index].position * world;
+			}
+
+			commandQueue_.push(command);
+		}
+	}
 }
 
+/*
 void Renderer3D::DrawQuad(const Mat4x4& world, float width, float height, const Vec4f& color)
 {
 	uint32_t vertexCount = 0;
