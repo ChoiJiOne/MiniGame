@@ -27,14 +27,7 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	GameMaker::GameEngine::Init({ "08.Grid3D", 100, 100, 800, 600, false, false });
 
 	GameMaker::Renderer3D* renderer = GameMaker::RenderManager::Get().GetRenderer3D();
-	GameMaker::FreeEulerCamera3D* camera = GameMaker::EntityManager::Get().Create<GameMaker::FreeEulerCamera3D>(
-		GameMaker::Vec3f(0.0f, 3.0f, 3.0f),
-		-GameMaker::PI_DIV_2,
-		-GameMaker::PI / 6.0f,
-		GameMaker::PI_DIV_4,
-		0.01f, 
-		100.0f
-	);
+	GameMaker::FreeEulerCamera3D* camera = GameMaker::EntityManager::Get().Create<GameMaker::FreeEulerCamera3D>(GameMaker::Vec3f(3.0f, 3.0f, 3.0f), -GameMaker::ToRadian(135.0f), -GameMaker::PI / 6.0f, GameMaker::PI_DIV_4, 0.01f, 100.0f);
 
 	float minX = -50.0f;
 	float maxX = +50.0f;
