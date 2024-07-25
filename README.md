@@ -87,4 +87,12 @@ To develop a game using `GameMaker`, you need to follow the steps below.
     <img src="./GameMaker/Sample/Image/07.Rendering2D.png" alt="07.Rendering2D" width="200" height="150">
     </td>
   </tr>
+  <tr>
+    <td>
+    <a href="./GameMaker/Sample/08.Grid3D/">08.Grid3D</a>
+    </td>
+    <td>
+    <img src="./GameMaker/Sample/Image/08.Grid3D.png" alt="08.Grid3D" width="200" height="150">
+    </td>
+  </tr>
 </table>
