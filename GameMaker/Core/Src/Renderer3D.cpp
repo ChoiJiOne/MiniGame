@@ -2,6 +2,7 @@
 #pragma warning(disable: 26495)
 #pragma warning(disable: 26819)
 #pragma warning(disable: 26451)
+#pragma warning(disable: 28020)
 
 #include <glad/glad.h>
 
@@ -86,7 +87,7 @@ void Renderer3D::Release()
 	bIsInitialized_ = false;
 }
 
-void GameMaker::Renderer3D::Begin(const Camera3D* camera3D)
+void Renderer3D::Begin(const Camera3D* camera3D)
 {
 	CHECK(!bIsBegin_ && camera3D != nullptr);
 	
@@ -186,7 +187,7 @@ void Renderer3D::DrawLine(const Vec3f& startPos, const Vec3f& endPos, const Vec4
 		}
 	}
 }
-void GameMaker::Renderer3D::DrawLine(const Vec3f& startPos, const Vec4f& startColor, const Vec3f& endPos, const Vec4f& endColor)
+void Renderer3D::DrawLine(const Vec3f& startPos, const Vec4f& startColor, const Vec3f& endPos, const Vec4f& endColor)
 {
 	if (commandQueue_.empty())
 	{
@@ -234,7 +235,7 @@ void GameMaker::Renderer3D::DrawLine(const Vec3f& startPos, const Vec4f& startCo
 	}
 }
 
-void GameMaker::Renderer3D::DrawQuad(const Mat4x4& world, float width, float height, const Vec4f& color)
+void Renderer3D::DrawQuad(const Mat4x4& world, float width, float height, const Vec4f& color)
 {
 	float w2 = width * 0.5f;
 	float h2 = height * 0.5f;
@@ -308,7 +309,7 @@ void GameMaker::Renderer3D::DrawQuad(const Mat4x4& world, float width, float hei
 	}
 }
 
-void GameMaker::Renderer3D::DrawQuadWireframe(const Mat4x4& world, float width, float height, const Vec4f& color)
+void Renderer3D::DrawQuadWireframe(const Mat4x4& world, float width, float height, const Vec4f& color)
 {
 	float w2 = width * 0.5f;
 	float h2 = height * 0.5f;
@@ -430,7 +431,7 @@ void GameMaker::Renderer3D::DrawQuadWireframe(const Mat4x4& world, float width, 
 	}
 }
 
-void GameMaker::Renderer3D::DrawCube(const Mat4x4& world, const Vec3f& extents, const Vec4f& color)
+void Renderer3D::DrawCube(const Mat4x4& world, const Vec3f& extents, const Vec4f& color)
 {
 	Vec3f minPos = -extents * 0.5f;
 	Vec3f maxPos = extents * 0.5f;
@@ -588,128 +589,6 @@ void GameMaker::Renderer3D::DrawCube(const Mat4x4& world, const Vec3f& extents, 
 	}
 }
 
-/*
-
-void Renderer3D::DrawCube(const Mat4x4& world, const Vec3f& extents, const Vec4f& color)
-{
-	uint32_t vertexCount = 0;
-
-	Vec3f minPosition = -extents * 0.5f;
-	Vec3f maxPosition = extents * 0.5f;
-
-	vertices_[vertexCount++] = Vertex(Vec3f(maxPosition.x, maxPosition.y, maxPosition.z), color);
-	vertices_[vertexCount++] = Vertex(Vec3f(minPosition.x, maxPosition.y, maxPosition.z), color);
-
-	vertices_[vertexCount++] = Vertex(Vec3f(minPosition.x, maxPosition.y, maxPosition.z), color);
-	vertices_[vertexCount++] = Vertex(Vec3f(minPosition.x, maxPosition.y, minPosition.z), color);
-
-	vertices_[vertexCount++] = Vertex(Vec3f(minPosition.x, maxPosition.y, minPosition.z), color);
-	vertices_[vertexCount++] = Vertex(Vec3f(maxPosition.x, maxPosition.y, minPosition.z), color);
-
-	vertices_[vertexCount++] = Vertex(Vec3f(maxPosition.x, maxPosition.y, minPosition.z), color);
-	vertices_[vertexCount++] = Vertex(Vec3f(maxPosition.x, maxPosition.y, maxPosition.z), color);
-
-	vertices_[vertexCount++] = Vertex(Vec3f(maxPosition.x, minPosition.y, maxPosition.z), color);
-	vertices_[vertexCount++] = Vertex(Vec3f(minPosition.x, minPosition.y, maxPosition.z), color);
-
-	vertices_[vertexCount++] = Vertex(Vec3f(minPosition.x, minPosition.y, maxPosition.z), color);
-	vertices_[vertexCount++] = Vertex(Vec3f(minPosition.x, minPosition.y, minPosition.z), color);
-
-	vertices_[vertexCount++] = Vertex(Vec3f(minPosition.x, minPosition.y, minPosition.z), color);
-	vertices_[vertexCount++] = Vertex(Vec3f(maxPosition.x, minPosition.y, minPosition.z), color);
-
-	vertices_[vertexCount++] = Vertex(Vec3f(maxPosition.x, minPosition.y, minPosition.z), color);
-	vertices_[vertexCount++] = Vertex(Vec3f(maxPosition.x, minPosition.y, maxPosition.z), color);
-
-	vertices_[vertexCount++] = Vertex(Vec3f(maxPosition.x, maxPosition.y, maxPosition.z), color);
-	vertices_[vertexCount++] = Vertex(Vec3f(maxPosition.x, minPosition.y, maxPosition.z), color);
-
-	vertices_[vertexCount++] = Vertex(Vec3f(minPosition.x, maxPosition.y, maxPosition.z), color);
-	vertices_[vertexCount++] = Vertex(Vec3f(minPosition.x, minPosition.y, maxPosition.z), color);
-
-	vertices_[vertexCount++] = Vertex(Vec3f(minPosition.x, maxPosition.y, minPosition.z), color);
-	vertices_[vertexCount++] = Vertex(Vec3f(minPosition.x, minPosition.y, minPosition.z), color);
-
-	vertices_[vertexCount++] = Vertex(Vec3f(maxPosition.x, maxPosition.y, minPosition.z), color);
-	vertices_[vertexCount++] = Vertex(Vec3f(maxPosition.x, minPosition.y, minPosition.z), color);
-
-	Draw(world, EDrawMode::LINES, vertexCount);
-}
-
-void Renderer3D::DrawSphere(const Mat4x4& world, float radius, const Vec4f& color)
-{
-	static const uint32_t sliceCount = 20;
-
-	uint32_t vertexCount = 0;
-	float stackStep = PI / static_cast<float>(sliceCount);
-	float sliceStep = TWO_PI / static_cast<float>(sliceCount);
-
-	for (uint32_t stack = 0; stack <= sliceCount; ++stack)
-	{
-		float phi = static_cast<float>(stack) * stackStep;
-
-		for (uint32_t slice = 0; slice < sliceCount; ++slice)
-		{
-			float theta0 = static_cast<float>(slice + 0) * sliceStep;
-			float theta1 = static_cast<float>(slice + 1) * sliceStep;
-
-			CHECK(0 <= vertexCount && vertexCount < MAX_VERTEX_SIZE);
-			vertices_[vertexCount++] = Vertex(
-				Vec3f(
-					radius * Sin(phi) * Cos(theta0),
-					radius * Cos(phi),
-					radius * Sin(phi) * Sin(theta0)
-				),
-				color
-			);
-
-			CHECK(0 <= vertexCount && vertexCount < MAX_VERTEX_SIZE);
-			vertices_[vertexCount++] = Vertex(
-				Vec3f(
-					radius * Sin(phi) * Cos(theta1),
-					radius * Cos(phi),
-					radius * Sin(phi) * Sin(theta1)
-				),
-				color
-			);
-		}
-	}
-
-	stackStep = TWO_PI / static_cast<float>(sliceCount);
-	for (uint32_t slice = 0; slice < sliceCount; ++slice)
-	{
-		float theta = static_cast<float>(slice) * sliceStep;
-
-		for (uint32_t stack = 0; stack <= sliceCount; ++stack)
-		{
-			float phi0 = static_cast<float>(stack + 0) * stackStep;
-			float phi1 = static_cast<float>(stack + 1) * stackStep;
-
-			CHECK(0 <= vertexCount && vertexCount < MAX_VERTEX_SIZE);
-			vertices_[vertexCount++] = Vertex(
-				Vec3f(
-					radius * Cos(phi0) * Cos(theta),
-					radius * Sin(phi0),
-					radius * Cos(phi0) * Sin(theta)
-				),
-				color
-			);
-
-			CHECK(0 <= vertexCount && vertexCount < MAX_VERTEX_SIZE);
-			vertices_[vertexCount++] = Vertex(
-				Vec3f(
-					radius * Cos(phi1) * Cos(theta),
-					radius * Sin(phi1),
-					radius * Cos(phi1) * Sin(theta)
-				),
-				color
-			);
-		}
-	}
-
-	Draw(world, EDrawMode::LINES, vertexCount);
-}
-
 void Renderer3D::DrawViewfrustum(const Mat4x4& view, const Mat4x4& projection, const Vec4f& color)
 {
 	static const uint32_t MAX_FRUSTUM_CORNER = 8;
@@ -735,112 +614,152 @@ void Renderer3D::DrawViewfrustum(const Mat4x4& view, const Mat4x4& projection, c
 		frustumCorners[index].z = transform.z / transform.w;
 	}
 
-	uint32_t vertexCount = 0;
-
-	vertices_[vertexCount++] = Vertex(frustumCorners[0], color);
-	vertices_[vertexCount++] = Vertex(frustumCorners[1], color);
-
-	vertices_[vertexCount++] = Vertex(frustumCorners[2], color);
-	vertices_[vertexCount++] = Vertex(frustumCorners[3], color);
-
-	vertices_[vertexCount++] = Vertex(frustumCorners[4], color);
-	vertices_[vertexCount++] = Vertex(frustumCorners[5], color);
-
-	vertices_[vertexCount++] = Vertex(frustumCorners[6], color);
-	vertices_[vertexCount++] = Vertex(frustumCorners[7], color);
-
-	vertices_[vertexCount++] = Vertex(frustumCorners[0], color);
-	vertices_[vertexCount++] = Vertex(frustumCorners[2], color);
-
-	vertices_[vertexCount++] = Vertex(frustumCorners[1], color);
-	vertices_[vertexCount++] = Vertex(frustumCorners[3], color);
-
-	vertices_[vertexCount++] = Vertex(frustumCorners[4], color);
-	vertices_[vertexCount++] = Vertex(frustumCorners[6], color);
-
-	vertices_[vertexCount++] = Vertex(frustumCorners[5], color);
-	vertices_[vertexCount++] = Vertex(frustumCorners[7], color);
-
-	vertices_[vertexCount++] = Vertex(frustumCorners[0], color);
-	vertices_[vertexCount++] = Vertex(frustumCorners[4], color);
-
-	vertices_[vertexCount++] = Vertex(frustumCorners[1], color);
-	vertices_[vertexCount++] = Vertex(frustumCorners[5], color);
-
-	vertices_[vertexCount++] = Vertex(frustumCorners[2], color);
-	vertices_[vertexCount++] = Vertex(frustumCorners[6], color);
-
-	vertices_[vertexCount++] = Vertex(frustumCorners[3], color);
-	vertices_[vertexCount++] = Vertex(frustumCorners[7], color);
-
-	Draw(Mat4x4::Identity(), EDrawMode::LINES, vertexCount);
-}
-
-void Renderer3D::DrawGrid(const Vec3f& extensions, float stride)
-{
-	CHECK(stride >= 1.0f);
-
-	float minXPosition = -extensions.x * 0.5f;
-	float maxXPosition = +extensions.x * 0.5f;
-	float minYPosition = -extensions.y * 0.5f;
-	float maxYPosition = +extensions.y * 0.5f;
-	float minZPosition = -extensions.z * 0.5f;
-	float maxZPosition = +extensions.z * 0.5f;
-
-	int32_t vertexCount = 0;
-	for (float x = minXPosition; x <= maxXPosition; x += stride)
+	if (commandQueue_.empty())
 	{
-		Vec4f color = NearZero(x) ? Vec4f(0.0f, 0.0f, 1.0f, 1.0f) : Vec4f(1.0f, 1.0f, 1.0f, 0.4f);
+		RenderCommand command;
+		command.drawMode = EDrawMode::LINES;
+		command.startVertexIndex = 0;
+		command.vertexCount = 24;
 
-		CHECK(0 <= vertexCount && vertexCount < MAX_VERTEX_SIZE);
-		vertices_[vertexCount++] = Vertex(Vec3f(x, 0.0f, minZPosition), color);
+		vertices_[command.startVertexIndex + 0] = Vertex(Vec4f(frustumCorners[0].x, frustumCorners[0].y, frustumCorners[0].z, 1.0f), color);
+		vertices_[command.startVertexIndex + 1] = Vertex(Vec4f(frustumCorners[1].x, frustumCorners[1].y, frustumCorners[1].z, 1.0f), color);
 
-		CHECK(0 <= vertexCount && vertexCount < MAX_VERTEX_SIZE);
-		vertices_[vertexCount++] = Vertex(Vec3f(x, 0.0f, maxZPosition), color);
+		vertices_[command.startVertexIndex + 2] = Vertex(Vec4f(frustumCorners[2].x, frustumCorners[2].y, frustumCorners[2].z, 1.0f), color);
+		vertices_[command.startVertexIndex + 3] = Vertex(Vec4f(frustumCorners[3].x, frustumCorners[3].y, frustumCorners[3].z, 1.0f), color);
+
+		vertices_[command.startVertexIndex + 4] = Vertex(Vec4f(frustumCorners[4].x, frustumCorners[4].y, frustumCorners[4].z, 1.0f), color);
+		vertices_[command.startVertexIndex + 5] = Vertex(Vec4f(frustumCorners[5].x, frustumCorners[5].y, frustumCorners[5].z, 1.0f), color);
+
+		vertices_[command.startVertexIndex + 4] = Vertex(Vec4f(frustumCorners[4].x, frustumCorners[4].y, frustumCorners[4].z, 1.0f), color);
+		vertices_[command.startVertexIndex + 5] = Vertex(Vec4f(frustumCorners[5].x, frustumCorners[5].y, frustumCorners[5].z, 1.0f), color);
+
+		vertices_[command.startVertexIndex + 6] = Vertex(Vec4f(frustumCorners[6].x, frustumCorners[6].y, frustumCorners[6].z, 1.0f), color);
+		vertices_[command.startVertexIndex + 7] = Vertex(Vec4f(frustumCorners[7].x, frustumCorners[7].y, frustumCorners[7].z, 1.0f), color);
+
+		vertices_[command.startVertexIndex + 8] = Vertex(Vec4f(frustumCorners[0].x, frustumCorners[0].y, frustumCorners[0].z, 1.0f), color);
+		vertices_[command.startVertexIndex + 9] = Vertex(Vec4f(frustumCorners[2].x, frustumCorners[2].y, frustumCorners[2].z, 1.0f), color);
+
+		vertices_[command.startVertexIndex + 10] = Vertex(Vec4f(frustumCorners[1].x, frustumCorners[1].y, frustumCorners[1].z, 1.0f), color);
+		vertices_[command.startVertexIndex + 11] = Vertex(Vec4f(frustumCorners[3].x, frustumCorners[3].y, frustumCorners[3].z, 1.0f), color);
+
+		vertices_[command.startVertexIndex + 12] = Vertex(Vec4f(frustumCorners[4].x, frustumCorners[4].y, frustumCorners[4].z, 1.0f), color);
+		vertices_[command.startVertexIndex + 13] = Vertex(Vec4f(frustumCorners[6].x, frustumCorners[6].y, frustumCorners[6].z, 1.0f), color);
+
+		vertices_[command.startVertexIndex + 14] = Vertex(Vec4f(frustumCorners[5].x, frustumCorners[5].y, frustumCorners[5].z, 1.0f), color);
+		vertices_[command.startVertexIndex + 15] = Vertex(Vec4f(frustumCorners[7].x, frustumCorners[7].y, frustumCorners[7].z, 1.0f), color);
+
+		vertices_[command.startVertexIndex + 16] = Vertex(Vec4f(frustumCorners[0].x, frustumCorners[0].y, frustumCorners[0].z, 1.0f), color);
+		vertices_[command.startVertexIndex + 17] = Vertex(Vec4f(frustumCorners[4].x, frustumCorners[4].y, frustumCorners[4].z, 1.0f), color);
+
+		vertices_[command.startVertexIndex + 18] = Vertex(Vec4f(frustumCorners[1].x, frustumCorners[1].y, frustumCorners[1].z, 1.0f), color);
+		vertices_[command.startVertexIndex + 19] = Vertex(Vec4f(frustumCorners[5].x, frustumCorners[5].y, frustumCorners[5].z, 1.0f), color);
+
+		vertices_[command.startVertexIndex + 20] = Vertex(Vec4f(frustumCorners[2].x, frustumCorners[2].y, frustumCorners[2].z, 1.0f), color);
+		vertices_[command.startVertexIndex + 21] = Vertex(Vec4f(frustumCorners[6].x, frustumCorners[6].y, frustumCorners[6].z, 1.0f), color);
+
+		vertices_[command.startVertexIndex + 22] = Vertex(Vec4f(frustumCorners[3].x, frustumCorners[3].y, frustumCorners[3].z, 1.0f), color);
+		vertices_[command.startVertexIndex + 23] = Vertex(Vec4f(frustumCorners[7].x, frustumCorners[7].y, frustumCorners[7].z, 1.0f), color);
+
+		commandQueue_.push(command);
 	}
-
-	for (float z = minZPosition; z <= maxZPosition; z += stride)
+	else
 	{
-		Vec4f color = NearZero(z) ? Vec4f(1.0f, 0.0f, 0.0f, 1.0f) : Vec4f(1.0f, 1.0f, 1.0f, 0.4f);
+		RenderCommand& prevCommand = commandQueue_.back();
 
-		CHECK(0 <= vertexCount && vertexCount < MAX_VERTEX_SIZE);
-		vertices_[vertexCount++] = Vertex(Vec3f(minXPosition, 0.0f, z), color);
-
-		CHECK(0 <= vertexCount && vertexCount < MAX_VERTEX_SIZE);
-		vertices_[vertexCount++] = Vertex(Vec3f(maxXPosition, 0.0f, z), color);
-	}
-
-	CHECK(0 <= vertexCount && vertexCount < MAX_VERTEX_SIZE);
-	vertices_[vertexCount++] = Vertex(Vec3f(0.0f, minYPosition, 0.0f), Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
-
-	CHECK(0 <= vertexCount && vertexCount < MAX_VERTEX_SIZE);
-	vertices_[vertexCount++] = Vertex(Vec3f(0.0f, maxYPosition, 0.0f), Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
-
-	Draw(Mat4x4::Identity(), EDrawMode::LINES, static_cast<uint32_t>(vertexCount));
-}
-
-void Renderer3D::Draw(const Mat4x4& world, const EDrawMode& drawMode, uint32_t vertexCount)
-{
-	CHECK(drawMode != EDrawMode::NONE);
-
-	const void* vertexPtr = reinterpret_cast<const void*>(vertices_.data());
-	uint32_t bufferByteSize = static_cast<uint32_t>(Vertex::GetStride() * vertices_.size());
-	vertexBuffer_->SetBufferData(vertexPtr, bufferByteSize);
-
-	shader_->Bind();
-	{
-		shader_->SetUniform("world", world);
-
-		if (drawMode == EDrawMode::POINTS)
+		if (prevCommand.drawMode == EDrawMode::LINES)
 		{
-			shader_->SetUniform("pointSize", pointSize_);
-		}
+			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			prevCommand.vertexCount += 24;
 
-		GL_FAILED(glBindVertexArray(vertexArrayObject_));
-		renderManager->ExecuteDrawVertex(vertexCount, drawMode);
-		GL_FAILED(glBindVertexArray(0));
+			vertices_[startVertexIndex + 0] = Vertex(Vec4f(frustumCorners[0].x, frustumCorners[0].y, frustumCorners[0].z, 1.0f), color);
+			vertices_[startVertexIndex + 1] = Vertex(Vec4f(frustumCorners[1].x, frustumCorners[1].y, frustumCorners[1].z, 1.0f), color);
+
+			vertices_[startVertexIndex + 2] = Vertex(Vec4f(frustumCorners[2].x, frustumCorners[2].y, frustumCorners[2].z, 1.0f), color);
+			vertices_[startVertexIndex + 3] = Vertex(Vec4f(frustumCorners[3].x, frustumCorners[3].y, frustumCorners[3].z, 1.0f), color);
+
+			vertices_[startVertexIndex + 4] = Vertex(Vec4f(frustumCorners[4].x, frustumCorners[4].y, frustumCorners[4].z, 1.0f), color);
+			vertices_[startVertexIndex + 5] = Vertex(Vec4f(frustumCorners[5].x, frustumCorners[5].y, frustumCorners[5].z, 1.0f), color);
+
+			vertices_[startVertexIndex + 4] = Vertex(Vec4f(frustumCorners[4].x, frustumCorners[4].y, frustumCorners[4].z, 1.0f), color);
+			vertices_[startVertexIndex + 5] = Vertex(Vec4f(frustumCorners[5].x, frustumCorners[5].y, frustumCorners[5].z, 1.0f), color);
+
+			vertices_[startVertexIndex + 6] = Vertex(Vec4f(frustumCorners[6].x, frustumCorners[6].y, frustumCorners[6].z, 1.0f), color);
+			vertices_[startVertexIndex + 7] = Vertex(Vec4f(frustumCorners[7].x, frustumCorners[7].y, frustumCorners[7].z, 1.0f), color);
+
+			vertices_[startVertexIndex + 8] = Vertex(Vec4f(frustumCorners[0].x, frustumCorners[0].y, frustumCorners[0].z, 1.0f), color);
+			vertices_[startVertexIndex + 9] = Vertex(Vec4f(frustumCorners[2].x, frustumCorners[2].y, frustumCorners[2].z, 1.0f), color);
+
+			vertices_[startVertexIndex + 10] = Vertex(Vec4f(frustumCorners[1].x, frustumCorners[1].y, frustumCorners[1].z, 1.0f), color);
+			vertices_[startVertexIndex + 11] = Vertex(Vec4f(frustumCorners[3].x, frustumCorners[3].y, frustumCorners[3].z, 1.0f), color);
+
+			vertices_[startVertexIndex + 12] = Vertex(Vec4f(frustumCorners[4].x, frustumCorners[4].y, frustumCorners[4].z, 1.0f), color);
+			vertices_[startVertexIndex + 13] = Vertex(Vec4f(frustumCorners[6].x, frustumCorners[6].y, frustumCorners[6].z, 1.0f), color);
+
+			vertices_[startVertexIndex + 14] = Vertex(Vec4f(frustumCorners[5].x, frustumCorners[5].y, frustumCorners[5].z, 1.0f), color);
+			vertices_[startVertexIndex + 15] = Vertex(Vec4f(frustumCorners[7].x, frustumCorners[7].y, frustumCorners[7].z, 1.0f), color);
+
+			vertices_[startVertexIndex + 16] = Vertex(Vec4f(frustumCorners[0].x, frustumCorners[0].y, frustumCorners[0].z, 1.0f), color);
+			vertices_[startVertexIndex + 17] = Vertex(Vec4f(frustumCorners[4].x, frustumCorners[4].y, frustumCorners[4].z, 1.0f), color);
+
+			vertices_[startVertexIndex + 18] = Vertex(Vec4f(frustumCorners[1].x, frustumCorners[1].y, frustumCorners[1].z, 1.0f), color);
+			vertices_[startVertexIndex + 19] = Vertex(Vec4f(frustumCorners[5].x, frustumCorners[5].y, frustumCorners[5].z, 1.0f), color);
+
+			vertices_[startVertexIndex + 20] = Vertex(Vec4f(frustumCorners[2].x, frustumCorners[2].y, frustumCorners[2].z, 1.0f), color);
+			vertices_[startVertexIndex + 21] = Vertex(Vec4f(frustumCorners[6].x, frustumCorners[6].y, frustumCorners[6].z, 1.0f), color);
+
+			vertices_[startVertexIndex + 22] = Vertex(Vec4f(frustumCorners[3].x, frustumCorners[3].y, frustumCorners[3].z, 1.0f), color);
+			vertices_[startVertexIndex + 23] = Vertex(Vec4f(frustumCorners[7].x, frustumCorners[7].y, frustumCorners[7].z, 1.0f), color);
+
+		}
+		else
+		{
+			RenderCommand command;
+			command.drawMode = EDrawMode::LINES;
+			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			command.vertexCount = 24;
+
+			vertices_[command.startVertexIndex + 0] = Vertex(Vec4f(frustumCorners[0].x, frustumCorners[0].y, frustumCorners[0].z, 1.0f), color);
+			vertices_[command.startVertexIndex + 1] = Vertex(Vec4f(frustumCorners[1].x, frustumCorners[1].y, frustumCorners[1].z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 2] = Vertex(Vec4f(frustumCorners[2].x, frustumCorners[2].y, frustumCorners[2].z, 1.0f), color);
+			vertices_[command.startVertexIndex + 3] = Vertex(Vec4f(frustumCorners[3].x, frustumCorners[3].y, frustumCorners[3].z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 4] = Vertex(Vec4f(frustumCorners[4].x, frustumCorners[4].y, frustumCorners[4].z, 1.0f), color);
+			vertices_[command.startVertexIndex + 5] = Vertex(Vec4f(frustumCorners[5].x, frustumCorners[5].y, frustumCorners[5].z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 4] = Vertex(Vec4f(frustumCorners[4].x, frustumCorners[4].y, frustumCorners[4].z, 1.0f), color);
+			vertices_[command.startVertexIndex + 5] = Vertex(Vec4f(frustumCorners[5].x, frustumCorners[5].y, frustumCorners[5].z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 6] = Vertex(Vec4f(frustumCorners[6].x, frustumCorners[6].y, frustumCorners[6].z, 1.0f), color);
+			vertices_[command.startVertexIndex + 7] = Vertex(Vec4f(frustumCorners[7].x, frustumCorners[7].y, frustumCorners[7].z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 8] = Vertex(Vec4f(frustumCorners[0].x, frustumCorners[0].y, frustumCorners[0].z, 1.0f), color);
+			vertices_[command.startVertexIndex + 9] = Vertex(Vec4f(frustumCorners[2].x, frustumCorners[2].y, frustumCorners[2].z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 10] = Vertex(Vec4f(frustumCorners[1].x, frustumCorners[1].y, frustumCorners[1].z, 1.0f), color);
+			vertices_[command.startVertexIndex + 11] = Vertex(Vec4f(frustumCorners[3].x, frustumCorners[3].y, frustumCorners[3].z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 12] = Vertex(Vec4f(frustumCorners[4].x, frustumCorners[4].y, frustumCorners[4].z, 1.0f), color);
+			vertices_[command.startVertexIndex + 13] = Vertex(Vec4f(frustumCorners[6].x, frustumCorners[6].y, frustumCorners[6].z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 14] = Vertex(Vec4f(frustumCorners[5].x, frustumCorners[5].y, frustumCorners[5].z, 1.0f), color);
+			vertices_[command.startVertexIndex + 15] = Vertex(Vec4f(frustumCorners[7].x, frustumCorners[7].y, frustumCorners[7].z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 16] = Vertex(Vec4f(frustumCorners[0].x, frustumCorners[0].y, frustumCorners[0].z, 1.0f), color);
+			vertices_[command.startVertexIndex + 17] = Vertex(Vec4f(frustumCorners[4].x, frustumCorners[4].y, frustumCorners[4].z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 18] = Vertex(Vec4f(frustumCorners[1].x, frustumCorners[1].y, frustumCorners[1].z, 1.0f), color);
+			vertices_[command.startVertexIndex + 19] = Vertex(Vec4f(frustumCorners[5].x, frustumCorners[5].y, frustumCorners[5].z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 20] = Vertex(Vec4f(frustumCorners[2].x, frustumCorners[2].y, frustumCorners[2].z, 1.0f), color);
+			vertices_[command.startVertexIndex + 21] = Vertex(Vec4f(frustumCorners[6].x, frustumCorners[6].y, frustumCorners[6].z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 22] = Vertex(Vec4f(frustumCorners[3].x, frustumCorners[3].y, frustumCorners[3].z, 1.0f), color);
+			vertices_[command.startVertexIndex + 23] = Vertex(Vec4f(frustumCorners[7].x, frustumCorners[7].y, frustumCorners[7].z, 1.0f), color);
+
+			commandQueue_.push(command);
+		}
 	}
-	shader_->Unbind();
-}*/
+}
 
 #pragma warning(pop)

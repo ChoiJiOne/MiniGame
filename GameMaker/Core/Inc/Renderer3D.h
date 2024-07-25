@@ -32,9 +32,8 @@ public:
 	void DrawQuad(const Mat4x4& world, float width, float height, const Vec4f& color);
 	void DrawQuadWireframe(const Mat4x4& world, float width, float height, const Vec4f& color);
 	void DrawCube(const Mat4x4& world, const Vec3f& extents, const Vec4f& color);
+	void DrawViewfrustum(const Mat4x4& view, const Mat4x4& projection, const Vec4f& color);
 	//void DrawSphere(const Mat4x4& world, float radius, const Vec4f& color);
-	//void DrawViewfrustum(const Mat4x4& view, const Mat4x4& projection, const Vec4f& color);
-	//void DrawGrid(const Vec3f& extensions, float stride);
 
 private:
 	struct Vertex
