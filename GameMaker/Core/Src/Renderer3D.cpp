@@ -44,7 +44,7 @@ Renderer3D::Renderer3D()
 	{
 		vertexBuffer_->Bind();
 
-		GL_FAILED(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, Vertex::GetStride(), (void*)(offsetof(Vertex, position))));
+		GL_FAILED(glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, Vertex::GetStride(), (void*)(offsetof(Vertex, position))));
 		GL_FAILED(glEnableVertexAttribArray(0));
 
 		GL_FAILED(glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, Vertex::GetStride(), (void*)(offsetof(Vertex, color))));
@@ -68,18 +68,16 @@ Renderer3D::~Renderer3D()
 void Renderer3D::Release()
 {
 	CHECK(bIsInitialized_);
-
-	ResourceManager& resourceManager = ResourceManager::Get();
-
+	
 	if (shader_)
 	{
-		resourceManager.Destroy(shader_);
+		resourceManagerPtr->Destroy(shader_);
 		shader_ = nullptr;
 	}
 
 	if (vertexBuffer_)
 	{
-		resourceManager.Destroy(vertexBuffer_);
+		resourceManagerPtr->Destroy(vertexBuffer_);
 		vertexBuffer_ = nullptr;
 	}
 
@@ -90,15 +88,8 @@ void Renderer3D::Release()
 
 void GameMaker::Renderer3D::Begin(const Camera3D* camera3D)
 {
-	CHECK(!bIsBegin_);
-	CHECK(camera3D != nullptr);
-
-	GLboolean originEnableDepth;
-	GL_FAILED(glGetBooleanv(GL_DEPTH_TEST, &originEnableDepth));
-
-	bIsBeforeEnableDepth_ = static_cast<bool>(originEnableDepth);
-	renderManager->SetDepthMode(false);
-
+	CHECK(!bIsBegin_ && camera3D != nullptr);
+	
 	shader_->Bind();
 	{
 		shader_->SetUniform("view", camera3D->GetView());
@@ -112,68 +103,90 @@ void GameMaker::Renderer3D::Begin(const Camera3D* camera3D)
 void Renderer3D::End()
 {
 	CHECK(bIsBegin_);
+	
+	GLboolean originEnableDepth;
+	GL_FAILED(glGetBooleanv(GL_DEPTH_TEST, &originEnableDepth));
 
-	renderManager->SetDepthMode(bIsBeforeEnableDepth_);
+	GLboolean originEnableCull;
+	GL_FAILED(glGetBooleanv(GL_CULL_FACE, &originEnableCull));
+
+	renderManagerPtr->SetCullFaceMode(false);
+	renderManagerPtr->SetDepthMode(true);
+	{
+		shader_->Bind();
+
+		const void* vertexPtr = reinterpret_cast<const void*>(vertices_.data());
+		uint32_t bufferByteSize = static_cast<uint32_t>(Vertex::GetStride() * vertices_.size());
+		vertexBuffer_->SetBufferData(vertexPtr, bufferByteSize);
+
+		GL_FAILED(glBindVertexArray(vertexArrayObject_));
+
+		while (!commandQueue_.empty())
+		{
+			RenderCommand command = commandQueue_.front();
+			commandQueue_.pop();
+
+			GL_FAILED(glDrawArrays(static_cast<GLenum>(command.drawMode), command.startVertexIndex, command.vertexCount));
+		}
+		
+		GL_FAILED(glBindVertexArray(0));
+
+		shader_->Unbind();
+	}
+	renderManagerPtr->SetDepthMode(static_cast<bool>(originEnableDepth));
+	renderManagerPtr->SetCullFaceMode(static_cast<bool>(originEnableCull));
 
 	bIsBegin_ = false;
 }
 
-void Renderer3D::DrawPoint(const Vec3f* positions, uint32_t size, const Vec4f& color, float pointSize)
-{
-	CHECK(size <= MAX_VERTEX_SIZE);
-	CHECK(pointSize >= 0.0f);
-
-	for (uint32_t index = 0; index < size; ++index)
-	{
-		vertices_[index].position = positions[index];
-		vertices_[index].color = color;
-	}
-
-	pointSize_ = pointSize;
-	Draw(Mat4x4::Identity(), EDrawMode::POINTS, size);
-}
-
-void Renderer3D::DrawPoint(const Vec3f* positions, const Vec4f* colors, uint32_t size, float pointSize)
-{
-	CHECK(size <= MAX_VERTEX_SIZE);
-	CHECK(pointSize >= 0.0f);
-
-	for (uint32_t index = 0; index < size; ++index)
-	{
-		vertices_[index].position = positions[index];
-		vertices_[index].color = colors[index];
-	}
-
-	pointSize_ = pointSize;
-	Draw(Mat4x4::Identity(), EDrawMode::POINTS, size);
-}
-
-void Renderer3D::DrawLine(const Vec3f* positions, const Vec4f* colors, uint32_t size)
-{
-	CHECK(size <= MAX_VERTEX_SIZE);
-
-	for (std::size_t index = 0; index < size; ++index)
-	{
-		vertices_[index].position = positions[index];
-		vertices_[index].color = colors[index];
-	}
-
-	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, size);
-}
-
 void Renderer3D::DrawLine(const Vec3f& startPos, const Vec3f& endPos, const Vec4f& color)
 {
-	uint32_t vertexCount = 0;
+	if (commandQueue_.empty())
+	{
+		RenderCommand command;
+		command.drawMode = EDrawMode::LINES;
+		command.startVertexIndex = 0;
+		command.vertexCount = 2;
+		
+		vertices_[command.startVertexIndex + 0].position = Vec4f(startPos.x, startPos.y, startPos.z, 1.0f);
+		vertices_[command.startVertexIndex + 0].color = color;
 
-	vertices_[vertexCount].position = startPos;
-	vertices_[vertexCount++].color = color;
+		vertices_[command.startVertexIndex + 1].position = Vec4f(endPos.x, endPos.y, endPos.z, 1.0f);
+		vertices_[command.startVertexIndex + 1].color = color;
 
-	vertices_[vertexCount].position = endPos;
-	vertices_[vertexCount++].color = color;
+		commandQueue_.push(command);
+	}
+	else
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
 
-	Draw(Mat4x4::Identity(), EDrawMode::LINE_STRIP, vertexCount);
+		if (prevCommand.drawMode == EDrawMode::LINES)
+		{
+			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			prevCommand.vertexCount += 2;
+
+			vertices_[startVertexIndex + 0].position = Vec4f(startPos.x, startPos.y, startPos.z, 1.0f);
+			vertices_[startVertexIndex + 0].color = color;
+
+			vertices_[startVertexIndex + 1].position = Vec4f(endPos.x, endPos.y, endPos.z, 1.0f);
+			vertices_[startVertexIndex + 1].color = color;
+		}
+		else
+		{
+			RenderCommand command;
+			command.drawMode = EDrawMode::LINES;
+			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			command.vertexCount = 2;
+
+			vertices_[command.startVertexIndex + 0].position = Vec4f(startPos.x, startPos.y, startPos.z, 1.0f);
+			vertices_[command.startVertexIndex + 0].color = color;
+
+			vertices_[command.startVertexIndex + 1].position = Vec4f(endPos.x, endPos.y, endPos.z, 1.0f);
+			vertices_[command.startVertexIndex + 1].color = color;
+		}
+	}
 }
-
+/*
 void Renderer3D::DrawLine(const Vec3f& startPos, const Vec4f& startColor, const Vec3f& endPos, const Vec4f& endColor)
 {
 	uint32_t vertexCount = 0;
@@ -195,19 +208,6 @@ void Renderer3D::DrawLines(const Vec3f* positions, uint32_t size, const Vec4f& c
 	{
 		vertices_[index].position = positions[index];
 		vertices_[index].color = color;
-	}
-
-	Draw(Mat4x4::Identity(), EDrawMode::LINES, size);
-}
-
-void Renderer3D::DrawLines(const Vec3f* positions, const Vec4f* colors, uint32_t size)
-{
-	CHECK(size <= MAX_VERTEX_SIZE);
-
-	for (std::size_t index = 0; index < size; ++index)
-	{
-		vertices_[index].position = positions[index];
-		vertices_[index].color = colors[index];
 	}
 
 	Draw(Mat4x4::Identity(), EDrawMode::LINES, size);
@@ -479,6 +479,6 @@ void Renderer3D::Draw(const Mat4x4& world, const EDrawMode& drawMode, uint32_t v
 		GL_FAILED(glBindVertexArray(0));
 	}
 	shader_->Unbind();
-}
+}*/
 
 #pragma warning(pop)
