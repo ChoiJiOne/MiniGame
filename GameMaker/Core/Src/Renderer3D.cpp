@@ -430,21 +430,165 @@ void GameMaker::Renderer3D::DrawQuadWireframe(const Mat4x4& world, float width, 
 	}
 }
 
-/*
-void Renderer3D::DrawQuad(const Mat4x4& world, float width, float height, const Vec4f& color)
+void GameMaker::Renderer3D::DrawCube(const Mat4x4& world, const Vec3f& extents, const Vec4f& color)
 {
-	uint32_t vertexCount = 0;
+	Vec3f minPos = -extents * 0.5f;
+	Vec3f maxPos = extents * 0.5f;
 
-	vertices_[vertexCount++] = Vertex(Vec3f(-width * 0.5f, -height * 0.5f, 0.0f), color);
-	vertices_[vertexCount++] = Vertex(Vec3f(+width * 0.5f, -height * 0.5f, 0.0f), color);
-	vertices_[vertexCount++] = Vertex(Vec3f(+width * 0.5f, +height * 0.5f, 0.0f), color);
+	if (commandQueue_.empty())
+	{
+		RenderCommand command;
+		command.drawMode = EDrawMode::LINES;
+		command.startVertexIndex = 0;
+		command.vertexCount = 24;
+		
+		vertices_[command.startVertexIndex + 0] = Vertex(Vec4f(maxPos.x, maxPos.y, maxPos.z, 1.0f), color);
+		vertices_[command.startVertexIndex + 1] = Vertex(Vec4f(minPos.x, maxPos.y, maxPos.z, 1.0f), color);
 
-	vertices_[vertexCount++] = Vertex(Vec3f(-width * 0.5f, -height * 0.5f, 0.0f), color);
-	vertices_[vertexCount++] = Vertex(Vec3f(+width * 0.5f, +height * 0.5f, 0.0f), color);
-	vertices_[vertexCount++] = Vertex(Vec3f(-width * 0.5f, +height * 0.5f, 0.0f), color);
+		vertices_[command.startVertexIndex + 2] = Vertex(Vec4f(minPos.x, maxPos.y, maxPos.z, 1.0f), color);
+		vertices_[command.startVertexIndex + 3] = Vertex(Vec4f(minPos.x, maxPos.y, minPos.z, 1.0f), color);
 
-	Draw(world, EDrawMode::TRIANGLES, vertexCount);
+		vertices_[command.startVertexIndex + 4] = Vertex(Vec4f(minPos.x, maxPos.y, minPos.z, 1.0f), color);
+		vertices_[command.startVertexIndex + 5] = Vertex(Vec4f(maxPos.x, maxPos.y, minPos.z, 1.0f), color);
+
+		vertices_[command.startVertexIndex + 6] = Vertex(Vec4f(maxPos.x, maxPos.y, minPos.z, 1.0f), color);
+		vertices_[command.startVertexIndex + 7] = Vertex(Vec4f(maxPos.x, maxPos.y, maxPos.z, 1.0f), color);
+
+		vertices_[command.startVertexIndex + 8] = Vertex(Vec4f(maxPos.x, minPos.y, maxPos.z, 1.0f), color);
+		vertices_[command.startVertexIndex + 9] = Vertex(Vec4f(minPos.x, minPos.y, maxPos.z, 1.0f), color);
+
+		vertices_[command.startVertexIndex + 10] = Vertex(Vec4f(minPos.x, minPos.y, maxPos.z, 1.0f), color);
+		vertices_[command.startVertexIndex + 11] = Vertex(Vec4f(minPos.x, minPos.y, minPos.z, 1.0f), color);
+
+		vertices_[command.startVertexIndex + 12] = Vertex(Vec4f(minPos.x, minPos.y, minPos.z, 1.0f), color);
+		vertices_[command.startVertexIndex + 13] = Vertex(Vec4f(maxPos.x, minPos.y, minPos.z, 1.0f), color);
+
+		vertices_[command.startVertexIndex + 14] = Vertex(Vec4f(maxPos.x, minPos.y, minPos.z, 1.0f), color);
+		vertices_[command.startVertexIndex + 15] = Vertex(Vec4f(maxPos.x, minPos.y, maxPos.z, 1.0f), color);
+
+		vertices_[command.startVertexIndex + 16] = Vertex(Vec4f(maxPos.x, maxPos.y, maxPos.z, 1.0f), color);
+		vertices_[command.startVertexIndex + 17] = Vertex(Vec4f(maxPos.x, minPos.y, maxPos.z, 1.0f), color);
+
+		vertices_[command.startVertexIndex + 18] = Vertex(Vec4f(minPos.x, maxPos.y, maxPos.z, 1.0f), color);
+		vertices_[command.startVertexIndex + 19] = Vertex(Vec4f(minPos.x, minPos.y, maxPos.z, 1.0f), color);
+
+		vertices_[command.startVertexIndex + 20] = Vertex(Vec4f(minPos.x, maxPos.y, minPos.z, 1.0f), color);
+		vertices_[command.startVertexIndex + 21] = Vertex(Vec4f(minPos.x, minPos.y, minPos.z, 1.0f), color);
+
+		vertices_[command.startVertexIndex + 22] = Vertex(Vec4f(maxPos.x, maxPos.y, minPos.z, 1.0f), color);
+		vertices_[command.startVertexIndex + 23] = Vertex(Vec4f(maxPos.x, minPos.y, minPos.z, 1.0f), color);
+
+		for (uint32_t index = 0; index < 24; ++index)
+		{
+			vertices_[command.startVertexIndex + index].position = vertices_[command.startVertexIndex + index].position * world;
+		}
+
+		commandQueue_.push(command);
+	}
+	else
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+
+		if (prevCommand.drawMode == EDrawMode::LINES)
+		{
+			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			prevCommand.vertexCount += 24;
+
+			vertices_[startVertexIndex + 0] = Vertex(Vec4f(maxPos.x, maxPos.y, maxPos.z, 1.0f), color);
+			vertices_[startVertexIndex + 1] = Vertex(Vec4f(minPos.x, maxPos.y, maxPos.z, 1.0f), color);
+
+			vertices_[startVertexIndex + 2] = Vertex(Vec4f(minPos.x, maxPos.y, maxPos.z, 1.0f), color);
+			vertices_[startVertexIndex + 3] = Vertex(Vec4f(minPos.x, maxPos.y, minPos.z, 1.0f), color);
+
+			vertices_[startVertexIndex + 4] = Vertex(Vec4f(minPos.x, maxPos.y, minPos.z, 1.0f), color);
+			vertices_[startVertexIndex + 5] = Vertex(Vec4f(maxPos.x, maxPos.y, minPos.z, 1.0f), color);
+
+			vertices_[startVertexIndex + 6] = Vertex(Vec4f(maxPos.x, maxPos.y, minPos.z, 1.0f), color);
+			vertices_[startVertexIndex + 7] = Vertex(Vec4f(maxPos.x, maxPos.y, maxPos.z, 1.0f), color);
+
+			vertices_[startVertexIndex + 8] = Vertex(Vec4f(maxPos.x, minPos.y, maxPos.z, 1.0f), color);
+			vertices_[startVertexIndex + 9] = Vertex(Vec4f(minPos.x, minPos.y, maxPos.z, 1.0f), color);
+
+			vertices_[startVertexIndex + 10] = Vertex(Vec4f(minPos.x, minPos.y, maxPos.z, 1.0f), color);
+			vertices_[startVertexIndex + 11] = Vertex(Vec4f(minPos.x, minPos.y, minPos.z, 1.0f), color);
+
+			vertices_[startVertexIndex + 12] = Vertex(Vec4f(minPos.x, minPos.y, minPos.z, 1.0f), color);
+			vertices_[startVertexIndex + 13] = Vertex(Vec4f(maxPos.x, minPos.y, minPos.z, 1.0f), color);
+
+			vertices_[startVertexIndex + 14] = Vertex(Vec4f(maxPos.x, minPos.y, minPos.z, 1.0f), color);
+			vertices_[startVertexIndex + 15] = Vertex(Vec4f(maxPos.x, minPos.y, maxPos.z, 1.0f), color);
+
+			vertices_[startVertexIndex + 16] = Vertex(Vec4f(maxPos.x, maxPos.y, maxPos.z, 1.0f), color);
+			vertices_[startVertexIndex + 17] = Vertex(Vec4f(maxPos.x, minPos.y, maxPos.z, 1.0f), color);
+
+			vertices_[startVertexIndex + 18] = Vertex(Vec4f(minPos.x, maxPos.y, maxPos.z, 1.0f), color);
+			vertices_[startVertexIndex + 19] = Vertex(Vec4f(minPos.x, minPos.y, maxPos.z, 1.0f), color);
+
+			vertices_[startVertexIndex + 20] = Vertex(Vec4f(minPos.x, maxPos.y, minPos.z, 1.0f), color);
+			vertices_[startVertexIndex + 21] = Vertex(Vec4f(minPos.x, minPos.y, minPos.z, 1.0f), color);
+
+			vertices_[startVertexIndex + 22] = Vertex(Vec4f(maxPos.x, maxPos.y, minPos.z, 1.0f), color);
+			vertices_[startVertexIndex + 23] = Vertex(Vec4f(maxPos.x, minPos.y, minPos.z, 1.0f), color);
+
+			for (uint32_t index = 0; index < 24; ++index)
+			{
+				vertices_[startVertexIndex + index].position = vertices_[startVertexIndex + index].position * world;
+			}
+		}
+		else
+		{
+			RenderCommand command;
+			command.drawMode = EDrawMode::LINES;
+			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			command.vertexCount = 24;
+
+			vertices_[command.startVertexIndex + 0] = Vertex(Vec4f(maxPos.x, maxPos.y, maxPos.z, 1.0f), color);
+			vertices_[command.startVertexIndex + 1] = Vertex(Vec4f(minPos.x, maxPos.y, maxPos.z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 2] = Vertex(Vec4f(minPos.x, maxPos.y, maxPos.z, 1.0f), color);
+			vertices_[command.startVertexIndex + 3] = Vertex(Vec4f(minPos.x, maxPos.y, minPos.z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 4] = Vertex(Vec4f(minPos.x, maxPos.y, minPos.z, 1.0f), color);
+			vertices_[command.startVertexIndex + 5] = Vertex(Vec4f(maxPos.x, maxPos.y, minPos.z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 6] = Vertex(Vec4f(maxPos.x, maxPos.y, minPos.z, 1.0f), color);
+			vertices_[command.startVertexIndex + 7] = Vertex(Vec4f(maxPos.x, maxPos.y, maxPos.z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 8] = Vertex(Vec4f(maxPos.x, minPos.y, maxPos.z, 1.0f), color);
+			vertices_[command.startVertexIndex + 9] = Vertex(Vec4f(minPos.x, minPos.y, maxPos.z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 10] = Vertex(Vec4f(minPos.x, minPos.y, maxPos.z, 1.0f), color);
+			vertices_[command.startVertexIndex + 11] = Vertex(Vec4f(minPos.x, minPos.y, minPos.z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 12] = Vertex(Vec4f(minPos.x, minPos.y, minPos.z, 1.0f), color);
+			vertices_[command.startVertexIndex + 13] = Vertex(Vec4f(maxPos.x, minPos.y, minPos.z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 14] = Vertex(Vec4f(maxPos.x, minPos.y, minPos.z, 1.0f), color);
+			vertices_[command.startVertexIndex + 15] = Vertex(Vec4f(maxPos.x, minPos.y, maxPos.z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 16] = Vertex(Vec4f(maxPos.x, maxPos.y, maxPos.z, 1.0f), color);
+			vertices_[command.startVertexIndex + 17] = Vertex(Vec4f(maxPos.x, minPos.y, maxPos.z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 18] = Vertex(Vec4f(minPos.x, maxPos.y, maxPos.z, 1.0f), color);
+			vertices_[command.startVertexIndex + 19] = Vertex(Vec4f(minPos.x, minPos.y, maxPos.z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 20] = Vertex(Vec4f(minPos.x, maxPos.y, minPos.z, 1.0f), color);
+			vertices_[command.startVertexIndex + 21] = Vertex(Vec4f(minPos.x, minPos.y, minPos.z, 1.0f), color);
+
+			vertices_[command.startVertexIndex + 22] = Vertex(Vec4f(maxPos.x, maxPos.y, minPos.z, 1.0f), color);
+			vertices_[command.startVertexIndex + 23] = Vertex(Vec4f(maxPos.x, minPos.y, minPos.z, 1.0f), color);
+
+			for (uint32_t index = 0; index < 24; ++index)
+			{
+				vertices_[command.startVertexIndex + index].position = vertices_[command.startVertexIndex + index].position * world;
+			}
+
+			commandQueue_.push(command);
+		}
+	}
 }
+
+/*
 
 void Renderer3D::DrawCube(const Mat4x4& world, const Vec3f& extents, const Vec4f& color)
 {
