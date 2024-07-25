@@ -8,6 +8,7 @@ add_subdirectory(05.KTX)
 add_subdirectory(06.Grid2D)
 add_subdirectory(07.Rendering2D)
 add_subdirectory(08.Grid3D)
+add_subdirectory(09.Cube)
 
 set_target_properties(
     01.Initialize
@@ -18,5 +19,6 @@ set_target_properties(
     06.Grid2D
     07.Rendering2D
     08.Grid3D
+    09.Cube
     PROPERTIES FOLDER "Sample"
 )
