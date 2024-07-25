@@ -28,7 +28,7 @@ public:
 	void End();
 
 	void DrawLine(const Vec3f& startPos, const Vec3f& endPos, const Vec4f& color);
-	//void DrawLine(const Vec3f& startPos, const Vec4f& startColor, const Vec3f& endPos, const Vec4f& endColor);
+	void DrawLine(const Vec3f& startPos, const Vec4f& startColor, const Vec3f& endPos, const Vec4f& endColor);
 	//void DrawQuad(const Mat4x4& world, float width, float height, const Vec4f& color);
 	//void DrawCube(const Mat4x4& world, const Vec3f& extents, const Vec4f& color);
 	//void DrawSphere(const Mat4x4& world, float radius, const Vec4f& color);
