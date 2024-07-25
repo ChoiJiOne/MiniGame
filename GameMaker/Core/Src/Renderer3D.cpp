@@ -308,6 +308,128 @@ void GameMaker::Renderer3D::DrawQuad(const Mat4x4& world, float width, float hei
 	}
 }
 
+void GameMaker::Renderer3D::DrawQuadWireframe(const Mat4x4& world, float width, float height, const Vec4f& color)
+{
+	float w2 = width * 0.5f;
+	float h2 = height * 0.5f;
+
+	if (commandQueue_.empty())
+	{
+		RenderCommand command;
+		command.drawMode = EDrawMode::LINES;
+		command.startVertexIndex = 0;
+		command.vertexCount = 8;
+
+		vertices_[command.startVertexIndex + 0].position = Vec4f(-w2, -h2, 0.0f, 1.0f);
+		vertices_[command.startVertexIndex + 0].color = color;
+
+		vertices_[command.startVertexIndex + 1].position = Vec4f(+w2, -h2, 0.0f, 1.0f);
+		vertices_[command.startVertexIndex + 1].color = color;
+
+		vertices_[command.startVertexIndex + 2].position = Vec4f(+w2, -h2, 0.0f, 1.0f);
+		vertices_[command.startVertexIndex + 2].color = color;
+
+		vertices_[command.startVertexIndex + 3].position = Vec4f(+w2, +h2, 0.0f, 1.0f);
+		vertices_[command.startVertexIndex + 3].color = color;
+
+		vertices_[command.startVertexIndex + 4].position = Vec4f(+w2, +h2, 0.0f, 1.0f);
+		vertices_[command.startVertexIndex + 4].color = color;
+
+		vertices_[command.startVertexIndex + 5].position = Vec4f(-w2, +h2, 0.0f, 1.0f);
+		vertices_[command.startVertexIndex + 5].color = color;
+
+		vertices_[command.startVertexIndex + 6].position = Vec4f(-w2, +h2, 0.0f, 1.0f);
+		vertices_[command.startVertexIndex + 6].color = color;
+
+		vertices_[command.startVertexIndex + 7].position = Vec4f(-w2, -h2, 0.0f, 1.0f);
+		vertices_[command.startVertexIndex + 7].color = color;
+
+		for (uint32_t index = 0; index < 8; ++index)
+		{
+			vertices_[command.startVertexIndex + index].position = vertices_[command.startVertexIndex + index].position * world;
+		}
+
+		commandQueue_.push(command);
+	}
+	else
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+
+		if (prevCommand.drawMode == EDrawMode::LINES)
+		{
+			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			prevCommand.vertexCount += 8;
+
+			vertices_[startVertexIndex + 0].position = Vec4f(-w2, -h2, 0.0f, 1.0f);
+			vertices_[startVertexIndex + 0].color = color;
+
+			vertices_[startVertexIndex + 1].position = Vec4f(+w2, -h2, 0.0f, 1.0f);
+			vertices_[startVertexIndex + 1].color = color;
+
+			vertices_[startVertexIndex + 2].position = Vec4f(+w2, -h2, 0.0f, 1.0f);
+			vertices_[startVertexIndex + 2].color = color;
+
+			vertices_[startVertexIndex + 3].position = Vec4f(+w2, +h2, 0.0f, 1.0f);
+			vertices_[startVertexIndex + 3].color = color;
+
+			vertices_[startVertexIndex + 4].position = Vec4f(+w2, +h2, 0.0f, 1.0f);
+			vertices_[startVertexIndex + 4].color = color;
+
+			vertices_[startVertexIndex + 5].position = Vec4f(-w2, +h2, 0.0f, 1.0f);
+			vertices_[startVertexIndex + 5].color = color;
+
+			vertices_[startVertexIndex + 6].position = Vec4f(-w2, +h2, 0.0f, 1.0f);
+			vertices_[startVertexIndex + 6].color = color;
+
+			vertices_[startVertexIndex + 7].position = Vec4f(-w2, -h2, 0.0f, 1.0f);
+			vertices_[startVertexIndex + 7].color = color;
+
+			for (uint32_t index = 0; index < 8; ++index)
+			{
+				vertices_[startVertexIndex + index].position = vertices_[startVertexIndex + index].position * world;
+			}
+		}
+		else
+		{
+			RenderCommand command;
+			command.drawMode = EDrawMode::LINES;
+			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			command.vertexCount = 8;
+
+			vertices_[command.startVertexIndex + 0].position = Vec4f(-w2, -h2, 0.0f, 1.0f);
+			vertices_[command.startVertexIndex + 0].color = color;
+
+			vertices_[command.startVertexIndex + 1].position = Vec4f(+w2, -h2, 0.0f, 1.0f);
+			vertices_[command.startVertexIndex + 1].color = color;
+
+			vertices_[command.startVertexIndex + 2].position = Vec4f(+w2, -h2, 0.0f, 1.0f);
+			vertices_[command.startVertexIndex + 2].color = color;
+
+			vertices_[command.startVertexIndex + 3].position = Vec4f(+w2, +h2, 0.0f, 1.0f);
+			vertices_[command.startVertexIndex + 3].color = color;
+
+			vertices_[command.startVertexIndex + 4].position = Vec4f(+w2, +h2, 0.0f, 1.0f);
+			vertices_[command.startVertexIndex + 4].color = color;
+
+			vertices_[command.startVertexIndex + 5].position = Vec4f(-w2, +h2, 0.0f, 1.0f);
+			vertices_[command.startVertexIndex + 5].color = color;
+
+			vertices_[command.startVertexIndex + 6].position = Vec4f(-w2, +h2, 0.0f, 1.0f);
+			vertices_[command.startVertexIndex + 6].color = color;
+
+			vertices_[command.startVertexIndex + 7].position = Vec4f(-w2, -h2, 0.0f, 1.0f);
+			vertices_[command.startVertexIndex + 7].color = color;
+
+			for (uint32_t index = 0; index < 8; ++index)
+			{
+				vertices_[command.startVertexIndex + index].position = vertices_[command.startVertexIndex + index].position * world;
+			}
+
+			commandQueue_.push(command);
+		}
+	}
+}
+
 /*
 void Renderer3D::DrawQuad(const Mat4x4& world, float width, float height, const Vec4f& color)
 {
