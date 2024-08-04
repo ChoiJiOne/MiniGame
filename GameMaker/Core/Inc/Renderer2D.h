@@ -51,10 +51,10 @@ public:
 	void DrawRoundRectWireframe(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate = 0.0f);
 	void DrawCircle(const Vec2f& center, float radius, const Vec4f& color);
 	void DrawCircleWireframe(const Vec2f& center, float radius, const Vec4f& color);
-	void DrawString(TTFont* font, const std::wstring& text, const Vec2f& pos, const Vec4f& color);
-	void DrawSprite(ITexture* texture, const Vec2f& center, float w, float h, float rotate = 0.0f, bool bFlipH = false, bool bFlipV = false);
 
-	/** factor의 값이 0.0 이면 blend 값에 영향을 받지 않고, 1.0이면 blend 색상만 렌더링합니다. */
+	void DrawString(TTFont* font, const std::wstring& text, const Vec2f& pos, const Vec4f& color);
+	
+	void DrawSprite(ITexture* texture, const Vec2f& center, float w, float h, float rotate = 0.0f, bool bFlipH = false, bool bFlipV = false);
 	void DrawSprite(ITexture* texture, const Vec2f& center, float w, float h, const Vec3f& blend, float factor = 0.0f, float rotate = 0.0f, bool bFlipH = false, bool bFlipV = false);
 
 private:
@@ -67,35 +67,6 @@ private:
 
 	struct Vertex
 	{
-		Vertex() noexcept : position(0.0f, 0.0f), uv(0.0f, 0.0f), color(0.0f, 0.0f, 0.0f, 0.0f) {}
-		Vertex(Vec2f&& p, Vec2f& t, Vec4f&& c) noexcept : position(p), uv(t), color(c) {}
-		Vertex(const Vec2f& p, const Vec2f& t, const Vec4f& c) noexcept : position(p), uv(t), color(c) {}
-		Vertex(float x, float y, float u, float v, float r, float g, float b, float a) noexcept : position(x, y), uv(u, v), color(r, g, b, a) {}
-		Vertex(Vertex&& instance) noexcept : position(instance.position), uv(instance.uv), color(instance.color) {}
-		Vertex(const Vertex& instance) noexcept : position(instance.position), uv(instance.uv), color(instance.color) {}
-
-		Vertex& operator=(Vertex&& instance) noexcept
-		{
-			if (this == &instance) return *this;
-
-			position = instance.position;
-			uv = instance.uv;
-			color = instance.color;
-
-			return *this;
-		}
-
-		Vertex& operator=(const Vertex& instance) noexcept
-		{
-			if (this == &instance) return *this;
-
-			position = instance.position;
-			uv = instance.uv;
-			color = instance.color;
-
-			return *this;
-		}
-
 		static uint32_t GetStride()
 		{
 			return sizeof(Vertex);
