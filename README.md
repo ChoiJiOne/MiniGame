@@ -31,3 +31,11 @@ To develop a game using `GameMaker`, you need to follow the steps below.
   ```
   GenerateProjectFiles.bat
   ```
+
+## Update
+
+To update the `GameMaker` to the latest version, execute the following command.
+
+```
+git submodule update --remote
+```
