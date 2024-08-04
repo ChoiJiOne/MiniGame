@@ -9,6 +9,7 @@ add_subdirectory(06.Grid2D)
 add_subdirectory(07.Rendering2D)
 add_subdirectory(08.Grid3D)
 add_subdirectory(09.Cube)
+add_subdirectory(10.Sprite2D)
 
 set_target_properties(
     01.Initialize
@@ -20,5 +21,6 @@ set_target_properties(
     07.Rendering2D
     08.Grid3D
     09.Cube
+    10.Sprite2D
     PROPERTIES FOLDER "Sample"
 )
