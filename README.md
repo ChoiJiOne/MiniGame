@@ -15,11 +15,15 @@
 
 To develop a game using `GameMaker`, you need to follow the steps below.
 
-- Run the following command to clone the repository.
+- First, create a git project in the desired folder.
   ```
-  git clone https://github.com/ChoiJiOne/GameMaker.git
+  git init
   ```
-- Next, run the `Setup.bat` script to create the project. The `<name>` argument is the name of the project you want to create.
+- Next, use the following command to add the `GameMaker` engine to the project.
+  ```
+  git submodule add https://github.com/ChoiJiOne/GameMaker.git
+  ```
+- After that, run the `Setup.bat` script to create the project. The `<name>` argument is the name of the project you want to create.
   ```
   GameMaker\\Script\\Setup.bat <name>
   ```
