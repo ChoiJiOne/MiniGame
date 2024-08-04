@@ -32,24 +32,29 @@ if "%PROJECT_NAME%" == "" (
     ECHO Project name is "%PROJECT_NAME%"...
 )
 
-if not exist "%~dp0\\Cache" (
-    mkdir "%~dp0\\Cache"
+SET CURRENT_PATH=%~dp0
+
+PUSHD "%CURRENT_PATH%"
+PUSHD "%~dp0..\\..\\"
+
+if not exist "%cd%\\Cache" (
+    mkdir "%cd%\\Cache"
 )
 
-if not exist "%PROJECT_NAME%" (
-    mkdir "%PROJECT_NAME%"
+if not exist "%cd%\\%PROJECT_NAME%" (
+    mkdir "%cd%\\%PROJECT_NAME%"
 )
 
-if not exist "%PROJECT_NAME%\\Inc" (
-    mkdir "%PROJECT_NAME%\\Inc"
+if not exist "%cd%\\%PROJECT_NAME%\\Inc" (
+    mkdir "%cd%\\%PROJECT_NAME%\\Inc"
 )
 
-if not exist "%PROJECT_NAME%\\Src" (
-    mkdir "%PROJECT_NAME%\\Src"
+if not exist "%cd%\\%PROJECT_NAME%\\Src" (
+    mkdir "%cd%\\%PROJECT_NAME%\\Src"
 )
 
-if not exist "%PROJECT_NAME%\\Res" (
-    mkdir "%PROJECT_NAME%\\Res"
+if not exist "%cd%\\%PROJECT_NAME%\\Res" (
+    mkdir "%cd%\\%PROJECT_NAME%\\Res"
 )
 
 SET OPTION=%2
@@ -57,8 +62,11 @@ if "%OPTION%" == "" (
     SET OPTION="NONE"
 )
 
-SET SETUP_SCRIPT_PATH=%~dp0GameMaker\Script\Setup.py
+SET SETUP_SCRIPT_PATH=%~dp0Setup.py
 python "%SETUP_SCRIPT_PATH%" "%PROJECT_NAME%" "%OPTION%"
+
+POPD
+POPD
 
 ECHO ====================
 ECHO Done Setup Project
