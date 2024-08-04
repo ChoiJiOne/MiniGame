@@ -39,3 +39,5 @@ To update the `GameMaker` to the latest version, execute the following command.
 ```
 git submodule update --remote
 ```
+
+다른 프로젝트에서 수정 테스트
