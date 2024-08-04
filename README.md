@@ -65,34 +65,18 @@ To develop a game using `GameMaker`, you need to follow the steps below.
   </tr>
   <tr>
     <td>
-    <a href="./GameMaker/Sample/05.KTX/">05.KTX</a>
+    <a href="./GameMaker/Sample/05.Grid2D/">05.Grid2D</a>
     </td>
     <td>
-    <img src="./GameMaker/Sample/Image/05.KTX.png" alt="05.KTX" width="200" height="150">
-    </td>
-  </tr>
-  <tr>
-    <td>
-    <a href="./GameMaker/Sample/06.Grid2D/">06.Grid2D</a>
-    </td>
-    <td>
-    <img src="./GameMaker/Sample/Image/06.Grid2D.png" alt="06.Grid2D" width="200" height="150">
+    <img src="./GameMaker/Sample/Image/05.Grid2D.png" alt="05.Grid2D" width="200" height="150">
     </td>
   </tr>
   <tr>
     <td>
-    <a href="./GameMaker/Sample/07.Rendering2D/">07.Rendering2D</a>
+    <a href="./GameMaker/Sample/06.Grid3D/">06.Grid3D</a>
     </td>
     <td>
-    <img src="./GameMaker/Sample/Image/07.Rendering2D.png" alt="07.Rendering2D" width="200" height="150">
-    </td>
-  </tr>
-  <tr>
-    <td>
-    <a href="./GameMaker/Sample/08.Grid3D/">08.Grid3D</a>
-    </td>
-    <td>
-    <img src="./GameMaker/Sample/Image/08.Grid3D.png" alt="08.Grid3D" width="200" height="150">
+    <img src="./GameMaker/Sample/Image/06.Grid3D.png" alt="06.Grid3D" width="200" height="150">
     </td>
   </tr>
 </table>
