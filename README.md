@@ -21,7 +21,7 @@ To develop a game using `GameMaker`, you need to follow the steps below.
   ```
 - Next, run the `Setup.bat` script to create the project. The `<name>` argument is the name of the project you want to create.
   ```
-  Setup.bat <name>
+  GameMaker\\Script\\Setup.bat <name>
   ```
 - Finally, run the `GenerateProjectFiles.bat` script to create the Visual Studio solution.
   ```
