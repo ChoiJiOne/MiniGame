@@ -21,8 +21,8 @@ TTFont::TTFont(const std::string& path, int32_t beginCodePoint, int32_t endCodeP
 	const uint8_t* bufferPtr = reinterpret_cast<const uint8_t*>(buffer.data());
 	CHECK((stbtt_InitFont(&info, bufferPtr, stbtt_GetFontOffsetForIndex(bufferPtr, 0)) != 0));
 
-	std::shared_ptr<uint8_t[]> glyphAtlasBitmap = GenerateGlyphAtlasBitmap(buffer, beginCodePoint_, endCodePoint_, fontSize, glyphs_, glyphAtlasSize_);
-	glyphAtlasID_ = CreateGlyphAtlasFromBitmap(glyphAtlasBitmap, glyphAtlasSize_);
+	std::shared_ptr<uint8_t[]> glyphAtlasBitmap = GenerateGlyphAtlasBitmap(buffer, beginCodePoint_, endCodePoint_, fontSize, glyphs_, atlasSize_);
+	atlasID_ = CreateGlyphAtlasFromBitmap(glyphAtlasBitmap, atlasSize_);
 
 	bIsInitialized_ = true;
 }
@@ -39,9 +39,15 @@ void TTFont::Release()
 {
 	CHECK(bIsInitialized_);
 
-	GL_FAILED(glDeleteTextures(1, &glyphAtlasID_));
+	GL_FAILED(glDeleteTextures(1, &atlasID_));
 
 	bIsInitialized_ = false;
+}
+
+void TTFont::Active(uint32_t unit) const
+{
+	GL_FAILED(glActiveTexture(GL_TEXTURE0 + unit));
+	GL_FAILED(glBindTexture(GL_TEXTURE_2D, atlasID_));
 }
 
 const Glyph& TTFont::GetGlyph(int32_t codePoint) const
@@ -87,7 +93,7 @@ void TTFont::MeasureText(const std::wstring& text, float& outWidth, float& outHe
 	outHeight = static_cast<float>(GameMaker::Abs(maxY - minY));
 }
 
-std::shared_ptr<uint8_t[]> TTFont::GenerateGlyphAtlasBitmap(const std::vector<uint8_t>& buffer, int32_t beginCodePoint, int32_t endCodePoint, float fontSize, std::vector<Glyph>& outGlyphs, int32_t& outGlyphAtlasSize)
+std::shared_ptr<uint8_t[]> TTFont::GenerateGlyphAtlasBitmap(const std::vector<uint8_t>& buffer, int32_t beginCodePoint, int32_t endCodePoint, float fontSize, std::vector<Glyph>& outGlyphs, int32_t& outAtlasSize)
 {
 	std::vector<stbtt_packedchar> packedchars(endCodePoint - beginCodePoint + 1);
 	outGlyphs.resize(endCodePoint - beginCodePoint + 1);
@@ -106,7 +112,7 @@ std::shared_ptr<uint8_t[]> TTFont::GenerateGlyphAtlasBitmap(const std::vector<ui
 		if (success)
 		{
 			stbtt_PackEnd(&packContext);
-			outGlyphAtlasSize = size;
+			outAtlasSize = size;
 			break;
 		}
 		else
@@ -131,7 +137,7 @@ std::shared_ptr<uint8_t[]> TTFont::GenerateGlyphAtlasBitmap(const std::vector<ui
 	return bitmap;
 }
 
-uint32_t TTFont::CreateGlyphAtlasFromBitmap(const std::shared_ptr<uint8_t[]>& bitmap, const int32_t& glyphAtlasSize)
+uint32_t TTFont::CreateGlyphAtlasFromBitmap(const std::shared_ptr<uint8_t[]>& bitmap, const int32_t& atlasSize)
 {
 	uint32_t textureAtlas;
 
@@ -144,7 +150,7 @@ uint32_t TTFont::CreateGlyphAtlasFromBitmap(const std::shared_ptr<uint8_t[]>& bi
 	GL_FAILED(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
 	const void* bufferPtr = reinterpret_cast<const void*>(&bitmap[0]);
-	GL_FAILED(glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, glyphAtlasSize, glyphAtlasSize, 0, GL_RED, GL_UNSIGNED_BYTE, bufferPtr));
+	GL_FAILED(glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, atlasSize, atlasSize, 0, GL_RED, GL_UNSIGNED_BYTE, bufferPtr));
 	GL_FAILED(glGenerateMipmap(GL_TEXTURE_2D));
 
 	GL_FAILED(glBindTexture(GL_TEXTURE_2D, 0));
