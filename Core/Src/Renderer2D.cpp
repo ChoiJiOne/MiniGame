@@ -158,8 +158,7 @@ void Renderer2D::End()
 				break;
 
 			case Renderer2D::EType::STRING:
-				GL_FAILED(glActiveTexture(GL_TEXTURE0));
-				GL_FAILED(glBindTexture(GL_TEXTURE_2D, command.font->GetGlyphAtlasID()));
+				command.font->Active(0);
 				break;
 			}
 
@@ -1209,7 +1208,7 @@ void Renderer2D::DrawString(TTFont* font, const std::wstring& text, const Vec2f&
 	float h = 0.0f;
 	font->MeasureText(text, w, h);
 
-	float atlasSize = static_cast<float>(font->GetGlyphAtlasSize());
+	float atlasSize = static_cast<float>(font->GetAtlasSize());
 	Vec2f currPos = Vec2f(pos.x, pos.y - h);
 
 	auto composeVertexData = [&](uint32_t vertexIndex)
