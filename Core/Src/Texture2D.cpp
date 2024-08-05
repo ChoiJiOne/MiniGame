@@ -16,6 +16,7 @@
 using namespace GameMaker;
 
 Texture2D::Texture2D(const std::string& path, bool bIsVerticallyFlip)
+	: bIsVerticallyFlip_(bIsVerticallyFlip)
 {
 	std::string extension = FileUtils::GetFileExtension(path);
 
@@ -23,7 +24,7 @@ Texture2D::Texture2D(const std::string& path, bool bIsVerticallyFlip)
 	int32_t height;
 	int32_t channels;
 	std::vector<uint8_t> buffer;
-	ReadPixelBufferFromFile(path, width, height, channels, buffer, bIsVerticallyFlip);
+	ReadPixelBufferFromFile(path, width, height, channels, buffer, bIsVerticallyFlip_);
 
 	GLenum format = 0xFFFF;
 	switch (channels)

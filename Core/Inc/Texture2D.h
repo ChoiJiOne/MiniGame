@@ -19,10 +19,13 @@ public:
 	virtual void Release() override;
 	virtual void Active(uint32_t unit) const override;
 
+	bool IsVerticallyFlip() { return bIsVerticallyFlip_; }
+
 private:
 	void ReadPixelBufferFromFile(const std::string& path, int32_t& outWidth, int32_t& outHeight, int32_t& outChannels, std::vector<uint8_t>& outPixels, bool bIsVerticallyFlip);
 
 private:
+	bool bIsVerticallyFlip_ = false;
 	uint32_t textureID_ = 0;
 };
 
