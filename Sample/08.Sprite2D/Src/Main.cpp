@@ -3,6 +3,7 @@
 #include <vector>
 #include <Windows.h>
 
+#include <imgui.h>
 #include <glad/glad.h>
 
 #if defined(DEBUG_MODE) || defined(RELEASE_MODE) || defined(DEVELOPMENT_MODE)
@@ -29,6 +30,7 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 #endif
 
 	GameMaker::GameEngine::Init({ "08.Sprite2D", 100, 100, 800, 600, false, false });
+	GameMaker::RenderManager::Get().SetVsyncMode(false);
 
 	float minX = -400.0f;
 	float maxX = +400.0f;
@@ -38,11 +40,25 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	float strideY = 10.0f;
 	
 	GameMaker::Renderer2D* renderer = GameMaker::RenderManager::Get().GetRenderer2D();
-	GameMaker::Texture2D* texture = GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>("GameMaker/Sample/08.Sprite2D/Res/AlienBlue.png", true);
 
+	uint32_t current = 0;
+	std::array<GameMaker::Texture2D*, 5> textures =
+	{
+		GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>("GameMaker/Sample/08.Sprite2D/Res/AlienBeige.png", true),
+		GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>("GameMaker/Sample/08.Sprite2D/Res/AlienBlue.png", true),
+		GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>("GameMaker/Sample/08.Sprite2D/Res/AlienGreen.png", true),
+		GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>("GameMaker/Sample/08.Sprite2D/Res/AlienPink.png", true),
+		GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>("GameMaker/Sample/08.Sprite2D/Res/AlienYellow.png", true),
+	};
+	
 	GameMaker::GameEngine::RunLoop(
 		[&](float deltaSeconds)
-		{
+		{			
+			ImGui::Begin("Framerate", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+			ImGui::SetWindowPos(ImVec2(0.0f, 0.0f));
+			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+			ImGui::End();
+
 			GameMaker::RenderManager::Get().BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
 
 			renderer->Begin();
@@ -59,8 +75,25 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 					renderer->DrawLine(GameMaker::Vec2f(minX, y), GameMaker::Vec2f(maxX, y), color);
 				}
 
-				renderer->DrawSprite(texture, GameMaker::Vec2f(0.0f, 0.0f), 66.0f, 92.0f, 0.0f);
-				renderer->DrawRectWireframe(GameMaker::Vec2f(0.0f, 0.0f), 66.0f, 92.0f, GameMaker::Vec4f(1.0f, 1.0f, 0.0f, 1.0f));
+				current = 0;
+				float sizeX = 66.0f;
+				float sizeY = 92.0f;
+				for (float x = -400.0f; x <= 400.0f; x += sizeX * 0.5f)
+				{
+					for (float y = 300.0f; y >= -300.0f; y -= sizeY * 0.5f)
+					{
+						renderer->DrawSprite(
+							textures[current], 
+							GameMaker::Vec2f(x, y), 
+							sizeX * 0.5f, 
+							sizeY * 0.5f, 
+							GameMaker::Vec3f(1.0f, 1.0f, 0.0f),
+							0.5f,
+							0.0f
+						);
+						current = (current + 1) % textures.size();
+					}
+				}
 			}
 			renderer->End();
 
