@@ -50,6 +50,9 @@ Renderer2D::Renderer2D()
 		GL_FAILED(glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, Vertex::GetStride(), (void*)(offsetof(Vertex, color))));
 		GL_FAILED(glEnableVertexAttribArray(2));
 
+		GL_FAILED(glVertexAttribIPointer(3, 1, GL_INT, Vertex::GetStride(), (void*)(offsetof(Vertex, unit))));
+		GL_FAILED(glEnableVertexAttribArray(3));
+
 		vertexBuffer_->Unbind();
 	}
 	GL_FAILED(glBindVertexArray(0));
@@ -154,7 +157,13 @@ void Renderer2D::End()
 			switch (command.type)
 			{
 			case Renderer2D::EType::SPRITE:
-				command.texture->Active(0);
+				for (uint32_t unit = 0; unit < MAX_TEXTURE_UNIT; ++unit)
+				{
+					if (command.texture[unit])
+					{
+						command.texture[unit]->Active(unit);
+					}
+				}
 				break;
 
 			case Renderer2D::EType::STRING:
@@ -202,7 +211,6 @@ void Renderer2D::DrawPoint(const Vec2f& point, const Vec4f& color, float pointSi
 		command.startVertexIndex = 0;
 		command.vertexCount = static_cast<uint32_t>(vertices.size());
 		command.type = EType::GEOMETRY;
-		command.texture = nullptr;
 		command.font = nullptr;
 
 		for (uint32_t index = 0; index < command.vertexCount; ++index)
@@ -235,7 +243,6 @@ void Renderer2D::DrawPoint(const Vec2f& point, const Vec4f& color, float pointSi
 			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			command.vertexCount = static_cast<uint32_t>(vertices.size());
 			command.type = EType::GEOMETRY;
-			command.texture = nullptr;
 			command.font = nullptr;
 
 			for (uint32_t index = 0; index < command.vertexCount; ++index)
@@ -264,8 +271,6 @@ void Renderer2D::DrawLine(const Vec2f& startPos, const Vec2f& endPos, const Vec4
 		command.startVertexIndex = 0;
 		command.vertexCount = static_cast<uint32_t>(vertices.size());
 		command.type = EType::GEOMETRY;
-		command.texture = nullptr;
-		command.font = nullptr;
 
 		for (uint32_t index = 0; index < command.vertexCount; ++index)
 		{
@@ -297,8 +302,6 @@ void Renderer2D::DrawLine(const Vec2f& startPos, const Vec2f& endPos, const Vec4
 			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			command.vertexCount = static_cast<uint32_t>(vertices.size());
 			command.type = EType::GEOMETRY;
-			command.texture = nullptr;
-			command.font = nullptr;
 
 			for (uint32_t index = 0; index < command.vertexCount; ++index)
 			{
@@ -332,8 +335,6 @@ void Renderer2D::DrawLine(const Vec2f& startPos, const Vec4f& startColor, const 
 		command.startVertexIndex = 0;
 		command.vertexCount = static_cast<uint32_t>(vertices.size());
 		command.type = EType::GEOMETRY;
-		command.texture = nullptr;
-		command.font = nullptr;
 
 		for (uint32_t index = 0; index < command.vertexCount; ++index)
 		{
@@ -365,8 +366,6 @@ void Renderer2D::DrawLine(const Vec2f& startPos, const Vec4f& startColor, const 
 			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			command.vertexCount = static_cast<uint32_t>(vertices.size());
 			command.type = EType::GEOMETRY;
-			command.texture = nullptr;
-			command.font = nullptr;
 
 			for (uint32_t index = 0; index < command.vertexCount; ++index)
 			{
@@ -395,8 +394,6 @@ void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec2f& byPos, const Ve
 		command.startVertexIndex = 0;
 		command.vertexCount = static_cast<uint32_t>(vertices.size());
 		command.type = EType::GEOMETRY;
-		command.texture = nullptr;
-		command.font = nullptr;
 
 		for (uint32_t index = 0; index < command.vertexCount; ++index)
 		{
@@ -428,7 +425,6 @@ void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec2f& byPos, const Ve
 			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			command.vertexCount = static_cast<uint32_t>(vertices.size());
 			command.type = EType::GEOMETRY;
-			command.texture = nullptr;
 			command.font = nullptr;
 
 			for (uint32_t index = 0; index < command.vertexCount; ++index)
@@ -465,7 +461,6 @@ void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec4f& fromColor, cons
 		command.startVertexIndex = 0;
 		command.vertexCount = static_cast<uint32_t>(vertices.size());
 		command.type = EType::GEOMETRY;
-		command.texture = nullptr;
 		command.font = nullptr;
 
 		for (uint32_t index = 0; index < command.vertexCount; ++index)
@@ -498,7 +493,6 @@ void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec4f& fromColor, cons
 			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			command.vertexCount = static_cast<uint32_t>(vertices.size());
 			command.type = EType::GEOMETRY;
-			command.texture = nullptr;
 			command.font = nullptr;
 
 			for (uint32_t index = 0; index < command.vertexCount; ++index)
@@ -528,7 +522,6 @@ void Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Vec2f& byPos,
 		command.startVertexIndex = 0;
 		command.vertexCount = static_cast<uint32_t>(vertices.size());
 		command.type = EType::GEOMETRY;
-		command.texture = nullptr;
 		command.font = nullptr;
 
 		for (uint32_t index = 0; index < command.vertexCount; ++index)
@@ -561,7 +554,6 @@ void Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Vec2f& byPos,
 			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			command.vertexCount = static_cast<uint32_t>(vertices.size());
 			command.type = EType::GEOMETRY;
-			command.texture = nullptr;
 			command.font = nullptr;
 
 			for (uint32_t index = 0; index < command.vertexCount; ++index)
@@ -598,8 +590,6 @@ void GameMaker::Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Ve
 		command.startVertexIndex = 0;
 		command.vertexCount = static_cast<uint32_t>(vertices.size());
 		command.type = EType::GEOMETRY;
-		command.texture = nullptr;
-		command.font = nullptr;
 
 		for (uint32_t index = 0; index < command.vertexCount; ++index)
 		{
@@ -631,8 +621,6 @@ void GameMaker::Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Ve
 			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			command.vertexCount = static_cast<uint32_t>(vertices.size());
 			command.type = EType::GEOMETRY;
-			command.texture = nullptr;
-			command.font = nullptr;
 
 			for (uint32_t index = 0; index < command.vertexCount; ++index)
 			{
@@ -674,8 +662,6 @@ void Renderer2D::DrawRect(const Vec2f& center, float w, float h, const Vec4f& co
 		command.startVertexIndex = 0;
 		command.vertexCount = static_cast<uint32_t>(vertices.size());
 		command.type = EType::GEOMETRY;
-		command.texture = nullptr;
-		command.font = nullptr;
 
 		for (uint32_t index = 0; index < command.vertexCount; ++index)
 		{
@@ -707,8 +693,6 @@ void Renderer2D::DrawRect(const Vec2f& center, float w, float h, const Vec4f& co
 			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			command.vertexCount = static_cast<uint32_t>(vertices.size());
 			command.type = EType::GEOMETRY;
-			command.texture = nullptr;
-			command.font = nullptr;
 
 			for (uint32_t index = 0; index < command.vertexCount; ++index)
 			{
@@ -748,8 +732,6 @@ void Renderer2D::DrawRectWireframe(const Vec2f& center, float w, float h, const 
 		command.startVertexIndex = 0;
 		command.vertexCount = static_cast<uint32_t>(vertices.size());
 		command.type = EType::GEOMETRY;
-		command.texture = nullptr;
-		command.font = nullptr;
 
 		for (uint32_t index = 0; index < command.vertexCount; ++index)
 		{
@@ -781,8 +763,6 @@ void Renderer2D::DrawRectWireframe(const Vec2f& center, float w, float h, const 
 			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			command.vertexCount = static_cast<uint32_t>(vertices.size());
 			command.type = EType::GEOMETRY;
-			command.texture = nullptr;
-			command.font = nullptr;
 
 			for (uint32_t index = 0; index < command.vertexCount; ++index)
 			{
@@ -880,8 +860,6 @@ void Renderer2D::DrawRoundRect(const Vec2f& center, float w, float h, float side
 		command.startVertexIndex = 0;
 		command.vertexCount = static_cast<uint32_t>(vertices.size());
 		command.type = EType::GEOMETRY;
-		command.texture = nullptr;
-		command.font = nullptr;
 
 		for (uint32_t index = 0; index < command.vertexCount; ++index)
 		{
@@ -913,8 +891,6 @@ void Renderer2D::DrawRoundRect(const Vec2f& center, float w, float h, float side
 			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			command.vertexCount = static_cast<uint32_t>(vertices.size());
 			command.type = EType::GEOMETRY;
-			command.texture = nullptr;
-			command.font = nullptr;
 
 			for (uint32_t index = 0; index < command.vertexCount; ++index)
 			{
@@ -1005,8 +981,6 @@ void Renderer2D::DrawRoundRectWireframe(const Vec2f& center, float w, float h, f
 		command.startVertexIndex = 0;
 		command.vertexCount = static_cast<uint32_t>(vertices.size());
 		command.type = EType::GEOMETRY;
-		command.texture = nullptr;
-		command.font = nullptr;
 
 		for (uint32_t index = 0; index < command.vertexCount; ++index)
 		{
@@ -1038,8 +1012,6 @@ void Renderer2D::DrawRoundRectWireframe(const Vec2f& center, float w, float h, f
 			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			command.vertexCount = static_cast<uint32_t>(vertices.size());
 			command.type = EType::GEOMETRY;
-			command.texture = nullptr;
-			command.font = nullptr;
 
 			for (uint32_t index = 0; index < command.vertexCount; ++index)
 			{
@@ -1079,8 +1051,6 @@ void Renderer2D::DrawCircle(const Vec2f& center, float radius, const Vec4f& colo
 		command.startVertexIndex = 0;
 		command.vertexCount = static_cast<uint32_t>(vertices.size());
 		command.type = EType::GEOMETRY;
-		command.texture = nullptr;
-		command.font = nullptr;
 
 		for (uint32_t index = 0; index < command.vertexCount; ++index)
 		{
@@ -1112,8 +1082,6 @@ void Renderer2D::DrawCircle(const Vec2f& center, float radius, const Vec4f& colo
 			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			command.vertexCount = static_cast<uint32_t>(vertices.size());
 			command.type = EType::GEOMETRY;
-			command.texture = nullptr;
-			command.font = nullptr;
 
 			for (uint32_t index = 0; index < command.vertexCount; ++index)
 			{
@@ -1152,8 +1120,6 @@ void GameMaker::Renderer2D::DrawCircleWireframe(const Vec2f& center, float radiu
 		command.startVertexIndex = 0;
 		command.vertexCount = static_cast<uint32_t>(vertices.size());
 		command.type = EType::GEOMETRY;
-		command.texture = nullptr;
-		command.font = nullptr;
 
 		for (uint32_t index = 0; index < command.vertexCount; ++index)
 		{
@@ -1185,8 +1151,6 @@ void GameMaker::Renderer2D::DrawCircleWireframe(const Vec2f& center, float radiu
 			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			command.vertexCount = static_cast<uint32_t>(vertices.size());
 			command.type = EType::GEOMETRY;
-			command.texture = nullptr;
-			command.font = nullptr;
 
 			for (uint32_t index = 0; index < command.vertexCount; ++index)
 			{
@@ -1223,7 +1187,7 @@ void Renderer2D::DrawString(TTFont* font, const std::wstring& text, const Vec2f&
 				vertices_[vertexIndex + 0].position = Vec2f(currPos.x + glyph.xoff, currPos.y - glyph.yoff);
 				vertices_[vertexIndex + 0].uv = Vec2f(static_cast<float>(glyph.pos0.x) / atlasSize, static_cast<float>(glyph.pos0.y) / atlasSize);
 				vertices_[vertexIndex + 0].color = color;
-
+				
 				vertices_[vertexIndex + 1].position = Vec2f(currPos.x + glyph.xoff, currPos.y - uh - glyph.yoff);
 				vertices_[vertexIndex + 1].uv = Vec2f(static_cast<float>(glyph.pos0.x) / atlasSize, static_cast<float>(glyph.pos1.y) / atlasSize);
 				vertices_[vertexIndex + 1].color = color;
@@ -1256,7 +1220,6 @@ void Renderer2D::DrawString(TTFont* font, const std::wstring& text, const Vec2f&
 		command.startVertexIndex = 0;
 		command.vertexCount = vertexCount;
 		command.type = EType::STRING;
-		command.texture = nullptr;
 		command.font = font;
 
 		composeVertexData(command.startVertexIndex);
@@ -1281,7 +1244,6 @@ void Renderer2D::DrawString(TTFont* font, const std::wstring& text, const Vec2f&
 			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			command.vertexCount = vertexCount;
 			command.type = EType::STRING;
-			command.texture = nullptr;
 			command.font = font;
 
 			composeVertexData(command.startVertexIndex);
@@ -1323,46 +1285,50 @@ void Renderer2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, flo
 		vertex += (center + Vec2f(0.375f, 0.375f));
 	}
 
-	if (bFlipH)
+	for (auto& uv : uvs)
 	{
-		for (auto& uv : uvs)
-		{
-			uv.y = (1.0f - uv.y);
-		}
+		uv.x = bFlipV ? (1.0f - uv.x) : uv.x;
+		uv.y = bFlipH ? (1.0f - uv.y) : uv.y;
 	}
-
-	if (bFlipV)
-	{
-		for (auto& uv : uvs)
-		{
-			uv.x = (1.0f - uv.x);
-		}
-	}
-
+	
 	if (commandQueue_.empty())
 	{
+		uint32_t textureUnit = 0;
+
 		RenderCommand command;
 		command.drawMode = EDrawMode::TRIANGLES;
 		command.startVertexIndex = 0;
 		command.vertexCount = static_cast<uint32_t>(vertices.size());
 		command.type = EType::SPRITE;
-		command.texture = texture;
+		command.texture[textureUnit] = texture;
 		command.font = nullptr;
 
 		for (uint32_t index = 0; index < command.vertexCount; ++index)
 		{
 			vertices_[command.startVertexIndex + index].position = vertices[index];
 			vertices_[command.startVertexIndex + index].uv = uvs[index];
-			vertices_[command.startVertexIndex + index].color = Vec4f();
+			vertices_[command.startVertexIndex + index].color = Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
+			vertices_[command.startVertexIndex + index].unit = textureUnit;
 		}
 
 		commandQueue_.push(command);
+		return;
 	}
-	else
+	
+	RenderCommand& prevCommand = commandQueue_.back();
+	if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == EType::SPRITE)
 	{
-		RenderCommand& prevCommand = commandQueue_.back();
+		int32_t textureUnit = -1;
+		for (uint32_t unit = 0; unit < MAX_TEXTURE_UNIT; ++unit)
+		{
+			if (prevCommand.texture[unit] == texture)
+			{
+				textureUnit = unit;
+				break;
+			}
+		}
 
-		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == EType::SPRITE && prevCommand.texture == texture)
+		if (textureUnit != -1)
 		{
 			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
@@ -1371,29 +1337,59 @@ void Renderer2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, flo
 			{
 				vertices_[startVertexIndex + index].position = vertices[index];
 				vertices_[startVertexIndex + index].uv = uvs[index];
-				vertices_[startVertexIndex + index].color = Vec4f();
+				vertices_[startVertexIndex + index].color = Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
+				vertices_[startVertexIndex + index].unit = textureUnit;
+			}
+
+			return;
+		}
+
+		for (uint32_t unit = 0; unit < MAX_TEXTURE_UNIT; ++unit)
+		{
+			if (prevCommand.texture[unit] == nullptr)
+			{
+				textureUnit = unit;
+				break;
 			}
 		}
-		else
-		{
-			RenderCommand command;
-			command.drawMode = EDrawMode::TRIANGLES;
-			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-			command.vertexCount = static_cast<uint32_t>(vertices.size());
-			command.type = EType::SPRITE;
-			command.texture = texture;
-			command.font = nullptr;
 
-			for (uint32_t index = 0; index < command.vertexCount; ++index)
+		if (textureUnit != -1)
+		{
+			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
+			prevCommand.texture[textureUnit] = texture;
+
+			for (uint32_t index = 0; index < vertices.size(); ++index)
 			{
-				vertices_[command.startVertexIndex + index].position = vertices[index];
-				vertices_[command.startVertexIndex + index].uv = uvs[index];
-				vertices_[command.startVertexIndex + index].color = Vec4f();
+				vertices_[startVertexIndex + index].position = vertices[index];
+				vertices_[startVertexIndex + index].uv = uvs[index];
+				vertices_[startVertexIndex + index].color = Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
+				vertices_[startVertexIndex + index].unit = textureUnit;
 			}
 
-			commandQueue_.push(command);
+			return;
 		}
 	}
+
+	uint32_t textureUnit = 0;
+
+	RenderCommand command;
+	command.drawMode = EDrawMode::TRIANGLES;
+	command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+	command.vertexCount = static_cast<uint32_t>(vertices.size());
+	command.type = EType::SPRITE;
+	command.texture[textureUnit] = texture;
+	command.font = nullptr;
+
+	for (uint32_t index = 0; index < command.vertexCount; ++index)
+	{
+		vertices_[command.startVertexIndex + index].position = vertices[index];
+		vertices_[command.startVertexIndex + index].uv = uvs[index];
+		vertices_[command.startVertexIndex + index].color = Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
+		vertices_[command.startVertexIndex + index].unit = textureUnit;
+	}
+
+	commandQueue_.push(command);
 }
 
 void Renderer2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, float h, const Vec3f& blend, float factor, float rotate, bool bFlipH, bool bFlipV)
@@ -1428,30 +1424,22 @@ void Renderer2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, flo
 		vertex += (center + Vec2f(0.375f, 0.375f));
 	}
 
-	if (bFlipH)
+	for (auto& uv : uvs)
 	{
-		for (auto& uv : uvs)
-		{
-			uv.y = (1.0f - uv.y);
-		}
-	}
-
-	if (bFlipV)
-	{
-		for (auto& uv : uvs)
-		{
-			uv.x = (1.0f - uv.x);
-		}
+		uv.x = bFlipV ? (1.0f - uv.x) : uv.x;
+		uv.y = bFlipH ? (1.0f - uv.y) : uv.y;
 	}
 
 	if (commandQueue_.empty())
 	{
+		uint32_t textureUnit = 0;
+
 		RenderCommand command;
 		command.drawMode = EDrawMode::TRIANGLES;
 		command.startVertexIndex = 0;
 		command.vertexCount = static_cast<uint32_t>(vertices.size());
 		command.type = EType::SPRITE;
-		command.texture = texture;
+		command.texture[textureUnit] = texture;
 		command.font = nullptr;
 
 		for (uint32_t index = 0; index < command.vertexCount; ++index)
@@ -1459,15 +1447,27 @@ void Renderer2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, flo
 			vertices_[command.startVertexIndex + index].position = vertices[index];
 			vertices_[command.startVertexIndex + index].uv = uvs[index];
 			vertices_[command.startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
+			vertices_[command.startVertexIndex + index].unit = textureUnit;
 		}
 
 		commandQueue_.push(command);
+		return;
 	}
-	else
-	{
-		RenderCommand& prevCommand = commandQueue_.back();
 
-		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == EType::SPRITE && prevCommand.texture == texture)
+	RenderCommand& prevCommand = commandQueue_.back();
+	if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == EType::SPRITE)
+	{
+		int32_t textureUnit = -1;
+		for (uint32_t unit = 0; unit < MAX_TEXTURE_UNIT; ++unit)
+		{
+			if (prevCommand.texture[unit] == texture)
+			{
+				textureUnit = unit;
+				break;
+			}
+		}
+
+		if (textureUnit != -1)
 		{
 			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
@@ -1477,28 +1477,58 @@ void Renderer2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, flo
 				vertices_[startVertexIndex + index].position = vertices[index];
 				vertices_[startVertexIndex + index].uv = uvs[index];
 				vertices_[startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
+				vertices_[startVertexIndex + index].unit = textureUnit;
+			}
+
+			return;
+		}
+
+		for (uint32_t unit = 0; unit < MAX_TEXTURE_UNIT; ++unit)
+		{
+			if (prevCommand.texture[unit] == nullptr)
+			{
+				textureUnit = unit;
+				break;
 			}
 		}
-		else
-		{
-			RenderCommand command;
-			command.drawMode = EDrawMode::TRIANGLES;
-			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-			command.vertexCount = static_cast<uint32_t>(vertices.size());
-			command.type = EType::SPRITE;
-			command.texture = texture;
-			command.font = nullptr;
 
-			for (uint32_t index = 0; index < command.vertexCount; ++index)
+		if (textureUnit != -1)
+		{
+			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
+			prevCommand.texture[textureUnit] = texture;
+
+			for (uint32_t index = 0; index < vertices.size(); ++index)
 			{
-				vertices_[command.startVertexIndex + index].position = vertices[index];
-				vertices_[command.startVertexIndex + index].uv = uvs[index];
-				vertices_[command.startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
+				vertices_[startVertexIndex + index].position = vertices[index];
+				vertices_[startVertexIndex + index].uv = uvs[index];
+				vertices_[startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
+				vertices_[startVertexIndex + index].unit = textureUnit;
 			}
 
-			commandQueue_.push(command);
+			return;
 		}
 	}
+
+	uint32_t textureUnit = 0;
+
+	RenderCommand command;
+	command.drawMode = EDrawMode::TRIANGLES;
+	command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+	command.vertexCount = static_cast<uint32_t>(vertices.size());
+	command.type = EType::SPRITE;
+	command.texture[textureUnit] = texture;
+	command.font = nullptr;
+
+	for (uint32_t index = 0; index < command.vertexCount; ++index)
+	{
+		vertices_[command.startVertexIndex + index].position = vertices[index];
+		vertices_[command.startVertexIndex + index].uv = uvs[index];
+		vertices_[command.startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
+		vertices_[command.startVertexIndex + index].unit = textureUnit;
+	}
+
+	commandQueue_.push(command);
 }
 
 #pragma warning(pop)

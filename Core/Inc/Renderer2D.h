@@ -75,7 +75,10 @@ private:
 		Vec2f position;
 		Vec2f uv;
 		Vec4f color;
+		uint32_t unit;
 	};
+
+	static const uint32_t MAX_TEXTURE_UNIT = 10;
 
 	struct RenderCommand
 	{
@@ -83,8 +86,8 @@ private:
 		uint32_t startVertexIndex;
 		uint32_t vertexCount;
 		EType type;
-		ITexture* texture;
-		TTFont* font;
+		ITexture* texture[MAX_TEXTURE_UNIT] = { nullptr, };
+		TTFont* font = nullptr;
 	};
 
 private:
