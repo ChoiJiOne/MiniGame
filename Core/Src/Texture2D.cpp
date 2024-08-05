@@ -20,14 +20,11 @@ Texture2D::Texture2D(const std::string& path, bool bIsVerticallyFlip)
 {
 	std::string extension = FileUtils::GetFileExtension(path);
 
-	int32_t width;
-	int32_t height;
-	int32_t channels;
 	std::vector<uint8_t> buffer;
-	ReadPixelBufferFromFile(path, width, height, channels, buffer, bIsVerticallyFlip_);
+	ReadPixelBufferFromFile(path, width_, height_, channels_, buffer, bIsVerticallyFlip_);
 
 	GLenum format = 0xFFFF;
-	switch (channels)
+	switch (channels_)
 	{
 	case IMAGE_FORMAT_R:
 		format = GL_RED;
