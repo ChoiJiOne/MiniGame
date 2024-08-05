@@ -24,8 +24,7 @@ Texture2D::Texture2D(const std::string& path, bool bIsVerticallyFlip)
 	std::vector<uint8_t> buffer;
 	ReadPixelBufferFromFile(path, width_, height_, channels_, buffer, format, bIsVerticallyFlip_);
 
-	CreateTextureResource(buffer, format);
-	
+	textureID_ = CreateTextureResource(buffer, format);
 	bIsInitialized_ = true;
 }
 
@@ -78,12 +77,14 @@ void Texture2D::ReadPixelBufferFromFile(const std::string& path, int32_t& outWid
 	format = formats.at(channels_);
 }
 
-void Texture2D::CreateTextureResource(const std::vector<uint8_t>& buffer, uint32_t format)
+uint32_t Texture2D::CreateTextureResource(const std::vector<uint8_t>& buffer, uint32_t format)
 {
 	const void* bufferPtr = reinterpret_cast<const void*>(buffer.data());
 
-	GL_FAILED(glGenTextures(1, &textureID_));
-	GL_FAILED(glBindTexture(GL_TEXTURE_2D, textureID_));
+	uint32_t textureID = 0;
+
+	GL_FAILED(glGenTextures(1, &textureID));
+	GL_FAILED(glBindTexture(GL_TEXTURE_2D, textureID));
 	GL_FAILED(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
 	GL_FAILED(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 	GL_FAILED(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
@@ -91,6 +92,8 @@ void Texture2D::CreateTextureResource(const std::vector<uint8_t>& buffer, uint32
 	GL_FAILED(glTexImage2D(GL_TEXTURE_2D, 0, format, width_, height_, 0, format, GL_UNSIGNED_BYTE, bufferPtr));
 	GL_FAILED(glGenerateMipmap(GL_TEXTURE_2D));
 	GL_FAILED(glBindTexture(GL_TEXTURE_2D, 0));
+
+	return textureID;
 }
 
 #pragma warning(pop)
