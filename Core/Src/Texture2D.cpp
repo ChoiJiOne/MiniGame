@@ -1,6 +1,8 @@
 #pragma warning(push)
 #pragma warning(disable: 26451)
 
+#include <map>
+
 #include <glad/glad.h>
 #include <stb_image.h>
 
@@ -18,45 +20,12 @@ using namespace GameMaker;
 Texture2D::Texture2D(const std::string& path, bool bIsVerticallyFlip)
 	: bIsVerticallyFlip_(bIsVerticallyFlip)
 {
-	std::string extension = FileUtils::GetFileExtension(path);
-
+	uint32_t format = 0xFFFF;
 	std::vector<uint8_t> buffer;
-	ReadPixelBufferFromFile(path, width_, height_, channels_, buffer, bIsVerticallyFlip_);
+	ReadPixelBufferFromFile(path, width_, height_, channels_, buffer, format, bIsVerticallyFlip_);
 
-	GLenum format = 0xFFFF;
-	switch (channels_)
-	{
-	case IMAGE_FORMAT_R:
-		format = GL_RED;
-		break;
-
-	case IMAGE_FORMAT_RG:
-		format = GL_RG;
-		break;
-
-	case IMAGE_FORMAT_RGB:
-		format = GL_RGB;
-		break;
-
-	case IMAGE_FORMAT_RGBA:
-		format = GL_RGBA;
-		break;
-
-	default:
-		ASSERT(false, "undefined texture resource format");
-		break;
-	}
-
-	GL_FAILED(glGenTextures(1, &textureID_));
-	GL_FAILED(glBindTexture(GL_TEXTURE_2D, textureID_));
-	GL_FAILED(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-	GL_FAILED(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-	GL_FAILED(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
-	GL_FAILED(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-	GL_FAILED(glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, buffer.data()));
-	GL_FAILED(glGenerateMipmap(GL_TEXTURE_2D));
-	GL_FAILED(glBindTexture(GL_TEXTURE_2D, 0));
-
+	CreateTextureResource(buffer, format);
+	
 	bIsInitialized_ = true;
 }
 
@@ -83,7 +52,7 @@ void Texture2D::Active(uint32_t unit) const
 	GL_FAILED(glBindTexture(GL_TEXTURE_2D, textureID_));
 }
 
-void Texture2D::ReadPixelBufferFromFile(const std::string& path, int32_t& outWidth, int32_t& outHeight, int32_t& outChannels, std::vector<uint8_t>& outPixels, bool bIsVerticallyFlip)
+void Texture2D::ReadPixelBufferFromFile(const std::string& path, int32_t& outWidth, int32_t& outHeight, int32_t& outChannels, std::vector<uint8_t>& outPixels, uint32_t& format, bool bIsVerticallyFlip)
 {
 	stbi_set_flip_vertically_on_load(static_cast<int32_t>(bIsVerticallyFlip));
 
@@ -97,6 +66,31 @@ void Texture2D::ReadPixelBufferFromFile(const std::string& path, int32_t& outWid
 
 	stbi_image_free(bufferPtr);
 	bufferPtr = nullptr;
+
+	static std::map<uint32_t, uint32_t> formats =
+	{
+		{ IMAGE_FORMAT_R,    GL_RED  },
+		{ IMAGE_FORMAT_RG,   GL_RG   },
+		{ IMAGE_FORMAT_RGB,  GL_RGB  },
+		{ IMAGE_FORMAT_RGBA, GL_RGBA },
+	};
+
+	format = formats.at(channels_);
+}
+
+void Texture2D::CreateTextureResource(const std::vector<uint8_t>& buffer, uint32_t format)
+{
+	const void* bufferPtr = reinterpret_cast<const void*>(buffer.data());
+
+	GL_FAILED(glGenTextures(1, &textureID_));
+	GL_FAILED(glBindTexture(GL_TEXTURE_2D, textureID_));
+	GL_FAILED(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+	GL_FAILED(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+	GL_FAILED(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+	GL_FAILED(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	GL_FAILED(glTexImage2D(GL_TEXTURE_2D, 0, format, width_, height_, 0, format, GL_UNSIGNED_BYTE, bufferPtr));
+	GL_FAILED(glGenerateMipmap(GL_TEXTURE_2D));
+	GL_FAILED(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
 #pragma warning(pop)
