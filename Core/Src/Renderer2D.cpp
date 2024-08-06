@@ -167,7 +167,13 @@ void Renderer2D::End()
 				break;
 
 			case Renderer2D::EType::STRING:
-				command.font->Active(0);
+				for (uint32_t unit = 0; unit < MAX_TEXTURE_UNIT; ++unit)
+				{
+					if (command.font[unit])
+					{
+						command.font[unit]->Active(unit);
+					}
+				}
 				break;
 			}
 
@@ -1046,11 +1052,11 @@ void Renderer2D::DrawString(TTFont* font, const std::wstring& text, const Vec2f&
 	float w = 0.0f;
 	float h = 0.0f;
 	font->MeasureText(text, w, h);
-
+	
 	float atlasSize = static_cast<float>(font->GetAtlasSize());
 	Vec2f currPos = Vec2f(pos.x, pos.y - h);
 
-	auto composeVertexData = [&](uint32_t vertexIndex)
+	auto composeVertexData = [&](uint32_t vertexIndex, uint32_t unit)
 		{
 			for (const auto& unicode : text)
 			{
@@ -1059,73 +1065,107 @@ void Renderer2D::DrawString(TTFont* font, const std::wstring& text, const Vec2f&
 				float uw = static_cast<float>(glyph.pos1.x - glyph.pos0.x);
 				float uh = static_cast<float>(glyph.pos1.y - glyph.pos0.y);
 
-				vertices_[vertexIndex + 0].position = Vec2f(currPos.x + glyph.xoff, currPos.y - glyph.yoff);
+				vertices_[vertexIndex + 0].position = Vec2f(currPos.x, currPos.y - glyph.yoff);
 				vertices_[vertexIndex + 0].uv = Vec2f(static_cast<float>(glyph.pos0.x) / atlasSize, static_cast<float>(glyph.pos0.y) / atlasSize);
 				vertices_[vertexIndex + 0].color = color;
+				vertices_[vertexIndex + 0].unit = unit;
 				
-				vertices_[vertexIndex + 1].position = Vec2f(currPos.x + glyph.xoff, currPos.y - uh - glyph.yoff);
+				vertices_[vertexIndex + 1].position = Vec2f(currPos.x, currPos.y - uh - glyph.yoff);
 				vertices_[vertexIndex + 1].uv = Vec2f(static_cast<float>(glyph.pos0.x) / atlasSize, static_cast<float>(glyph.pos1.y) / atlasSize);
 				vertices_[vertexIndex + 1].color = color;
+				vertices_[vertexIndex + 1].unit = unit;
 
-				vertices_[vertexIndex + 2].position = Vec2f(currPos.x + glyph.xoff + uw, currPos.y - glyph.yoff);
+				vertices_[vertexIndex + 2].position = Vec2f(currPos.x + uw, currPos.y - glyph.yoff);
 				vertices_[vertexIndex + 2].uv = Vec2f(static_cast<float>(glyph.pos1.x) / atlasSize, static_cast<float>(glyph.pos0.y) / atlasSize);
 				vertices_[vertexIndex + 2].color = color;
+				vertices_[vertexIndex + 2].unit = unit;
 
-				vertices_[vertexIndex + 3].position = Vec2f(currPos.x + glyph.xoff + uw, currPos.y - glyph.yoff);
+				vertices_[vertexIndex + 3].position = Vec2f(currPos.x + uw, currPos.y - glyph.yoff);
 				vertices_[vertexIndex + 3].uv = Vec2f(static_cast<float>(glyph.pos1.x) / atlasSize, static_cast<float>(glyph.pos0.y) / atlasSize);
 				vertices_[vertexIndex + 3].color = color;
+				vertices_[vertexIndex + 3].unit = unit;
 
-				vertices_[vertexIndex + 4].position = Vec2f(currPos.x + glyph.xoff, currPos.y - uh - glyph.yoff);
+				vertices_[vertexIndex + 4].position = Vec2f(currPos.x, currPos.y - uh - glyph.yoff);
 				vertices_[vertexIndex + 4].uv = Vec2f(static_cast<float>(glyph.pos0.x) / atlasSize, static_cast<float>(glyph.pos1.y) / atlasSize);
 				vertices_[vertexIndex + 4].color = color;
+				vertices_[vertexIndex + 4].unit = unit;
 
-				vertices_[vertexIndex + 5].position = Vec2f(currPos.x + glyph.xoff + uw, currPos.y - uh - glyph.yoff);
+				vertices_[vertexIndex + 5].position = Vec2f(currPos.x + uw, currPos.y - uh - glyph.yoff);
 				vertices_[vertexIndex + 5].uv = Vec2f(static_cast<float>(glyph.pos1.x) / atlasSize, static_cast<float>(glyph.pos1.y) / atlasSize);
 				vertices_[vertexIndex + 5].color = color;
+				vertices_[vertexIndex + 5].unit = unit;
 
 				currPos.x += glyph.xadvance;
 				vertexIndex += 6;
 			}
 		};
-	
-	if (commandQueue_.empty())
-	{
-		RenderCommand command;
-		command.drawMode = EDrawMode::TRIANGLES;
-		command.startVertexIndex = 0;
-		command.vertexCount = vertexCount;
-		command.type = EType::STRING;
-		command.font = font;
 
-		composeVertexData(command.startVertexIndex);
 
-		commandQueue_.push(command);
-	}
-	else
+	if (!commandQueue_.empty())
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
-		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == EType::STRING && prevCommand.font == font)
+		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == EType::STRING)
 		{
-			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-			prevCommand.vertexCount += vertexCount;
+			int32_t atlasUnit = -1;
+			for (uint32_t unit = 0; unit < MAX_TEXTURE_UNIT; ++unit)
+			{
+				if (prevCommand.font[unit] == font)
+				{
+					atlasUnit = unit;
+					break;
+				}
+			}
 
-			composeVertexData(startVertexIndex);
-		}
-		else
-		{
-			RenderCommand command;
-			command.drawMode = EDrawMode::TRIANGLES;
-			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-			command.vertexCount = vertexCount;
-			command.type = EType::STRING;
-			command.font = font;
+			if (atlasUnit != -1)
+			{
+				uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+				prevCommand.vertexCount += vertexCount;
 
-			composeVertexData(command.startVertexIndex);
+				composeVertexData(startVertexIndex, atlasUnit);
+				return;
+			}
 
-			commandQueue_.push(command);
+			for (uint32_t unit = 0; unit < MAX_TEXTURE_UNIT; ++unit)
+			{
+				if (prevCommand.font[unit] == nullptr)
+				{
+					atlasUnit = unit;
+					break;
+				}
+			}
+
+			if (atlasUnit != -1)
+			{
+				uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+				prevCommand.vertexCount += vertexCount;
+				prevCommand.font[atlasUnit] = font;
+
+				composeVertexData(startVertexIndex, atlasUnit);
+				return;
+			}
 		}
 	}
+	
+	uint32_t startVertexIndex = 0;
+	if (!commandQueue_.empty())
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+		startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+	}
+
+	uint32_t atlasUnit = 0;
+
+	RenderCommand command;
+	command.drawMode = EDrawMode::TRIANGLES;
+	command.startVertexIndex = startVertexIndex;
+	command.vertexCount = vertexCount;
+	command.type = EType::STRING;
+	command.font[atlasUnit] = font;
+
+	composeVertexData(command.startVertexIndex, atlasUnit);
+
+	commandQueue_.push(command);
 }
 
 void Renderer2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, float h, float rotate, bool bFlipH, bool bFlipV)

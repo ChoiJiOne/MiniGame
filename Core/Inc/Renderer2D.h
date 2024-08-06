@@ -87,7 +87,7 @@ private:
 		uint32_t vertexCount;
 		EType type;
 		ITexture* texture[MAX_TEXTURE_UNIT] = { nullptr, };
-		TTFont* font = nullptr;
+		TTFont* font[MAX_TEXTURE_UNIT] = { nullptr, };
 	};
 
 private:
