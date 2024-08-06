@@ -1165,96 +1165,81 @@ void Renderer2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, flo
 		uv.x = bFlipV ? (1.0f - uv.x) : uv.x;
 		uv.y = bFlipH ? (1.0f - uv.y) : uv.y;
 	}
-	
-	if (commandQueue_.empty())
+
+	if (!commandQueue_.empty())
 	{
-		uint32_t textureUnit = 0;
-
-		RenderCommand command;
-		command.drawMode = EDrawMode::TRIANGLES;
-		command.startVertexIndex = 0;
-		command.vertexCount = static_cast<uint32_t>(vertices.size());
-		command.type = EType::SPRITE;
-		command.texture[textureUnit] = texture;
-		command.font = nullptr;
-
-		for (uint32_t index = 0; index < command.vertexCount; ++index)
+		RenderCommand& prevCommand = commandQueue_.back();
+		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == EType::SPRITE)
 		{
-			vertices_[command.startVertexIndex + index].position = vertices[index];
-			vertices_[command.startVertexIndex + index].uv = uvs[index];
-			vertices_[command.startVertexIndex + index].color = Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
-			vertices_[command.startVertexIndex + index].unit = textureUnit;
-		}
+			int32_t textureUnit = -1;
+			for (uint32_t unit = 0; unit < MAX_TEXTURE_UNIT; ++unit)
+			{
+				if (prevCommand.texture[unit] == texture)
+				{
+					textureUnit = unit;
+					break;
+				}
+			}
 
-		commandQueue_.push(command);
-		return;
+			if (textureUnit != -1)
+			{
+				uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+				prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
+
+				for (uint32_t index = 0; index < vertices.size(); ++index)
+				{
+					vertices_[startVertexIndex + index].position = vertices[index];
+					vertices_[startVertexIndex + index].uv = uvs[index];
+					vertices_[startVertexIndex + index].color = Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
+					vertices_[startVertexIndex + index].unit = textureUnit;
+				}
+
+				return;
+			}
+
+			for (uint32_t unit = 0; unit < MAX_TEXTURE_UNIT; ++unit)
+			{
+				if (prevCommand.texture[unit] == nullptr)
+				{
+					textureUnit = unit;
+					break;
+				}
+			}
+
+			if (textureUnit != -1)
+			{
+				uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+				prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
+				prevCommand.texture[textureUnit] = texture;
+
+				for (uint32_t index = 0; index < vertices.size(); ++index)
+				{
+					vertices_[startVertexIndex + index].position = vertices[index];
+					vertices_[startVertexIndex + index].uv = uvs[index];
+					vertices_[startVertexIndex + index].color = Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
+					vertices_[startVertexIndex + index].unit = textureUnit;
+				}
+
+				return;
+			}
+		}
 	}
 	
-	RenderCommand& prevCommand = commandQueue_.back();
-	if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == EType::SPRITE)
+	uint32_t startVertexIndex = 0;
+	if (!commandQueue_.empty())
 	{
-		int32_t textureUnit = -1;
-		for (uint32_t unit = 0; unit < MAX_TEXTURE_UNIT; ++unit)
-		{
-			if (prevCommand.texture[unit] == texture)
-			{
-				textureUnit = unit;
-				break;
-			}
-		}
-
-		if (textureUnit != -1)
-		{
-			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
-
-			for (uint32_t index = 0; index < vertices.size(); ++index)
-			{
-				vertices_[startVertexIndex + index].position = vertices[index];
-				vertices_[startVertexIndex + index].uv = uvs[index];
-				vertices_[startVertexIndex + index].color = Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
-				vertices_[startVertexIndex + index].unit = textureUnit;
-			}
-
-			return;
-		}
-
-		for (uint32_t unit = 0; unit < MAX_TEXTURE_UNIT; ++unit)
-		{
-			if (prevCommand.texture[unit] == nullptr)
-			{
-				textureUnit = unit;
-				break;
-			}
-		}
-
-		if (textureUnit != -1)
-		{
-			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
-			prevCommand.texture[textureUnit] = texture;
-
-			for (uint32_t index = 0; index < vertices.size(); ++index)
-			{
-				vertices_[startVertexIndex + index].position = vertices[index];
-				vertices_[startVertexIndex + index].uv = uvs[index];
-				vertices_[startVertexIndex + index].color = Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
-				vertices_[startVertexIndex + index].unit = textureUnit;
-			}
-
-			return;
-		}
+		RenderCommand& prevCommand = commandQueue_.back();
+		startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 	}
-
+	
 	uint32_t textureUnit = 0;
 
 	RenderCommand command;
 	command.drawMode = EDrawMode::TRIANGLES;
-	command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = static_cast<uint32_t>(vertices.size());
 	command.type = EType::SPRITE;
 	command.texture[textureUnit] = texture;
-	command.font = nullptr;
 
 	for (uint32_t index = 0; index < command.vertexCount; ++index)
 	{
@@ -1305,95 +1290,80 @@ void Renderer2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, flo
 		uv.y = bFlipH ? (1.0f - uv.y) : uv.y;
 	}
 
-	if (commandQueue_.empty())
+	if (!commandQueue_.empty())
 	{
-		uint32_t textureUnit = 0;
-
-		RenderCommand command;
-		command.drawMode = EDrawMode::TRIANGLES;
-		command.startVertexIndex = 0;
-		command.vertexCount = static_cast<uint32_t>(vertices.size());
-		command.type = EType::SPRITE;
-		command.texture[textureUnit] = texture;
-		command.font = nullptr;
-
-		for (uint32_t index = 0; index < command.vertexCount; ++index)
+		RenderCommand& prevCommand = commandQueue_.back();
+		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == EType::SPRITE)
 		{
-			vertices_[command.startVertexIndex + index].position = vertices[index];
-			vertices_[command.startVertexIndex + index].uv = uvs[index];
-			vertices_[command.startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
-			vertices_[command.startVertexIndex + index].unit = textureUnit;
-		}
+			int32_t textureUnit = -1;
+			for (uint32_t unit = 0; unit < MAX_TEXTURE_UNIT; ++unit)
+			{
+				if (prevCommand.texture[unit] == texture)
+				{
+					textureUnit = unit;
+					break;
+				}
+			}
 
-		commandQueue_.push(command);
-		return;
+			if (textureUnit != -1)
+			{
+				uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+				prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
+
+				for (uint32_t index = 0; index < vertices.size(); ++index)
+				{
+					vertices_[startVertexIndex + index].position = vertices[index];
+					vertices_[startVertexIndex + index].uv = uvs[index];
+					vertices_[startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
+					vertices_[startVertexIndex + index].unit = textureUnit;
+				}
+
+				return;
+			}
+
+			for (uint32_t unit = 0; unit < MAX_TEXTURE_UNIT; ++unit)
+			{
+				if (prevCommand.texture[unit] == nullptr)
+				{
+					textureUnit = unit;
+					break;
+				}
+			}
+
+			if (textureUnit != -1)
+			{
+				uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+				prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
+				prevCommand.texture[textureUnit] = texture;
+
+				for (uint32_t index = 0; index < vertices.size(); ++index)
+				{
+					vertices_[startVertexIndex + index].position = vertices[index];
+					vertices_[startVertexIndex + index].uv = uvs[index];
+					vertices_[startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
+					vertices_[startVertexIndex + index].unit = textureUnit;
+				}
+
+				return;
+			}
+		}
 	}
 
-	RenderCommand& prevCommand = commandQueue_.back();
-	if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == EType::SPRITE)
+	uint32_t startVertexIndex = 0;
+	if (!commandQueue_.empty())
 	{
-		int32_t textureUnit = -1;
-		for (uint32_t unit = 0; unit < MAX_TEXTURE_UNIT; ++unit)
-		{
-			if (prevCommand.texture[unit] == texture)
-			{
-				textureUnit = unit;
-				break;
-			}
-		}
-
-		if (textureUnit != -1)
-		{
-			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
-
-			for (uint32_t index = 0; index < vertices.size(); ++index)
-			{
-				vertices_[startVertexIndex + index].position = vertices[index];
-				vertices_[startVertexIndex + index].uv = uvs[index];
-				vertices_[startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
-				vertices_[startVertexIndex + index].unit = textureUnit;
-			}
-
-			return;
-		}
-
-		for (uint32_t unit = 0; unit < MAX_TEXTURE_UNIT; ++unit)
-		{
-			if (prevCommand.texture[unit] == nullptr)
-			{
-				textureUnit = unit;
-				break;
-			}
-		}
-
-		if (textureUnit != -1)
-		{
-			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
-			prevCommand.texture[textureUnit] = texture;
-
-			for (uint32_t index = 0; index < vertices.size(); ++index)
-			{
-				vertices_[startVertexIndex + index].position = vertices[index];
-				vertices_[startVertexIndex + index].uv = uvs[index];
-				vertices_[startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
-				vertices_[startVertexIndex + index].unit = textureUnit;
-			}
-
-			return;
-		}
+		RenderCommand& prevCommand = commandQueue_.back();
+		startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 	}
 
 	uint32_t textureUnit = 0;
 
 	RenderCommand command;
 	command.drawMode = EDrawMode::TRIANGLES;
-	command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = static_cast<uint32_t>(vertices.size());
 	command.type = EType::SPRITE;
 	command.texture[textureUnit] = texture;
-	command.font = nullptr;
 
 	for (uint32_t index = 0; index < command.vertexCount; ++index)
 	{
