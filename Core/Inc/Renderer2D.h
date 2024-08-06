@@ -58,6 +58,9 @@ public:
 	void DrawSprite(ITexture* texture, const Vec2f& center, float w, float h, const Vec3f& blend, float factor = 0.0f, float rotate = 0.0f, bool bFlipH = false, bool bFlipV = false);
 
 private:
+	void Flush();
+
+private:
 	enum class EType
 	{
 		GEOMETRY = 0x00,
@@ -101,6 +104,9 @@ private:
 
 	std::map<EType, Shader*> shaders_;
 	std::queue<RenderCommand> commandQueue_;
+
+	bool originEnableDepth_ = false;
+	bool originEnableCull_ = false;
 };
 
 }

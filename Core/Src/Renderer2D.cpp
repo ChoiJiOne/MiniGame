@@ -126,13 +126,6 @@ void Renderer2D::Begin(const Camera2D* camera2D)
 		}
 		shaderPtr->Unbind();
 	}
-	
-	bIsBegin_ = true;
-}
-
-void Renderer2D::End()
-{
-	CHECK(bIsBegin_);
 
 	GLboolean originEnableDepth;
 	GL_FAILED(glGetBooleanv(GL_DEPTH_TEST, &originEnableDepth));
@@ -140,55 +133,23 @@ void Renderer2D::End()
 	GLboolean originEnableCull;
 	GL_FAILED(glGetBooleanv(GL_CULL_FACE, &originEnableCull));
 
+	originEnableDepth_ = static_cast<bool>(originEnableDepth);
+	originEnableCull_ = static_cast<bool>(originEnableCull);
+
 	renderManagerPtr->SetDepthMode(false);
 	renderManagerPtr->SetCullFaceMode(false);
-	{
-		const void* vertexPtr = reinterpret_cast<const void*>(vertices_.data());
-		uint32_t bufferByteSize = static_cast<uint32_t>(Vertex::GetStride() * vertices_.size());
-		vertexBuffer_->SetBufferData(vertexPtr, bufferByteSize);
 
-		GL_FAILED(glBindVertexArray(vertexArrayObject_));
+	bIsBegin_ = true;
+}
 
-		while (!commandQueue_.empty())
-		{
-			RenderCommand command = commandQueue_.front();
-			commandQueue_.pop();
+void Renderer2D::End()
+{
+	CHECK(bIsBegin_);
 
-			switch (command.type)
-			{
-			case Renderer2D::EType::SPRITE:
-				for (uint32_t unit = 0; unit < MAX_TEXTURE_UNIT; ++unit)
-				{
-					if (command.texture[unit])
-					{
-						command.texture[unit]->Active(unit);
-					}
-				}
-				break;
-
-			case Renderer2D::EType::STRING:
-				for (uint32_t unit = 0; unit < MAX_TEXTURE_UNIT; ++unit)
-				{
-					if (command.font[unit])
-					{
-						command.font[unit]->Active(unit);
-					}
-				}
-				break;
-			}
-
-			Shader* shader = shaders_.at(command.type);
-			shader->Bind();
-			{
-				GL_FAILED(glDrawArrays(static_cast<GLenum>(command.drawMode), command.startVertexIndex, command.vertexCount));
-			}
-			shader->Unbind();
-		}
-
-		GL_FAILED(glBindVertexArray(0));
-	}
-	renderManagerPtr->SetCullFaceMode(static_cast<bool>(originEnableCull));
-	renderManagerPtr->SetDepthMode(static_cast<bool>(originEnableDepth));
+	Flush();
+	
+	renderManagerPtr->SetCullFaceMode(originEnableCull_);
+	renderManagerPtr->SetDepthMode(originEnableDepth_);
 
 	bIsBegin_ = false;
 }
@@ -1414,6 +1375,58 @@ void Renderer2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, flo
 	}
 
 	commandQueue_.push(command);
+}
+
+void Renderer2D::Flush()
+{
+	if (commandQueue_.empty()) /** Command Queue가 비어있으면 동작X */
+	{
+		return;
+	}
+
+	const void* vertexPtr = reinterpret_cast<const void*>(vertices_.data());
+	uint32_t bufferByteSize = static_cast<uint32_t>(Vertex::GetStride() * vertices_.size());
+	vertexBuffer_->SetBufferData(vertexPtr, bufferByteSize);
+
+	GL_FAILED(glBindVertexArray(vertexArrayObject_));
+
+	while (!commandQueue_.empty())
+	{
+		RenderCommand command = commandQueue_.front();
+		commandQueue_.pop();
+
+		switch (command.type)
+		{
+		case Renderer2D::EType::SPRITE:
+			for (uint32_t unit = 0; unit < MAX_TEXTURE_UNIT; ++unit)
+			{
+				if (command.texture[unit])
+				{
+					command.texture[unit]->Active(unit);
+				}
+			}
+			break;
+
+		case Renderer2D::EType::STRING:
+			for (uint32_t unit = 0; unit < MAX_TEXTURE_UNIT; ++unit)
+			{
+				if (command.font[unit])
+				{
+					command.font[unit]->Active(unit);
+				}
+			}
+			break;
+		}
+
+		Shader* shader = shaders_.at(command.type);
+		shader->Bind();
+		{
+			GL_FAILED(glDrawArrays(static_cast<GLenum>(command.drawMode), command.startVertexIndex, command.vertexCount));
+		}
+		shader->Unbind();
+	}
+
+	GL_FAILED(glBindVertexArray(0));
 }
 
 #pragma warning(pop)
