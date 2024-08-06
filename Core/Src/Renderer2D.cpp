@@ -308,23 +308,7 @@ void Renderer2D::DrawLine(const Vec2f& startPos, const Vec4f& startColor, const 
 		endColor,
 	};
 
-	if (commandQueue_.empty())
-	{
-		RenderCommand command;
-		command.drawMode = EDrawMode::LINES;
-		command.startVertexIndex = 0;
-		command.vertexCount = static_cast<uint32_t>(vertices.size());
-		command.type = EType::GEOMETRY;
-
-		for (uint32_t index = 0; index < command.vertexCount; ++index)
-		{
-			vertices_[command.startVertexIndex + index].position = vertices[index];
-			vertices_[command.startVertexIndex + index].color = colors[index];
-		}
-
-		commandQueue_.push(command);
-	}
-	else
+	if (!commandQueue_.empty())
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
@@ -338,24 +322,31 @@ void Renderer2D::DrawLine(const Vec2f& startPos, const Vec4f& startColor, const 
 				vertices_[startVertexIndex + index].position = vertices[index];
 				vertices_[startVertexIndex + index].color = colors[index];
 			}
-		}
-		else
-		{
-			RenderCommand command;
-			command.drawMode = EDrawMode::LINES;
-			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-			command.vertexCount = static_cast<uint32_t>(vertices.size());
-			command.type = EType::GEOMETRY;
 
-			for (uint32_t index = 0; index < command.vertexCount; ++index)
-			{
-				vertices_[command.startVertexIndex + index].position = vertices[index];
-				vertices_[command.startVertexIndex + index].color = colors[index];
-			}
-
-			commandQueue_.push(command);
+			return;
 		}
 	}
+
+	uint32_t startVertexIndex = 0;
+	if (!commandQueue_.empty())
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+		startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+	}
+
+	RenderCommand command;
+	command.drawMode = EDrawMode::LINES;
+	command.startVertexIndex = startVertexIndex;
+	command.vertexCount = static_cast<uint32_t>(vertices.size());
+	command.type = EType::GEOMETRY;
+
+	for (uint32_t index = 0; index < command.vertexCount; ++index)
+	{
+		vertices_[command.startVertexIndex + index].position = vertices[index];
+		vertices_[command.startVertexIndex + index].color = colors[index];
+	}
+
+	commandQueue_.push(command);
 }
 
 void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec2f& byPos, const Vec2f& toPos, const Vec4f& color)
