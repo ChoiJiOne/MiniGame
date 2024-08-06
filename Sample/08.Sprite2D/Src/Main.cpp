@@ -1,3 +1,4 @@
+
 #include <array>
 #include <cstdint>
 #include <vector>
@@ -38,7 +39,7 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	float minY = -300.0f;
 	float maxY = +300.0f;
 	float strideY = 10.0f;
-	
+
 	GameMaker::Renderer2D* renderer = GameMaker::RenderManager::Get().GetRenderer2D();
 
 	uint32_t current = 0;
@@ -50,10 +51,13 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 		GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>("GameMaker/Sample/08.Sprite2D/Res/AlienPink.png", true),
 		GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>("GameMaker/Sample/08.Sprite2D/Res/AlienYellow.png", true),
 	};
-	
+
+	float sizeX = 66.0f;
+	float sizeY = 92.0f;
+
 	GameMaker::GameEngine::RunLoop(
 		[&](float deltaSeconds)
-		{			
+		{
 			ImGui::Begin("Framerate", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 			ImGui::SetWindowPos(ImVec2(0.0f, 0.0f));
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -76,21 +80,11 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 				}
 
 				current = 0;
-				float sizeX = 66.0f;
-				float sizeY = 92.0f;
-				for (float x = -400.0f; x <= 400.0f; x += sizeX * 0.5f)
+				for (float x = minX; x <= maxX; x += sizeX * 0.5f)
 				{
-					for (float y = 300.0f; y >= -300.0f; y -= sizeY * 0.5f)
+					for (float y = maxY; y >= minY; y -= sizeY * 0.5f)
 					{
-						renderer->DrawSprite(
-							textures[current], 
-							GameMaker::Vec2f(x, y), 
-							sizeX * 0.5f, 
-							sizeY * 0.5f, 
-							GameMaker::Vec3f(1.0f, 1.0f, 0.0f),
-							0.5f,
-							0.0f
-						);
+						renderer->DrawSprite(textures[current], GameMaker::Vec2f(x, y), sizeX * 0.5f, sizeY * 0.5f, 0.0f);
 						current = (current + 1) % textures.size();
 					}
 				}
