@@ -1429,4 +1429,17 @@ void Renderer2D::Flush()
 	GL_FAILED(glBindVertexArray(0));
 }
 
+bool Renderer2D::IsFullCommandQueue()
+{
+	if (commandQueue_.empty())
+	{
+		return false;
+	}
+
+	const RenderCommand& command = commandQueue_.back();
+	uint32_t index = command.startVertexIndex + command.vertexCount;
+
+	return index >= MAX_VERTEX_SIZE;
+}
+
 #pragma warning(pop)

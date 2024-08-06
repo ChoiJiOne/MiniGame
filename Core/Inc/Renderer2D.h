@@ -59,6 +59,7 @@ public:
 
 private:
 	void Flush();
+	bool IsFullCommandQueue();
 
 private:
 	enum class EType
