@@ -83,14 +83,14 @@ void TTFont::MeasureText(const std::wstring& text, float& outWidth, float& outHe
 		}
 
 		float y0 = glyph.yoff;
-		float y1 = static_cast<float>(glyph.pos1.y - glyph.pos0.y) + glyph.yoff;
+		float y1 = static_cast<float>(glyph.pos1.y - glyph.pos0.y) + 2.0f * glyph.yoff;
 
-		minY = GameMaker::Min<float>(y0, minY);
-		maxY = GameMaker::Max<float>(y1, maxY);
+		minY = Min<float>(y0, minY);
+		maxY = Max<float>(y1, maxY);
 	}
 
 	outWidth = width;
-	outHeight = static_cast<float>(GameMaker::Abs(maxY - minY));
+	outHeight = static_cast<float>(Abs(maxY - minY));
 }
 
 std::shared_ptr<uint8_t[]> TTFont::GenerateGlyphAtlasBitmap(const std::vector<uint8_t>& buffer, int32_t beginCodePoint, int32_t endCodePoint, float fontSize, std::vector<Glyph>& outGlyphs, int32_t& outAtlasSize)
