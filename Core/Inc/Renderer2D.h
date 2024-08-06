@@ -59,7 +59,7 @@ public:
 
 private:
 	void Flush();
-	bool IsFullCommandQueue();
+	bool IsFullCommandQueue(uint32_t vertexCount);
 
 private:
 	enum class EType
@@ -97,8 +97,8 @@ private:
 private:
 	bool bIsBegin_ = false;
 
-	static const int32_t MAX_VERTEX_SIZE = 20000;
-	std::array<Vertex, MAX_VERTEX_SIZE> vertices_;
+	static const int32_t MAX_VERTEX_BUFFER_SIZE = 30000;
+	std::array<Vertex, MAX_VERTEX_BUFFER_SIZE> vertices_;
 	
 	uint32_t vertexArrayObject_ = 0;
 	VertexBuffer* vertexBuffer_ = nullptr;

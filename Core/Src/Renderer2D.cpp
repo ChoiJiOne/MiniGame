@@ -155,8 +155,14 @@ void Renderer2D::End()
 }
 void Renderer2D::DrawPoint(const Vec2f& point, const Vec4f& color, float pointSize)
 {
+	static const uint32_t MAX_VERTEX_SIZE = 6;
+	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
+	{
+		Flush();
+	}
+
 	float w = pointSize * 0.5f;
-	std::array<Vec2f, 6> vertices =
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
 		Vec2f(-w, -w),
 		Vec2f(+w, +w),
@@ -213,7 +219,13 @@ void Renderer2D::DrawPoint(const Vec2f& point, const Vec4f& color, float pointSi
 
 void Renderer2D::DrawLine(const Vec2f& startPos, const Vec2f& endPos, const Vec4f& color)
 {
-	std::array<Vec2f, 2> vertices = 
+	static const uint32_t MAX_VERTEX_SIZE = 2;
+	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
+	{
+		Flush();
+	}
+
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{ 
 		startPos + Vec2f(0.375f, 0.375f), 
 		endPos + Vec2f(0.375f, 0.375f), 
@@ -262,13 +274,19 @@ void Renderer2D::DrawLine(const Vec2f& startPos, const Vec2f& endPos, const Vec4
 
 void Renderer2D::DrawLine(const Vec2f& startPos, const Vec4f& startColor, const Vec2f& endPos, const Vec4f& endColor)
 {
-	std::array<Vec2f, 2> vertices = 
+	static const uint32_t MAX_VERTEX_SIZE = 2;
+	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
+	{
+		Flush();
+	}
+
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{ 
 		startPos + Vec2f(0.375f, 0.375f), 
 		endPos + Vec2f(0.375f, 0.375f), 
 	};
 
-	std::array<Vec4f, 2> colors =
+	std::array<Vec4f, MAX_VERTEX_SIZE> colors =
 	{
 		startColor,
 		endColor,
@@ -317,7 +335,13 @@ void Renderer2D::DrawLine(const Vec2f& startPos, const Vec4f& startColor, const 
 
 void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec2f& byPos, const Vec2f& toPos, const Vec4f& color)
 {
-	std::array<Vec2f, 3> vertices =
+	static const uint32_t MAX_VERTEX_SIZE = 3;
+	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
+	{
+		Flush();
+	}
+
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
 		fromPos + Vec2f(0.375f, 0.375f),
 		  byPos + Vec2f(0.375f, 0.375f),
@@ -367,14 +391,20 @@ void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec2f& byPos, const Ve
 
 void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec4f& fromColor, const Vec2f& byPos, const Vec4f& byColor, const Vec2f& toPos, const Vec4f& toColor)
 {
-	std::array<Vec2f, 3> vertices =
+	static const uint32_t MAX_VERTEX_SIZE = 3;
+	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
+	{
+		Flush();
+	}
+
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
 		fromPos + Vec2f(0.375f, 0.375f),
 		  byPos + Vec2f(0.375f, 0.375f),
 		  toPos + Vec2f(0.375f, 0.375f),
 	};
 
-	std::array<Vec4f, 3> colors =
+	std::array<Vec4f, MAX_VERTEX_SIZE> colors =
 	{
 		fromColor,
 		byColor,
@@ -424,7 +454,13 @@ void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec4f& fromColor, cons
 
 void Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Vec2f& byPos, const Vec2f& toPos, const Vec4f& color)
 {
-	std::array<Vec2f, 6> vertices =
+	static const uint32_t MAX_VERTEX_SIZE = 6;
+	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
+	{
+		Flush();
+	}
+
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
 		fromPos + Vec2f(0.375f, 0.375f),   byPos + Vec2f(0.375f, 0.375f),
 		byPos   + Vec2f(0.375f, 0.375f),   toPos + Vec2f(0.375f, 0.375f),
@@ -474,14 +510,20 @@ void Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Vec2f& byPos,
 
 void GameMaker::Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Vec4f& fromColor, const Vec2f& byPos, const Vec4f& byColor, const Vec2f& toPos, const Vec4f& toColor)
 {
-	std::array<Vec2f, 6> vertices =
+	static const uint32_t MAX_VERTEX_SIZE = 6;
+	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
+	{
+		Flush();
+	}
+
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
 		fromPos + Vec2f(0.375f, 0.375f),   byPos + Vec2f(0.375f, 0.375f),
 		byPos + Vec2f(0.375f, 0.375f),   toPos + Vec2f(0.375f, 0.375f),
 		toPos + Vec2f(0.375f, 0.375f), fromPos + Vec2f(0.375f, 0.375f),
 	};
 
-	std::array<Vec4f, 6> colors =
+	std::array<Vec4f, MAX_VERTEX_SIZE> colors =
 	{
 		fromColor, byColor,
 		byColor,   toColor,
@@ -531,10 +573,16 @@ void GameMaker::Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Ve
 
 void Renderer2D::DrawRect(const Vec2f& center, float w, float h, const Vec4f& color, float rotate)
 {
+	static const uint32_t MAX_VERTEX_SIZE = 6;
+	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
+	{
+		Flush();
+	}
+
 	float w2 = w * 0.5f;
 	float h2 = h * 0.5f;
 	
-	std::array<Vec2f, 6> vertices =
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
 		Vec2f(-w2, -h2),
 		Vec2f(+w2, +h2),
@@ -594,10 +642,16 @@ void Renderer2D::DrawRect(const Vec2f& center, float w, float h, const Vec4f& co
 
 void Renderer2D::DrawRectWireframe(const Vec2f& center, float w, float h, const Vec4f& color, float rotate)
 {
+	static const uint32_t MAX_VERTEX_SIZE = 8;
+	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
+	{
+		Flush();
+	}
+
 	float w2 = w * 0.5f;
 	float h2 = h * 0.5f;
 
-	std::array<Vec2f, 8> vertices =
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
 		Vec2f(-w2, -h2), Vec2f(+w2, -h2),
 		Vec2f(+w2, -h2), Vec2f(+w2, +h2),
@@ -655,14 +709,18 @@ void Renderer2D::DrawRectWireframe(const Vec2f& center, float w, float h, const 
 
 void Renderer2D::DrawRoundRect(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate)
 {
+	static const uint32_t MAX_VERTEX_SIZE = 252;
+	static const uint32_t MAX_SLICE_SIZE = 20;
+	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
+	{
+		Flush();
+	}
+
 	float w2 = w * 0.5f;
 	float h2 = h * 0.5f;
 	side = Min<float>(side, Min<float>(h2, h2));
 
 	uint32_t vertexCount = 0;
-	
-	static const uint32_t MAX_VERTEX_SIZE = 252;
-	static const uint32_t MAX_SLICE_SIZE = 20;
 	std::array<Vec2f, MAX_VERTEX_SIZE> vertices;
 
 	auto calculateBezierCurve = [&](const Vec2f& startPos, const Vec2f& endPos, const Vec2f& controlPos, uint32_t sliceCount)
@@ -774,14 +832,18 @@ void Renderer2D::DrawRoundRect(const Vec2f& center, float w, float h, float side
 
 void Renderer2D::DrawRoundRectWireframe(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate)
 {
+	static const uint32_t MAX_VERTEX_SIZE = 168;
+	static const uint32_t MAX_SLICE_SIZE = 20;
+	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
+	{
+		Flush();
+	}
+
 	float w2 = w * 0.5f;
 	float h2 = h * 0.5f;
 	side = Min<float>(side, Min<float>(h2, h2));
 
 	uint32_t vertexCount = 0;
-
-	static const uint32_t MAX_VERTEX_SIZE = 168;
-	static const uint32_t MAX_SLICE_SIZE = 20;
 	std::array<Vec2f, MAX_VERTEX_SIZE> vertices;
 
 	auto calculateBezierCurve = [&](const Vec2f& startPos, const Vec2f& endPos, const Vec2f& controlPos, uint32_t sliceCount)
@@ -886,10 +948,14 @@ void Renderer2D::DrawRoundRectWireframe(const Vec2f& center, float w, float h, f
 
 void Renderer2D::DrawCircle(const Vec2f& center, float radius, const Vec4f& color)
 {
-	uint32_t vertexCount = 0;
-
 	static const uint32_t MAX_VERTEX_SIZE = 300;
 	static const uint32_t MAX_SLICE_SIZE = 100;
+	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
+	{
+		Flush();
+	}
+
+	uint32_t vertexCount = 0;
 	std::array<Vec2f, MAX_VERTEX_SIZE> vertices;
 
 	for (int32_t slice = 0; slice < MAX_SLICE_SIZE; ++slice)
@@ -947,10 +1013,14 @@ void Renderer2D::DrawCircle(const Vec2f& center, float radius, const Vec4f& colo
 
 void GameMaker::Renderer2D::DrawCircleWireframe(const Vec2f& center, float radius, const Vec4f& color)
 {
-	uint32_t vertexCount = 0;
-
 	static const uint32_t MAX_VERTEX_SIZE = 200;
 	static const uint32_t MAX_SLICE_SIZE = 100;
+	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
+	{
+		Flush();
+	}
+
+	uint32_t vertexCount = 0;
 	std::array<Vec2f, MAX_VERTEX_SIZE> vertices;
 
 	for (int32_t slice = 0; slice < MAX_SLICE_SIZE; ++slice)
@@ -1009,6 +1079,10 @@ void Renderer2D::DrawString(TTFont* font, const std::wstring& text, const Vec2f&
 {
 	/** 문자 하나당 정점 6개. */
 	uint32_t vertexCount = 6 * static_cast<uint32_t>(text.size());
+	if (IsFullCommandQueue(vertexCount))
+	{
+		Flush();
+	}
 
 	float w = 0.0f;
 	float h = 0.0f;
@@ -1131,10 +1205,16 @@ void Renderer2D::DrawString(TTFont* font, const std::wstring& text, const Vec2f&
 
 void Renderer2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, float h, float rotate, bool bFlipH, bool bFlipV)
 {
+	static const uint32_t MAX_VERTEX_SIZE = 6;
+	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
+	{
+		Flush();
+	}
+
 	float w2 = w * 0.5f;
 	float h2 = h * 0.5f;
 
-	std::array<Vec2f, 6> vertices =
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
 		Vec2f(-w2, -h2),
 		Vec2f(+w2, +h2),
@@ -1144,7 +1224,7 @@ void Renderer2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, flo
 		Vec2f(+w2, +h2),
 	};
 
-	std::array<Vec2f, 6> uvs =
+	std::array<Vec2f, MAX_VERTEX_SIZE> uvs =
 	{
 		Vec2f(0.0f, 0.0f),
 		Vec2f(1.0f, 1.0f),
@@ -1255,10 +1335,16 @@ void Renderer2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, flo
 
 void Renderer2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, float h, const Vec3f& blend, float factor, float rotate, bool bFlipH, bool bFlipV)
 {
+	static const uint32_t MAX_VERTEX_SIZE = 6;
+	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
+	{
+		Flush();
+	}
+
 	float w2 = w * 0.5f;
 	float h2 = h * 0.5f;
 
-	std::array<Vec2f, 6> vertices =
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
 		Vec2f(-w2, -h2),
 		Vec2f(+w2, +h2),
@@ -1268,7 +1354,7 @@ void Renderer2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, flo
 		Vec2f(+w2, +h2),
 	};
 
-	std::array<Vec2f, 6> uvs =
+	std::array<Vec2f, MAX_VERTEX_SIZE> uvs =
 	{
 		Vec2f(0.0f, 0.0f),
 		Vec2f(1.0f, 1.0f),
@@ -1429,7 +1515,7 @@ void Renderer2D::Flush()
 	GL_FAILED(glBindVertexArray(0));
 }
 
-bool Renderer2D::IsFullCommandQueue()
+bool Renderer2D::IsFullCommandQueue(uint32_t vertexCount)
 {
 	if (commandQueue_.empty())
 	{
@@ -1437,9 +1523,9 @@ bool Renderer2D::IsFullCommandQueue()
 	}
 
 	const RenderCommand& command = commandQueue_.back();
-	uint32_t index = command.startVertexIndex + command.vertexCount;
+	uint32_t index = command.startVertexIndex + command.vertexCount + vertexCount;
 
-	return index >= MAX_VERTEX_SIZE;
+	return index >= MAX_VERTEX_BUFFER_SIZE;
 }
 
 #pragma warning(pop)
