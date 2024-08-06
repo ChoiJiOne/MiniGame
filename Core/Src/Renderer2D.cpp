@@ -234,7 +234,6 @@ void Renderer2D::DrawPoint(const Vec2f& point, const Vec4f& color, float pointSi
 	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = static_cast<uint32_t>(vertices.size());
 	command.type = EType::GEOMETRY;
-	command.font = nullptr;
 
 	for (uint32_t index = 0; index < command.vertexCount; ++index)
 	{
@@ -358,23 +357,7 @@ void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec2f& byPos, const Ve
 		  toPos + Vec2f(0.375f, 0.375f),
 	};
 
-	if (commandQueue_.empty())
-	{
-		RenderCommand command;
-		command.drawMode = EDrawMode::TRIANGLES;
-		command.startVertexIndex = 0;
-		command.vertexCount = static_cast<uint32_t>(vertices.size());
-		command.type = EType::GEOMETRY;
-
-		for (uint32_t index = 0; index < command.vertexCount; ++index)
-		{
-			vertices_[command.startVertexIndex + index].position = vertices[index];
-			vertices_[command.startVertexIndex + index].color = color;
-		}
-
-		commandQueue_.push(command);
-	}
-	else
+	if (!commandQueue_.empty())
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
@@ -388,25 +371,31 @@ void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec2f& byPos, const Ve
 				vertices_[startVertexIndex + index].position = vertices[index];
 				vertices_[startVertexIndex + index].color = color;
 			}
-		}
-		else
-		{
-			RenderCommand command;
-			command.drawMode = EDrawMode::TRIANGLES;
-			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-			command.vertexCount = static_cast<uint32_t>(vertices.size());
-			command.type = EType::GEOMETRY;
-			command.font = nullptr;
 
-			for (uint32_t index = 0; index < command.vertexCount; ++index)
-			{
-				vertices_[command.startVertexIndex + index].position = vertices[index];
-				vertices_[command.startVertexIndex + index].color = color;
-			}
-
-			commandQueue_.push(command);
+			return;
 		}
 	}
+
+	uint32_t startVertexIndex = 0;
+	if (!commandQueue_.empty())
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+		startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+	}
+
+	RenderCommand command;
+	command.drawMode = EDrawMode::TRIANGLES;
+	command.startVertexIndex = startVertexIndex;
+	command.vertexCount = static_cast<uint32_t>(vertices.size());
+	command.type = EType::GEOMETRY;
+
+	for (uint32_t index = 0; index < command.vertexCount; ++index)
+	{
+		vertices_[command.startVertexIndex + index].position = vertices[index];
+		vertices_[command.startVertexIndex + index].color = color;
+	}
+
+	commandQueue_.push(command);
 }
 
 void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec4f& fromColor, const Vec2f& byPos, const Vec4f& byColor, const Vec2f& toPos, const Vec4f& toColor)
@@ -425,24 +414,7 @@ void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec4f& fromColor, cons
 		toColor,
 	};
 
-	if (commandQueue_.empty())
-	{
-		RenderCommand command;
-		command.drawMode = EDrawMode::TRIANGLES;
-		command.startVertexIndex = 0;
-		command.vertexCount = static_cast<uint32_t>(vertices.size());
-		command.type = EType::GEOMETRY;
-		command.font = nullptr;
-
-		for (uint32_t index = 0; index < command.vertexCount; ++index)
-		{
-			vertices_[command.startVertexIndex + index].position = vertices[index];
-			vertices_[command.startVertexIndex + index].color = colors[index];
-		}
-
-		commandQueue_.push(command);
-	}
-	else
+	if (!commandQueue_.empty())
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
@@ -456,25 +428,31 @@ void Renderer2D::DrawTriangle(const Vec2f& fromPos, const Vec4f& fromColor, cons
 				vertices_[startVertexIndex + index].position = vertices[index];
 				vertices_[startVertexIndex + index].color = colors[index];
 			}
-		}
-		else
-		{
-			RenderCommand command;
-			command.drawMode = EDrawMode::TRIANGLES;
-			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-			command.vertexCount = static_cast<uint32_t>(vertices.size());
-			command.type = EType::GEOMETRY;
-			command.font = nullptr;
 
-			for (uint32_t index = 0; index < command.vertexCount; ++index)
-			{
-				vertices_[command.startVertexIndex + index].position = vertices[index];
-				vertices_[command.startVertexIndex + index].color = colors[index];
-			}
-
-			commandQueue_.push(command);
+			return;
 		}
 	}
+
+	uint32_t startVertexIndex = 0;
+	if (!commandQueue_.empty())
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+		startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+	}
+
+	RenderCommand command;
+	command.drawMode = EDrawMode::TRIANGLES;
+	command.startVertexIndex = startVertexIndex;
+	command.vertexCount = static_cast<uint32_t>(vertices.size());
+	command.type = EType::GEOMETRY;
+
+	for (uint32_t index = 0; index < command.vertexCount; ++index)
+	{
+		vertices_[command.startVertexIndex + index].position = vertices[index];
+		vertices_[command.startVertexIndex + index].color = colors[index];
+	}
+
+	commandQueue_.push(command);
 }
 
 void Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Vec2f& byPos, const Vec2f& toPos, const Vec4f& color)
@@ -486,24 +464,7 @@ void Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Vec2f& byPos,
 		toPos   + Vec2f(0.375f, 0.375f), fromPos + Vec2f(0.375f, 0.375f),
 	};
 
-	if (commandQueue_.empty())
-	{
-		RenderCommand command;
-		command.drawMode = EDrawMode::LINES;
-		command.startVertexIndex = 0;
-		command.vertexCount = static_cast<uint32_t>(vertices.size());
-		command.type = EType::GEOMETRY;
-		command.font = nullptr;
-
-		for (uint32_t index = 0; index < command.vertexCount; ++index)
-		{
-			vertices_[command.startVertexIndex + index].position = vertices[index];
-			vertices_[command.startVertexIndex + index].color = color;
-		}
-
-		commandQueue_.push(command);
-	}
-	else
+	if (!commandQueue_.empty())
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
@@ -517,25 +478,31 @@ void Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Vec2f& byPos,
 				vertices_[startVertexIndex + index].position = vertices[index];
 				vertices_[startVertexIndex + index].color = color;
 			}
-		}
-		else
-		{
-			RenderCommand command;
-			command.drawMode = EDrawMode::LINES;
-			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-			command.vertexCount = static_cast<uint32_t>(vertices.size());
-			command.type = EType::GEOMETRY;
-			command.font = nullptr;
 
-			for (uint32_t index = 0; index < command.vertexCount; ++index)
-			{
-				vertices_[command.startVertexIndex + index].position = vertices[index];
-				vertices_[command.startVertexIndex + index].color = color;
-			}
-
-			commandQueue_.push(command);
+			return;
 		}
 	}
+
+	uint32_t startVertexIndex = 0;
+	if (!commandQueue_.empty())
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+		startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+	}
+
+	RenderCommand command;
+	command.drawMode = EDrawMode::LINES;
+	command.startVertexIndex = startVertexIndex;
+	command.vertexCount = static_cast<uint32_t>(vertices.size());
+	command.type = EType::GEOMETRY;
+
+	for (uint32_t index = 0; index < command.vertexCount; ++index)
+	{
+		vertices_[command.startVertexIndex + index].position = vertices[index];
+		vertices_[command.startVertexIndex + index].color = color;
+	}
+
+	commandQueue_.push(command);
 }
 
 void GameMaker::Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Vec4f& fromColor, const Vec2f& byPos, const Vec4f& byColor, const Vec2f& toPos, const Vec4f& toColor)
@@ -554,23 +521,7 @@ void GameMaker::Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Ve
 		toColor,   fromColor,
 	};
 
-	if (commandQueue_.empty())
-	{
-		RenderCommand command;
-		command.drawMode = EDrawMode::LINES;
-		command.startVertexIndex = 0;
-		command.vertexCount = static_cast<uint32_t>(vertices.size());
-		command.type = EType::GEOMETRY;
-
-		for (uint32_t index = 0; index < command.vertexCount; ++index)
-		{
-			vertices_[command.startVertexIndex + index].position = vertices[index];
-			vertices_[command.startVertexIndex + index].color = colors[index];
-		}
-
-		commandQueue_.push(command);
-	}
-	else
+	if (!commandQueue_.empty())
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
@@ -584,24 +535,31 @@ void GameMaker::Renderer2D::DrawTriangleWireframe(const Vec2f& fromPos, const Ve
 				vertices_[startVertexIndex + index].position = vertices[index];
 				vertices_[startVertexIndex + index].color = colors[index];
 			}
-		}
-		else
-		{
-			RenderCommand command;
-			command.drawMode = EDrawMode::LINES;
-			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-			command.vertexCount = static_cast<uint32_t>(vertices.size());
-			command.type = EType::GEOMETRY;
 
-			for (uint32_t index = 0; index < command.vertexCount; ++index)
-			{
-				vertices_[command.startVertexIndex + index].position = vertices[index];
-				vertices_[command.startVertexIndex + index].color = colors[index];
-			}
-
-			commandQueue_.push(command);
+			return;
 		}
 	}
+
+	uint32_t startVertexIndex = 0;
+	if (!commandQueue_.empty())
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+		startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+	}
+
+	RenderCommand command;
+	command.drawMode = EDrawMode::LINES;
+	command.startVertexIndex = startVertexIndex;
+	command.vertexCount = static_cast<uint32_t>(vertices.size());
+	command.type = EType::GEOMETRY;
+
+	for (uint32_t index = 0; index < command.vertexCount; ++index)
+	{
+		vertices_[command.startVertexIndex + index].position = vertices[index];
+		vertices_[command.startVertexIndex + index].color = colors[index];
+	}
+
+	commandQueue_.push(command);
 }
 
 void Renderer2D::DrawRect(const Vec2f& center, float w, float h, const Vec4f& color, float rotate)
@@ -625,24 +583,8 @@ void Renderer2D::DrawRect(const Vec2f& center, float w, float h, const Vec4f& co
 		vertex = rotateMat * vertex;
 		vertex += (center + Vec2f(0.375f, 0.375f));
 	}
-	
-	if (commandQueue_.empty())
-	{
-		RenderCommand command;
-		command.drawMode = EDrawMode::TRIANGLES;
-		command.startVertexIndex = 0;
-		command.vertexCount = static_cast<uint32_t>(vertices.size());
-		command.type = EType::GEOMETRY;
 
-		for (uint32_t index = 0; index < command.vertexCount; ++index)
-		{
-			vertices_[command.startVertexIndex + index].position = vertices[index];
-			vertices_[command.startVertexIndex + index].color = color;
-		}
-
-		commandQueue_.push(command);
-	}
-	else
+	if (!commandQueue_.empty())
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
@@ -656,24 +598,31 @@ void Renderer2D::DrawRect(const Vec2f& center, float w, float h, const Vec4f& co
 				vertices_[startVertexIndex + index].position = vertices[index];
 				vertices_[startVertexIndex + index].color = color;
 			}
-		}
-		else
-		{
-			RenderCommand command;
-			command.drawMode = EDrawMode::TRIANGLES;
-			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-			command.vertexCount = static_cast<uint32_t>(vertices.size());
-			command.type = EType::GEOMETRY;
 
-			for (uint32_t index = 0; index < command.vertexCount; ++index)
-			{
-				vertices_[command.startVertexIndex + index].position = vertices[index];
-				vertices_[command.startVertexIndex + index].color = color;
-			}
-
-			commandQueue_.push(command);
+			return;
 		}
+	}	
+	
+	uint32_t startVertexIndex = 0;
+	if (!commandQueue_.empty())
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+		startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 	}
+
+	RenderCommand command;
+	command.drawMode = EDrawMode::TRIANGLES;
+	command.startVertexIndex = startVertexIndex;
+	command.vertexCount = static_cast<uint32_t>(vertices.size());
+	command.type = EType::GEOMETRY;
+
+	for (uint32_t index = 0; index < command.vertexCount; ++index)
+	{
+		vertices_[command.startVertexIndex + index].position = vertices[index];
+		vertices_[command.startVertexIndex + index].color = color;
+	}
+
+	commandQueue_.push(command);
 }
 
 void Renderer2D::DrawRectWireframe(const Vec2f& center, float w, float h, const Vec4f& color, float rotate)
@@ -696,23 +645,7 @@ void Renderer2D::DrawRectWireframe(const Vec2f& center, float w, float h, const 
 		vertex += (center + Vec2f(0.375f, 0.375f));
 	}
 	
-	if (commandQueue_.empty())
-	{
-		RenderCommand command;
-		command.drawMode = EDrawMode::LINES;
-		command.startVertexIndex = 0;
-		command.vertexCount = static_cast<uint32_t>(vertices.size());
-		command.type = EType::GEOMETRY;
-
-		for (uint32_t index = 0; index < command.vertexCount; ++index)
-		{
-			vertices_[command.startVertexIndex + index].position = vertices[index];
-			vertices_[command.startVertexIndex + index].color = color;
-		}
-
-		commandQueue_.push(command);
-	}
-	else
+	if (!commandQueue_.empty())
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
@@ -726,24 +659,31 @@ void Renderer2D::DrawRectWireframe(const Vec2f& center, float w, float h, const 
 				vertices_[startVertexIndex + index].position = vertices[index];
 				vertices_[startVertexIndex + index].color = color;
 			}
-		}
-		else
-		{
-			RenderCommand command;
-			command.drawMode = EDrawMode::LINES;
-			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-			command.vertexCount = static_cast<uint32_t>(vertices.size());
-			command.type = EType::GEOMETRY;
 
-			for (uint32_t index = 0; index < command.vertexCount; ++index)
-			{
-				vertices_[command.startVertexIndex + index].position = vertices[index];
-				vertices_[command.startVertexIndex + index].color = color;
-			}
-
-			commandQueue_.push(command);
+			return;
 		}
 	}
+
+	uint32_t startVertexIndex = 0;
+	if (!commandQueue_.empty())
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+		startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+	}
+
+	RenderCommand command;
+	command.drawMode = EDrawMode::LINES;
+	command.startVertexIndex = startVertexIndex;
+	command.vertexCount = static_cast<uint32_t>(vertices.size());
+	command.type = EType::GEOMETRY;
+
+	for (uint32_t index = 0; index < command.vertexCount; ++index)
+	{
+		vertices_[command.startVertexIndex + index].position = vertices[index];
+		vertices_[command.startVertexIndex + index].color = color;
+	}
+
+	commandQueue_.push(command);
 }
 
 void Renderer2D::DrawRoundRect(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate)
@@ -823,24 +763,8 @@ void Renderer2D::DrawRoundRect(const Vec2f& center, float w, float h, float side
 		vertices[index + 1] += (center + Vec2f(0.375f, 0.375f));
 		vertices[index + 2] += (center + Vec2f(0.375f, 0.375f));
 	}
-	
-	if (commandQueue_.empty())
-	{
-		RenderCommand command;
-		command.drawMode = EDrawMode::TRIANGLES;
-		command.startVertexIndex = 0;
-		command.vertexCount = static_cast<uint32_t>(vertices.size());
-		command.type = EType::GEOMETRY;
 
-		for (uint32_t index = 0; index < command.vertexCount; ++index)
-		{
-			vertices_[command.startVertexIndex + index].position = vertices[index];
-			vertices_[command.startVertexIndex + index].color = color;
-		}
-
-		commandQueue_.push(command);
-	}
-	else
+	if (!commandQueue_.empty())
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
@@ -854,24 +778,31 @@ void Renderer2D::DrawRoundRect(const Vec2f& center, float w, float h, float side
 				vertices_[startVertexIndex + index].position = vertices[index];
 				vertices_[startVertexIndex + index].color = color;
 			}
-		}
-		else
-		{
-			RenderCommand command;
-			command.drawMode = EDrawMode::TRIANGLES;
-			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-			command.vertexCount = static_cast<uint32_t>(vertices.size());
-			command.type = EType::GEOMETRY;
 
-			for (uint32_t index = 0; index < command.vertexCount; ++index)
-			{
-				vertices_[command.startVertexIndex + index].position = vertices[index];
-				vertices_[command.startVertexIndex + index].color = color;
-			}
-
-			commandQueue_.push(command);
+			return;
 		}
 	}
+
+	uint32_t startVertexIndex = 0;
+	if (!commandQueue_.empty())
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+		startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+	}
+
+	RenderCommand command;
+	command.drawMode = EDrawMode::TRIANGLES;
+	command.startVertexIndex = startVertexIndex;
+	command.vertexCount = static_cast<uint32_t>(vertices.size());
+	command.type = EType::GEOMETRY;
+
+	for (uint32_t index = 0; index < command.vertexCount; ++index)
+	{
+		vertices_[command.startVertexIndex + index].position = vertices[index];
+		vertices_[command.startVertexIndex + index].color = color;
+	}
+
+	commandQueue_.push(command);
 }
 
 void Renderer2D::DrawRoundRectWireframe(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate)
@@ -945,23 +876,7 @@ void Renderer2D::DrawRoundRectWireframe(const Vec2f& center, float w, float h, f
 		vertices[index + 1] += (center + Vec2f(0.375f, 0.375f));
 	}
 
-	if (commandQueue_.empty())
-	{
-		RenderCommand command;
-		command.drawMode = EDrawMode::LINES;
-		command.startVertexIndex = 0;
-		command.vertexCount = static_cast<uint32_t>(vertices.size());
-		command.type = EType::GEOMETRY;
-
-		for (uint32_t index = 0; index < command.vertexCount; ++index)
-		{
-			vertices_[command.startVertexIndex + index].position = vertices[index];
-			vertices_[command.startVertexIndex + index].color = color;
-		}
-
-		commandQueue_.push(command);
-	}
-	else
+	if (!commandQueue_.empty())
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
@@ -975,24 +890,31 @@ void Renderer2D::DrawRoundRectWireframe(const Vec2f& center, float w, float h, f
 				vertices_[startVertexIndex + index].position = vertices[index];
 				vertices_[startVertexIndex + index].color = color;
 			}
-		}
-		else
-		{
-			RenderCommand command;
-			command.drawMode = EDrawMode::LINES;
-			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-			command.vertexCount = static_cast<uint32_t>(vertices.size());
-			command.type = EType::GEOMETRY;
 
-			for (uint32_t index = 0; index < command.vertexCount; ++index)
-			{
-				vertices_[command.startVertexIndex + index].position = vertices[index];
-				vertices_[command.startVertexIndex + index].color = color;
-			}
-
-			commandQueue_.push(command);
+			return;
 		}
 	}
+
+	uint32_t startVertexIndex = 0;
+	if (!commandQueue_.empty())
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+		startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+	}
+
+	RenderCommand command;
+	command.drawMode = EDrawMode::LINES;
+	command.startVertexIndex = startVertexIndex;
+	command.vertexCount = static_cast<uint32_t>(vertices.size());
+	command.type = EType::GEOMETRY;
+
+	for (uint32_t index = 0; index < command.vertexCount; ++index)
+	{
+		vertices_[command.startVertexIndex + index].position = vertices[index];
+		vertices_[command.startVertexIndex + index].color = color;
+	}
+
+	commandQueue_.push(command);
 }
 
 void Renderer2D::DrawCircle(const Vec2f& center, float radius, const Vec4f& color)
@@ -1015,23 +937,7 @@ void Renderer2D::DrawCircle(const Vec2f& center, float radius, const Vec4f& colo
 		vertexCount += 3;
 	}
 
-	if (commandQueue_.empty())
-	{
-		RenderCommand command;
-		command.drawMode = EDrawMode::TRIANGLES;
-		command.startVertexIndex = 0;
-		command.vertexCount = static_cast<uint32_t>(vertices.size());
-		command.type = EType::GEOMETRY;
-
-		for (uint32_t index = 0; index < command.vertexCount; ++index)
-		{
-			vertices_[command.startVertexIndex + index].position = vertices[index];
-			vertices_[command.startVertexIndex + index].color = color;
-		}
-
-		commandQueue_.push(command);
-	}
-	else
+	if (!commandQueue_.empty())
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
@@ -1045,24 +951,31 @@ void Renderer2D::DrawCircle(const Vec2f& center, float radius, const Vec4f& colo
 				vertices_[startVertexIndex + index].position = vertices[index];
 				vertices_[startVertexIndex + index].color = color;
 			}
-		}
-		else
-		{
-			RenderCommand command;
-			command.drawMode = EDrawMode::TRIANGLES;
-			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-			command.vertexCount = static_cast<uint32_t>(vertices.size());
-			command.type = EType::GEOMETRY;
 
-			for (uint32_t index = 0; index < command.vertexCount; ++index)
-			{
-				vertices_[command.startVertexIndex + index].position = vertices[index];
-				vertices_[command.startVertexIndex + index].color = color;
-			}
-
-			commandQueue_.push(command);
+			return;
 		}
 	}
+
+	uint32_t startVertexIndex = 0;
+	if (!commandQueue_.empty())
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+		startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+	}
+
+	RenderCommand command;
+	command.drawMode = EDrawMode::TRIANGLES;
+	command.startVertexIndex = startVertexIndex;
+	command.vertexCount = static_cast<uint32_t>(vertices.size());
+	command.type = EType::GEOMETRY;
+
+	for (uint32_t index = 0; index < command.vertexCount; ++index)
+	{
+		vertices_[command.startVertexIndex + index].position = vertices[index];
+		vertices_[command.startVertexIndex + index].color = color;
+	}
+
+	commandQueue_.push(command);
 }
 
 void GameMaker::Renderer2D::DrawCircleWireframe(const Vec2f& center, float radius, const Vec4f& color)
@@ -1084,23 +997,7 @@ void GameMaker::Renderer2D::DrawCircleWireframe(const Vec2f& center, float radiu
 		vertexCount += 2;
 	}
 
-	if (commandQueue_.empty())
-	{
-		RenderCommand command;
-		command.drawMode = EDrawMode::LINES;
-		command.startVertexIndex = 0;
-		command.vertexCount = static_cast<uint32_t>(vertices.size());
-		command.type = EType::GEOMETRY;
-
-		for (uint32_t index = 0; index < command.vertexCount; ++index)
-		{
-			vertices_[command.startVertexIndex + index].position = vertices[index];
-			vertices_[command.startVertexIndex + index].color = color;
-		}
-
-		commandQueue_.push(command);
-	}
-	else
+	if (!commandQueue_.empty())
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
@@ -1114,24 +1011,31 @@ void GameMaker::Renderer2D::DrawCircleWireframe(const Vec2f& center, float radiu
 				vertices_[startVertexIndex + index].position = vertices[index];
 				vertices_[startVertexIndex + index].color = color;
 			}
-		}
-		else
-		{
-			RenderCommand command;
-			command.drawMode = EDrawMode::LINES;
-			command.startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-			command.vertexCount = static_cast<uint32_t>(vertices.size());
-			command.type = EType::GEOMETRY;
 
-			for (uint32_t index = 0; index < command.vertexCount; ++index)
-			{
-				vertices_[command.startVertexIndex + index].position = vertices[index];
-				vertices_[command.startVertexIndex + index].color = color;
-			}
-
-			commandQueue_.push(command);
+			return;
 		}
 	}
+
+	uint32_t startVertexIndex = 0;
+	if (!commandQueue_.empty())
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+		startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+	}
+
+	RenderCommand command;
+	command.drawMode = EDrawMode::LINES;
+	command.startVertexIndex = startVertexIndex;
+	command.vertexCount = static_cast<uint32_t>(vertices.size());
+	command.type = EType::GEOMETRY;
+
+	for (uint32_t index = 0; index < command.vertexCount; ++index)
+	{
+		vertices_[command.startVertexIndex + index].position = vertices[index];
+		vertices_[command.startVertexIndex + index].color = color;
+	}
+
+	commandQueue_.push(command);
 }
 
 void Renderer2D::DrawString(TTFont* font, const std::wstring& text, const Vec2f& pos, const Vec4f& color)
