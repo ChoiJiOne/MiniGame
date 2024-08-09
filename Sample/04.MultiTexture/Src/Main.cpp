@@ -69,8 +69,16 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 		"GameMaker/Sample/04.MultiTexture/Res/Shader.frag"
 	);
 
-	GameMaker::Texture2D* texture0 = GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>("GameMaker/Sample/04.MultiTexture/Res/container.png", true);
-	GameMaker::Texture2D* texture1 = GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>("GameMaker/Sample/04.MultiTexture/Res/awesomeface.png", true);
+	GameMaker::Texture2D* texture0 = GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>(
+		"GameMaker/Sample/04.MultiTexture/Res/container.png", 
+		GameMaker::Texture2D::EFilter::LINEAR,
+		true
+	);
+	GameMaker::Texture2D* texture1 = GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>(
+		"GameMaker/Sample/04.MultiTexture/Res/awesomeface.png", 
+		GameMaker::Texture2D::EFilter::LINEAR,
+		true
+	);
 
 	GameMaker::GameEngine::RunLoop(
 		[&](float deltaSeconds)

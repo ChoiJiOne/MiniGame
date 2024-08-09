@@ -45,11 +45,11 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	uint32_t current = 0;
 	std::array<GameMaker::Texture2D*, 5> textures =
 	{
-		GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>("GameMaker/Sample/08.Sprite2D/Res/AlienBeige.png", true),
-		GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>("GameMaker/Sample/08.Sprite2D/Res/AlienBlue.png", true),
-		GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>("GameMaker/Sample/08.Sprite2D/Res/AlienGreen.png", true),
-		GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>("GameMaker/Sample/08.Sprite2D/Res/AlienPink.png", true),
-		GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>("GameMaker/Sample/08.Sprite2D/Res/AlienYellow.png", true),
+		GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>("GameMaker/Sample/08.Sprite2D/Res/AlienBeige.png", GameMaker::Texture2D::EFilter::LINEAR, true),
+		GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>("GameMaker/Sample/08.Sprite2D/Res/AlienBlue.png", GameMaker::Texture2D::EFilter::LINEAR, true),
+		GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>("GameMaker/Sample/08.Sprite2D/Res/AlienGreen.png", GameMaker::Texture2D::EFilter::LINEAR, true),
+		GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>("GameMaker/Sample/08.Sprite2D/Res/AlienPink.png", GameMaker::Texture2D::EFilter::LINEAR, true),
+		GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>("GameMaker/Sample/08.Sprite2D/Res/AlienYellow.png", GameMaker::Texture2D::EFilter::LINEAR, true),
 	};
 
 	float sizeX = 66.0f;

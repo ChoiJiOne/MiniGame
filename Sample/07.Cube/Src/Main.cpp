@@ -134,7 +134,11 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 		"GameMaker/Sample/07.Cube/Res/Shader.frag"
 	);
 
-	GameMaker::Texture2D* texture = GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>("GameMaker/Sample/07.Cube/Res/box.png", true);
+	GameMaker::Texture2D* texture = GameMaker::ResourceManager::Get().Create<GameMaker::Texture2D>(
+		"GameMaker/Sample/07.Cube/Res/box.png", 
+		GameMaker::Texture2D::EFilter::LINEAR,
+		true
+	);
 
 	GameMaker::RenderManager::Get().SetCullFaceMode(false);
 
