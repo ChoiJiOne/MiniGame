@@ -17,14 +17,14 @@
 
 using namespace GameMaker;
 
-Texture2D::Texture2D(const std::string& path, bool bIsVerticallyFlip)
+Texture2D::Texture2D(const std::string& path, EFilter filter, bool bIsVerticallyFlip)
 	: bIsVerticallyFlip_(bIsVerticallyFlip)
 {
 	uint32_t format = 0xFFFF;
 	std::vector<uint8_t> buffer;
 	ReadPixelBufferFromFile(path, width_, height_, channels_, buffer, format, bIsVerticallyFlip_);
 
-	textureID_ = CreateTextureResource(buffer, format);
+	textureID_ = CreateTextureResource(buffer, format, filter);
 	bIsInitialized_ = true;
 }
 
@@ -77,7 +77,7 @@ void Texture2D::ReadPixelBufferFromFile(const std::string& path, int32_t& outWid
 	format = formats.at(channels_);
 }
 
-uint32_t Texture2D::CreateTextureResource(const std::vector<uint8_t>& buffer, uint32_t format)
+uint32_t Texture2D::CreateTextureResource(const std::vector<uint8_t>& buffer, uint32_t format, EFilter filter)
 {
 	const void* bufferPtr = reinterpret_cast<const void*>(buffer.data());
 
@@ -87,8 +87,8 @@ uint32_t Texture2D::CreateTextureResource(const std::vector<uint8_t>& buffer, ui
 	GL_FAILED(glBindTexture(GL_TEXTURE_2D, textureID));
 	GL_FAILED(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
 	GL_FAILED(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-	GL_FAILED(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
-	GL_FAILED(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	GL_FAILED(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<GLint>(filter)));
+	GL_FAILED(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<GLint>(filter)));
 	GL_FAILED(glTexImage2D(GL_TEXTURE_2D, 0, format, width_, height_, 0, format, GL_UNSIGNED_BYTE, bufferPtr));
 	GL_FAILED(glGenerateMipmap(GL_TEXTURE_2D));
 	GL_FAILED(glBindTexture(GL_TEXTURE_2D, 0));

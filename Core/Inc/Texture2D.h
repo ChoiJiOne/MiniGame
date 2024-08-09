@@ -11,7 +11,15 @@ namespace GameMaker
 class Texture2D : public ITexture
 {
 public:
-	explicit Texture2D(const std::string& path, bool bIsVerticallyFlip);
+	/** https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexParameter.xhtml */
+	enum class EFilter
+	{
+		NEAREST = 0x2600,
+		LINEAR  = 0x2601,
+	};
+
+public:
+	explicit Texture2D(const std::string& path, EFilter filter, bool bIsVerticallyFlip);
 	virtual ~Texture2D();
 
 	DISALLOW_COPY_AND_ASSIGN(Texture2D);
@@ -27,7 +35,7 @@ public:
 
 private:
 	void ReadPixelBufferFromFile(const std::string& path, int32_t& outWidth, int32_t& outHeight, int32_t& outChannels, std::vector<uint8_t>& outPixels, uint32_t& format, bool bIsVerticallyFlip);
-	uint32_t CreateTextureResource(const std::vector<uint8_t>& buffer, uint32_t format);
+	uint32_t CreateTextureResource(const std::vector<uint8_t>& buffer, uint32_t format, EFilter filter);
 
 private:
 	bool bIsVerticallyFlip_ = false;
