@@ -38,6 +38,8 @@ private:
 	static bool bShouldCloseWindow_;
 	static std::function<void()> endLoopCallback_;
 	static std::function<void(float)> frameCallback_;
+
+	static uint32_t numVideoDisplay_;
 };
 
 }

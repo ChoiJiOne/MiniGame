@@ -21,6 +21,7 @@ void* GameEngine::window_ = nullptr;
 bool GameEngine::bShouldCloseWindow_ = false;
 std::function<void()> GameEngine::endLoopCallback_ = nullptr;
 std::function<void(float)> GameEngine::frameCallback_ = nullptr;
+uint32_t GameEngine::numVideoDisplay_ = 0;
 
 LPTOP_LEVEL_EXCEPTION_FILTER topLevelExceptionFilter;
 static InputManager* inputManager = nullptr;
@@ -46,7 +47,7 @@ void GameEngine::Init(const WindowParam& param)
 
 	window_ = SDL_CreateWindow(param.title.c_str(), param.x, param.y, param.w, param.h, flags);
 	CHECK(window_ != nullptr);
-		
+	
 	InputManager::Get().Startup();
 	AudioManager::Get().Startup();
 	ResourceManager::Get().Startup();
@@ -134,6 +135,8 @@ void GameEngine::PreInit()
 	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, GL_DOUBLE_BUFFER));
 	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, GL_MULTISAMPLE_BUFFERS));
 	SDL_FAILED(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, GL_MULTISAMPLE_SAMPLES));
+
+	numVideoDisplay_ = SDL_GetNumVideoDisplays();
 }
 
 void GameEngine::PostInit()
