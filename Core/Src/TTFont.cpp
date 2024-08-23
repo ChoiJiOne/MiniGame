@@ -6,7 +6,7 @@
 #include <stb_truetype.h>
 
 #include "Assertion.h"
-#include "FileUtils.h"
+#include "FileManager.h"
 #include "TTFont.h"
 
 using namespace GameMaker;
@@ -15,7 +15,7 @@ TTFont::TTFont(const std::string& path, int32_t beginCodePoint, int32_t endCodeP
 	: beginCodePoint_(beginCodePoint)
 	, endCodePoint_(endCodePoint)
 {
-	std::vector<uint8_t> buffer = FileUtils::ReadFile(path);
+	std::vector<uint8_t> buffer = FileManager::Get().ReadFile(path);
 
 	stbtt_fontinfo info;
 	const uint8_t* bufferPtr = reinterpret_cast<const uint8_t*>(buffer.data());

@@ -1,7 +1,7 @@
 #include <glad/glad.h>
 
 #include "Assertion.h"
-#include "FileUtils.h"
+#include "FileManager.h"
 #include "Shader.h"
 
 using namespace GameMaker;
@@ -316,7 +316,7 @@ uint32_t Shader::CreateShader(const EType& type, const std::string& path)
 {
 	uint32_t shaderID = glCreateShader(static_cast<GLenum>(type));
 
-	std::vector<uint8_t> buffer = FileUtils::ReadFile(path);
+	std::vector<uint8_t> buffer = FileManager::Get().ReadFile(path);
 
 	std::string source = std::string(buffer.begin(), buffer.end());
 	const char* sourcePtr = source.c_str();

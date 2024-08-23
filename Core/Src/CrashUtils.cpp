@@ -4,7 +4,7 @@
 #include <Shlwapi.h>
 
 #include "CrashUtils.h"
-#include "FileUtils.h"
+#include "FileManager.h"
 #include "StringUtils.h"
 
 using namespace GameMaker;
@@ -14,9 +14,10 @@ LONG WINAPI CrashUtils::DetectApplicationCrash(EXCEPTION_POINTERS* ep)
 	std::wstring systemTime = GetCurrentSystemTimeAsString();
 	std::wstring minidumpPath = GetMinidumpPath();
 
-	if (!FileUtils::IsValidPath(minidumpPath))
+	FileManager& fileManager = FileManager::Get();
+	if (!fileManager.IsValidPath(minidumpPath))
 	{
-		FileUtils::MakeDirectory(minidumpPath);
+		fileManager.MakeDirectory(minidumpPath);
 	}
 
 	std::wstring path = StringUtils::PrintF(L"%sWindows-%s-Minidump.dmp", minidumpPath.c_str(), systemTime.c_str());
@@ -27,7 +28,7 @@ LONG WINAPI CrashUtils::DetectApplicationCrash(EXCEPTION_POINTERS* ep)
 		std::string message = "Failed to write minidump file.";
 		std::vector<uint8_t> messageBuffer(message.begin(), message.end());
 
-		FileUtils::WriteFile(writeErrorPath, messageBuffer);
+		fileManager.WriteFile(writeErrorPath, messageBuffer);
 	}
 
 	return EXCEPTION_EXECUTE_HANDLER;
@@ -54,7 +55,7 @@ std::wstring CrashUtils::GetMinidumpPath()
 	GetModuleFileNameW(nullptr, exePath, MAX_PATH);
 
 	std::wstring minidumpPath(exePath);
-	std::wstring basePath = FileUtils::GetBasePath(minidumpPath);
+	std::wstring basePath = FileManager::Get().GetBasePath(minidumpPath);
 
 	return StringUtils::PrintF(L"%s\\Crash\\", basePath.c_str());
 }

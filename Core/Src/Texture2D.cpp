@@ -7,7 +7,6 @@
 #include <stb_image.h>
 
 #include "Assertion.h"
-#include "FileUtils.h"
 #include "Texture2D.h"
 
 #define IMAGE_FORMAT_R    1
