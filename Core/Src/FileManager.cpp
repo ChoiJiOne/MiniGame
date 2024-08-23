@@ -80,3 +80,13 @@ void FileManager::WriteFile(const std::wstring& path, const std::vector<uint8_t>
 	WINDOWS_ASSERT(::WriteFile(file, buffer.data(), static_cast<DWORD>(buffer.size()), &writeByteSize, nullptr), L"failed to write %s", path.c_str());
 	WINDOWS_ASSERT(::CloseHandle(file), L"failed to close %s", path.c_str());
 }
+
+void FileManager::MakeDirectory(const std::string& path)
+{
+	WINDOWS_ASSERT(CreateDirectoryA(path.c_str(), nullptr), "failed to create %s", path.c_str());
+}
+
+void FileManager::MakeDirectory(const std::wstring& path)
+{
+	WINDOWS_ASSERT(CreateDirectoryW(path.c_str(), nullptr), L"failed to create %s", path.c_str());
+}

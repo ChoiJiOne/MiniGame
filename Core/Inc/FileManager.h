@@ -25,6 +25,8 @@ public:
 	std::vector<uint8_t> ReadFile(const std::wstring& path);
 	void WriteFile(const std::string& path, const std::vector<uint8_t>& buffer);
 	void WriteFile(const std::wstring& path, const std::vector<uint8_t>& buffer);
+	static void MakeDirectory(const std::string& path);
+	static void MakeDirectory(const std::wstring& path);
 
 private:
 	DEFAULT_CONSTRUCTOR_AND_VIRTUAL_DESTRUCTOR(FileManager);
