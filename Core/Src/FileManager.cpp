@@ -90,3 +90,13 @@ void FileManager::MakeDirectory(const std::wstring& path)
 {
 	WINDOWS_ASSERT(CreateDirectoryW(path.c_str(), nullptr), L"failed to create %s", path.c_str());
 }
+
+bool FileManager::IsValidPath(const std::string& path)
+{
+	return PathFileExistsA(path.c_str());
+}
+
+bool FileManager::IsValidPath(const std::wstring& path)
+{
+	return PathFileExistsW(path.c_str());
+}
