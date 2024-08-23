@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.27)
 add_subdirectory(glad)
 add_subdirectory(imgui)
 add_subdirectory(jsoncpp)
+add_subdirectory(mimalloc)
 add_subdirectory(miniaudio)
 add_subdirectory(SDL)
 add_subdirectory(stb)
@@ -17,5 +18,6 @@ set_target_properties(
     SDL2main 
     sdl_headers_copy 
     stb 
+    mimalloc-static
     PROPERTIES FOLDER "ThirdParty"
 )
