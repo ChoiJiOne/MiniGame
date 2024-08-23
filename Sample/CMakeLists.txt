@@ -10,6 +10,7 @@ add_subdirectory(07.Cube)
 add_subdirectory(08.Sprite2D)
 add_subdirectory(09.String2D)
 add_subdirectory(10.GLTF)
+add_subdirectory(11.File)
 
 set_target_properties(
     01.Initialize
@@ -22,5 +23,6 @@ set_target_properties(
     08.Sprite2D
     09.String2D
     10.GLTF
+    11.File
     PROPERTIES FOLDER "Sample"
 )
