@@ -30,6 +30,13 @@ public:
 	bool IsValidPath(const std::string& path);
 	bool IsValidPath(const std::wstring& path);
 
+	/**
+	 * 파일 경로가 "D:\\AAA\\BBB\\CCC.a"라면, 반환하는 값은 "D:\\AAA\\BBB\\" 입니다.
+	 * 디렉토리 경로가 "D:\\AAA\\BBB\\CCC"라면, 반환하는 값은 "D:\\AAA\\BBB\\" 입니다.
+	 */
+	std::string GetBasePath(const std::string& path);
+	std::wstring GetBasePath(const std::wstring& path);
+
 private:
 	DEFAULT_CONSTRUCTOR_AND_VIRTUAL_DESTRUCTOR(FileManager);
 
