@@ -490,6 +490,7 @@ if (MI_BUILD_STATIC)
       $<INSTALL_INTERFACE:${mi_install_incdir}>
   )
   if(WIN32)
+    set_property(TARGET mimalloc-static PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     # When building both static and shared libraries on Windows, a static library should use a
     # different output name to avoid the conflict with the import library of a shared one.
     string(REPLACE "mimalloc" "mimalloc-static" mi_output_name ${mi_basename})
