@@ -136,3 +136,39 @@ std::wstring FileManager::GetBasePath(const std::wstring& path)
 		return L"";
 	}
 }
+
+std::string FileManager::RemoveBasePath(const std::string& path)
+{
+	std::size_t lastSlash;
+
+	if ((lastSlash = path.rfind('/')) != std::string::npos)
+	{
+		return path.substr(lastSlash + 1, std::string::npos);
+	}
+	else if ((lastSlash = path.rfind('\\')) != std::string::npos)
+	{
+		return path.substr(lastSlash + 1, std::string::npos);
+	}
+	else
+	{
+		return path;
+	}
+}
+
+std::wstring FileManager::RemoveBasePath(const std::wstring& path)
+{
+	std::size_t lastSlash;
+
+	if ((lastSlash = path.rfind(L'/')) != std::wstring::npos)
+	{
+		return path.substr(lastSlash + 1, std::wstring::npos);
+	}
+	else if ((lastSlash = path.rfind(L'\\')) != std::wstring::npos)
+	{
+		return path.substr(lastSlash + 1, std::wstring::npos);
+	}
+	else
+	{
+		return path;
+	}
+}
