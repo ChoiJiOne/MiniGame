@@ -11,6 +11,7 @@
 #include "Config.h"
 #include "CrashUtils.h"
 #include "EntityManager.h"
+#include "FileManager.h"
 #include "GameEngine.h"
 #include "GameTimer.h"
 #include "InputManager.h"
@@ -51,6 +52,7 @@ void GameEngine::Init(const WindowParam& param)
 	window_ = SDL_CreateWindow(param.title.c_str(), param.x, param.y, param.w, param.h, flags);
 	CHECK(window_ != nullptr);
 	
+	FileManager::Get().Startup();
 	InputManager::Get().Startup();
 	AudioManager::Get().Startup();
 	ResourceManager::Get().Startup();
@@ -75,6 +77,7 @@ void GameEngine::Shutdown()
 	RenderManager::Get().Shutdown();
 	AudioManager::Get().Shutdown();
 	InputManager::Get().Shutdown();
+	FileManager::Get().Shutdown();
 
 	if (window_)
 	{
