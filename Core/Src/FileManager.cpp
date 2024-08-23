@@ -60,3 +60,23 @@ std::vector<uint8_t> FileManager::ReadFile(const std::wstring& path)
 
 	return buffer;
 }
+
+void FileManager::WriteFile(const std::string& path, const std::vector<uint8_t>& buffer)
+{
+	HANDLE file = ::CreateFileA(path.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+	WINDOWS_ASSERT(file != INVALID_HANDLE_VALUE, "failed to create %s", path.c_str());
+
+	DWORD writeByteSize = 0;
+	WINDOWS_ASSERT(::WriteFile(file, buffer.data(), static_cast<DWORD>(buffer.size()), &writeByteSize, nullptr), "failed to write %s", path.c_str());
+	WINDOWS_ASSERT(::CloseHandle(file), "failed to close %s", path.c_str());
+}
+
+void FileManager::WriteFile(const std::wstring& path, const std::vector<uint8_t>& buffer)
+{
+	HANDLE file = ::CreateFileW(path.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+	WINDOWS_ASSERT(file != INVALID_HANDLE_VALUE, L"failed to create %s", path.c_str());
+
+	DWORD writeByteSize = 0;
+	WINDOWS_ASSERT(::WriteFile(file, buffer.data(), static_cast<DWORD>(buffer.size()), &writeByteSize, nullptr), L"failed to write %s", path.c_str());
+	WINDOWS_ASSERT(::CloseHandle(file), L"failed to close %s", path.c_str());
+}

@@ -23,6 +23,8 @@ public:
 
 	std::vector<uint8_t> ReadFile(const std::string& path);
 	std::vector<uint8_t> ReadFile(const std::wstring& path);
+	void WriteFile(const std::string& path, const std::vector<uint8_t>& buffer);
+	void WriteFile(const std::wstring& path, const std::vector<uint8_t>& buffer);
 
 private:
 	DEFAULT_CONSTRUCTOR_AND_VIRTUAL_DESTRUCTOR(FileManager);
@@ -32,9 +34,6 @@ private:
 
 	char workingDirectoryA_[MAX_STRING_SIZE];
 	wchar_t workingDirectoryW_[MAX_STRING_SIZE];
-
-	char stringBufferA_[MAX_STRING_SIZE];
-	wchar_t stringBufferW_[MAX_STRING_SIZE];
 };
 
 }
