@@ -21,6 +21,9 @@ public:
 	const char* GetWorkingDirectoryA() const { return &workingDirectoryA_[0]; }
 	const wchar_t* GetWorkingDirectoryW() const { return &workingDirectoryW_[0]; }
 
+	std::vector<uint8_t> ReadFile(const std::string& path);
+	std::vector<uint8_t> ReadFile(const std::wstring& path);
+
 private:
 	DEFAULT_CONSTRUCTOR_AND_VIRTUAL_DESTRUCTOR(FileManager);
 
