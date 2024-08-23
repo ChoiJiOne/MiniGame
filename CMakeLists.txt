@@ -43,6 +43,7 @@ target_link_libraries(
     miniaudio
     SDL2
     stb
+    mimalloc-static
 )
 
 target_compile_definitions(
