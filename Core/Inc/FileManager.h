@@ -44,6 +44,13 @@ public:
 	std::string RemoveBasePath(const std::string& path);
 	std::wstring RemoveBasePath(const std::wstring& path);
 
+	/**
+	 * 파일 경로가 "D:\\AAA\\BBB\\CCC.a"라면, 반환하는 값은 "a" 입니다.
+	 * 파일 경로가 "D:/AAA/BBB/CCC.a"라면, 반환하는 값은 "a" 입니다.
+	 */
+	std::string GetFileExtension(const std::string& path);
+	std::wstring GetFileExtension(const std::wstring& path);
+
 private:
 	DEFAULT_CONSTRUCTOR_AND_VIRTUAL_DESTRUCTOR(FileManager);
 
