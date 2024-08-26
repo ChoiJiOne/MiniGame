@@ -328,10 +328,8 @@ uint32_t Shader::CreateShader(const EType& type, const std::string& path)
 	GL_FAILED(glGetShaderiv(shaderID, GL_COMPILE_STATUS, &status));
 	if (!status)
 	{
-		char buffer[1024];
-
-		glGetShaderInfoLog(shaderID, 1024, nullptr, buffer);
-		ASSERT(false, "failed to compile shader\n%s", buffer);
+		glGetShaderInfoLog(shaderID, MAX_STRING_BUFFER, nullptr, glLogBuffer_);
+		ASSERT(false, "failed to compile shader\n%s", glLogBuffer_);
 	}
 
 	return shaderID;
@@ -354,10 +352,8 @@ uint32_t Shader::CreateProgram(const std::vector<uint32_t>& shaderIDs)
 	GL_FAILED(glGetProgramiv(programID, GL_LINK_STATUS, &status));
 	if (!status)
 	{
-		char buffer[1024];
-
-		glGetProgramInfoLog(programID_, 1024, nullptr, buffer);
-		ASSERT(false, "failed to link shader program\n%s", buffer);
+		glGetProgramInfoLog(programID_, MAX_STRING_BUFFER, nullptr, glLogBuffer_);
+		ASSERT(false, "failed to link shader program\n%s", glLogBuffer_);
 	}
 
 	return programID;

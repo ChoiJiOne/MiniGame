@@ -71,6 +71,9 @@ protected:
 	uint32_t CreateProgram(const std::vector<uint32_t>& shaderIDs);
 
 protected:
+	static const uint32_t MAX_STRING_BUFFER = 1024;
+	char glLogBuffer_[MAX_STRING_BUFFER];
+
 	uint32_t programID_ = 0;
 	std::map<std::string, uint32_t> uniformLocationCache_;
 };
