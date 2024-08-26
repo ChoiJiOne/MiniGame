@@ -10,7 +10,7 @@ Shader::Shader(const std::string& csPath)
 {
 	uniformLocationCache_ = std::map<std::string, uint32_t>();
 
-	uint32_t csID = CreateShader(EType::COMPUTE, csPath);
+	uint32_t csID = CreateShaderFromFile(EType::COMPUTE, csPath);
 	ASSERT(csID != 0, "failed to create %s", csPath.c_str());
 
 	std::vector<uint32_t> shaderIDs = { csID };
@@ -25,10 +25,10 @@ Shader::Shader(const std::string& vsPath, const std::string& fsPath)
 {
 	uniformLocationCache_ = std::map<std::string, uint32_t>();
 
-	uint32_t vsID = CreateShader(EType::VERTEX, vsPath);
+	uint32_t vsID = CreateShaderFromFile(EType::VERTEX, vsPath);
 	ASSERT(vsID != 0, "failed to create %s", vsPath.c_str());
 
-	uint32_t fsID = CreateShader(EType::FRAGMENT, fsPath);
+	uint32_t fsID = CreateShaderFromFile(EType::FRAGMENT, fsPath);
 	ASSERT(fsID != 0, "failed to create %s", fsPath.c_str());
 
 	std::vector<uint32_t> shaderIDs = { vsID, fsID };
@@ -44,13 +44,13 @@ Shader::Shader(const std::string& vsPath, const std::string& gsPath, const std::
 {
 	uniformLocationCache_ = std::map<std::string, uint32_t>();
 
-	uint32_t vsID = CreateShader(EType::VERTEX, vsPath);
+	uint32_t vsID = CreateShaderFromFile(EType::VERTEX, vsPath);
 	ASSERT(vsID != 0, "failed to create %s", vsPath.c_str());
 
-	uint32_t gsID = CreateShader(EType::GEOMETRY, gsPath);
+	uint32_t gsID = CreateShaderFromFile(EType::GEOMETRY, gsPath);
 	ASSERT(gsID != 0, "failed to create %s", gsPath.c_str());
 
-	uint32_t fsID = CreateShader(EType::FRAGMENT, fsPath);
+	uint32_t fsID = CreateShaderFromFile(EType::FRAGMENT, fsPath);
 	ASSERT(fsID != 0, "failed to create %s", fsPath.c_str());
 
 	std::vector<uint32_t> shaderIDs = { vsID, gsID, fsID };
@@ -312,13 +312,33 @@ int32_t Shader::GetUniformLocation(const std::string& name)
 	}
 }
 
-uint32_t Shader::CreateShader(const EType& type, const std::string& path)
+uint32_t Shader::CreateShaderFromFile(const EType& type, const std::string& path)
 {
 	uint32_t shaderID = glCreateShader(static_cast<GLenum>(type));
 
 	std::vector<uint8_t> buffer = FileManager::Get().ReadFile(path);
 
 	std::string source = std::string(buffer.begin(), buffer.end());
+	const char* sourcePtr = source.c_str();
+
+	GL_FAILED(glShaderSource(shaderID, 1, &sourcePtr, nullptr));
+	GL_FAILED(glCompileShader(shaderID));
+
+	int32_t status;
+	GL_FAILED(glGetShaderiv(shaderID, GL_COMPILE_STATUS, &status));
+	if (!status)
+	{
+		glGetShaderInfoLog(shaderID, MAX_STRING_BUFFER, nullptr, glLogBuffer_);
+		ASSERT(false, "failed to compile shader\n%s", glLogBuffer_);
+	}
+
+	return shaderID;
+}
+
+uint32_t GameMaker::Shader::CreateShaderFromSource(const EType& type, const std::string& source)
+{
+	uint32_t shaderID = glCreateShader(static_cast<GLenum>(type));
+
 	const char* sourcePtr = source.c_str();
 
 	GL_FAILED(glShaderSource(shaderID, 1, &sourcePtr, nullptr));

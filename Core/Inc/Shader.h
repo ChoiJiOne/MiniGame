@@ -67,7 +67,8 @@ protected:
 	};
 
 	int32_t GetUniformLocation(const std::string& name);
-	uint32_t CreateShader(const EType& type, const std::string& path);
+	uint32_t CreateShaderFromFile(const EType& type, const std::string& path);
+	uint32_t CreateShaderFromSource(const EType& type, const std::string& source);
 	uint32_t CreateProgram(const std::vector<uint32_t>& shaderIDs);
 
 protected:
