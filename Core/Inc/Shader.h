@@ -58,12 +58,12 @@ public:
 protected:
 	enum class EType : int32_t
 	{
-		Vertex     = 0x8B31,
-		Control    = 0x8E88,
-		Evaluation = 0x8E87,
-		Geometry   = 0x8DD9,
-		Fragment   = 0x8B30,
-		Compute    = 0x91B9,
+		VERTEX     = 0x8B31,
+		CONTROL    = 0x8E88,
+		EVALUATION = 0x8E87,
+		GEOMETRY   = 0x8DD9,
+		FRAGMENT   = 0x8B30,
+		COMPUTE    = 0x91B9,
 	};
 
 	int32_t GetUniformLocation(const std::string& name);

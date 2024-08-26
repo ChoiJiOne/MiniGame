@@ -10,7 +10,7 @@ Shader::Shader(const std::string& csPath)
 {
 	uniformLocationCache_ = std::map<std::string, uint32_t>();
 
-	uint32_t csID = CreateShader(EType::Compute, csPath);
+	uint32_t csID = CreateShader(EType::COMPUTE, csPath);
 	ASSERT(csID != 0, "failed to create %s", csPath.c_str());
 
 	std::vector<uint32_t> shaderIDs = { csID };
@@ -25,10 +25,10 @@ Shader::Shader(const std::string& vsPath, const std::string& fsPath)
 {
 	uniformLocationCache_ = std::map<std::string, uint32_t>();
 
-	uint32_t vsID = CreateShader(EType::Vertex, vsPath);
+	uint32_t vsID = CreateShader(EType::VERTEX, vsPath);
 	ASSERT(vsID != 0, "failed to create %s", vsPath.c_str());
 
-	uint32_t fsID = CreateShader(EType::Fragment, fsPath);
+	uint32_t fsID = CreateShader(EType::FRAGMENT, fsPath);
 	ASSERT(fsID != 0, "failed to create %s", fsPath.c_str());
 
 	std::vector<uint32_t> shaderIDs = { vsID, fsID };
@@ -44,13 +44,13 @@ Shader::Shader(const std::string& vsPath, const std::string& gsPath, const std::
 {
 	uniformLocationCache_ = std::map<std::string, uint32_t>();
 
-	uint32_t vsID = CreateShader(EType::Vertex, vsPath);
+	uint32_t vsID = CreateShader(EType::VERTEX, vsPath);
 	ASSERT(vsID != 0, "failed to create %s", vsPath.c_str());
 
-	uint32_t gsID = CreateShader(EType::Geometry, gsPath);
+	uint32_t gsID = CreateShader(EType::GEOMETRY, gsPath);
 	ASSERT(gsID != 0, "failed to create %s", gsPath.c_str());
 
-	uint32_t fsID = CreateShader(EType::Fragment, fsPath);
+	uint32_t fsID = CreateShader(EType::FRAGMENT, fsPath);
 	ASSERT(fsID != 0, "failed to create %s", fsPath.c_str());
 
 	std::vector<uint32_t> shaderIDs = { vsID, gsID, fsID };
