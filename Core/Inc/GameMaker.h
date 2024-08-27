@@ -8,5 +8,5 @@ namespace GameMaker
 {
 	GameError Startup();
 	GameError Shutdown();
-	GameError RunLoop(const std::function<void(float)>& callback);
+	void RunLoop(const std::function<void(float)>& callback);
 }
