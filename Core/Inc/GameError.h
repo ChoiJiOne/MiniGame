@@ -5,8 +5,10 @@
 
 enum class ErrorCode : int32_t
 {
-	OK     = 0x00,
-	FAILED = 0x01,
+	OK              = 0x00,
+	FAILED          = 0x01, /** 일반적인 에러 */
+	FAILED_STARTUP  = 0x02,
+	FAILED_SHUTDOWN = 0x03,
 };
 
 class GameError
