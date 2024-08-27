@@ -11,12 +11,12 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 add_subdirectory(ThirdParty)
-add_subdirectory(Sample)
+# add_subdirectory(Sample)
 
 set(PROJECT_NAME "GameMaker")
 
-include("${CMAKE_CURRENT_SOURCE_DIR}/Script/Config.cmake")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/Config.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/Config.h")
+# include("${CMAKE_CURRENT_SOURCE_DIR}/Script/Config.cmake")
+# configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/Config.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/Config.h")
 
 set(GAME_MAKER_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 set(GAME_MAKER_CORE "${GAME_MAKER_PATH}/Core")
