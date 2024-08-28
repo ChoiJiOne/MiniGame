@@ -10,6 +10,7 @@ enum class ErrorCode : int32_t
 	FAILED_STARTUP  = 0x02,
 	FAILED_SHUTDOWN = 0x03,
 	FAILED_SDL      = 0x04, /** SDL2 라이브러리 에러 */
+	FAILED_WINDOWS  = 0x05, /** Windows API 에러 */
 };
 
 class GameError
@@ -45,7 +46,7 @@ public:
 	const ErrorCode& GetCode() const { return errorCode_; }
 	const std::string& GetMessage() const { return message_; }
 	
-private:
+protected:
 	ErrorCode errorCode_ = ErrorCode::OK;
 	std::string message_;
 };
@@ -57,5 +58,26 @@ class SDLError : public GameError
 public:
 	SDLError() : GameError(ErrorCode::FAILED_SDL, SDL_GetError()) {}
 	virtual ~SDLError() {}
+};
+#endif
+
+#if defined(_WIN32) || defined(_WIN64) /** Windows OS에서. */
+#include <windows.h>
+class WindowsError : public GameError
+{
+public:
+	WindowsError() : GameError(ErrorCode::FAILED_WINDOWS, GetErrorMessage()) {}
+	virtual ~WindowsError() {}
+
+private:
+	static std::string GetErrorMessage()
+	{
+		static const uint32_t MAX_BUFFER_SIZE = 1024;
+		static char buffer[MAX_BUFFER_SIZE];
+
+		uint32_t size = FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), buffer, MAX_BUFFER_SIZE, nullptr);
+
+		return std::string(buffer, size);
+	}
 };
 #endif
