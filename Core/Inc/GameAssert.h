@@ -15,9 +15,22 @@
 	}\
 }
 #endif
+#ifndef GAME_CHECK
+#define GAME_CHECK(EXP)\
+{\
+	if(!(bool)(EXP))\
+	{\
+		GameLogger::DebugPrintF("\nAssertion check point failed!\nFile : %s\nLine : %d\nExpression : %s\n", __FILE__, __LINE__, #EXP);\
+		__debugbreak();\
+	}\
+}
+#endif
 #else
 #ifndef GAME_ASSERT
 #define GAME_ASSERT(EXP, ...) ((void)(EXP))
+#endif
+#ifndef GAME_CHECK
+#define GAME_CHECK(EXP) ((void)(EXP))
 #endif
 #endif
 
