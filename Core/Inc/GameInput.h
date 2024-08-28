@@ -1,6 +1,9 @@
 #pragma once
 
 #include <cstdint>
+#include <functional>
+
+#include "GameMath.h"
 
 namespace GameInput
 {
@@ -30,7 +33,7 @@ enum class Mouse : int32_t
 };
 
 /** https://wiki.libsdl.org/SDL_Scancode */
-enum class EKey : int32_t
+enum class Key : int32_t
 {
 	KEY_UNKNOWN = 0,
 	KEY_A = 4,
@@ -283,7 +286,7 @@ enum class EKey : int32_t
 };
 
 /** https://wiki.libsdl.org/SDL_WindowEventID */
-enum class EWindowEvent : int32_t
+enum class WindowEvent : int32_t
 {
 	NONE            = 0x00,
 	SHOWN           = 0x01,
@@ -303,8 +306,20 @@ enum class EWindowEvent : int32_t
 	TAKE_FOCUS      = 0x0F,
 	HIT_TEST        = 0x10,
 	ICCPROF_CHANGED = 0x11,
-	DISPLAY_CHANGED = 0x12
+	DISPLAY_CHANGED = 0x12,
 };
 
+using WindowEventID = int32_t;
+
+void PollEvents(); /** 반드시 엔진 내부에서면 사용해야 합니다. */
+
+Press GetKeyPress(const Key& key);
+Press GetMousePress(const Mouse& mouse);
+const GameMath::Vec2i& GetPrevMousePos();
+const GameMath::Vec2i& GetCurrMousePos();
+
+WindowEventID AddWindowEventAction(const WindowEvent& windowEvent, const std::function<void()>& eventAction, bool bIsActive = true);
+void DeleteWindowEventAction(const WindowEventID& windowEventID);
+void SetActiveWindowEventAction(const WindowEventID& windowEventID, bool bIsActive);
 
 }
