@@ -19,6 +19,24 @@ static SDL_Window* window_ = nullptr;
 static int32_t numVideoDisplay_ = 0;
 static std::vector<GameMath::Vec2i> displaySizes_;
 
+
+template <>
+void GameMaker::GetScreenSize(float& outWidth, float& outHeight)
+{
+	int32_t w = 0;
+	int32_t h = 0;
+	SDL_GetWindowSize(window_, &w, &h);
+
+	outWidth = static_cast<float>(w);
+	outHeight = static_cast<float>(h);
+}
+
+template <>
+void GameMaker::GetScreenSize(int32_t& outWidth, int32_t& outHeight)
+{
+	SDL_GetWindowSize(window_, &outWidth, &outHeight);
+}
+
 GameError GameMaker::Startup(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool bIsResizble, bool bIsFullscreen)
 {
 	if (bIsStartup_)

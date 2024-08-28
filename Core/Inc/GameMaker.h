@@ -17,4 +17,6 @@ void RunLoop(const std::function<void(float)>& frameCallback);
 int32_t GetNumVideoDisplay();
 GameError GetVideoDisplaySize(int32_t index, GameMath::Vec2i& outSize);
 
+template <typename T>
+void GetScreenSize(T& outWidth, T& outHeight);
 }
