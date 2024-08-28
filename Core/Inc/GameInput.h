@@ -22,7 +22,12 @@ enum class PressState : int32_t
 	HELD     = 0x03
 };
 
-
+enum class Mouse : int32_t
+{
+	LEFT   = (1 << ((1) - 1)),
+	MIDDLE = (1 << ((2) - 1)),
+	RIGHT  = (1 << ((3) - 1)),
+};
 
 
 
