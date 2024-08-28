@@ -5,18 +5,19 @@
 
 #if defined(DEBUG_MODE) || defined(RELEASE_MODE) || defined(RELWITHDEBINFO_MODE)
 #ifndef GAME_ASSERT
-#define GAME_ASSERT(EXP, MESSAGE)\
+#define GAME_ASSERT(EXP, ...)\
 {\
 	if(!(bool)(EXP))\
 	{\
-		GameLogger::DebugPrintF("\nAssertion check point failed!\nFile : %s\nLine : %d\nExpression : %s\nMessage : %s\n", __FILE__, __LINE__, #EXP, MESSAGE);\
+		GameLogger::DebugPrintF("\nAssertion check point failed!\nFile : %s\nLine : %d\nExpression : %s\nMessage : ", __FILE__, __LINE__, #EXP);\
+		GameLogger::DebugPrintF(__VA_ARGS__);\
 		__debugbreak();\
 	}\
 }
 #endif
 #else
 #ifndef GAME_ASSERT
-#define GAME_ASSERT(EXP, MESSAGE) ((void)(EXP))
+#define GAME_ASSERT(EXP, ...) ((void)(EXP))
 #endif
 #endif
 
