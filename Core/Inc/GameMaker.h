@@ -3,6 +3,7 @@
 #include <functional>
 
 #include "GameError.h"
+#include "GameMath.h"
 
 namespace GameMaker
 {
@@ -11,4 +12,7 @@ namespace GameMaker
 	GameError Shutdown();
 
 	void RunLoop(const std::function<void(float)>& frameCallback);
+
+	int32_t GetNumVideoDisplay();
+	GameError GetVideoDisplaySize(int32_t index, GameMath::Vec2i& outSize);
 }

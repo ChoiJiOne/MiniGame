@@ -12,13 +12,11 @@
 
 #include "Config.h"
 #include "GameMaker.h"
-#include "GameMath.h"
 
 static bool bIsStartup_ = false;
 static bool bIsInitSDL_ = false;
 static SDL_Window* window_ = nullptr;
 static int32_t numVideoDisplay_ = 0;
-static const uint32_t MAX_DISPLAY_COUNT = 10;
 static std::vector<GameMath::Vec2i> displaySizes_;
 
 GameError GameMaker::Startup(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool bIsResizble, bool bIsFullscreen)
@@ -129,4 +127,20 @@ GameError GameMaker::Shutdown()
 
 void GameMaker::RunLoop(const std::function<void(float)>& frameCallback)
 {
+}
+
+int32_t GameMaker::GetNumVideoDisplay()
+{
+	return numVideoDisplay_;
+}
+
+GameError GameMaker::GetVideoDisplaySize(int32_t index, GameMath::Vec2i& outSize)
+{
+	if (index < 0 || index >= displaySizes_.size())
+	{
+		return GameError(ErrorCode::BUFFER_OUT_OF_RANGE, "Video Display index is out of range.");
+	}
+
+	outSize = displaySizes_[index];
+	return GameError(ErrorCode::OK, "Succeed get video display size.");
 }
