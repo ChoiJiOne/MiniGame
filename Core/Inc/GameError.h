@@ -94,7 +94,6 @@ public:
 	GLError(GLenum errorCode) : GameError(ErrorCode::FAILED_OPENGL, GetErrorMessage(errorCode)) {}
 	virtual ~GLError() {}
 
-private:
 	static std::string GetErrorMessage(const GLenum errorCode)
 	{
 		static std::map<GLenum, std::string> errorMessages =
