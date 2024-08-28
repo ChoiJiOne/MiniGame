@@ -121,7 +121,23 @@ GameError GameMaker::Startup(const char* title, int32_t x, int32_t y, int32_t w,
 	{
 		return SDLError();
 	}
-	
+
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.IniFilename = nullptr;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;
+
+	if (!ImGui_ImplSDL2_InitForOpenGL(window_, context_))
+	{
+		return GameError(ErrorCode::FAILED_IMGUI, "Failed to initialize ImGui for SDL2.");
+	}
+
+	if (!ImGui_ImplOpenGL3_Init())
+	{
+		return GameError(ErrorCode::FAILED_IMGUI, "Failed to initialzie ImGui for OpenGL.");
+	}
+
 	bIsStartup_ = true;
 	return GameError(ErrorCode::OK, "Succeed startup GameMaker.");
 }
@@ -150,6 +166,10 @@ GameError GameMaker::Shutdown()
 
 		return GameError(ErrorCode::FAILED_SHUTDOWN, "Startup has not called, or Shutdown has already been invoked.");
 	}
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
 
 	if (context_)
 	{
@@ -182,6 +202,10 @@ void GameMaker::RunLoop(const std::function<void(float)>& frameCallback)
 		timer_.Tick();
 
 		PollEvents();
+
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplSDL2_NewFrame();
+		ImGui::NewFrame();
 
 		if (frameCallback)
 		{
