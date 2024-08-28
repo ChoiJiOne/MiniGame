@@ -19,6 +19,7 @@ bool bShouldCloseWindow_ = false;
 static bool bIsStartup_ = false;
 static bool bIsInitSDL_ = false;
 static SDL_Window* window_ = nullptr;
+static SDL_GLContext context_ = nullptr;
 static int32_t numVideoDisplay_ = 0;
 static std::vector<GameMath::Vec2i> displaySizes_;
 
@@ -109,6 +110,17 @@ GameError GameMaker::Startup(const char* title, int32_t x, int32_t y, int32_t w,
 	{
 		return SDLError();
 	}
+
+	context_ = SDL_GL_CreateContext(window_);
+	if (!context_)
+	{
+		return SDLError();
+	}
+
+	if (SDL_GL_MakeCurrent(window_, context_) < 0)
+	{
+		return SDLError();
+	}
 	
 	bIsStartup_ = true;
 	return GameError(ErrorCode::OK, "Succeed startup GameMaker.");
@@ -118,6 +130,12 @@ GameError GameMaker::Shutdown()
 {
 	if (!bIsStartup_)
 	{
+		if (context_)
+		{
+			SDL_GL_DeleteContext(context_);
+			context_ = nullptr;
+		}
+
 		if (window_)
 		{
 			SDL_DestroyWindow(window_);
@@ -131,6 +149,12 @@ GameError GameMaker::Shutdown()
 		}
 
 		return GameError(ErrorCode::FAILED_SHUTDOWN, "Startup has not called, or Shutdown has already been invoked.");
+	}
+
+	if (context_)
+	{
+		SDL_GL_DeleteContext(context_);
+		context_ = nullptr;
 	}
 
 	if (window_)
