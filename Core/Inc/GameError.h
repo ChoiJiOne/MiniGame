@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <map>
 
 
 enum class ErrorCode : int32_t
@@ -48,6 +49,7 @@ public:
 
 	const ErrorCode& GetCode() const { return errorCode_; }
 	const std::string& GetMessage() const { return message_; }
+	const char* GetMessagePtr() const { return message_.c_str(); }
 	
 protected:
 	ErrorCode errorCode_ = ErrorCode::OK;
