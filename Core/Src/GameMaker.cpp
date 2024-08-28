@@ -24,6 +24,8 @@ static std::vector<GameMath::Vec2i> displaySizes_;
 
 static GameTimer timer_; /** 엔진 내부에서만 사용하는 전역 타이머 */
 
+extern void PollEvents(); /** GameInput 내부에서 사용하는 함수. */
+
 template <>
 void GameMaker::GetScreenSize(float& outWidth, float& outHeight)
 {
@@ -149,6 +151,19 @@ GameError GameMaker::Shutdown()
 
 void GameMaker::RunLoop(const std::function<void(float)>& frameCallback)
 {
+	timer_.Reset();
+
+	while (!bShouldCloseWindow_)
+	{
+		timer_.Tick();
+
+		PollEvents();
+
+		if (frameCallback)
+		{
+			frameCallback(timer_.GetDeltaSeconds());
+		}
+	}
 }
 
 int32_t GameMaker::GetNumVideoDisplay()
