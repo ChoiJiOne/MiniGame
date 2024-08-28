@@ -12,13 +12,14 @@
 
 #include "Config.h"
 #include "GameMaker.h"
+#include "GameMath.h"
 
 static bool bIsStartup_ = false;
 static bool bIsInitSDL_ = false;
 static SDL_Window* window_ = nullptr;
 static int32_t numVideoDisplay_ = 0;
 static const uint32_t MAX_DISPLAY_COUNT = 10;
-
+static std::vector<GameMath::Vec2i> displaySizes_;
 
 GameError GameMaker::Startup(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool bIsResizble, bool bIsFullscreen)
 {
@@ -62,6 +63,19 @@ GameError GameMaker::Startup(const char* title, int32_t x, int32_t y, int32_t w,
 	if (numVideoDisplay_ < 1)
 	{
 		return SDLError();
+	}
+
+	displaySizes_.resize(numVideoDisplay_);
+	for (uint32_t index = 0; index < displaySizes_.size(); ++index)
+	{
+		SDL_DisplayMode displayMode;
+		if (SDL_GetDesktopDisplayMode(index, &displayMode) < 0)
+		{
+			return SDLError();
+		}
+
+		displaySizes_[index].x = displayMode.w;
+		displaySizes_[index].y = displayMode.h;
 	}
 
 	uint32_t baseFlags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
