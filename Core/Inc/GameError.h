@@ -94,9 +94,9 @@ public:
 	GLError(GLenum errorCode) : GameError(ErrorCode::FAILED_OPENGL, GetErrorMessage(errorCode)) {}
 	virtual ~GLError() {}
 
-	static std::string GetErrorMessage(const GLenum errorCode)
+	static const char* GetErrorMessage(const GLenum errorCode)
 	{
-		static std::map<GLenum, std::string> errorMessages =
+		static std::map<GLenum, const char*> errorMessages =
 		{
 			{ GL_NO_ERROR,                      "No error has been recorded. (GL_NO_ERROR)"                                                                              },
 			{ GL_INVALID_ENUM,                  "An unacceptable value is specified for an enumerated argument. (GL_INVALID_ENUM)"                                       },
