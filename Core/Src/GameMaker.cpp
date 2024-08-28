@@ -13,12 +13,13 @@
 #include "Config.h"
 #include "GameMaker.h"
 
+bool bShouldCloseWindow_ = false;
+
 static bool bIsStartup_ = false;
 static bool bIsInitSDL_ = false;
 static SDL_Window* window_ = nullptr;
 static int32_t numVideoDisplay_ = 0;
 static std::vector<GameMath::Vec2i> displaySizes_;
-
 
 template <>
 void GameMaker::GetScreenSize(float& outWidth, float& outHeight)

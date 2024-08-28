@@ -19,4 +19,5 @@ GameError GetVideoDisplaySize(int32_t index, GameMath::Vec2i& outSize);
 
 template <typename T>
 void GetScreenSize(T& outWidth, T& outHeight);
+
 }
