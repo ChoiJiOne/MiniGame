@@ -1,0 +1,25 @@
+#pragma once
+
+#include "GameMacro.h"
+
+/** 이 클래스는 엔티티 인터페이스로, 엔티티는 반드시 이 인터페이스를 상속받아야 합니다. */
+class IEntity
+{
+public:
+	IEntity() = default;
+	virtual ~IEntity()
+	{
+		if (bIsInitialized_)
+		{
+			Release();
+		}
+	}
+
+	DISALLOW_COPY_AND_ASSIGN(IEntity);
+
+	virtual void Release() = 0;
+	bool IsInitialized() const { return bIsInitialized_; }
+
+protected:
+	bool bIsInitialized_ = false;
+};
