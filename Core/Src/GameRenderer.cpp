@@ -17,7 +17,7 @@ void GameRenderer::BeginFrame(float red, float green, float blue, float alpha, f
 	glClearDepth(depth);
 	glClearStencil(stencil);
 	
-	GL_ASSERT(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+	GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 }
 
 void GameRenderer::EndFrame()
@@ -43,18 +43,18 @@ void GameRenderer::SetWindowViewport()
 
 void GameRenderer::SetVsyncMode(bool bIsEnable)
 {
-	GL_ASSERT(SDL_GL_SetSwapInterval(static_cast<int32_t>(bIsEnable)));
+	GL_CHECK(SDL_GL_SetSwapInterval(static_cast<int32_t>(bIsEnable)));
 }
 
 void GameRenderer::SetDepthMode(bool bIsEnable)
 {
 	if (bIsEnable)
 	{
-		GL_ASSERT(glEnable(GL_DEPTH_TEST));
+		GL_CHECK(glEnable(GL_DEPTH_TEST));
 	}
 	else
 	{
-		GL_ASSERT(glDisable(GL_DEPTH_TEST));
+		GL_CHECK(glDisable(GL_DEPTH_TEST));
 	}
 }
 
@@ -62,11 +62,11 @@ void GameRenderer::SetStencilMode(bool bIsEnable)
 {
 	if (bIsEnable)
 	{
-		GL_ASSERT(glEnable(GL_STENCIL_TEST));
+		GL_CHECK(glEnable(GL_STENCIL_TEST));
 	}
 	else
 	{
-		GL_ASSERT(glDisable(GL_STENCIL_TEST));
+		GL_CHECK(glDisable(GL_STENCIL_TEST));
 	}
 }
 
@@ -74,12 +74,12 @@ void GameRenderer::SetAlphaBlendMode(bool bIsEnable)
 {
 	if (bIsEnable)
 	{
-		GL_ASSERT(glEnable(GL_BLEND));
-		GL_ASSERT(glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO));
+		GL_CHECK(glEnable(GL_BLEND));
+		GL_CHECK(glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO));
 	}
 	else
 	{
-		GL_ASSERT(glDisable(GL_BLEND));
+		GL_CHECK(glDisable(GL_BLEND));
 	}
 }
 
@@ -87,11 +87,11 @@ void GameRenderer::SetMultisampleMode(bool bIsEnable)
 {
 	if (bIsEnable)
 	{
-		GL_ASSERT(glEnable(GL_MULTISAMPLE));
+		GL_CHECK(glEnable(GL_MULTISAMPLE));
 	}
 	else
 	{
-		GL_ASSERT(glDisable(GL_MULTISAMPLE));
+		GL_CHECK(glDisable(GL_MULTISAMPLE));
 	}
 }
 
@@ -99,10 +99,10 @@ void GameRenderer::SetCullFaceMode(bool bIsEnable)
 {
 	if (bIsEnable)
 	{
-		GL_ASSERT(glEnable(GL_CULL_FACE));
+		GL_CHECK(glEnable(GL_CULL_FACE));
 	}
 	else
 	{
-		GL_ASSERT(glDisable(GL_CULL_FACE));
+		GL_CHECK(glDisable(GL_CULL_FACE));
 	}
 }
