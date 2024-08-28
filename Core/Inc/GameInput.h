@@ -311,8 +311,6 @@ enum class WindowEvent : int32_t
 
 using WindowEventID = int32_t;
 
-void PollEvents(); /** 반드시 엔진 내부에서면 사용해야 합니다. */
-
 Press GetKeyPress(const Key& key);
 Press GetMousePress(const Mouse& mouse);
 const GameMath::Vec2i& GetPrevMousePos();

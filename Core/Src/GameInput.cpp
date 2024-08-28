@@ -25,7 +25,7 @@ struct MouseState
 	GameMath::Vec2i position; // 마우스 버튼의 위치입니다.
 };
 
-extern bool bShouldCloseWindow_;
+extern bool bShouldCloseWindow_; /** GameMaker 내부에서 사용하는 전역 변수. */
 
 static KeyboardState prevKeyboardState_;
 static KeyboardState currKeyboardState_;
@@ -47,7 +47,7 @@ void ExecuteWindowEventAction(const GameInput::WindowEvent& windowEvent)
 	}
 }
 
-bool IsPressKey(const KeyboardState& keyboardState, const GameInput::Key & key)
+bool IsPressKey(const KeyboardState& keyboardState, const GameInput::Key& key)
 {
 	return keyboardState.keybordState.at(static_cast<int32_t>(key)) == 0 ? false : true;
 }
@@ -57,20 +57,20 @@ bool IsPressMouse(const MouseState& mouseState, const GameInput::Mouse& mouse)
 	return (mouseState.state & static_cast<uint32_t>(mouse)) == 0 ? false : true;
 }
 
-void GameInput::PollEvents()
+void PollEvents()
 {
 	SDL_Event e;
 
 	while (SDL_PollEvent(&e))
 	{
-		ImGui_ImplSDL2_ProcessEvent(&e);
+		//ImGui_ImplSDL2_ProcessEvent(&e);
 
 		if (e.type == SDL_QUIT)
 		{
 			bShouldCloseWindow_ = true;
 		}
 
-		WindowEvent windowEvent = static_cast<WindowEvent>(e.window.event);
+		GameInput::WindowEvent windowEvent = static_cast<GameInput::WindowEvent>(e.window.event);
 		for (std::size_t index = 0; index < windowEventActionSize_; ++index)
 		{
 			if (windowEvent == windowEventActions_[index].windowEvent && windowEventActions_[index].bIsActive)
