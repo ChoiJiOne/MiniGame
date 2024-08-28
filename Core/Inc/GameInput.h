@@ -14,7 +14,7 @@ namespace GameInput
  * |     1      |     1      | HELD     |
  * --------------------------------------
  */
-enum class PressState : int32_t
+enum class Press : int32_t
 {
 	NONE     = 0x00,
 	PRESSED  = 0x01,
