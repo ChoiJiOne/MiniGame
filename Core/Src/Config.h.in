@@ -1,0 +1,13 @@
+#pragma once
+
+#define GL_MAJOR               @GL_MAJOR@
+#define GL_MINOR               @GL_MINOR@
+#define GL_RED_SIZE            @GL_RED_SIZE@
+#define GL_GREEN_SIZE          @GL_GREEN_SIZE@
+#define GL_BLUE_SIZE           @GL_BLUE_SIZE@
+#define GL_ALPHA_SIZE          @GL_ALPHA_SIZE@
+#define GL_DEPTH_SIZE          @GL_DEPTH_SIZE@
+#define GL_STENCIL_SIZE        @GL_STENCIL_SIZE@
+#define GL_DOUBLE_BUFFER       @GL_DOUBLE_BUFFER@
+#define GL_MULTISAMPLE_BUFFERS @GL_MULTISAMPLE_BUFFERS@
+#define GL_MULTISAMPLE_SAMPLES @GL_MULTISAMPLE_SAMPLES@
