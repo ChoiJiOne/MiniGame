@@ -5,12 +5,13 @@
 
 enum class ErrorCode : int32_t
 {
-	OK              = 0x00,
-	FAILED          = 0x01, /** 일반적인 에러 */
-	FAILED_STARTUP  = 0x02,
-	FAILED_SHUTDOWN = 0x03,
-	FAILED_SDL      = 0x04, /** SDL2 라이브러리 에러 */
-	FAILED_WINDOWS  = 0x05, /** Windows API 에러 */
+	OK                  = 0x00,
+	FAILED              = 0x01, /** 일반적인 에러 */
+	FAILED_STARTUP      = 0x02,
+	FAILED_SHUTDOWN     = 0x03,
+	FAILED_SDL          = 0x04, /** SDL2 라이브러리 에러 */
+	FAILED_WINDOWS      = 0x05, /** Windows API 에러 */
+	BUFFER_OUT_OF_RANGE = 0x06, /** 배열의 범위를 벗어난 에러 */
 };
 
 class GameError
