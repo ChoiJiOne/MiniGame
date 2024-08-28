@@ -5,6 +5,8 @@
 
 #include <SDL2/SDL.h>
 
+#include <glad/glad.h>
+
 #include <mimalloc-new-delete.h>
 /** 서드 파티 라이브러리 사용을 위한 헤더 선언 종료*/
 
@@ -120,6 +122,11 @@ GameError GameMaker::Startup(const char* title, int32_t x, int32_t y, int32_t w,
 	if (SDL_GL_MakeCurrent(window_, context_) < 0)
 	{
 		return SDLError();
+	}
+
+	if (!gladLoadGLLoader((GLADloadproc)(SDL_GL_GetProcAddress)))
+	{
+		return GameError(ErrorCode::FAILED_OPENGL, "Failed to load OpenGL function.");
 	}
 
 	ImGui::CreateContext();
