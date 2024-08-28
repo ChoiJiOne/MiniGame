@@ -17,11 +17,11 @@
 #include "GameTimer.h"
 
 bool bShouldCloseWindow_ = false;
+SDL_Window* window_ = nullptr;
+SDL_GLContext context_ = nullptr;
 
 static bool bIsStartup_ = false;
 static bool bIsInitSDL_ = false;
-static SDL_Window* window_ = nullptr;
-static SDL_GLContext context_ = nullptr;
 static int32_t numVideoDisplay_ = 0;
 static std::vector<GameMath::Vec2i> displaySizes_;
 
