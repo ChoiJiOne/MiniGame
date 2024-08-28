@@ -63,7 +63,7 @@ void PollEvents()
 
 	while (SDL_PollEvent(&e))
 	{
-		//ImGui_ImplSDL2_ProcessEvent(&e);
+		ImGui_ImplSDL2_ProcessEvent(&e);
 
 		if (e.type == SDL_QUIT)
 		{
