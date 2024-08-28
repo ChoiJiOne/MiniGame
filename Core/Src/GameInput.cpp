@@ -4,6 +4,7 @@
 #include <imgui_impl_sdl2.h>
 #include <SDL2/SDL.h>
 
+#include "GameAssert.h"
 #include "GameInput.h"
 
 struct WindowEventAction
@@ -161,6 +162,8 @@ const GameMath::Vec2i& GameInput::GetCurrMousePos()
 
 GameInput::WindowEventID GameInput::AddWindowEventAction(const WindowEvent& windowEvent, const std::function<void()>& eventAction, bool bIsActive)
 {
+	GAME_CHECK(0 <= windowEventActionSize_ && windowEventActionSize_ < MAX_EVENT_ACTION_SIZE);
+
 	WindowEventID windowEventID = -1;
 	for (int32_t index = 0; index < windowEventActionSize_; ++index)
 	{
@@ -185,6 +188,8 @@ GameInput::WindowEventID GameInput::AddWindowEventAction(const WindowEvent& wind
 
 void GameInput::DeleteWindowEventAction(const WindowEventID& windowEventID)
 {
+	GAME_CHECK(0 <= windowEventID && windowEventID < MAX_EVENT_ACTION_SIZE);
+
 	windowEventActions_[windowEventID].windowEvent = WindowEvent::NONE;
 	windowEventActions_[windowEventID].windowEventAction = nullptr;
 	windowEventActions_[windowEventID].bIsActive = false;
@@ -192,5 +197,6 @@ void GameInput::DeleteWindowEventAction(const WindowEventID& windowEventID)
 
 void GameInput::SetActiveWindowEventAction(const WindowEventID& windowEventID, bool bIsActive)
 {
+	GAME_CHECK(0 <= windowEventID && windowEventID < MAX_EVENT_ACTION_SIZE);
 	windowEventActions_[windowEventID].bIsActive = bIsActive;
 }
