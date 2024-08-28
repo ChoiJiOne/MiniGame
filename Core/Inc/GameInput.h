@@ -282,4 +282,29 @@ enum class EKey : int32_t
 	KEY_NUM_SCANCODES = 512
 };
 
+/** https://wiki.libsdl.org/SDL_WindowEventID */
+enum class EWindowEvent : int32_t
+{
+	NONE            = 0x00,
+	SHOWN           = 0x01,
+	HIDDEN          = 0x02,
+	EXPOSED         = 0x03,
+	MOVED           = 0x04,
+	RESIZED         = 0x05,
+	SIZE_CHANGED    = 0x06,
+	MINIMIZED       = 0x07,
+	MAXIMIZED       = 0x08,
+	RESTORED        = 0x09,
+	ENTER           = 0x0A,
+	LEAVE           = 0x0B,
+	FOCUS_GAINED    = 0x0C,
+	FOCUS_LOST      = 0x0D,
+	CLOSE           = 0x0E,
+	TAKE_FOCUS      = 0x0F,
+	HIT_TEST        = 0x10,
+	ICCPROF_CHANGED = 0x11,
+	DISPLAY_CHANGED = 0x12
+};
+
+
 }
