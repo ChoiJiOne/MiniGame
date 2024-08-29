@@ -43,7 +43,7 @@ void GameRenderer::SetWindowViewport()
 
 void GameRenderer::SetVsyncMode(bool bIsEnable)
 {
-	GL_CHECK(SDL_GL_SetSwapInterval(static_cast<int32_t>(bIsEnable)));
+	GAME_ASSERT(SDL_GL_SetSwapInterval(static_cast<int32_t>(bIsEnable)) == 0, "%s", SDL_GetError());
 }
 
 void GameRenderer::SetDepthMode(bool bIsEnable)
