@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GameMacro.h"
+#include "Macro.h"
 
 /** 이 클래스는 엔티티 인터페이스로, 엔티티는 반드시 이 인터페이스를 상속받아야 합니다. */
 class IEntity
