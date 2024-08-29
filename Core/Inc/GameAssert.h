@@ -37,7 +37,6 @@
 
 #if defined(__glad_h_)
 #if defined(DEBUG_MODE) || defined(RELEASE_MODE) || defined(RELWITHDEBINFO_MODE)
-
 #ifndef GL_ASSERT
 #define GL_ASSERT(EXP, ...)\
 EXP;\
@@ -45,9 +44,9 @@ EXP;\
 	GLenum _errorCode = glGetError();\
 	if (_errorCode != GL_NO_ERROR)\
 	{\
-		GameLogger::DebugPrintF("\nOpenGL Assertion check point failed!\nFile : %s\nLine : %d\nExpression : %s\GL : %s\nMessage : ", __FILE__, __LINE__, #EXP, GLError::GetErrorMessage(_errorCode));\
+		GameLogger::DebugPrintF("\nOpenGL Assertion check point failed!\nFile : %s\nLine : %d\nExpression : %s\nGL : %s\nMessage : ", __FILE__, __LINE__, #EXP, GLError::GetErrorMessage(_errorCode));\
 		GameLogger::DebugPrintF(__VA_ARGS__);\
-		GameLogger::DebugPrintF("\n");\		
+		GameLogger::DebugPrintF("\n");\
 		__debugbreak();\
 	}\
 }
@@ -59,7 +58,7 @@ EXP;\
 	GLenum _errorCode = glGetError();\
 	if (_errorCode != GL_NO_ERROR)\
 	{\
-		GameLogger::DebugPrintF("\nOpenGL Assertion check point failed!\nFile : %s\nLine : %d\nExpression : %s\nMessage : %s\n", __FILE__, __LINE__, #EXP, GLError::GetErrorMessage(_errorCode));\
+		GameLogger::DebugPrintF("\nOpenGL Assertion check point failed!\nFile : %s\nLine : %d\nExpression : %s\nGL : %s\n", __FILE__, __LINE__, #EXP, GLError::GetErrorMessage(_errorCode));\
 		__debugbreak();\
 	}\
 }
