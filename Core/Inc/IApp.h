@@ -310,6 +310,16 @@ enum class WindowEvent : int32_t
 	DISPLAY_CHANGED = 0x12,
 };
 
+enum class EDrawMode : int32_t
+{
+	POINTS       = 0x0000,
+	LINES        = 0x0001,
+	LINE_STRIP   = 0x0003,
+	TRIANGLES    = 0x0004,
+	TRIANGLE_FAN = 0x0006,
+	NONE         = 0xFFFF,
+};
+
 class IApp
 {
 public:
