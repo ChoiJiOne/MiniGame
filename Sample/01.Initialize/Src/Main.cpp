@@ -16,7 +16,7 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 #endif
 
 	GameError error = GameMaker::Startup("01.Initialize", 100, 100, 800, 600);
-	GAME_ASSERT(error.GetCode() == ErrorCode::OK, error.GetMessagePtr());
+	GAME_ASSERT(error.GetCode() == ErrorCode::OK, "%s", error.GetMessagePtr());
 
 	GameMaker::RunLoop(
 		[](float deltaSeconds) 
