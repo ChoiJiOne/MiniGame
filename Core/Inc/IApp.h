@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 #include <vector>
 
 #include "GameMath.h"
@@ -330,7 +331,7 @@ public:
 
 	DISALLOW_COPY_AND_ASSIGN(IApp); /** 명시적으로 복사 생성자 및 대입 연산자 삭제 */
 
-	virtual bool Startup() = 0;
+	virtual void Startup() = 0;
 	virtual void Shutdown() = 0;
 	virtual void Run() = 0;
 
