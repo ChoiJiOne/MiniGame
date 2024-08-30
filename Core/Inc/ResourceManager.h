@@ -16,13 +16,13 @@ public:
 	template <typename TResource, typename... Args>
 	TResource* Create(Args&&... args)
 	{
-		if (!(0 <= cacheSize_ && cacheSize_ < MAX_RESOURCE_SIZE))
+		if (!(0 <= size_ && size_ < MAX_RESOURCE_SIZE))
 		{
 			return nullptr;
 		}
 
 		int32_t resourceID = -1;
-		for (uint32_t index = 0; index < cacheSize_; ++index)
+		for (uint32_t index = 0; index < size_; ++index)
 		{
 			if (!resources_[index] && !usage_[index])
 			{
@@ -33,7 +33,7 @@ public:
 
 		if (resourceID == -1)
 		{
-			resourceID = cacheSize_++;
+			resourceID = size_++;
 		}
 
 		usage_[resourceID] = true;
@@ -55,7 +55,7 @@ private:
 private:
 	static const uint32_t MAX_RESOURCE_SIZE = 200;
 
-	uint32_t cacheSize_ = 0;
+	uint32_t size_ = 0;
 	std::array<std::unique_ptr<IResource>, MAX_RESOURCE_SIZE> resources_;
 	std::array<bool, MAX_RESOURCE_SIZE> usage_;
 };

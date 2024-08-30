@@ -10,10 +10,10 @@ ResourceManager& ResourceManager::Get()
 void ResourceManager::Destroy(const IResource* resource)
 {
 	int32_t resourceID = -1;
-	for (uint32_t index = 0; index < cacheSize_; ++index)
+	for (uint32_t index = 0; index < size_; ++index)
 	{
-		IResource* cacheResource = resources_[index].get();
-		if (resource == cacheResource)
+		IResource* resourcePtr = resources_[index].get();
+		if (resource == resourcePtr)
 		{
 			resourceID = static_cast<int32_t>(index);
 			break;
@@ -34,7 +34,7 @@ void ResourceManager::Destroy(const IResource* resource)
 
 void ResourceManager::Cleanup()
 {
-	for (std::size_t index = 0; index < cacheSize_; ++index)
+	for (std::size_t index = 0; index < size_; ++index)
 	{
 		if (resources_[index])
 		{
@@ -48,5 +48,5 @@ void ResourceManager::Cleanup()
 		}
 	}
 
-	cacheSize_ = 0;
+	size_ = 0;
 }
