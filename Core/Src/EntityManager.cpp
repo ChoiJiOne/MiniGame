@@ -10,10 +10,10 @@ EntityManager& EntityManager::Get()
 void EntityManager::Destroy(const IEntity* entity)
 {
 	int32_t entityID = -1;
-	for (uint32_t index = 0; index < cacheSize_; ++index)
+	for (uint32_t index = 0; index < size_; ++index)
 	{
-		IEntity* cache = entities_[index].get();
-		if (entity == cache)
+		IEntity* entityPtr = entities_[index].get();
+		if (entity == entityPtr)
 		{
 			entityID = static_cast<int32_t>(index);
 			break;
@@ -34,7 +34,7 @@ void EntityManager::Destroy(const IEntity* entity)
 
 void EntityManager::Cleanup()
 {
-	for (std::size_t index = 0; index < cacheSize_; ++index)
+	for (std::size_t index = 0; index < size_; ++index)
 	{
 		if (entities_[index])
 		{
@@ -48,5 +48,5 @@ void EntityManager::Cleanup()
 		}
 	}
 
-	cacheSize_ = 0;
+	size_ = 0;
 }
