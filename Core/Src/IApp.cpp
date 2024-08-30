@@ -1,4 +1,5 @@
 #include <map>
+#include <windows.h>
 
 /** 서드 파티 라이브러리 사용을 위한 헤더 선언 시작 */
 #include <imgui.h>
@@ -13,13 +14,19 @@
 /** 서드 파티 라이브러리 사용을 위한 헤더 선언 종료*/
 
 #include "Assertion.h"
+#include "CrashManager.h"
 #include "Config.h"
 #include "IApp.h"
+
+static LPTOP_LEVEL_EXCEPTION_FILTER topLevelExceptionFilter_;
+extern LONG WINAPI DetectApplicationCrash(EXCEPTION_POINTERS* ep);
 
 IApp* IApp::instance_ = nullptr;
 
 IApp::IApp(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool bIsResizble, bool bIsFullscreen)
 {
+	topLevelExceptionFilter_ = ::SetUnhandledExceptionFilter(DetectApplicationCrash);
+
 	instance_ = this;
 
 	ASSERT(SDL_Init(SDL_INIT_EVERYTHING) == 0, "%s", SDL_GetError());
@@ -100,6 +107,8 @@ IApp::~IApp()
 	window_ = nullptr;
 
 	SDL_Quit();
+
+	::SetUnhandledExceptionFilter(topLevelExceptionFilter_);
 }
 
 IApp* IApp::Get()
