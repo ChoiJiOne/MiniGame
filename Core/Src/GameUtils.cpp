@@ -2,6 +2,7 @@
 #include <Shlwapi.h>
 #include <windows.h>
 
+#include "Assertion.h"
 #include "GameUtils.h"
 
 static const uint32_t MAX_STRING_BUFFER_SIZE = 1024;
@@ -162,118 +163,64 @@ bool GameUtils::ToFloat(const std::wstring& floating, float& outFloating)
 	return true;
 }
 
-GameError GameUtils::ReadFile(const std::string& path, std::vector<uint8_t>& outBuffer)
+std::vector<uint8_t> GameUtils::ReadFile(const std::string& path)
 {
 	HANDLE file = ::CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
-	if (file == INVALID_HANDLE_VALUE)
-	{
-		return WindowsError();
-	}
-
-	DWORD fileSize = ::GetFileSize(file, nullptr);
-	outBuffer.resize(fileSize);
-
-	DWORD bytesRead;
-	if (!::ReadFile(file, outBuffer.data(), fileSize, &bytesRead, nullptr))
-	{
-		return WindowsError();
-	}
-	
-	if (!::CloseHandle(file))
-	{
-		return WindowsError();
-	}
-
-	return GameError(ErrorCode::OK, "Succeed read file.");
-}
-
-GameError GameUtils::ReadFile(const std::wstring& path, std::vector<uint8_t>& outBuffer)
-{
-	HANDLE file = ::CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
-	if (file == INVALID_HANDLE_VALUE)
-	{
-		return WindowsError();
-	}
+	ASSERT(file != INVALID_HANDLE_VALUE, "%s", GetWinErrorMessage());
 
 	DWORD fileSize = ::GetFileSize(file, nullptr);
 	std::vector<uint8_t> buffer(fileSize);
 
 	DWORD bytesRead;
-	if (!::ReadFile(file, buffer.data(), fileSize, &bytesRead, nullptr))
-	{
-		return WindowsError();
-	}
+	ASSERT(::ReadFile(file, buffer.data(), fileSize, &bytesRead, nullptr), "%s", GetWinErrorMessage());
+	ASSERT(::CloseHandle(file), "%s", GetWinErrorMessage());
 
-	if (!::CloseHandle(file))
-	{
-		return WindowsError();
-	}
-
-	return GameError(ErrorCode::OK, "Succeed read file.");
+	return buffer;
 }
 
-GameError GameUtils::WriteFile(const std::string& path, const std::vector<uint8_t>& buffer)
+std::vector<uint8_t> GameUtils::ReadFile(const std::wstring& path)
+{
+	HANDLE file = ::CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
+	ASSERT(file != INVALID_HANDLE_VALUE, "%s", GetWinErrorMessage());
+
+	DWORD fileSize = ::GetFileSize(file, nullptr);
+	std::vector<uint8_t> buffer(fileSize);
+
+	DWORD bytesRead;
+	ASSERT(::ReadFile(file, buffer.data(), fileSize, &bytesRead, nullptr), "%s", GetWinErrorMessage());
+	ASSERT(::CloseHandle(file), "%s", GetWinErrorMessage());;
+
+	return buffer;
+}
+
+void GameUtils::WriteFile(const std::string& path, const std::vector<uint8_t>& buffer)
 {
 	HANDLE file = ::CreateFileA(path.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-	if (file == INVALID_HANDLE_VALUE)
-	{
-		return WindowsError();
-	}
+	ASSERT(file != INVALID_HANDLE_VALUE, GetWinErrorMessage());
 
 	DWORD writeByteSize = 0;
-	if (!::WriteFile(file, buffer.data(), static_cast<DWORD>(buffer.size()), &writeByteSize, nullptr))
-	{
-		return WindowsError();
-	}
-
-	if (!::CloseHandle(file))
-	{
-		return WindowsError();
-	}
-
-	return GameError(ErrorCode::OK, "Succeed write file.");
+	ASSERT(::WriteFile(file, buffer.data(), static_cast<DWORD>(buffer.size()), &writeByteSize, nullptr), GetWinErrorMessage());
+	ASSERT(::CloseHandle(file), "failed to close %s", GetWinErrorMessage());
 }
 
-GameError GameUtils::WriteFile(const std::wstring& path, const std::vector<uint8_t>& buffer)
+void GameUtils::WriteFile(const std::wstring& path, const std::vector<uint8_t>& buffer)
 {
 	HANDLE file = ::CreateFileW(path.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-	if (file == INVALID_HANDLE_VALUE)
-	{
-		return WindowsError();
-	}
+	ASSERT(file != INVALID_HANDLE_VALUE, GetWinErrorMessage());
 
 	DWORD writeByteSize = 0;
-	if (!::WriteFile(file, buffer.data(), static_cast<DWORD>(buffer.size()), &writeByteSize, nullptr))
-	{
-		return WindowsError();
-	}
-
-	if (!::CloseHandle(file))
-	{
-		return WindowsError();
-	}
-
-	return GameError(ErrorCode::OK, "Succeed write file.");
+	ASSERT(::WriteFile(file, buffer.data(), static_cast<DWORD>(buffer.size()), &writeByteSize, nullptr), GetWinErrorMessage());
+	ASSERT(::CloseHandle(file), "failed to close %s", GetWinErrorMessage());
 }
 
-GameError GameUtils::MakeDirectory(const std::string& path)
+void GameUtils::MakeDirectory(const std::string& path)
 {
-	if (!CreateDirectoryA(path.c_str(), nullptr))
-	{
-		return WindowsError();
-	}
-
-	return GameError(ErrorCode::OK, "Succeed make directory.");
+	ASSERT(CreateDirectoryA(path.c_str(), nullptr), GetWinErrorMessage());
 }
 
-GameError GameUtils::MakeDirectory(const std::wstring& path)
+void GameUtils::MakeDirectory(const std::wstring& path)
 {
-	if (!CreateDirectoryW(path.c_str(), nullptr))
-	{
-		return WindowsError();
-	}
-
-	return GameError(ErrorCode::OK, "Succeed make directory.");
+	ASSERT(CreateDirectoryW(path.c_str(), nullptr), GetWinErrorMessage());
 }
 
 bool GameUtils::IsValidPath(const std::string& path)

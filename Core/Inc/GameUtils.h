@@ -4,8 +4,6 @@
 #include <string>
 #include <cstdarg>
 
-#include "GameError.h"
-
 namespace GameUtils
 {
 
@@ -26,12 +24,12 @@ bool ToFloat(const std::string& floating, float& outFloating);
 bool ToFloat(const std::wstring& floating, float& outFloating);
 
 /** 파일 관련 기능. */
-GameError ReadFile(const std::string& path, std::vector<uint8_t>& outBuffer);
-GameError ReadFile(const std::wstring& path, std::vector<uint8_t>& outBuffer);
-GameError WriteFile(const std::string& path, const std::vector<uint8_t>& buffer);
-GameError WriteFile(const std::wstring& path, const std::vector<uint8_t>& buffer);
-GameError MakeDirectory(const std::string& path);
-GameError MakeDirectory(const std::wstring& path);
+std::vector<uint8_t> ReadFile(const std::string& path);
+std::vector<uint8_t> ReadFile(const std::wstring& path);
+void WriteFile(const std::string& path, const std::vector<uint8_t>& buffer);
+void WriteFile(const std::wstring& path, const std::vector<uint8_t>& buffer);
+void MakeDirectory(const std::string& path);
+void MakeDirectory(const std::wstring& path);
 bool IsValidPath(const std::string& path);
 bool IsValidPath(const std::wstring& path);
 std::string GetBasePath(const std::string& path);
