@@ -1,5 +1,11 @@
 #pragma once
 
+#include <cstdarg>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
+#include <string>
+
 #if defined(DEBUG_MODE) || defined(RELEASE_MODE) || defined(RELWITHDEBINFO_MODE)
 inline void DebugPrintF(const char* format, ...)
 {
