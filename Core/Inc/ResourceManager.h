@@ -46,6 +46,7 @@ public:
 	void Destroy(const IResource* resource);
 
 	void Register(const std::string& name, IResource* resource);
+	bool IsRegistration(const std::string& name);
 	void Unregister(const std::string& name);
 
 	template <typename TResource>
@@ -66,6 +67,8 @@ private:
 	ResourceManager() = default;
 	virtual ~ResourceManager() {}
 	
+	void Unregister(const IResource* resource); /** 이 메서드는 내부에서만 사용해야 합니다. */
+
 	void Cleanup(); /** 이 메서드는 IApp에서만 접근해야 합니다. */
 
 private:

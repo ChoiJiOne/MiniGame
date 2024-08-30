@@ -22,6 +22,8 @@ void ResourceManager::Destroy(const IResource* resource)
 
 	if (resourceID != -1 && resources_[resourceID])
 	{
+		Unregister(resource);
+
 		if (resources_[resourceID]->IsInitialized())
 		{
 			resources_[resourceID]->Release();
@@ -40,12 +42,34 @@ void ResourceManager::Register(const std::string& name, IResource* resource)
 	resourceCache_.insert({ name, resource });
 }
 
+bool ResourceManager::IsRegistration(const std::string& name)
+{
+	return resourceCache_.find(name) != resourceCache_.end();
+}
+
 void ResourceManager::Unregister(const std::string& name)
 {
 	auto it = resourceCache_.find(name);
 	ASSERT(it != resourceCache_.end(), "Can't find '%s' in ResourceManager.", name.c_str());
 
 	resourceCache_.erase(it);
+}
+
+void ResourceManager::Unregister(const IResource* resource)
+{
+	std::string name;
+	for (const auto& resourceCache : resourceCache_)
+	{
+		if (resourceCache.second == resource)
+		{
+			name = resourceCache.first;
+		}
+	}
+
+	if (!name.empty())
+	{
+		Unregister(name);
+	}
 }
 
 void ResourceManager::Cleanup()
