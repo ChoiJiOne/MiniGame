@@ -32,6 +32,22 @@ void ResourceManager::Destroy(const IResource* resource)
 	}
 }
 
+void ResourceManager::Register(const std::string& name, IResource* resource)
+{
+	auto it = resourceCache_.find(name);
+	ASSERT(it == resourceCache_.end(), "Already register '%s'", name.c_str());
+
+	resourceCache_.insert({ name, resource });
+}
+
+void ResourceManager::Unregister(const std::string& name)
+{
+	auto it = resourceCache_.find(name);
+	ASSERT(it != resourceCache_.end(), "Can't find '%s' in ResourceManager.", name.c_str());
+
+	resourceCache_.erase(it);
+}
+
 void ResourceManager::Cleanup()
 {
 	for (std::size_t index = 0; index < size_; ++index)

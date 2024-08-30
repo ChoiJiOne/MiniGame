@@ -2,6 +2,7 @@
 
 #include <array>
 #include <memory>
+#include <map>
 
 #include "IResource.h"
 
@@ -44,6 +45,21 @@ public:
 
 	void Destroy(const IResource* resource);
 
+	void Register(const std::string& name, IResource* resource);
+	void Unregister(const std::string& name);
+
+	template <typename TResource>
+	TResource* GetByName(const std::string& name)
+	{
+		auto it = resourceCache_.find(name);
+		if (it == resourceCache_.end())
+		{
+			return nullptr;
+		}
+
+		return reinterpret_cast<TResource*>(it->second);
+	}
+
 private:
 	friend class IApp;
 
@@ -58,4 +74,6 @@ private:
 	uint32_t size_ = 0;
 	std::array<std::unique_ptr<IResource>, MAX_RESOURCE_SIZE> resources_;
 	std::array<bool, MAX_RESOURCE_SIZE> usage_;
+
+	std::map<std::string, IResource*> resourceCache_;
 };
