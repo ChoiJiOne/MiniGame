@@ -14,9 +14,12 @@
 /** 서드 파티 라이브러리 사용을 위한 헤더 선언 종료*/
 
 #include "Assertion.h"
+#include "AudioManager.h"
 #include "CrashManager.h"
 #include "Config.h"
+#include "EntityManager.h"
 #include "IApp.h"
+#include "ResourceManager.h"
 
 static LPTOP_LEVEL_EXCEPTION_FILTER topLevelExceptionFilter_;
 extern LONG WINAPI DetectApplicationCrash(EXCEPTION_POINTERS* ep);
@@ -92,10 +95,16 @@ IApp::IApp(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool b
 
 	ASSERT(ImGui_ImplSDL2_InitForOpenGL(window, context), "Failed to initialize ImGui for SDL2.");
 	ASSERT(ImGui_ImplOpenGL3_Init(), "Failed to initialzie ImGui for OpenGL.");
+
+	AudioManager::Get().Startup();
 }
 
 IApp::~IApp()
 {
+	EntityManager::Get().Cleanup();
+	ResourceManager::Get().Cleanup();
+	AudioManager::Get().Shutdown();
+
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
