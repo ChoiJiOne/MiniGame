@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstring>
 #include <string>
+#include <map>
 
 #include <windows.h>
 
@@ -72,7 +73,6 @@ inline void DebugPrintF(const wchar_t* format, ...)
 
 #if defined(WIN32) || defined(WIN64)
 #include <windows.h>
-
 static const char* GetWinErrorMessage()
 {
 	static const uint32_t MAX_BUFFER_SIZE = 1024;
@@ -85,7 +85,7 @@ static const char* GetWinErrorMessage()
 #endif
 
 #if defined(__glad_h_)
-static const char* GetErrorMessage(const GLenum errorCode)
+static const char* GetGLErrorMessage(const GLenum errorCode)
 {
 	static std::map<GLenum, const char*> errorMessages =
 	{
@@ -113,7 +113,7 @@ EXP;\
 	GLenum _errorCode = glGetError();\
 	if (_errorCode != GL_NO_ERROR)\
 	{\
-		DebugPrintF("\nOpenGL Assertion check point failed!\nFile : %s\nLine : %d\nExpression : %s\nGL : %s\nMessage : ", __FILE__, __LINE__, #EXP, GetErrorMessage(_errorCode));\
+		DebugPrintF("\nOpenGL Assertion check point failed!\nFile : %s\nLine : %d\nExpression : %s\nGL : %s\nMessage : ", __FILE__, __LINE__, #EXP, GetGLErrorMessage(_errorCode));\
 		DebugPrintF(__VA_ARGS__);\
 		DebugPrintF("\n");\
 		__debugbreak();\
@@ -127,7 +127,7 @@ EXP;\
 	GLenum _errorCode = glGetError();\
 	if (_errorCode != GL_NO_ERROR)\
 	{\
-		DebugPrintF("\nOpenGL Assertion check point failed!\nFile : %s\nLine : %d\nExpression : %s\nGL : %s\n", __FILE__, __LINE__, #EXP, GetErrorMessage(_errorCode));\
+		DebugPrintF("\nOpenGL Assertion check point failed!\nFile : %s\nLine : %d\nExpression : %s\nGL : %s\n", __FILE__, __LINE__, #EXP, GetGLErrorMessage(_errorCode));\
 		__debugbreak();\
 	}\
 }
