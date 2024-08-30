@@ -12,6 +12,7 @@ public:
 		if (bIsInitialized_)
 		{
 			Release();
+			bIsInitialized_ = false;
 		}
 	}
 
