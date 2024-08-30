@@ -12,14 +12,11 @@ public:
 
 	static CrashManager& Get();
 
-	std::wstring GetCurrentSystemTimeAsString();
-	std::wstring GetCrashDumpPath();
-	void SetCrashCallbackEvent(const std::function<void()>& callback) { crashCallbackEvent_ = callback; }
+	void SetCrashCallbackEvent(const std::function<void()>& callback);
+	const wchar_t* GetCrashDumpFileNamePtr();
+	const std::wstring& GetCrashDumpFileName();
 
 private:
 	CrashManager() = default;
 	virtual ~CrashManager() {}
-	
-private:
-	std::function<void()> crashCallbackEvent_ = nullptr;
 };
