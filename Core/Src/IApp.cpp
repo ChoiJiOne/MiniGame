@@ -137,7 +137,7 @@ void IApp::GetScreenSize(int32_t& outWidth, int32_t& outHeight)
 
 void IApp::RunLoop(const std::function<void(float)>& frameCallback)
 {
-	timer_.Tick();
+	timer_.Reset();
 
 	SDL_Event e;
 	while (!bIsQuit_)
@@ -168,5 +168,103 @@ void IApp::RunLoop(const std::function<void(float)>& frameCallback)
 				frameCallback(timer_.GetDeltaSeconds());
 			}
 		}
+	}
+}
+
+void IApp::BeginFrame(float red, float green, float blue, float alpha, float depth, uint8_t stencil)
+{
+	SetWindowViewport();
+
+	glClearColor(red, green, blue, alpha);
+	glClearDepth(depth);
+	glClearStencil(stencil);
+
+	GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+}
+
+void IApp::EndFrame()
+{
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	SDL_GL_SwapWindow(reinterpret_cast<SDL_Window*>(window_));
+}
+
+void IApp::SetViewport(int32_t x, int32_t y, int32_t width, int32_t height)
+{
+	glViewport(x, y, width, height);
+}
+
+void IApp::SetWindowViewport()
+{
+	int32_t w = 0;
+	int32_t h = 0;
+	GetScreenSize<int32_t>(w, h);
+	SetViewport(0, 0, w, h);
+}
+
+void IApp::SetVsyncMode(bool bIsEnable)
+{
+	ASSERT(SDL_GL_SetSwapInterval(static_cast<int32_t>(bIsEnable)) == 0, "%s", SDL_GetError());
+}
+
+void IApp::SetDepthMode(bool bIsEnable)
+{
+	if (bIsEnable)
+	{
+		GL_CHECK(glEnable(GL_DEPTH_TEST));
+	}
+	else
+	{
+		GL_CHECK(glDisable(GL_DEPTH_TEST));
+	}
+}
+
+void IApp::SetStencilMode(bool bIsEnable)
+{
+	if (bIsEnable)
+	{
+		GL_CHECK(glEnable(GL_STENCIL_TEST));
+	}
+	else
+	{
+		GL_CHECK(glDisable(GL_STENCIL_TEST));
+	}
+}
+
+void IApp::SetAlphaBlendMode(bool bIsEnable)
+{
+	if (bIsEnable)
+	{
+		GL_CHECK(glEnable(GL_BLEND));
+		GL_CHECK(glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO));
+	}
+	else
+	{
+		GL_CHECK(glDisable(GL_BLEND));
+	}
+}
+
+void IApp::SetMultisampleMode(bool bIsEnable)
+{
+	if (bIsEnable)
+	{
+		GL_CHECK(glEnable(GL_MULTISAMPLE));
+	}
+	else
+	{
+		GL_CHECK(glDisable(GL_MULTISAMPLE));
+	}
+}
+
+void IApp::SetCullFaceMode(bool bIsEnable)
+{
+	if (bIsEnable)
+	{
+		GL_CHECK(glEnable(GL_CULL_FACE));
+	}
+	else
+	{
+		GL_CHECK(glDisable(GL_CULL_FACE));
 	}
 }

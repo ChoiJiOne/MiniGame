@@ -342,8 +342,21 @@ public:
 	template <typename T>
 	void GetScreenSize(T& outWidth, T& outHeight);
 
+	/** 렌더링 관련 설정 */
+	void SetViewport(int32_t x, int32_t y, int32_t width, int32_t height);
+	void SetWindowViewport();
+	void SetVsyncMode(bool bIsEnable);
+	void SetDepthMode(bool bIsEnable);
+	void SetStencilMode(bool bIsEnable);
+	void SetAlphaBlendMode(bool bIsEnable);
+	void SetMultisampleMode(bool bIsEnable);
+	void SetCullFaceMode(bool bIsEnable);
+
 protected:
 	void RunLoop(const std::function<void(float)>& frameCallback);
+
+	void BeginFrame(float red, float green, float blue, float alpha, float depth = 1.0f, uint8_t stencil = 0);
+	void EndFrame();
 	
 protected:
 	static IApp* instance_;
