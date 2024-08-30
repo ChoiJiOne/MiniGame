@@ -1,0 +1,24 @@
+#pragma once
+
+#include <array>
+#include <memory>
+
+#include "Macro.h"
+
+/** 오디오 매니저는 싱글턴입니다. */
+class AudioManager
+{
+public:
+	DISALLOW_COPY_AND_ASSIGN(AudioManager);
+
+	static AudioManager& Get();
+
+private:
+	friend class IApp;
+
+	AudioManager() = default;
+	virtual ~AudioManager() {}
+
+	void Startup(); /** IApp 내부에서만 호출해야 합니다. */
+	void Shutdown(); /** IApp 내부에서만 호출해야 합니다. */
+};
