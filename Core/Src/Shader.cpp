@@ -1,14 +1,77 @@
 #include <glad/glad.h>
 
-#include "GameAssert.h"
+#include "Assertion.h"
 #include "GameUtils.h"
 #include "Shader.h"
 
 static const uint32_t MAX_STRING_BUFFER = 1024;
 static char glLogBuffer_[MAX_STRING_BUFFER] = { 0, };
 
-Shader::Shader()
+Shader::Shader(const std::string& csPath)
 {
+	uniformLocationCache_ = std::map<std::string, uint32_t>();
+
+	std::vector<uint8_t> csBuffer = GameUtils::ReadFile(csPath);
+	csBuffer.push_back('\0');
+	
+	uint32_t csID = CreateShader(Type::COMPUTE, reinterpret_cast<const char*>(csBuffer.data()));
+	ASSERT(csID != 0, "failed to create %s", csPath.c_str());
+
+	std::vector<uint32_t> shaderIDs = { csID };
+	programID_ = CreateProgram(shaderIDs);
+
+	GL_CHECK(glDeleteShader(csID));
+
+	bIsInitialized_ = true;
+}
+
+Shader::Shader(const std::string& vsPath, const std::string& fsPath)
+{
+	uniformLocationCache_ = std::map<std::string, uint32_t>();
+
+	std::vector<uint8_t> vsBuffer = GameUtils::ReadFile(vsPath);
+	vsBuffer.push_back('\0');
+
+	std::vector<uint8_t> fsBuffer = GameUtils::ReadFile(fsPath);
+	fsBuffer.push_back('\0');
+
+	uint32_t vsID = CreateShader(Type::VERTEX, reinterpret_cast<const char*>(vsBuffer.data()));
+	uint32_t fsID = CreateShader(Type::FRAGMENT, reinterpret_cast<const char*>(fsBuffer.data()));
+
+	std::vector<uint32_t> shaderIDs = { vsID, fsID };
+	programID_ = CreateProgram(shaderIDs);
+
+	GL_CHECK(glDeleteShader(vsID));
+	GL_CHECK(glDeleteShader(fsID));
+
+	bIsInitialized_ = true;
+}
+
+Shader::Shader(const std::string& vsPath, const std::string& gsPath, const std::string& fsPath)
+{
+	uniformLocationCache_ = std::map<std::string, uint32_t>();
+
+	std::vector<uint8_t> vsBuffer = GameUtils::ReadFile(vsPath);
+	vsBuffer.push_back('\0');
+
+	std::vector<uint8_t> gsBuffer = GameUtils::ReadFile(gsPath);
+	gsBuffer.push_back('\0');
+
+	std::vector<uint8_t> fsBuffer = GameUtils::ReadFile(fsPath);
+	fsBuffer.push_back('\0');
+
+	uint32_t vsID = CreateShader(Type::VERTEX, reinterpret_cast<const char*>(vsBuffer.data()));
+	uint32_t gsID = CreateShader(Type::GEOMETRY, reinterpret_cast<const char*>(gsBuffer.data()));
+	uint32_t fsID = CreateShader(Type::FRAGMENT, reinterpret_cast<const char*>(fsBuffer.data()));
+
+	std::vector<uint32_t> shaderIDs = { vsID, gsID, fsID };
+	programID_ = CreateProgram(shaderIDs);
+
+	GL_CHECK(glDeleteShader(vsID));
+	GL_CHECK(glDeleteShader(gsID));
+	GL_CHECK(glDeleteShader(fsID));
+
+	bIsInitialized_ = true;
 }
 
 Shader::~Shader()
@@ -21,7 +84,7 @@ Shader::~Shader()
 
 void Shader::Release()
 {
-	GAME_CHECK(bIsInitialized_);
+	CHECK(bIsInitialized_);
 
 	if (programID_) /** 셰이더 프로그램이 할당에 성공했다면 0이 아닌 값이 할당됨. */
 	{
@@ -30,99 +93,6 @@ void Shader::Release()
 	}
 
 	bIsInitialized_ = false;
-}
-
-GameError Shader::LoadFromFile(const std::string& csPath)
-{
-	std::vector<uint8_t> csBuffer;
-	GameError error = GameUtils::ReadFile(csPath, csBuffer);
-	if (error.GetCode() != ErrorCode::OK)
-	{
-		return error;
-	}
-	csBuffer.push_back('\0');
-
-	uint32_t csID = CreateShader(Type::COMPUTE, reinterpret_cast<const char*>(csBuffer.data()));
-
-	std::vector<uint32_t> shaderIDs = { csID };
-	programID_ = CreateProgram(shaderIDs);
-
-	GL_CHECK(glDeleteShader(csID));
-
-	bIsInitialized_ = true;
-	return GameError(ErrorCode::OK, "Succeed load shader from file.");
-}
-
-GameError Shader::LoadFromFile(const std::string& vsPath, const std::string& fsPath)
-{
-	std::vector<uint8_t> vsBuffer;
-	GameError error = GameUtils::ReadFile(vsPath, vsBuffer);
-	if (error.GetCode() != ErrorCode::OK)
-	{
-		return error;
-	}
-	vsBuffer.push_back('\0');
-
-	std::vector<uint8_t> fsBuffer;
-	error = GameUtils::ReadFile(fsPath, fsBuffer);
-	if (error.GetCode() != ErrorCode::OK)
-	{
-		return error;
-	}
-	fsBuffer.push_back('\0');
-
-	uint32_t vsID = CreateShader(Type::VERTEX, reinterpret_cast<const char*>(vsBuffer.data()));
-	uint32_t fsID = CreateShader(Type::FRAGMENT, reinterpret_cast<const char*>(fsBuffer.data()));
-
-	std::vector<uint32_t> shaderIDs = { vsID, fsID };
-	programID_ = CreateProgram(shaderIDs);
-
-	GL_CHECK(glDeleteShader(fsID));
-	GL_CHECK(glDeleteShader(vsID));
-
-	bIsInitialized_ = true;
-	return GameError(ErrorCode::OK, "Succeed load shader from file.");
-}
-
-GameError Shader::LoadFromFile(const std::string& vsPath, const std::string& gsPath, const std::string& fsPath)
-{
-	std::vector<uint8_t> vsBuffer;
-	GameError error = GameUtils::ReadFile(vsPath, vsBuffer);
-	if (error.GetCode() != ErrorCode::OK)
-	{
-		return error;
-	}
-	vsBuffer.push_back('\0');
-
-	std::vector<uint8_t> gsBuffer;
-	error = GameUtils::ReadFile(gsPath, gsBuffer);
-	if (error.GetCode() != ErrorCode::OK)
-	{
-		return error;
-	}
-	gsBuffer.push_back('\0');
-
-	std::vector<uint8_t> fsBuffer;
-	error = GameUtils::ReadFile(fsPath, fsBuffer);
-	if (error.GetCode() != ErrorCode::OK)
-	{
-		return error;
-	}
-	fsBuffer.push_back('\0');
-
-	uint32_t vsID = CreateShader(Type::VERTEX, reinterpret_cast<const char*>(vsBuffer.data()));
-	uint32_t gsID = CreateShader(Type::GEOMETRY, reinterpret_cast<const char*>(gsBuffer.data()));
-	uint32_t fsID = CreateShader(Type::FRAGMENT, reinterpret_cast<const char*>(fsBuffer.data()));
-
-	std::vector<uint32_t> shaderIDs = { vsID, gsID, fsID };
-	programID_ = CreateProgram(shaderIDs);
-
-	GL_CHECK(glDeleteShader(fsID));
-	GL_CHECK(glDeleteShader(gsID));
-	GL_CHECK(glDeleteShader(vsID));
-
-	bIsInitialized_ = true;
-	return GameError(ErrorCode::OK, "Succeed load shader from file.");
 }
 
 void Shader::Bind()
@@ -343,7 +313,7 @@ int32_t Shader::GetUniformLocation(const std::string& name)
 	if (uniformLocation == uniformLocationCache_.end())
 	{
 		int32_t location = glGetUniformLocation(programID_, name.c_str());
-		GL_CHECK(location != -1);
+		ASSERT((location != -1), "%s", GetGLErrorMessage(glGetError()));
 
 		uniformLocationCache_.insert({ name, location });
 		return location;
@@ -357,7 +327,7 @@ int32_t Shader::GetUniformLocation(const std::string& name)
 uint32_t Shader::CreateShader(const Type& type, const char* sourcePtr)
 {
 	uint32_t shaderID = glCreateShader(static_cast<GLenum>(type));
-	GL_CHECK(shaderID != 0);
+	ASSERT((shaderID != 0), "%s", GetGLErrorMessage(glGetError()));
 
 	GL_CHECK(glShaderSource(shaderID, 1, &sourcePtr, nullptr));
 	GL_CHECK(glCompileShader(shaderID));
@@ -367,7 +337,7 @@ uint32_t Shader::CreateShader(const Type& type, const char* sourcePtr)
 	if (!status)
 	{
 		GL_CHECK(glGetShaderInfoLog(shaderID, MAX_STRING_BUFFER, nullptr, glLogBuffer_));
-		GAME_ASSERT(false, "\nfailed to compile shader\n%s", glLogBuffer_);
+		ASSERT(false, "failed to compile shader\n%s", glLogBuffer_);
 	}
 
 	return shaderID;
@@ -375,10 +345,10 @@ uint32_t Shader::CreateShader(const Type& type, const char* sourcePtr)
 
 uint32_t Shader::CreateProgram(const std::vector<uint32_t>& shaderIDs)
 {
-	GAME_CHECK(shaderIDs.size() > 0);
+	CHECK(shaderIDs.size() > 0);
 
 	uint32_t programID = glCreateProgram();
-	GL_CHECK(programID != 0);
+	ASSERT((programID != 0), "%s", GetGLErrorMessage(glGetError()));
 
 	for (const uint32_t shaderID : shaderIDs)
 	{
@@ -391,7 +361,7 @@ uint32_t Shader::CreateProgram(const std::vector<uint32_t>& shaderIDs)
 	if (!status)
 	{
 		GL_CHECK(glGetProgramInfoLog(programID_, MAX_STRING_BUFFER, nullptr, glLogBuffer_));
-		GAME_ASSERT(false, "\nfailed to link shader program\n%s", glLogBuffer_);
+		ASSERT(false, "failed to link shader program\n%s", glLogBuffer_);
 	}
 
 	return programID;

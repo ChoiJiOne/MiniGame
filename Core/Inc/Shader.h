@@ -4,24 +4,24 @@
 #include <string>
 #include <vector>
 
-#include "GameError.h"
 #include "GameMath.h"
 #include "IResource.h"
 
 class Shader : public IResource
 {
 public:
-	Shader();
+	Shader() = default;
+
+	explicit Shader(const std::string& csPath);
+	explicit Shader(const std::string& vsPath, const std::string& fsPath);
+	explicit Shader(const std::string& vsPath, const std::string& gsPath, const std::string& fsPath);
+
 	virtual ~Shader();
 
 	DISALLOW_COPY_AND_ASSIGN(Shader);
 
 	virtual void Release() override;
 
-	GameError LoadFromFile(const std::string& csPath);
-	GameError LoadFromFile(const std::string& vsPath, const std::string& fsPath);
-	GameError LoadFromFile(const std::string& vsPath, const std::string& gsPath, const std::string& fsPath);
-	
 	void Bind();
 	void Unbind();
 
