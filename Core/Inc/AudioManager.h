@@ -2,6 +2,7 @@
 
 #include <array>
 #include <memory>
+#include <string>
 
 #include "Macro.h"
 
@@ -15,10 +16,14 @@ public:
 
 private:
 	friend class IApp;
+	friend class Sound;
 
 	AudioManager() = default;
 	virtual ~AudioManager() {}
 
 	void Startup(); /** IApp 내부에서만 호출해야 합니다. */
 	void Shutdown(); /** IApp 내부에서만 호출해야 합니다. */
+
+	void* CreateSound(const std::string& path);
+	void DestroySound(void* sound);
 };
