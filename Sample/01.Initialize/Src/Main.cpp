@@ -5,9 +5,36 @@
 #include <crtdbg.h>
 #endif
 
-#include "GameAssert.h"
-#include "GameMaker.h"
-#include "GameRenderer.h"
+#include "Assertion.h"
+#include "IApp.h"
+
+class DemoApp : public IApp
+{
+public:
+	DemoApp() : IApp("01.Initialize", 100, 100, 800, 600, false, false) {}
+	virtual ~DemoApp() {}
+
+	DISALLOW_COPY_AND_ASSIGN(DemoApp);
+
+	virtual void Startup() override
+	{
+	}
+
+	virtual void Shutdown() override
+	{
+	}
+
+	virtual void Run() override
+	{
+		RunLoop(
+			[&](float deltaSeconds)
+			{
+				BeginFrame(1.0f, 0.0f, 0.0f, 1.0f);
+				EndFrame();
+			}
+		);
+	}
+};
 
 int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR pCmdLine, _In_ int32_t nCmdShow)
 {
@@ -15,17 +42,9 @@ int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	GameError error = GameMaker::Startup("01.Initialize", 100, 100, 800, 600);
-	GAME_ASSERT(error.GetCode() == ErrorCode::OK, "%s", error.GetMessagePtr());
-
-	GameMaker::RunLoop(
-		[](float deltaSeconds) 
-		{
-			GameRenderer::BeginFrame(1.0f, 1.0f, 1.0f, 1.0f);
-			GameRenderer::EndFrame();
-		}
-	);
-
-	GameMaker::Shutdown();
+	std::unique_ptr<IApp> app = std::make_unique<DemoApp>();
+	app->Startup();
+	app->Run();
+	app->Shutdown();
 	return 0;
 }
