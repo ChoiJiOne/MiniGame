@@ -2,6 +2,7 @@
 
 #include <array>
 #include <memory>
+#include <map>
 
 #include "IEntity.h"
 
@@ -44,11 +45,29 @@ public:
 
 	void Destroy(const IEntity* entity);
 
+	void Register(const std::string& name, IEntity* entity);
+	bool IsRegistration(const std::string& name);
+	void Unregister(const std::string& name);
+
+	template <typename TEntity>
+	TEntity* GetByName(const std::string& name)
+	{
+		auto it = entityCache_.find(name);
+		if (it == entityCache_.end())
+		{
+			return nullptr;
+		}
+
+		return reinterpret_cast<TEntity*>(it->second);
+	}
+
 private:
 	friend class IApp;
 
 	EntityManager() = default;
 	virtual ~EntityManager() {}
+
+	void Unregister(const IEntity* entity);
 
 	void Cleanup();
 
@@ -58,4 +77,6 @@ private:
 	uint32_t size_ = 0;
 	std::array<std::unique_ptr<IEntity>, MAX_ENTITY_SIZE> entities_;
 	std::array<bool, MAX_ENTITY_SIZE> usage_;
+
+	std::map<std::string, IEntity*> entityCache_;
 };

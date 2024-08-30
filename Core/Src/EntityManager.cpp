@@ -22,6 +22,8 @@ void EntityManager::Destroy(const IEntity* entity)
 
 	if (entityID != -1 && entities_[entityID])
 	{
+		Unregister(entity);
+
 		if (entities_[entityID]->IsInitialized())
 		{
 			entities_[entityID]->Release();
@@ -29,6 +31,44 @@ void EntityManager::Destroy(const IEntity* entity)
 
 		entities_[entityID].reset();
 		usage_[entityID] = false;
+	}
+}
+
+void EntityManager::Register(const std::string& name, IEntity* entity)
+{
+	auto it = entityCache_.find(name);
+	ASSERT(it == entityCache_.end(), "Already register '%s'", name.c_str());
+
+	entityCache_.insert({ name, entity });
+}
+
+bool EntityManager::IsRegistration(const std::string& name)
+{
+	return entityCache_.find(name) != entityCache_.end();
+}
+
+void EntityManager::Unregister(const std::string& name)
+{
+	auto it = entityCache_.find(name);
+	ASSERT(it != entityCache_.end(), "Can't find '%s' in EntityManager.", name.c_str());
+
+	entityCache_.erase(it);
+}
+
+void EntityManager::Unregister(const IEntity* entity)
+{
+	std::string name;
+	for (const auto& entityCache : entityCache_)
+	{
+		if (entityCache.second == entity)
+		{
+			name = entityCache.first;
+		}
+	}
+
+	if (!name.empty())
+	{
+		Unregister(name);
 	}
 }
 
