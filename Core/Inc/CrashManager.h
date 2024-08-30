@@ -5,6 +5,7 @@
 
 #include "Macro.h"
 
+/** 크래시 매니저는 싱글턴 클래스입니다. */
 class CrashManager
 {
 public:
