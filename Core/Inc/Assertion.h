@@ -6,6 +6,8 @@
 #include <cstring>
 #include <string>
 
+#include <windows.h>
+
 #if defined(DEBUG_MODE) || defined(RELEASE_MODE) || defined(RELWITHDEBINFO_MODE)
 inline void DebugPrintF(const char* format, ...)
 {
