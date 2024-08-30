@@ -7,14 +7,7 @@ class IEntity
 {
 public:
 	IEntity() = default;
-	virtual ~IEntity()
-	{
-		if (bIsInitialized_)
-		{
-			Release();
-			bIsInitialized_ = false;
-		}
-	}
+	virtual ~IEntity() {}
 
 	DISALLOW_COPY_AND_ASSIGN(IEntity);
 

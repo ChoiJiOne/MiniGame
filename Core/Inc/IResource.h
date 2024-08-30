@@ -7,14 +7,7 @@ class IResource
 {
 public:
 	IResource() = default;
-	virtual ~IResource() 
-	{
-		if (bIsInitialized_)
-		{
-			Release();
-			bIsInitialized_ = false;
-		}
-	}
+	virtual ~IResource() {}
 
 	DISALLOW_COPY_AND_ASSIGN(IResource);
 
