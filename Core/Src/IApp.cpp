@@ -139,19 +139,34 @@ void IApp::RunLoop(const std::function<void(float)>& frameCallback)
 {
 	timer_.Tick();
 
+	SDL_Event e;
 	while (!bIsQuit_)
 	{
-		timer_.Tick();
-		
-		//PollEvents();
-
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplSDL2_NewFrame();
-		ImGui::NewFrame();
-
-		if (frameCallback)
+		if (SDL_PollEvent(&e))
 		{
-			frameCallback(timer_.GetDeltaSeconds());
+			ImGui_ImplSDL2_ProcessEvent(&e);
+
+			switch (e.type)
+			{
+			case SDL_QUIT:
+				bIsQuit_ = true;
+				break;
+			case SDL_WINDOWEVENT:
+				break;
+			}
+		}
+		else
+		{
+			timer_.Tick();
+
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplSDL2_NewFrame();
+			ImGui::NewFrame();
+
+			if (frameCallback)
+			{
+				frameCallback(timer_.GetDeltaSeconds());
+			}
 		}
 	}
 }
