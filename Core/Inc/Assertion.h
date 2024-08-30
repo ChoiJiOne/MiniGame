@@ -64,6 +64,20 @@ inline void DebugPrintF(const wchar_t* format, ...)
 #endif
 #endif
 
+#if defined(WIN32) || defined(WIN64)
+#include <windows.h>
+
+static const char* GetWinErrorMessage()
+{
+	static const uint32_t MAX_BUFFER_SIZE = 1024;
+	static char buffer[MAX_BUFFER_SIZE];
+
+	uint32_t size = FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), buffer, MAX_BUFFER_SIZE, nullptr);
+
+	return buffer;
+}
+#endif
+
 #if defined(__glad_h_)
 static const char* GetErrorMessage(const GLenum errorCode)
 {
