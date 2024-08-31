@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <map>
 #include <windows.h>
 
@@ -87,6 +88,16 @@ IApp::IApp(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool b
 
 	ASSERT(gladLoadGLLoader((GLADloadproc)(SDL_GL_GetProcAddress)), "Failed to load OpenGL function.");
 
+	int32_t extensions = 0;
+	GL_CHECK(glGetIntegerv(GL_NUM_EXTENSIONS, &extensions));
+
+	extensions_ = std::vector<std::string>(extensions);
+	for (uint32_t index = 0; index < extensions; ++index)
+	{
+		const char* ext = (const char*)(glGetStringi(GL_EXTENSIONS, index));
+		extensions_[index] = ext;
+	}
+	
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	io.IniFilename = nullptr;
@@ -285,4 +296,10 @@ void IApp::SetCullFaceMode(bool bIsEnable)
 	{
 		GL_CHECK(glDisable(GL_CULL_FACE));
 	}
+}
+
+bool IApp::HasGLExtension(const std::string& extension)
+{
+	auto it = std::find(extensions_.begin(), extensions_.end(), extension);
+	return it != extensions_.end();
 }

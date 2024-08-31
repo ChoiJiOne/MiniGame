@@ -352,6 +352,7 @@ public:
 	void SetAlphaBlendMode(bool bIsEnable);
 	void SetMultisampleMode(bool bIsEnable);
 	void SetCullFaceMode(bool bIsEnable);
+	bool HasGLExtension(const std::string& extension);
 
 protected:
 	void RunLoop(const std::function<void(float)>& frameCallback);
@@ -371,4 +372,6 @@ protected:
 	GameTimer timer_;
 
 	bool bIsQuit_ = false;
+
+	std::vector<std::string> extensions_; /** OpenGL 확장자 목록입니다. */
 };
