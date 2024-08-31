@@ -71,11 +71,14 @@ public:
 	}
 
 	virtual void Run() override
-	{
+	{		
+		/** 알파 블랜딩 활성화. */
+		SetAlphaBlendMode(true);
+		
 		RunLoop(
 			[&](float deltaSeconds)
 			{
-				BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
+				BeginFrame(1.0f, 1.0f, 1.0f, 1.0f);
 
 				shader_->Bind();
 				{
