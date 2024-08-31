@@ -29,8 +29,8 @@ public:
 	int32_t GetChannels() const { return channels_; }
 	
 private:
-	void ReadPixelBufferFromImageFile(const std::string& path, int32_t& outWidth, int32_t& outHeight, int32_t& outChannels, std::vector<uint8_t>& outPixels, uint32_t& format);
-	uint32_t CreateTextureResource(const std::vector<uint8_t>& buffer, uint32_t format, const Filter& filter);
+	uint32_t CreateTextureFromImage(const std::string& path, const Filter& filter);
+	uint32_t CreateTextureFromDDS(const std::string& path, const Filter& filter);
 
 private:
 	int32_t width_ = 0;
