@@ -54,7 +54,7 @@ Texture2D::Texture2D(const std::string& path, const Filter& filter)
 {
 	uint32_t format = 0xFFFF;
 	std::vector<uint8_t> buffer;
-	ReadPixelBufferFromFile(path, width_, height_, channels_, buffer, format);
+	ReadPixelBufferFromImageFile(path, width_, height_, channels_, buffer, format);
 
 	textureID_ = CreateTextureResource(buffer, format, filter);
 	bIsInitialized_ = true;
@@ -83,7 +83,7 @@ void Texture2D::Active(uint32_t unit) const
 	GL_CHECK(glBindTexture(GL_TEXTURE_2D, textureID_));
 }
 
-void Texture2D::ReadPixelBufferFromFile(const std::string& path, int32_t& outWidth, int32_t& outHeight, int32_t& outChannels, std::vector<uint8_t>& outPixels, uint32_t& format)
+void Texture2D::ReadPixelBufferFromImageFile(const std::string& path, int32_t& outWidth, int32_t& outHeight, int32_t& outChannels, std::vector<uint8_t>& outPixels, uint32_t& format)
 {
 	uint8_t* bufferPtr = stbi_load(path.c_str(), &outWidth, &outHeight, &outChannels, 0);
 	ASSERT(bufferPtr != nullptr, "failed to load %s file", path.c_str());
