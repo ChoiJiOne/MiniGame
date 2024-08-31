@@ -20,6 +20,7 @@
 #include "Config.h"
 #include "EntityManager.h"
 #include "IApp.h"
+#include "RenderManager2D.h"
 #include "ResourceManager.h"
 
 static LPTOP_LEVEL_EXCEPTION_FILTER topLevelExceptionFilter_;
@@ -108,11 +109,13 @@ IApp::IApp(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool b
 	ASSERT(ImGui_ImplOpenGL3_Init(), "Failed to initialzie ImGui for OpenGL.");
 
 	AudioManager::Get().Startup();
+	RenderManager2D::Get().Startup();
 }
 
 IApp::~IApp()
 {
 	EntityManager::Get().Cleanup();
+	RenderManager2D::Get().Shutdown();
 	ResourceManager::Get().Cleanup();
 	AudioManager::Get().Shutdown();
 
