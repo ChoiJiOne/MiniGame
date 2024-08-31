@@ -14,6 +14,37 @@
 #define PIXEL_FORMAT_RGB  3
 #define PIXEL_FORMAT_RGBA 4
 
+/** https://learn.microsoft.com/en-us/windows/win32/direct3ddds/dds-header */
+struct DDSHeader 
+{
+	uint8_t  magic[4];
+	uint32_t dwSize;
+	uint32_t dwFlags;
+	uint32_t dwHeight;
+	uint32_t dwWidth;
+	uint32_t dwPitchOrLinearSize;
+	uint32_t dwDepth;
+	uint32_t dwMipMapCount;
+	uint32_t dwReserved1[11];
+
+	/** DDS_PIXEL_FORMAT Ω√¿€. */
+	uint32_t dwPixelSize;
+	uint32_t dwPixelFlags;
+	uint32_t dwFourCC;
+	uint32_t dwRGBBitCount;
+	uint32_t dwRBitMask;
+	uint32_t dwGBitMask;
+	uint32_t dwBBitMask;
+	uint32_t dwABitMask;
+	/** DDS_PIXEL_FORMAT ≥°. */
+
+	uint32_t dwCaps;
+	uint32_t dwCaps2;
+	uint32_t dwCaps3;
+	uint32_t dwCaps4;
+	uint32_t dwReserved2;
+};
+
 Texture2D::Texture2D(const std::string& path, const Filter& filter)
 {
 	uint32_t format = 0xFFFF;
