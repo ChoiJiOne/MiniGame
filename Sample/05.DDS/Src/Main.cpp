@@ -58,7 +58,7 @@ public:
 		GL_CHECK(glBindVertexArray(0));
 
 		shader_ = ResourceManager::Get().Create<Shader>("GameMaker\\Sample\\05.DDS\\Res\\Shader.vert", "GameMaker\\Sample\\05.DDS\\Res\\Shader.frag");
-		texture_ = ResourceManager::Get().Create<Texture2D>("GameMaker\\Sample\\05.DDS\\Res\\awesomeface.png", Texture2D::Filter::LINEAR);
+		texture_ = ResourceManager::Get().Create<Texture2D>("GameMaker\\Sample\\05.DDS\\Res\\DXT5\\awesomeface_32.dds", Texture2D::Filter::LINEAR);
 	}
 
 	virtual void Shutdown() override
