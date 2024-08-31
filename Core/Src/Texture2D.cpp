@@ -8,6 +8,7 @@
 
 #include "Assertion.h"
 #include "GameUtils.h"
+#include "IApp.h"
 #include "Texture2D.h"
 
 #define PIXEL_FORMAT_R    1
@@ -56,16 +57,52 @@ Texture2D::Texture2D(const std::string& path, const Filter& filter)
 	uint32_t format = 0xFFFF;
 	std::vector<uint8_t> buffer;
 	std::string extension = GameUtils::GetFileExtension(path);
-	if (extension == "DDS") /** S3TC(DXTn) 압축 포멧이라면. */
+	if (extension == "dds") /** S3TC(DXTn) 압축 포멧이라면. */
 	{
-		ReadPixelBufferFromDDSFile(path, width_, height_, channels_, buffer, format);
+		//bool bHasExt = IApp::Get()->HasGLExtension("GL_EXT_texture_compression_s3tc");
+		//ASSERT(bHasExt, "This hardware does not support 'GL_EXT_texture_compression_s3tc'.");
+
+		//std::vector<uint8_t> buffer = GameUtils::ReadFile(path);
+		//DDSHeader* ddsFilePtr = reinterpret_cast<DDSHeader*>(buffer.data());
+
+		//std::string ddsFileCode;
+		//ddsFileCode += ddsFilePtr->magic[0];
+		//ddsFileCode += ddsFilePtr->magic[1];
+		//ddsFileCode += ddsFilePtr->magic[2];
+		//ddsFileCode += ddsFilePtr->magic[3];
+		//ASSERT(ddsFileCode == "DDS ", "Invalid %s DDS file code", path.c_str());
+
+		//uint32_t width = ddsFilePtr->dwWidth;
+		//uint32_t height = ddsFilePtr->dwHeight;
+		//uint32_t linearSize = ddsFilePtr->dwPitchOrLinearSize;
+		//uint32_t mipMapCount = ddsFilePtr->dwMipMapCount;
+		//uint32_t bufferSize = mipMapCount > 1 ? linearSize * 2 : linearSize;
+		//uint8_t* bufferPtr = reinterpret_cast<uint8_t*>(&ddsFilePtr[1]);
+
+		//uint32_t format;
+		//uint32_t blockSize;
+		//switch (ddsFilePtr->dwFourCC)
+		//{
+		//case FOURCC_DXT1:
+		//	format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+		//	break;
+
+		//case FOURCC_DXT3:
+		//	format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+		//	break;
+
+		//case FOURCC_DXT5:
+		//	format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+		//	break;
+		//}
+
 	}
 	else /** 비압축 포멧 (PNG, JPG, BMP, TGA 등등...) */
 	{
 		ReadPixelBufferFromImageFile(path, width_, height_, channels_, buffer, format);
+		textureID_ = CreateTextureResource(buffer, format, filter);
 	}
-	
-	textureID_ = CreateTextureResource(buffer, format, filter);
+
 	bIsInitialized_ = true;
 }
 
@@ -114,13 +151,6 @@ void Texture2D::ReadPixelBufferFromImageFile(const std::string& path, int32_t& o
 	};
 
 	format = formats.at(channels_);
-}
-
-void Texture2D::ReadPixelBufferFromDDSFile(const std::string& path, int32_t& outWidth, int32_t& outHeight, int32_t& outChannels, std::vector<uint8_t>& outPixels, uint32_t& format)
-{
-
-
-
 }
 
 uint32_t Texture2D::CreateTextureResource(const std::vector<uint8_t>& buffer, uint32_t format, const Filter& filter)
