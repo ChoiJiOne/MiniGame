@@ -5,6 +5,8 @@
 #include <crtdbg.h>
 #endif
 
+#include <imgui.h>
+
 #include "Assertion.h"
 #include "IApp.h"
 #include "CrashManager.h"
@@ -13,7 +15,7 @@
 class DemoApp : public IApp
 {
 public:
-	DemoApp() : IApp("02.Crash", 100, 100, 800, 600, false, false) {}
+	DemoApp() : IApp("02.Crash", 100, 100, 400, 100, false, false) {}
 	virtual ~DemoApp() {}
 
 	DISALLOW_COPY_AND_ASSIGN(DemoApp);
@@ -37,9 +39,17 @@ public:
 		RunLoop(
 			[&](float deltaSeconds)
 			{
+				ImGui::Begin("CRASH", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+				ImGui::SetWindowPos(ImVec2(0.0f, 0.0f));
+				ImGui::SetWindowSize(ImVec2(400.0f, 100.0f));
+				if (ImGui::Button("CRASH!")) /** 고의로 크래시 유발! */
+				{
+					int32_t* a = nullptr;
+					*a = 10;
+				}
+				ImGui::End();
+
 				BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
-				int* a = nullptr;
-				*a = 10; /** 고의로 크래시 유발! */
 				EndFrame();
 			}
 		);
