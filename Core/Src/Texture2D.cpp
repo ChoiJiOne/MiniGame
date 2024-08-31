@@ -14,6 +14,11 @@
 #define PIXEL_FORMAT_RGB  3
 #define PIXEL_FORMAT_RGBA 4
 
+/** https://www.oldunreal.com/editing/s3tc/ARB_texture_compression.pdf */
+#define FOURCC_DXT1 0x31545844
+#define FOURCC_DXT3 0x33545844
+#define FOURCC_DXT5 0x35545844
+
 /** https://learn.microsoft.com/en-us/windows/win32/direct3ddds/dds-header */
 struct DDSHeader 
 {
