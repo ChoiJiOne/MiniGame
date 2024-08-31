@@ -7,6 +7,7 @@
 #include <stb_image.h>
 
 #include "Assertion.h"
+#include "GameUtils.h"
 #include "Texture2D.h"
 
 #define PIXEL_FORMAT_R    1
@@ -54,8 +55,16 @@ Texture2D::Texture2D(const std::string& path, const Filter& filter)
 {
 	uint32_t format = 0xFFFF;
 	std::vector<uint8_t> buffer;
-	ReadPixelBufferFromImageFile(path, width_, height_, channels_, buffer, format);
-
+	std::string extension = GameUtils::GetFileExtension(path);
+	if (extension == "DDS") /** S3TC(DXTn) 압축 포멧이라면. */
+	{
+		ReadPixelBufferFromDDSFile(path, width_, height_, channels_, buffer, format);
+	}
+	else /** 비압축 포멧 (PNG, JPG, BMP, TGA 등등...) */
+	{
+		ReadPixelBufferFromImageFile(path, width_, height_, channels_, buffer, format);
+	}
+	
 	textureID_ = CreateTextureResource(buffer, format, filter);
 	bIsInitialized_ = true;
 }
@@ -105,6 +114,13 @@ void Texture2D::ReadPixelBufferFromImageFile(const std::string& path, int32_t& o
 	};
 
 	format = formats.at(channels_);
+}
+
+void Texture2D::ReadPixelBufferFromDDSFile(const std::string& path, int32_t& outWidth, int32_t& outHeight, int32_t& outChannels, std::vector<uint8_t>& outPixels, uint32_t& format)
+{
+
+
+
 }
 
 uint32_t Texture2D::CreateTextureResource(const std::vector<uint8_t>& buffer, uint32_t format, const Filter& filter)
