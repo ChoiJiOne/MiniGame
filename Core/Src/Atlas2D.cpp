@@ -30,6 +30,7 @@ Atlas2D::Atlas2D(const std::string& imagePath, const std::string& jsonPath, cons
 		block.size.x = element["w"].asInt();
 		block.size.y = element["h"].asInt();
 
+		keys_.push_back(key.c_str());
 		blocks_.insert({ key.c_str(), block });
 	}
 }

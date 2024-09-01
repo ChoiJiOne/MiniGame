@@ -22,8 +22,10 @@ public:
 
 	virtual void Release() override;
 
+	const std::vector<std::string>& GetKeys() const { return keys_; }
 	const Block& GetByName(const std::string& name) const;
 
 private:
+	std::vector<std::string> keys_;
 	std::map<std::string, Block> blocks_;
 };
