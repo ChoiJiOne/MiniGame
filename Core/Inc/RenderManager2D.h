@@ -8,6 +8,7 @@
 #include "IApp.h"
 #include "IResource.h"
 
+class Atlas2D;
 class Camera2D;
 class ITexture;
 class Shader;
@@ -48,6 +49,8 @@ public:
 
 	void DrawSprite(ITexture* texture, const GameMath::Vec2f& center, float w, float h, float rotate = 0.0f, bool bFlipH = false, bool bFlipV = false);
 	void DrawSprite(ITexture* texture, const GameMath::Vec2f& center, float w, float h, const GameMath::Vec3f& blend, float factor = 0.0f, float rotate = 0.0f, bool bFlipH = false, bool bFlipV = false);
+	void DrawSprite(Atlas2D* atlas, const std::string& name, const GameMath::Vec2f& center, float w, float h, float rotate = 0.0f, bool bFlipH = false, bool bFlipV = false);
+	void DrawSprite(Atlas2D* atlas, const std::string& name, const GameMath::Vec2f& center, float w, float h, const GameMath::Vec3f& blend, float factor = 0.0f, float rotate = 0.0f, bool bFlipH = false, bool bFlipV = false);
 	
 	void DrawString(TTFont* font, const std::wstring& text, const GameMath::Vec2f& pos, const GameMath::Vec4f& color);
 	

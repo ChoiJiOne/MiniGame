@@ -7,6 +7,7 @@
 #include <glad/glad.h>
 
 #include "Assertion.h"
+#include "Atlas2D.h"
 #include "Camera2D.h"
 #include "ITexture.h"
 #include "RenderManager2D.h"
@@ -1320,6 +1321,284 @@ void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& cente
 	command.vertexCount = static_cast<uint32_t>(vertices.size());
 	command.type = RenderCommand::Type::SPRITE;
 	command.texture[textureUnit] = texture;
+
+	for (uint32_t index = 0; index < command.vertexCount; ++index)
+	{
+		vertices_[command.startVertexIndex + index].position = vertices[index];
+		vertices_[command.startVertexIndex + index].uv = uvs[index];
+		vertices_[command.startVertexIndex + index].color = GameMath::Vec4f(blend.x, blend.y, blend.z, factor);
+		vertices_[command.startVertexIndex + index].unit = textureUnit;
+	}
+
+	commandQueue_.push(command);
+}
+
+void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const GameMath::Vec2f& center, float w, float h, float rotate, bool bFlipH, bool bFlipV)
+{
+	static const uint32_t MAX_VERTEX_SIZE = 6;
+	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
+	{
+		Flush();
+	}
+
+	float w2 = w * 0.5f;
+	float h2 = h * 0.5f;
+
+	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices =
+	{
+		GameMath::Vec2f(-w2, -h2),
+		GameMath::Vec2f(+w2, +h2),
+		GameMath::Vec2f(-w2, +h2),
+		GameMath::Vec2f(-w2, -h2),
+		GameMath::Vec2f(+w2, -h2),
+		GameMath::Vec2f(+w2, +h2),
+	};
+
+	const Atlas2D::Block& block = atlas->GetByName(name);
+	float atlasWidth = static_cast<float>(atlas->GetWidth());
+	float atlasHeight = static_cast<float>(atlas->GetHeight());
+
+	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> uvs =
+	{
+		GameMath::Vec2f(static_cast<float>(block.pos.x               ) / atlasWidth, static_cast<float>(block.pos.y               ) / atlasHeight),
+		GameMath::Vec2f(static_cast<float>(block.pos.x + block.size.x) / atlasWidth, static_cast<float>(block.pos.y + block.size.y) / atlasHeight),
+		GameMath::Vec2f(static_cast<float>(block.pos.x               ) / atlasWidth, static_cast<float>(block.pos.y + block.size.y) / atlasHeight),
+		GameMath::Vec2f(static_cast<float>(block.pos.x               ) / atlasWidth, static_cast<float>(block.pos.y               ) / atlasHeight),
+		GameMath::Vec2f(static_cast<float>(block.pos.x + block.size.x) / atlasWidth, static_cast<float>(block.pos.y               ) / atlasHeight),
+		GameMath::Vec2f(static_cast<float>(block.pos.x + block.size.x) / atlasWidth, static_cast<float>(block.pos.y + block.size.y) / atlasHeight),
+	};
+
+	GameMath::Mat2x2 rotateMat = GameMath::Mat2x2(
+		+GameMath::Cos(rotate), -GameMath::Sin(rotate),
+		+GameMath::Sin(rotate), +GameMath::Cos(rotate)
+	);
+	for (auto& vertex : vertices)
+	{
+		vertex = rotateMat * vertex;
+		vertex += (center + GameMath::Vec2f(0.375f, 0.375f));
+	}
+
+	float cx = (static_cast<float>(block.pos.x) + static_cast<float>(block.size.x) * 0.5f) / atlasWidth;
+	float cy = (static_cast<float>(block.pos.y) + static_cast<float>(block.size.y) * 0.5f) / atlasHeight;
+	for (auto& uv : uvs)
+	{
+		uv.x = bFlipH ? (2.0f * cx - uv.x) : uv.x;
+		uv.y = bFlipV ? (2.0f * cy - uv.y) : uv.y;
+	}
+
+	if (!commandQueue_.empty())
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::SPRITE)
+		{
+			int32_t textureUnit = -1;
+			for (uint32_t unit = 0; unit < RenderCommand::MAX_TEXTURE_UNIT; ++unit)
+			{
+				if (prevCommand.texture[unit] == atlas)
+				{
+					textureUnit = unit;
+					break;
+				}
+			}
+
+			if (textureUnit != -1)
+			{
+				uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+				prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
+
+				for (uint32_t index = 0; index < vertices.size(); ++index)
+				{
+					vertices_[startVertexIndex + index].position = vertices[index];
+					vertices_[startVertexIndex + index].uv = uvs[index];
+					vertices_[startVertexIndex + index].color = GameMath::Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
+					vertices_[startVertexIndex + index].unit = textureUnit;
+				}
+
+				return;
+			}
+
+			for (uint32_t unit = 0; unit < RenderCommand::MAX_TEXTURE_UNIT; ++unit)
+			{
+				if (prevCommand.texture[unit] == nullptr)
+				{
+					textureUnit = unit;
+					break;
+				}
+			}
+
+			if (textureUnit != -1)
+			{
+				uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+				prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
+				prevCommand.texture[textureUnit] = atlas;
+
+				for (uint32_t index = 0; index < vertices.size(); ++index)
+				{
+					vertices_[startVertexIndex + index].position = vertices[index];
+					vertices_[startVertexIndex + index].uv = uvs[index];
+					vertices_[startVertexIndex + index].color = GameMath::Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
+					vertices_[startVertexIndex + index].unit = textureUnit;
+				}
+
+				return;
+			}
+		}
+	}
+
+	uint32_t startVertexIndex = 0;
+	if (!commandQueue_.empty())
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+		startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+	}
+
+	uint32_t textureUnit = 0;
+
+	RenderCommand command;
+	command.drawMode = EDrawMode::TRIANGLES;
+	command.startVertexIndex = startVertexIndex;
+	command.vertexCount = static_cast<uint32_t>(vertices.size());
+	command.type = RenderCommand::Type::SPRITE;
+	command.texture[textureUnit] = atlas;
+
+	for (uint32_t index = 0; index < command.vertexCount; ++index)
+	{
+		vertices_[command.startVertexIndex + index].position = vertices[index];
+		vertices_[command.startVertexIndex + index].uv = uvs[index];
+		vertices_[command.startVertexIndex + index].color = GameMath::Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
+		vertices_[command.startVertexIndex + index].unit = textureUnit;
+	}
+
+	commandQueue_.push(command);
+}
+
+void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const GameMath::Vec2f& center, float w, float h, const GameMath::Vec3f& blend, float factor, float rotate, bool bFlipH, bool bFlipV)
+{	
+	static const uint32_t MAX_VERTEX_SIZE = 6;
+	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
+	{
+		Flush();
+	}
+
+	float w2 = w * 0.5f;
+	float h2 = h * 0.5f;
+
+	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices =
+	{
+		GameMath::Vec2f(-w2, -h2),
+		GameMath::Vec2f(+w2, +h2),
+		GameMath::Vec2f(-w2, +h2),
+		GameMath::Vec2f(-w2, -h2),
+		GameMath::Vec2f(+w2, -h2),
+		GameMath::Vec2f(+w2, +h2),
+	};
+
+	const Atlas2D::Block& block = atlas->GetByName(name);
+	float atlasWidth = static_cast<float>(atlas->GetWidth());
+	float atlasHeight = static_cast<float>(atlas->GetHeight());
+
+	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> uvs =
+	{
+		GameMath::Vec2f(static_cast<float>(block.pos.x               ) / atlasWidth, static_cast<float>(block.pos.y               ) / atlasHeight),
+		GameMath::Vec2f(static_cast<float>(block.pos.x + block.size.x) / atlasWidth, static_cast<float>(block.pos.y + block.size.y) / atlasHeight),
+		GameMath::Vec2f(static_cast<float>(block.pos.x               ) / atlasWidth, static_cast<float>(block.pos.y + block.size.y) / atlasHeight),
+		GameMath::Vec2f(static_cast<float>(block.pos.x               ) / atlasWidth, static_cast<float>(block.pos.y               ) / atlasHeight),
+		GameMath::Vec2f(static_cast<float>(block.pos.x + block.size.x) / atlasWidth, static_cast<float>(block.pos.y               ) / atlasHeight),
+		GameMath::Vec2f(static_cast<float>(block.pos.x + block.size.x) / atlasWidth, static_cast<float>(block.pos.y + block.size.y) / atlasHeight),
+	};
+
+	GameMath::Mat2x2 rotateMat = GameMath::Mat2x2(
+		+GameMath::Cos(rotate), -GameMath::Sin(rotate),
+		+GameMath::Sin(rotate), +GameMath::Cos(rotate)
+	);
+	for (auto& vertex : vertices)
+	{
+		vertex = rotateMat * vertex;
+		vertex += (center + GameMath::Vec2f(0.375f, 0.375f));
+	}
+
+	float cx = (static_cast<float>(block.pos.x) + static_cast<float>(block.size.x) * 0.5f) / atlasWidth;
+	float cy = (static_cast<float>(block.pos.y) + static_cast<float>(block.size.y) * 0.5f) / atlasHeight;
+	for (auto& uv : uvs)
+	{
+		uv.x = bFlipV ? (2.0f * cx - uv.x) : uv.x;
+		uv.y = bFlipH ? (2.0f * cy - uv.y) : uv.y;
+	}
+
+	if (!commandQueue_.empty())
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::SPRITE)
+		{
+			int32_t textureUnit = -1;
+			for (uint32_t unit = 0; unit < RenderCommand::MAX_TEXTURE_UNIT; ++unit)
+			{
+				if (prevCommand.texture[unit] == atlas)
+				{
+					textureUnit = unit;
+					break;
+				}
+			}
+
+			if (textureUnit != -1)
+			{
+				uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+				prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
+
+				for (uint32_t index = 0; index < vertices.size(); ++index)
+				{
+					vertices_[startVertexIndex + index].position = vertices[index];
+					vertices_[startVertexIndex + index].uv = uvs[index];
+					vertices_[startVertexIndex + index].color = GameMath::Vec4f(blend.x, blend.y, blend.z, factor);
+					vertices_[startVertexIndex + index].unit = textureUnit;
+				}
+
+				return;
+			}
+
+			for (uint32_t unit = 0; unit < RenderCommand::MAX_TEXTURE_UNIT; ++unit)
+			{
+				if (prevCommand.texture[unit] == nullptr)
+				{
+					textureUnit = unit;
+					break;
+				}
+			}
+
+			if (textureUnit != -1)
+			{
+				uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+				prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
+				prevCommand.texture[textureUnit] = atlas;
+
+				for (uint32_t index = 0; index < vertices.size(); ++index)
+				{
+					vertices_[startVertexIndex + index].position = vertices[index];
+					vertices_[startVertexIndex + index].uv = uvs[index];
+					vertices_[startVertexIndex + index].color = GameMath::Vec4f(blend.x, blend.y, blend.z, factor);
+					vertices_[startVertexIndex + index].unit = textureUnit;
+				}
+
+				return;
+			}
+		}
+	}
+
+	uint32_t startVertexIndex = 0;
+	if (!commandQueue_.empty())
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+		startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+	}
+
+	uint32_t textureUnit = 0;
+
+	RenderCommand command;
+	command.drawMode = EDrawMode::TRIANGLES;
+	command.startVertexIndex = startVertexIndex;
+	command.vertexCount = static_cast<uint32_t>(vertices.size());
+	command.type = RenderCommand::Type::SPRITE;
+	command.texture[textureUnit] = atlas;
 
 	for (uint32_t index = 0; index < command.vertexCount; ++index)
 	{
