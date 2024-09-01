@@ -45,6 +45,9 @@ public:
 	void DrawCircle(const GameMath::Vec2f& center, float radius, const GameMath::Vec4f& color);
 	void DrawCircleWireframe(const GameMath::Vec2f& center, float radius, const GameMath::Vec4f& color);
 
+	void DrawSprite(ITexture* texture, const GameMath::Vec2f& center, float w, float h, float rotate = 0.0f, bool bFlipH = false, bool bFlipV = false);
+	void DrawSprite(ITexture* texture, const GameMath::Vec2f& center, float w, float h, const GameMath::Vec3f& blend, float factor = 0.0f, float rotate = 0.0f, bool bFlipH = false, bool bFlipV = false);
+	
 private:
 	friend class IApp;
 
