@@ -1,12 +1,17 @@
 #include <cstdint>
 #include <Windows.h>
 
+#include <imgui.h>
+
 #if defined(DEBUG_MODE) || defined(RELEASE_MODE) || defined(DEVELOPMENT_MODE)
 #include <crtdbg.h>
 #endif
 
 #include "Assertion.h"
+#include "Atlas2D.h"
 #include "IApp.h"
+#include "RenderManager2D.h"
+#include "ResourceManager.h"
 
 class DemoApp : public IApp
 {
@@ -18,22 +23,87 @@ public:
 
 	virtual void Startup() override
 	{
+		SetVsyncMode(false);
+		SetAlphaBlendMode(true);
+
+		bird_ = ResourceManager::Get().Create<Atlas2D>(
+			"GameMaker/Sample/09.Atlas2D/Res/bird/bird.png", 
+			"GameMaker/Sample/09.Atlas2D/Res/bird/bird.json", 
+			Texture2D::Filter::NEAREST
+		);
 	}
 
 	virtual void Shutdown() override
 	{
+		ResourceManager::Get().Destroy(bird_);
 	}
 
 	virtual void Run() override
 	{
+		float minX = -400.0f;
+		float maxX = +400.0f;
+		float strideX = 10.0f;
+		float minY = -300.0f;
+		float maxY = +300.0f;
+		float strideY = 10.0f;
+
+		const std::vector<std::string>& keys = bird_->GetKeys();
+		
 		RunLoop(
 			[&](float deltaSeconds)
 			{
-				BeginFrame(1.0f, 0.0f, 0.0f, 1.0f);
+				stepTime_ += deltaSeconds;
+				if (stepTime_ >= 0.1f)
+				{
+					stepTime_ -= 0.1f;
+					current_ = (current_ + 1) % keys.size();
+				}
+
+				ImGui::Begin("Framerate", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+				ImGui::SetWindowPos(ImVec2(0.0f, 0.0f));
+				ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+				if (ImGui::Button("FLIP-V"))
+				{
+					bIsFlipV_ = !bIsFlipV_;
+				}
+				if (ImGui::Button("FLIP-H"))
+				{
+					bIsFlipH_ = !bIsFlipH_;
+				}
+				ImGui::End();
+
+				BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
+
+				RenderManager2D::Get().Begin();
+				{
+					for (float x = minX; x <= maxX; x += strideX)
+					{
+						GameMath::Vec4f color = (x == 0.0f) ? GameMath::Vec4f(0.0f, 0.0f, 1.0f, 1.0f) : GameMath::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
+						RenderManager2D::Get().DrawLine(GameMath::Vec2f(x, minX), GameMath::Vec2f(x, maxY), color);
+					}
+
+					for (float y = minY; y <= maxY; y += strideY)
+					{
+						GameMath::Vec4f color = (y == 0.0f) ? GameMath::Vec4f(1.0f, 0.0f, 0.0f, 1.0f) : GameMath::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
+						RenderManager2D::Get().DrawLine(GameMath::Vec2f(minX, y), GameMath::Vec2f(maxX, y), color);
+					}
+
+					RenderManager2D::Get().DrawSprite(bird_, keys[current_], GameMath::Vec2f(0.0f, 0.0f), 64.0f, 64.0f, bIsFlipH_, bIsFlipV_);
+				}
+				RenderManager2D::Get().End();
+
 				EndFrame();
 			}
 		);
 	}
+
+private:
+	float stepTime_ = 0.0f;
+	int32_t current_ = 0;
+	Atlas2D* bird_ = nullptr;
+
+	bool bIsFlipH_ = false;
+	bool bIsFlipV_ = false;
 };
 
 int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR pCmdLine, _In_ int32_t nCmdShow)
