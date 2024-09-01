@@ -1345,7 +1345,8 @@ void RenderManager2D::DrawString(TTFont* font, const std::wstring& text, const G
 	float h = 0.0f;
 	font->MeasureText(text, w, h);
 
-	float atlasSize = static_cast<float>(font->GetAtlasSize());
+	float atlasWidth = static_cast<float>(font->GetAtlasWidth());
+	float atlasHeight = static_cast<float>(font->GetAtlasHeight());
 	GameMath::Vec2f currPos = GameMath::Vec2f(pos.x, pos.y - h);
 
 	auto composeVertexData = [&](uint32_t vertexIndex, uint32_t unit)
@@ -1358,32 +1359,32 @@ void RenderManager2D::DrawString(TTFont* font, const std::wstring& text, const G
 				float uh = static_cast<float>(glyph.pos1.y - glyph.pos0.y);
 
 				vertices_[vertexIndex + 0].position = GameMath::Vec2f(currPos.x, currPos.y - glyph.yoff);
-				vertices_[vertexIndex + 0].uv = GameMath::Vec2f(static_cast<float>(glyph.pos0.x) / atlasSize, static_cast<float>(glyph.pos0.y) / atlasSize);
+				vertices_[vertexIndex + 0].uv = GameMath::Vec2f(static_cast<float>(glyph.pos0.x) / atlasWidth, static_cast<float>(glyph.pos0.y) / atlasHeight);
 				vertices_[vertexIndex + 0].color = color;
 				vertices_[vertexIndex + 0].unit = unit;
 
 				vertices_[vertexIndex + 1].position = GameMath::Vec2f(currPos.x, currPos.y - uh - glyph.yoff);
-				vertices_[vertexIndex + 1].uv = GameMath::Vec2f(static_cast<float>(glyph.pos0.x) / atlasSize, static_cast<float>(glyph.pos1.y) / atlasSize);
+				vertices_[vertexIndex + 1].uv = GameMath::Vec2f(static_cast<float>(glyph.pos0.x) / atlasWidth, static_cast<float>(glyph.pos1.y) / atlasHeight);
 				vertices_[vertexIndex + 1].color = color;
 				vertices_[vertexIndex + 1].unit = unit;
 
 				vertices_[vertexIndex + 2].position = GameMath::Vec2f(currPos.x + uw, currPos.y - glyph.yoff);
-				vertices_[vertexIndex + 2].uv = GameMath::Vec2f(static_cast<float>(glyph.pos1.x) / atlasSize, static_cast<float>(glyph.pos0.y) / atlasSize);
+				vertices_[vertexIndex + 2].uv = GameMath::Vec2f(static_cast<float>(glyph.pos1.x) / atlasWidth, static_cast<float>(glyph.pos0.y) / atlasHeight);
 				vertices_[vertexIndex + 2].color = color;
 				vertices_[vertexIndex + 2].unit = unit;
 
 				vertices_[vertexIndex + 3].position = GameMath::Vec2f(currPos.x + uw, currPos.y - glyph.yoff);
-				vertices_[vertexIndex + 3].uv = GameMath::Vec2f(static_cast<float>(glyph.pos1.x) / atlasSize, static_cast<float>(glyph.pos0.y) / atlasSize);
+				vertices_[vertexIndex + 3].uv = GameMath::Vec2f(static_cast<float>(glyph.pos1.x) / atlasWidth, static_cast<float>(glyph.pos0.y) / atlasHeight);
 				vertices_[vertexIndex + 3].color = color;
 				vertices_[vertexIndex + 3].unit = unit;
 
 				vertices_[vertexIndex + 4].position = GameMath::Vec2f(currPos.x, currPos.y - uh - glyph.yoff);
-				vertices_[vertexIndex + 4].uv = GameMath::Vec2f(static_cast<float>(glyph.pos0.x) / atlasSize, static_cast<float>(glyph.pos1.y) / atlasSize);
+				vertices_[vertexIndex + 4].uv = GameMath::Vec2f(static_cast<float>(glyph.pos0.x) / atlasWidth, static_cast<float>(glyph.pos1.y) / atlasHeight);
 				vertices_[vertexIndex + 4].color = color;
 				vertices_[vertexIndex + 4].unit = unit;
 
 				vertices_[vertexIndex + 5].position = GameMath::Vec2f(currPos.x + uw, currPos.y - uh - glyph.yoff);
-				vertices_[vertexIndex + 5].uv = GameMath::Vec2f(static_cast<float>(glyph.pos1.x) / atlasSize, static_cast<float>(glyph.pos1.y) / atlasSize);
+				vertices_[vertexIndex + 5].uv = GameMath::Vec2f(static_cast<float>(glyph.pos1.x) / atlasWidth, static_cast<float>(glyph.pos1.y) / atlasHeight);
 				vertices_[vertexIndex + 5].color = color;
 				vertices_[vertexIndex + 5].unit = unit;
 
