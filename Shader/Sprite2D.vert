@@ -14,7 +14,7 @@ uniform mat4 ortho;
 void main()
 {
 	gl_Position = ortho * vec4(vec3(inPosition, 0.0f), 1.0f);
-	outTexCoords = inTexCoords;
+	outTexCoords = vec2(inTexCoords.x, 1.0f - inTexCoords.y);
 	outColor = inColor;
 	outUnit = inUnit;
 }
