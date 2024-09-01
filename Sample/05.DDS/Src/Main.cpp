@@ -9,9 +9,11 @@
 
 #include "Assertion.h"
 #include "IApp.h"
+#include "RenderManager2D.h"
 #include "ResourceManager.h"
 #include "Shader.h"
 #include "Texture2D.h"
+#include "TTFont.h"
 #include "VertexBuffer.h"
 
 struct Vertex
@@ -167,10 +169,14 @@ public:
 
 		chunk.texture = ResourceManager::Get().Create<Texture2D>("GameMaker\\Sample\\05.DDS\\Res\\DXT5\\awesomeface_32.dds", Texture2D::Filter::LINEAR);
 		chunks_.insert({ Format::DXT5, chunk });
+
+		font_ = ResourceManager::Get().Create<TTFont>("GameMaker\\Sample\\05.DDS\\Res\\SeoulNamsanEB.ttf", 0x00, 0x127, 32.0f);
 	}
 
 	virtual void Shutdown() override
 	{
+		ResourceManager::Get().Destroy(font_);
+
 		for (auto& chunk : chunks_)
 		{
 			GL_CHECK(glDeleteVertexArrays(1, &chunk.second.vao));
@@ -204,6 +210,15 @@ public:
 				}
 				shader_->Unbind();
 
+				RenderManager2D::Get().Begin();
+				{
+					RenderManager2D::Get().DrawString(font_, L"RGBA", GameMath::Vec2f(-400.0f, 300.0f), GameMath::Vec4f(0.0f, 0.0f, 0.0f, 1.0f));
+					RenderManager2D::Get().DrawString(font_, L"DXT1", GameMath::Vec2f(   0.0f, 300.0f), GameMath::Vec4f(0.0f, 0.0f, 0.0f, 1.0f));
+					RenderManager2D::Get().DrawString(font_, L"DXT3", GameMath::Vec2f(-400.0f,   0.0f), GameMath::Vec4f(0.0f, 0.0f, 0.0f, 1.0f));
+					RenderManager2D::Get().DrawString(font_, L"DXT5", GameMath::Vec2f(   0.0f,   0.0f), GameMath::Vec4f(0.0f, 0.0f, 0.0f, 1.0f));
+				}
+				RenderManager2D::Get().End();
+
 				EndFrame();
 			}
 		);
@@ -212,6 +227,7 @@ public:
 private:
 	Shader* shader_ = nullptr;
 	std::map<Format, Chunk> chunks_;
+	TTFont* font_ = nullptr;
 };
 
 int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR pCmdLine, _In_ int32_t nCmdShow)
