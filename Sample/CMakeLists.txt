@@ -7,6 +7,7 @@ add_subdirectory(04.Texture)
 add_subdirectory(05.DDS)
 add_subdirectory(06.Geometry2D)
 add_subdirectory(07.Sprite2D)
+add_subdirectory(08.String2D)
 add_subdirectory(10.Sound)
 
 set_target_properties(
@@ -17,6 +18,7 @@ set_target_properties(
     05.DDS
     06.Geometry2D
     07.Sprite2D
+    08.String2D
     10.Sound
     PROPERTIES FOLDER "Sample"
 )
