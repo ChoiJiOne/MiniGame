@@ -12,6 +12,7 @@
 #include "RenderManager2D.h"
 #include "ResourceManager.h"
 #include "Shader.h"
+#include "TTFont.h"
 #include "VertexBuffer.h"
 
 RenderManager2D& RenderManager2D::Get()
@@ -1331,6 +1332,134 @@ void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& cente
 	commandQueue_.push(command);
 }
 
+void RenderManager2D::DrawString(TTFont* font, const std::wstring& text, const GameMath::Vec2f& pos, const GameMath::Vec4f& color)
+{	
+	/** 문자 하나당 정점 6개. */
+	uint32_t vertexCount = 6 * static_cast<uint32_t>(text.size());
+	if (IsFullCommandQueue(vertexCount))
+	{
+		Flush();
+	}
+
+	float w = 0.0f;
+	float h = 0.0f;
+	font->MeasureText(text, w, h);
+
+	float atlasSize = static_cast<float>(font->GetAtlasSize());
+	GameMath::Vec2f currPos = GameMath::Vec2f(pos.x, pos.y - h);
+
+	auto composeVertexData = [&](uint32_t vertexIndex, uint32_t unit)
+		{
+			for (const auto& unicode : text)
+			{
+				const Glyph& glyph = font->GetGlyph(static_cast<int32_t>(unicode));
+
+				float uw = static_cast<float>(glyph.pos1.x - glyph.pos0.x);
+				float uh = static_cast<float>(glyph.pos1.y - glyph.pos0.y);
+
+				vertices_[vertexIndex + 0].position = GameMath::Vec2f(currPos.x, currPos.y - glyph.yoff);
+				vertices_[vertexIndex + 0].uv = GameMath::Vec2f(static_cast<float>(glyph.pos0.x) / atlasSize, static_cast<float>(glyph.pos0.y) / atlasSize);
+				vertices_[vertexIndex + 0].color = color;
+				vertices_[vertexIndex + 0].unit = unit;
+
+				vertices_[vertexIndex + 1].position = GameMath::Vec2f(currPos.x, currPos.y - uh - glyph.yoff);
+				vertices_[vertexIndex + 1].uv = GameMath::Vec2f(static_cast<float>(glyph.pos0.x) / atlasSize, static_cast<float>(glyph.pos1.y) / atlasSize);
+				vertices_[vertexIndex + 1].color = color;
+				vertices_[vertexIndex + 1].unit = unit;
+
+				vertices_[vertexIndex + 2].position = GameMath::Vec2f(currPos.x + uw, currPos.y - glyph.yoff);
+				vertices_[vertexIndex + 2].uv = GameMath::Vec2f(static_cast<float>(glyph.pos1.x) / atlasSize, static_cast<float>(glyph.pos0.y) / atlasSize);
+				vertices_[vertexIndex + 2].color = color;
+				vertices_[vertexIndex + 2].unit = unit;
+
+				vertices_[vertexIndex + 3].position = GameMath::Vec2f(currPos.x + uw, currPos.y - glyph.yoff);
+				vertices_[vertexIndex + 3].uv = GameMath::Vec2f(static_cast<float>(glyph.pos1.x) / atlasSize, static_cast<float>(glyph.pos0.y) / atlasSize);
+				vertices_[vertexIndex + 3].color = color;
+				vertices_[vertexIndex + 3].unit = unit;
+
+				vertices_[vertexIndex + 4].position = GameMath::Vec2f(currPos.x, currPos.y - uh - glyph.yoff);
+				vertices_[vertexIndex + 4].uv = GameMath::Vec2f(static_cast<float>(glyph.pos0.x) / atlasSize, static_cast<float>(glyph.pos1.y) / atlasSize);
+				vertices_[vertexIndex + 4].color = color;
+				vertices_[vertexIndex + 4].unit = unit;
+
+				vertices_[vertexIndex + 5].position = GameMath::Vec2f(currPos.x + uw, currPos.y - uh - glyph.yoff);
+				vertices_[vertexIndex + 5].uv = GameMath::Vec2f(static_cast<float>(glyph.pos1.x) / atlasSize, static_cast<float>(glyph.pos1.y) / atlasSize);
+				vertices_[vertexIndex + 5].color = color;
+				vertices_[vertexIndex + 5].unit = unit;
+
+				currPos.x += glyph.xadvance;
+				vertexIndex += 6;
+			}
+		};
+
+
+	if (!commandQueue_.empty())
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+
+		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::STRING)
+		{
+			int32_t atlasUnit = -1;
+			for (uint32_t unit = 0; unit < RenderCommand::MAX_TEXTURE_UNIT; ++unit)
+			{
+				if (prevCommand.font[unit] == font)
+				{
+					atlasUnit = unit;
+					break;
+				}
+			}
+
+			if (atlasUnit != -1)
+			{
+				uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+				prevCommand.vertexCount += vertexCount;
+
+				composeVertexData(startVertexIndex, atlasUnit);
+				return;
+			}
+
+			for (uint32_t unit = 0; unit < RenderCommand::MAX_TEXTURE_UNIT; ++unit)
+			{
+				if (prevCommand.font[unit] == nullptr)
+				{
+					atlasUnit = unit;
+					break;
+				}
+			}
+
+			if (atlasUnit != -1)
+			{
+				uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+				prevCommand.vertexCount += vertexCount;
+				prevCommand.font[atlasUnit] = font;
+
+				composeVertexData(startVertexIndex, atlasUnit);
+				return;
+			}
+		}
+	}
+
+	uint32_t startVertexIndex = 0;
+	if (!commandQueue_.empty())
+	{
+		RenderCommand& prevCommand = commandQueue_.back();
+		startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
+	}
+
+	uint32_t atlasUnit = 0;
+
+	RenderCommand command;
+	command.drawMode = EDrawMode::TRIANGLES;
+	command.startVertexIndex = startVertexIndex;
+	command.vertexCount = vertexCount;
+	command.type = RenderCommand::Type::STRING;
+	command.font[atlasUnit] = font;
+
+	composeVertexData(command.startVertexIndex, atlasUnit);
+
+	commandQueue_.push(command);
+}
+
 void RenderManager2D::Flush()
 {
 	if (commandQueue_.empty()) /** Command Queue가 비어있으면 동작X */
@@ -1362,13 +1491,13 @@ void RenderManager2D::Flush()
 			break;
 
 		case RenderCommand::Type::STRING:
-			//for (uint32_t unit = 0; unit < RenderCommand::MAX_TEXTURE_UNIT; ++unit)
-			//{
-			//	if (command.font[unit])
-			//	{
-			//		command.font[unit]->Active(unit);
-			//	}
-			//}
+			for (uint32_t unit = 0; unit < RenderCommand::MAX_TEXTURE_UNIT; ++unit)
+			{
+				if (command.font[unit])
+				{
+					command.font[unit]->Active(unit);
+				}
+			}
 			break;
 		}
 

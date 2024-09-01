@@ -11,6 +11,7 @@
 class Camera2D;
 class ITexture;
 class Shader;
+class TTFont;
 class VertexBuffer;
 
 /**
@@ -48,6 +49,8 @@ public:
 	void DrawSprite(ITexture* texture, const GameMath::Vec2f& center, float w, float h, float rotate = 0.0f, bool bFlipH = false, bool bFlipV = false);
 	void DrawSprite(ITexture* texture, const GameMath::Vec2f& center, float w, float h, const GameMath::Vec3f& blend, float factor = 0.0f, float rotate = 0.0f, bool bFlipH = false, bool bFlipV = false);
 	
+	void DrawString(TTFont* font, const std::wstring& text, const GameMath::Vec2f& pos, const GameMath::Vec4f& color);
+	
 private:
 	friend class IApp;
 
@@ -83,7 +86,7 @@ private:
 		uint32_t vertexCount;
 		Type type;
 		ITexture* texture[MAX_TEXTURE_UNIT] = { nullptr, };
-		//TTFont* font[MAX_TEXTURE_UNIT] = { nullptr, };
+		TTFont* font[MAX_TEXTURE_UNIT] = { nullptr, };
 	};
 
 	void Startup(); /** IApp 내부에서만 사용하는 메서드입니다. */
