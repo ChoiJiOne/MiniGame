@@ -12,6 +12,7 @@
 TTFont::TTFont(const std::string& path, int32_t beginCodePoint, int32_t endCodePoint, float fontSize)
 	: beginCodePoint_(beginCodePoint)
 	, endCodePoint_(endCodePoint)
+	, fontSize_(fontSize)
 {
 	std::vector<uint8_t> buffer = GameUtils::ReadFile(path);
 
@@ -19,8 +20,8 @@ TTFont::TTFont(const std::string& path, int32_t beginCodePoint, int32_t endCodeP
 	const uint8_t* bufferPtr = reinterpret_cast<const uint8_t*>(buffer.data());
 	ASSERT((stbtt_InitFont(&info, bufferPtr, stbtt_GetFontOffsetForIndex(bufferPtr, 0)) != 0), "Failed to initialize stb_truetype font.");
 
-	std::shared_ptr<uint8_t[]> bitmap = CreateGlyphAtlasBitmap(buffer, beginCodePoint_, endCodePoint_, fontSize, glyphs_, atlasSize_);
-	atlasID_ = CreateGlyphAtlasResource(bitmap, atlasSize_);
+	std::shared_ptr<uint8_t[]> bitmap = CreateGlyphAtlasBitmap(buffer);
+	atlasID_ = CreateGlyphAtlasResource(bitmap);
 
 	bIsInitialized_ = true;
 }
@@ -91,69 +92,83 @@ void TTFont::MeasureText(const std::wstring& text, float& outWidth, float& outHe
 	outHeight = static_cast<float>(GameMath::Abs(maxY - minY));
 }
 
-std::shared_ptr<uint8_t[]> TTFont::CreateGlyphAtlasBitmap(const std::vector<uint8_t>& buffer, int32_t beginCodePoint, int32_t endCodePoint, float fontSize, std::vector<Glyph>& outGlyphs, int32_t& outAtlasSize)
+std::shared_ptr<uint8_t[]> TTFont::CreateGlyphAtlasBitmap(const std::vector<uint8_t>& buffer)
 {
-	std::vector<stbtt_packedchar> packedchars(endCodePoint - beginCodePoint + 1);
-	outGlyphs.resize(endCodePoint - beginCodePoint + 1);
+	std::size_t glyphSize = static_cast<std::size_t>(endCodePoint_ - beginCodePoint_ + 1);
 
-	int32_t success = 0;
+	std::vector<stbtt_packedchar> packedchars(glyphSize);
+	glyphs_ = std::vector<Glyph>(glyphSize);
+
+	atlasWidth_ = 16;
+	atlasHeight_ = 16;
+
 	stbtt_pack_context packContext;
 	std::shared_ptr<uint8_t[]> bitmap = nullptr;
 
-	for (int32_t size = 16; size < 8192; size *= 2)
+	while (atlasWidth_ <= 4096 || atlasHeight_ <= 4096)
 	{
-		bitmap = std::make_unique<uint8_t[]>(size * size);
-		success = stbtt_PackBegin(&packContext, bitmap.get(), size, size, 0, 1, nullptr);
-		stbtt_PackSetOversampling(&packContext, 1, 1);
+		bitmap = std::make_unique<uint8_t[]>(atlasWidth_ * atlasHeight_);
 
-		success = stbtt_PackFontRange(&packContext, buffer.data(), 0, fontSize, beginCodePoint, static_cast<int>(packedchars.size()), packedchars.data());
+		int32_t success = stbtt_PackBegin(&packContext, bitmap.get(), atlasWidth_, atlasHeight_, 0, 1, nullptr);
+		stbtt_PackSetOversampling(&packContext, 1, 1);
+		
+		success = stbtt_PackFontRange(&packContext, buffer.data(), 0, fontSize_, beginCodePoint_, static_cast<int>(packedchars.size()), packedchars.data());
 		if (success)
 		{
 			stbtt_PackEnd(&packContext);
-			outAtlasSize = size;
 			break;
 		}
 		else
 		{
 			stbtt_PackEnd(&packContext);
 			bitmap.reset();
+
+			if (atlasWidth_ == atlasHeight_)
+			{
+				atlasWidth_ *= 2;
+			}
+			else
+			{
+				atlasHeight_ *= 2;
+			}
 		}
 	}
 
+	ASSERT(bitmap != nullptr, "Failed to create glyph atlas from stb_truetype.");
 	for (std::size_t index = 0; index < packedchars.size(); ++index)
 	{
-		outGlyphs[index].codePoint = static_cast<int32_t>(index + beginCodePoint);
-		outGlyphs[index].pos0 = GameMath::Vec2i(packedchars[index].x0, packedchars[index].y0);
-		outGlyphs[index].pos1 = GameMath::Vec2i(packedchars[index].x1, packedchars[index].y1);
-		outGlyphs[index].xoff = packedchars[index].xoff;
-		outGlyphs[index].yoff = packedchars[index].yoff;
-		outGlyphs[index].xoff2 = packedchars[index].xoff2;
-		outGlyphs[index].yoff2 = packedchars[index].yoff2;
-		outGlyphs[index].xadvance = packedchars[index].xadvance;
+		glyphs_[index].codePoint = static_cast<int32_t>(index + beginCodePoint_);
+		glyphs_[index].pos0 = GameMath::Vec2i(packedchars[index].x0, packedchars[index].y0);
+		glyphs_[index].pos1 = GameMath::Vec2i(packedchars[index].x1, packedchars[index].y1);
+		glyphs_[index].xoff = packedchars[index].xoff;
+		glyphs_[index].yoff = packedchars[index].yoff;
+		glyphs_[index].xoff2 = packedchars[index].xoff2;
+		glyphs_[index].yoff2 = packedchars[index].yoff2;
+		glyphs_[index].xadvance = packedchars[index].xadvance;
 	}
 
 	return bitmap;
 }
 
-uint32_t TTFont::CreateGlyphAtlasResource(const std::shared_ptr<uint8_t[]>& bitmap, const int32_t& atlasSize)
+uint32_t TTFont::CreateGlyphAtlasResource(const std::shared_ptr<uint8_t[]>& bitmap)
 {
-	uint32_t textureAtlas;
+	uint32_t atlasID;
 
-	GL_CHECK(glGenTextures(1, &textureAtlas));
-	GL_CHECK(glBindTexture(GL_TEXTURE_2D, textureAtlas));
+	GL_CHECK(glGenTextures(1, &atlasID));
+	GL_CHECK(glBindTexture(GL_TEXTURE_2D, atlasID));
 
+	GL_CHECK(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 	GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
 	GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 	GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 	GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
 	const void* bufferPtr = reinterpret_cast<const void*>(&bitmap[0]);
-	GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, atlasSize, atlasSize, 0, GL_RED, GL_UNSIGNED_BYTE, bufferPtr));
-	GL_CHECK(glGenerateMipmap(GL_TEXTURE_2D));
+	GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, atlasWidth_, atlasHeight_, 0, GL_RED, GL_UNSIGNED_BYTE, bufferPtr));
 
 	GL_CHECK(glBindTexture(GL_TEXTURE_2D, 0));
 
-	return textureAtlas;
+	return atlasID;
 }
 
 #pragma warning(pop)
