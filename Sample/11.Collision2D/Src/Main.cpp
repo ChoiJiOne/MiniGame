@@ -36,13 +36,6 @@ public:
 
 	virtual void Run() override
 	{
-		float minX = -400.0f;
-		float maxX = +400.0f;
-		float strideX = 10.0f;
-		float minY = -300.0f;
-		float maxY = +300.0f;
-		float strideY = 10.0f;
-
 		RunLoop(
 			[&](float deltaSeconds)
 			{
@@ -56,7 +49,6 @@ public:
 				{
 					ImGui::SetWindowPos(ImVec2(0.0f, 0.0f));
 					ImGui::SetWindowSize(ImVec2(400.0f, 150.0f));
-
 					ImGui::RadioButton("1.POINT", &select_, 0);
 					ImGui::RadioButton("2.LINE ", &select_, 1);
 					ImGui::RadioButton("3.CIRCLE", &select_, 2);
@@ -68,29 +60,29 @@ public:
 				switch (select_)
 				{
 				case 0:
-					targetPoint_.center = currPos_;
-					targetCollision_ = &targetPoint_;
+					selectPoint_.center = currPos_;
+					current_ = &selectPoint_;
 					break;
 				case 1:
-					targetLine_.start = currPos_ + GameMath::Vec2f(50.0f, 25.0f);
-					targetLine_.end = currPos_ + GameMath::Vec2f(-50.0f, -25.0f);
-					targetCollision_ = &targetLine_;
+					selectLine_.start = currPos_ + GameMath::Vec2f(50.0f, 25.0f);
+					selectLine_.end = currPos_ + GameMath::Vec2f(-50.0f, -25.0f);
+					current_ = &selectLine_;
 					break;
 				case 2:
-					targetCircle_.center = currPos_;
-					targetCircle_.radius = 50.0f;
-					targetCollision_ = &targetCircle_;
+					selectCircle_.center = currPos_;
+					selectCircle_.radius = 50.0f;
+					current_ = &selectCircle_;
 					break;
 				case 3:
-					targetAABB_.center = currPos_;
-					targetAABB_.size = GameMath::Vec2f(50.0f, 25.0f);
-					targetCollision_ = &targetAABB_;
+					selectAABB_.center = currPos_;
+					selectAABB_.size = GameMath::Vec2f(50.0f, 25.0f);
+					current_ = &selectAABB_;
 					break;
 				case 4:
-					targetOBB_.center = currPos_;
-					targetOBB_.size = GameMath::Vec2f(50.0f, 25.0f);
-					targetOBB_.rotate = GameMath::ToRadian(30.0f);
-					targetCollision_ = &targetOBB_;
+					selectOBB_.center = currPos_;
+					selectOBB_.size = GameMath::Vec2f(50.0f, 25.0f);
+					selectOBB_.rotate = GameMath::ToRadian(30.0f);
+					current_ = &selectOBB_;
 					break;
 				}
 				
@@ -98,42 +90,31 @@ public:
 
 				RenderManager2D::Get().Begin();
 				{
-
-					for (float x = minX; x <= maxX; x += strideX)
-					{
-						GameMath::Vec4f color = (x == 0.0f) ? GameMath::Vec4f(0.0f, 0.0f, 1.0f, 1.0f) : GameMath::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
-						RenderManager2D::Get().DrawLine(GameMath::Vec2f(x, minX), GameMath::Vec2f(x, maxY), color);
-					}
-
-					for (float y = minY; y <= maxY; y += strideY)
-					{
-						GameMath::Vec4f color = (y == 0.0f) ? GameMath::Vec4f(1.0f, 0.0f, 0.0f, 1.0f) : GameMath::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
-						RenderManager2D::Get().DrawLine(GameMath::Vec2f(minX, y), GameMath::Vec2f(maxX, y), color);
-					}
-
+					DrawGrid();
+					
 					switch (select_)
 					{
 					case 0:
-						RenderManager2D::Get().DrawPoint(targetPoint_.center, GameMath::Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
+						RenderManager2D::Get().DrawPoint(selectPoint_.center, white_);
 						break;
 					case 1:
-						RenderManager2D::Get().DrawLine(targetLine_.start, targetLine_.end, GameMath::Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
+						RenderManager2D::Get().DrawLine(selectLine_.start, selectLine_.end, white_);
 						break;
 					case 2:
-						RenderManager2D::Get().DrawCircleWireframe(targetCircle_.center, targetCircle_.radius, GameMath::Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
+						RenderManager2D::Get().DrawCircleWireframe(selectCircle_.center, selectCircle_.radius, white_);
 						break;
 					case 3:
-						RenderManager2D::Get().DrawRectWireframe(targetAABB_.center, targetAABB_.size.x, targetAABB_.size.y, GameMath::Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
+						RenderManager2D::Get().DrawRectWireframe(selectAABB_.center, selectAABB_.size.x, selectAABB_.size.y, white_);
 						break;
 					case 4:
-						RenderManager2D::Get().DrawRectWireframe(targetOBB_.center, targetOBB_.size.x, targetOBB_.size.y, GameMath::Vec4f(1.0f, 1.0f, 1.0f, 1.0f), targetOBB_.rotate);
+						RenderManager2D::Get().DrawRectWireframe(selectOBB_.center, selectOBB_.size.x, selectOBB_.size.y, white_, selectOBB_.rotate);
 						break;
 					}
 
-					RenderManager2D::Get().DrawLine(line_.start, line_.end, line_.Intersect(targetCollision_) ? GameMath::Vec4f(1.0f, 0.0f, 0.0f, 1.0f) : GameMath::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
-					RenderManager2D::Get().DrawCircleWireframe(circle_.center, circle_.radius, circle_.Intersect(targetCollision_) ? GameMath::Vec4f(1.0f, 0.0f, 0.0f, 1.0f) : GameMath::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
-					RenderManager2D::Get().DrawRectWireframe(aabb_.center, aabb_.size.x, aabb_.size.y, aabb_.Intersect(targetCollision_) ? GameMath::Vec4f(1.0f, 0.0f, 0.0f, 1.0f) : GameMath::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
-					RenderManager2D::Get().DrawRectWireframe(obb_.center, obb_.size.x, obb_.size.y, obb_.Intersect(targetCollision_) ? GameMath::Vec4f(1.0f, 0.0f, 0.0f, 1.0f) : GameMath::Vec4f(0.0f, 0.0f, 1.0f, 1.0f), obb_.rotate);
+					RenderManager2D::Get().DrawLine(line_.start, line_.end, line_.Intersect(current_) ? red_ : blue_);
+					RenderManager2D::Get().DrawCircleWireframe(circle_.center, circle_.radius, circle_.Intersect(current_) ? red_ : blue_);
+					RenderManager2D::Get().DrawRectWireframe(aabb_.center, aabb_.size.x, aabb_.size.y, aabb_.Intersect(current_) ? red_ : blue_);
+					RenderManager2D::Get().DrawRectWireframe(obb_.center, obb_.size.x, obb_.size.y, obb_.Intersect(current_) ? red_ : blue_, obb_.rotate);
 				}
 				RenderManager2D::Get().End();
 
@@ -143,21 +124,49 @@ public:
 	}
 
 private:
+	void DrawGrid()
+	{
+		for (float x = minX_; x <= maxX_; x += strideX_)
+		{
+			GameMath::Vec4f color = (x == 0.0f) ? red_ : gray_;
+			RenderManager2D::Get().DrawLine(GameMath::Vec2f(x, minX_), GameMath::Vec2f(x, maxY_), color);
+		}
+
+		for (float y = minY_; y <= maxY_; y += strideY_)
+		{
+			GameMath::Vec4f color = (y == 0.0f) ? blue_ : gray_;
+			RenderManager2D::Get().DrawLine(GameMath::Vec2f(minX_, y), GameMath::Vec2f(maxX_, y), color);
+		}
+	}
+	
+private:
+	float minX_ = -400.0f;
+	float maxX_ = +400.0f;
+	float strideX_ = 10.0f;
+	float minY_ = -300.0f;
+	float maxY_ = +300.0f;
+	float strideY_ = 10.0f;
+
 	int32_t select_ = 0;
 	GameMath::Vec2f screenSize_;
 	GameMath::Vec2f currPos_;
 
-	ICollision2D* targetCollision_ = nullptr;
-	Point2D targetPoint_;
-	Line2D targetLine_;
-	Circle2D targetCircle_;
-	Rect2D targetAABB_;
-	OrientedRect2D targetOBB_;
+	ICollision2D* current_ = nullptr;
+	Point2D selectPoint_;
+	Line2D selectLine_;
+	Circle2D selectCircle_;
+	Rect2D selectAABB_;
+	OrientedRect2D selectOBB_;
 
 	Line2D line_;
 	Circle2D circle_;
 	Rect2D aabb_;
 	OrientedRect2D obb_;
+
+	GameMath::Vec4f red_ = GameMath::Vec4f(1.0f, 0.0f, 0.0f, 1.0f);
+	GameMath::Vec4f blue_ = GameMath::Vec4f(0.0f, 0.0f, 1.0f, 1.0f);
+	GameMath::Vec4f gray_ = GameMath::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
+	GameMath::Vec4f white_ = GameMath::Vec4f(1.0f, 1.0f, 1.0f, 1.0f);
 };
 
 int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR pCmdLine, _In_ int32_t nCmdShow)
