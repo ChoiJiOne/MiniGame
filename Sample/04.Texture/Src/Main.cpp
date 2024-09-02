@@ -85,7 +85,7 @@ public:
 					texture_->Active(0);
 
 					GL_CHECK(glBindVertexArray(vao_));
-					GL_CHECK(glDrawArrays(static_cast<GLenum>(EDrawMode::TRIANGLE_FAN), 0, 4));
+					GL_CHECK(glDrawArrays(static_cast<GLenum>(DrawMode::TRIANGLE_FAN), 0, 4));
 					GL_CHECK(glBindVertexArray(0));
 				}
 				shader_->Unbind();

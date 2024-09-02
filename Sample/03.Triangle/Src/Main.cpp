@@ -77,7 +77,7 @@ public:
 				shader_->Bind();
 				{
 					GL_CHECK(glBindVertexArray(vao_));
-					GL_CHECK(glDrawArrays(static_cast<GLenum>(EDrawMode::TRIANGLES), 0, 3));
+					GL_CHECK(glDrawArrays(static_cast<GLenum>(DrawMode::TRIANGLES), 0, 3));
 					GL_CHECK(glBindVertexArray(0));
 				}
 				shader_->Unbind();
