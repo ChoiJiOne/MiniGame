@@ -84,7 +84,7 @@ private:
 			SPRITE   = 0x02,
 		};
 
-		EDrawMode drawMode;
+		DrawMode drawMode;
 		uint32_t startVertexIndex;
 		uint32_t vertexCount;
 		Type type;

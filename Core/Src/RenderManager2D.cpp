@@ -160,7 +160,7 @@ void RenderManager2D::DrawPoint(const GameMath::Vec2f& point, const GameMath::Ve
 	if (!commandQueue_.empty())
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
-		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::GEOMETRY)
+		if (prevCommand.drawMode == DrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::GEOMETRY)
 		{
 			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
@@ -183,7 +183,7 @@ void RenderManager2D::DrawPoint(const GameMath::Vec2f& point, const GameMath::Ve
 	}
 
 	RenderCommand command;
-	command.drawMode = EDrawMode::TRIANGLES;
+	command.drawMode = DrawMode::TRIANGLES;
 	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = static_cast<uint32_t>(vertices.size());
 	command.type = RenderCommand::Type::GEOMETRY;
@@ -215,7 +215,7 @@ void RenderManager2D::DrawLine(const GameMath::Vec2f& startPos, const GameMath::
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
-		if (prevCommand.drawMode == EDrawMode::LINES && prevCommand.type == RenderCommand::Type::GEOMETRY)
+		if (prevCommand.drawMode == DrawMode::LINES && prevCommand.type == RenderCommand::Type::GEOMETRY)
 		{
 			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
@@ -238,7 +238,7 @@ void RenderManager2D::DrawLine(const GameMath::Vec2f& startPos, const GameMath::
 	}
 
 	RenderCommand command;
-	command.drawMode = EDrawMode::LINES;
+	command.drawMode = DrawMode::LINES;
 	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = static_cast<uint32_t>(vertices.size());
 	command.type = RenderCommand::Type::GEOMETRY;
@@ -276,7 +276,7 @@ void RenderManager2D::DrawLine(const GameMath::Vec2f& startPos, const GameMath::
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
-		if (prevCommand.drawMode == EDrawMode::LINES && prevCommand.type == RenderCommand::Type::GEOMETRY)
+		if (prevCommand.drawMode == DrawMode::LINES && prevCommand.type == RenderCommand::Type::GEOMETRY)
 		{
 			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
@@ -299,7 +299,7 @@ void RenderManager2D::DrawLine(const GameMath::Vec2f& startPos, const GameMath::
 	}
 
 	RenderCommand command;
-	command.drawMode = EDrawMode::LINES;
+	command.drawMode = DrawMode::LINES;
 	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = static_cast<uint32_t>(vertices.size());
 	command.type = RenderCommand::Type::GEOMETRY;
@@ -332,7 +332,7 @@ void RenderManager2D::DrawTriangle(const GameMath::Vec2f& fromPos, const GameMat
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
-		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::GEOMETRY)
+		if (prevCommand.drawMode == DrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::GEOMETRY)
 		{
 			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
@@ -355,7 +355,7 @@ void RenderManager2D::DrawTriangle(const GameMath::Vec2f& fromPos, const GameMat
 	}
 
 	RenderCommand command;
-	command.drawMode = EDrawMode::TRIANGLES;
+	command.drawMode = DrawMode::TRIANGLES;
 	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = static_cast<uint32_t>(vertices.size());
 	command.type = RenderCommand::Type::GEOMETRY;
@@ -395,7 +395,7 @@ void RenderManager2D::DrawTriangle(const GameMath::Vec2f& fromPos, const GameMat
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
-		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::GEOMETRY)
+		if (prevCommand.drawMode == DrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::GEOMETRY)
 		{
 			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
@@ -418,7 +418,7 @@ void RenderManager2D::DrawTriangle(const GameMath::Vec2f& fromPos, const GameMat
 	}
 
 	RenderCommand command;
-	command.drawMode = EDrawMode::TRIANGLES;
+	command.drawMode = DrawMode::TRIANGLES;
 	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = static_cast<uint32_t>(vertices.size());
 	command.type = RenderCommand::Type::GEOMETRY;
@@ -451,7 +451,7 @@ void RenderManager2D::DrawTriangleWireframe(const GameMath::Vec2f& fromPos, cons
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
-		if (prevCommand.drawMode == EDrawMode::LINES && prevCommand.type == RenderCommand::Type::GEOMETRY)
+		if (prevCommand.drawMode == DrawMode::LINES && prevCommand.type == RenderCommand::Type::GEOMETRY)
 		{
 			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
@@ -474,7 +474,7 @@ void RenderManager2D::DrawTriangleWireframe(const GameMath::Vec2f& fromPos, cons
 	}
 
 	RenderCommand command;
-	command.drawMode = EDrawMode::LINES;
+	command.drawMode = DrawMode::LINES;
 	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = static_cast<uint32_t>(vertices.size());
 	command.type = RenderCommand::Type::GEOMETRY;
@@ -514,7 +514,7 @@ void RenderManager2D::DrawTriangleWireframe(const GameMath::Vec2f& fromPos, cons
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
-		if (prevCommand.drawMode == EDrawMode::LINES && prevCommand.type == RenderCommand::Type::GEOMETRY)
+		if (prevCommand.drawMode == DrawMode::LINES && prevCommand.type == RenderCommand::Type::GEOMETRY)
 		{
 			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
@@ -537,7 +537,7 @@ void RenderManager2D::DrawTriangleWireframe(const GameMath::Vec2f& fromPos, cons
 	}
 
 	RenderCommand command;
-	command.drawMode = EDrawMode::LINES;
+	command.drawMode = DrawMode::LINES;
 	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = static_cast<uint32_t>(vertices.size());
 	command.type = RenderCommand::Type::GEOMETRY;
@@ -586,7 +586,7 @@ void RenderManager2D::DrawRect(const GameMath::Vec2f& center, float w, float h, 
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
-		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::GEOMETRY)
+		if (prevCommand.drawMode == DrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::GEOMETRY)
 		{
 			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
@@ -609,7 +609,7 @@ void RenderManager2D::DrawRect(const GameMath::Vec2f& center, float w, float h, 
 	}
 
 	RenderCommand command;
-	command.drawMode = EDrawMode::TRIANGLES;
+	command.drawMode = DrawMode::TRIANGLES;
 	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = static_cast<uint32_t>(vertices.size());
 	command.type = RenderCommand::Type::GEOMETRY;
@@ -656,7 +656,7 @@ void RenderManager2D::DrawRectWireframe(const GameMath::Vec2f& center, float w, 
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
-		if (prevCommand.drawMode == EDrawMode::LINES && prevCommand.type == RenderCommand::Type::GEOMETRY)
+		if (prevCommand.drawMode == DrawMode::LINES && prevCommand.type == RenderCommand::Type::GEOMETRY)
 		{
 			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
@@ -679,7 +679,7 @@ void RenderManager2D::DrawRectWireframe(const GameMath::Vec2f& center, float w, 
 	}
 
 	RenderCommand command;
-	command.drawMode = EDrawMode::LINES;
+	command.drawMode = DrawMode::LINES;
 	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = static_cast<uint32_t>(vertices.size());
 	command.type = RenderCommand::Type::GEOMETRY;
@@ -782,7 +782,7 @@ void RenderManager2D::DrawRoundRect(const GameMath::Vec2f& center, float w, floa
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
-		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::GEOMETRY)
+		if (prevCommand.drawMode == DrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::GEOMETRY)
 		{
 			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
@@ -805,7 +805,7 @@ void RenderManager2D::DrawRoundRect(const GameMath::Vec2f& center, float w, floa
 	}
 
 	RenderCommand command;
-	command.drawMode = EDrawMode::TRIANGLES;
+	command.drawMode = DrawMode::TRIANGLES;
 	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = static_cast<uint32_t>(vertices.size());
 	command.type = RenderCommand::Type::GEOMETRY;
@@ -901,7 +901,7 @@ void RenderManager2D::DrawRoundRectWireframe(const GameMath::Vec2f& center, floa
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
-		if (prevCommand.drawMode == EDrawMode::LINES && prevCommand.type == RenderCommand::Type::GEOMETRY)
+		if (prevCommand.drawMode == DrawMode::LINES && prevCommand.type == RenderCommand::Type::GEOMETRY)
 		{
 			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
@@ -924,7 +924,7 @@ void RenderManager2D::DrawRoundRectWireframe(const GameMath::Vec2f& center, floa
 	}
 
 	RenderCommand command;
-	command.drawMode = EDrawMode::LINES;
+	command.drawMode = DrawMode::LINES;
 	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = static_cast<uint32_t>(vertices.size());
 	command.type = RenderCommand::Type::GEOMETRY;
@@ -966,7 +966,7 @@ void RenderManager2D::DrawCircle(const GameMath::Vec2f& center, float radius, co
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
-		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::GEOMETRY)
+		if (prevCommand.drawMode == DrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::GEOMETRY)
 		{
 			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
@@ -989,7 +989,7 @@ void RenderManager2D::DrawCircle(const GameMath::Vec2f& center, float radius, co
 	}
 
 	RenderCommand command;
-	command.drawMode = EDrawMode::TRIANGLES;
+	command.drawMode = DrawMode::TRIANGLES;
 	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = static_cast<uint32_t>(vertices.size());
 	command.type = RenderCommand::Type::GEOMETRY;
@@ -1030,7 +1030,7 @@ void RenderManager2D::DrawCircleWireframe(const GameMath::Vec2f& center, float r
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
-		if (prevCommand.drawMode == EDrawMode::LINES && prevCommand.type == RenderCommand::Type::GEOMETRY)
+		if (prevCommand.drawMode == DrawMode::LINES && prevCommand.type == RenderCommand::Type::GEOMETRY)
 		{
 			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
@@ -1053,7 +1053,7 @@ void RenderManager2D::DrawCircleWireframe(const GameMath::Vec2f& center, float r
 	}
 
 	RenderCommand command;
-	command.drawMode = EDrawMode::LINES;
+	command.drawMode = DrawMode::LINES;
 	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = static_cast<uint32_t>(vertices.size());
 	command.type = RenderCommand::Type::GEOMETRY;
@@ -1114,7 +1114,7 @@ void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& cente
 	if (!commandQueue_.empty())
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
-		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::SPRITE)
+		if (prevCommand.drawMode == DrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::SPRITE)
 		{
 			int32_t textureUnit = -1;
 			for (uint32_t unit = 0; unit < RenderCommand::MAX_TEXTURE_UNIT; ++unit)
@@ -1180,7 +1180,7 @@ void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& cente
 	uint32_t textureUnit = 0;
 
 	RenderCommand command;
-	command.drawMode = EDrawMode::TRIANGLES;
+	command.drawMode = DrawMode::TRIANGLES;
 	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = static_cast<uint32_t>(vertices.size());
 	command.type = RenderCommand::Type::SPRITE;
@@ -1244,7 +1244,7 @@ void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& cente
 	if (!commandQueue_.empty())
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
-		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::SPRITE)
+		if (prevCommand.drawMode == DrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::SPRITE)
 		{
 			int32_t textureUnit = -1;
 			for (uint32_t unit = 0; unit < RenderCommand::MAX_TEXTURE_UNIT; ++unit)
@@ -1310,7 +1310,7 @@ void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& cente
 	uint32_t textureUnit = 0;
 
 	RenderCommand command;
-	command.drawMode = EDrawMode::TRIANGLES;
+	command.drawMode = DrawMode::TRIANGLES;
 	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = static_cast<uint32_t>(vertices.size());
 	command.type = RenderCommand::Type::SPRITE;
@@ -1378,7 +1378,7 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 	if (!commandQueue_.empty())
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
-		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::SPRITE)
+		if (prevCommand.drawMode == DrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::SPRITE)
 		{
 			int32_t textureUnit = -1;
 			for (uint32_t unit = 0; unit < RenderCommand::MAX_TEXTURE_UNIT; ++unit)
@@ -1444,7 +1444,7 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 	uint32_t textureUnit = 0;
 
 	RenderCommand command;
-	command.drawMode = EDrawMode::TRIANGLES;
+	command.drawMode = DrawMode::TRIANGLES;
 	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = static_cast<uint32_t>(vertices.size());
 	command.type = RenderCommand::Type::SPRITE;
@@ -1512,7 +1512,7 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 	if (!commandQueue_.empty())
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
-		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::SPRITE)
+		if (prevCommand.drawMode == DrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::SPRITE)
 		{
 			int32_t textureUnit = -1;
 			for (uint32_t unit = 0; unit < RenderCommand::MAX_TEXTURE_UNIT; ++unit)
@@ -1578,7 +1578,7 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 	uint32_t textureUnit = 0;
 
 	RenderCommand command;
-	command.drawMode = EDrawMode::TRIANGLES;
+	command.drawMode = DrawMode::TRIANGLES;
 	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = static_cast<uint32_t>(vertices.size());
 	command.type = RenderCommand::Type::SPRITE;
@@ -1661,7 +1661,7 @@ void RenderManager2D::DrawString(TTFont* font, const std::wstring& text, const G
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
 
-		if (prevCommand.drawMode == EDrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::STRING)
+		if (prevCommand.drawMode == DrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::STRING)
 		{
 			int32_t atlasUnit = -1;
 			for (uint32_t unit = 0; unit < RenderCommand::MAX_TEXTURE_UNIT; ++unit)
@@ -1713,7 +1713,7 @@ void RenderManager2D::DrawString(TTFont* font, const std::wstring& text, const G
 	uint32_t atlasUnit = 0;
 
 	RenderCommand command;
-	command.drawMode = EDrawMode::TRIANGLES;
+	command.drawMode = DrawMode::TRIANGLES;
 	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = vertexCount;
 	command.type = RenderCommand::Type::STRING;

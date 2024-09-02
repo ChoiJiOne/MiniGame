@@ -313,7 +313,7 @@ enum class WindowEvent : int32_t
 
 using WindowEventID = int32_t;
 
-enum class EDrawMode : int32_t
+enum class DrawMode : int32_t
 {
 	POINTS       = 0x0000,
 	LINES        = 0x0001,
