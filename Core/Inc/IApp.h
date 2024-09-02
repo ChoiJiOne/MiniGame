@@ -344,6 +344,13 @@ public:
 	template <typename T>
 	void GetScreenSize(T& outWidth, T& outHeight);
 
+	bool IsQuit() const { return bIsQuit_; }
+	bool IsResize() const { return bIsResize_; }
+	bool IsMinimize() const { return bIsMinimize_; }
+	bool IsMaximize() const { return bIsMaximize_; }
+	bool IsEnterMouse() const { return bIsEnterMouse_; }
+	bool IsGainFocus() const { return bIsGainFocus_; }
+
 	/** 렌더링 관련 설정 */
 	void SetViewport(int32_t x, int32_t y, int32_t width, int32_t height);
 	void SetWindowViewport();
@@ -389,6 +396,7 @@ protected:
 	void BeginFrame(float red, float green, float blue, float alpha, float depth = 1.0f, uint8_t stencil = 0);
 	void EndFrame();
 
+	void RegisterAppWindowEvent();
 	bool IsPressKey(const KeyboardState& keyboardState, const Key& key);
 	bool IsPressMouse(const MouseState& mouseState, const Mouse& mouse);
 
@@ -404,6 +412,11 @@ protected:
 	GameTimer timer_;
 
 	bool bIsQuit_ = false;
+	bool bIsResize_ = false;
+	bool bIsMaximize_ = false;
+	bool bIsMinimize_ = false;
+	bool bIsEnterMouse_ = false; /** 마우스가 윈도우 내부에 있는지 확인 */
+	bool bIsGainFocus_ = true;
 
 	std::vector<std::string> extensions_; /** OpenGL 확장자 목록입니다. */
 
@@ -413,6 +426,6 @@ protected:
 	MouseState currMouseState_;
 
 	static const uint32_t MAX_EVENT_ACTION_SIZE = 200;
-	uint32_t windowEventActionSize_;
+	uint32_t windowEventActionSize_ = 0;
 	std::array<WindowEventAction, MAX_EVENT_ACTION_SIZE> windowEventActions_;
 };

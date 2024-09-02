@@ -110,6 +110,8 @@ IApp::IApp(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool b
 
 	AudioManager::Get().Startup();
 	RenderManager2D::Get().Startup();
+
+	RegisterAppWindowEvent();
 }
 
 IApp::~IApp()
@@ -188,7 +190,7 @@ void IApp::RunLoop(const std::function<void(float)>& frameCallback)
 			{
 				if (windowEvent == windowEventActions_[index].windowEvent)
 				{
-					if (windowEventActions_[index].bIsActive && !windowEventActions_[index].windowEventAction)
+					if (windowEventActions_[index].bIsActive && windowEventActions_[index].windowEventAction)
 					{
 						windowEventActions_[index].windowEventAction();
 					}
@@ -236,6 +238,26 @@ void IApp::EndFrame()
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 	SDL_GL_SwapWindow(reinterpret_cast<SDL_Window*>(window_));
+}
+
+void IApp::RegisterAppWindowEvent()
+{
+	AddWindowEventAction(WindowEvent::RESIZED, [&]() { bIsResize_ = !bIsResize_; }, true );
+	AddWindowEventAction(WindowEvent::MINIMIZED, [&]() { bIsMinimize_ = true; }, true);
+	AddWindowEventAction(WindowEvent::MAXIMIZED, [&]() { bIsMaximize_ = true; }, true);
+	AddWindowEventAction(WindowEvent::ENTER, [&]() { bIsEnterMouse_ = true; });
+	AddWindowEventAction(WindowEvent::LEAVE, [&]() { bIsEnterMouse_ = false; });
+	AddWindowEventAction(WindowEvent::ENTER, [&]() { bIsEnterMouse_ = true; });
+	AddWindowEventAction(WindowEvent::LEAVE, [&]() { bIsEnterMouse_ = false; });
+	AddWindowEventAction(WindowEvent::FOCUS_GAINED, [&]() { bIsGainFocus_ = true; });
+	AddWindowEventAction(WindowEvent::FOCUS_LOST, [&]() { bIsGainFocus_ = false; });
+	AddWindowEventAction(WindowEvent::RESTORED, 
+		[&]() 
+		{
+			bIsMaximize_ = (bIsMaximize_) ? !bIsMaximize_ : bIsMaximize_;
+			bIsMinimize_ = (bIsMinimize_) ? !bIsMinimize_ : bIsMinimize_;
+		}
+	);
 }
 
 bool IApp::IsPressKey(const KeyboardState& keyboardState, const Key& key)
