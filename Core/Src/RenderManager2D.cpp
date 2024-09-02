@@ -1104,14 +1104,11 @@ void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& cente
 	);
 	for (auto& vertex : vertices)
 	{
+		vertex.x = bFlipH ? -vertex.x : vertex.x;
+		vertex.y = bFlipV ? -vertex.y : vertex.y;
+		
 		vertex = rotateMat * vertex;
 		vertex += (center + GameMath::Vec2f(0.375f, 0.375f));
-	}
-
-	for (auto& uv : uvs)
-	{
-		uv.x = bFlipV ? (1.0f - uv.x) : uv.x;
-		uv.y = bFlipH ? (1.0f - uv.y) : uv.y;
 	}
 
 	if (!commandQueue_.empty())
@@ -1232,19 +1229,16 @@ void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& cente
 	};
 
 	GameMath::Mat2x2 rotateMat = GameMath::Mat2x2(
-		+GameMath::Cos(rotate), -GameMath::Sin(rotate), 
+		+GameMath::Cos(rotate), -GameMath::Sin(rotate),
 		+GameMath::Sin(rotate), +GameMath::Cos(rotate)
 	);
 	for (auto& vertex : vertices)
 	{
+		vertex.x = bFlipH ? -vertex.x : vertex.x;
+		vertex.y = bFlipV ? -vertex.y : vertex.y;
+
 		vertex = rotateMat * vertex;
 		vertex += (center + GameMath::Vec2f(0.375f, 0.375f));
-	}
-
-	for (auto& uv : uvs)
-	{
-		uv.x = bFlipV ? (1.0f - uv.x) : uv.x;
-		uv.y = bFlipH ? (1.0f - uv.y) : uv.y;
 	}
 
 	if (!commandQueue_.empty())
@@ -1374,18 +1368,13 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 	);
 	for (auto& vertex : vertices)
 	{
+		vertex.x = bFlipH ? -vertex.x : vertex.x;
+		vertex.y = bFlipV ? -vertex.y : vertex.y;
+
 		vertex = rotateMat * vertex;
 		vertex += (center + GameMath::Vec2f(0.375f, 0.375f));
 	}
-
-	float cx = (static_cast<float>(block.pos.x) + static_cast<float>(block.size.x) * 0.5f) / atlasWidth;
-	float cy = (static_cast<float>(block.pos.y) + static_cast<float>(block.size.y) * 0.5f) / atlasHeight;
-	for (auto& uv : uvs)
-	{
-		uv.x = bFlipH ? (2.0f * cx - uv.x) : uv.x;
-		uv.y = bFlipV ? (2.0f * cy - uv.y) : uv.y;
-	}
-
+	
 	if (!commandQueue_.empty())
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
@@ -1513,18 +1502,13 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 	);
 	for (auto& vertex : vertices)
 	{
+		vertex.x = bFlipH ? -vertex.x : vertex.x;
+		vertex.y = bFlipV ? -vertex.y : vertex.y;
+
 		vertex = rotateMat * vertex;
 		vertex += (center + GameMath::Vec2f(0.375f, 0.375f));
 	}
-
-	float cx = (static_cast<float>(block.pos.x) + static_cast<float>(block.size.x) * 0.5f) / atlasWidth;
-	float cy = (static_cast<float>(block.pos.y) + static_cast<float>(block.size.y) * 0.5f) / atlasHeight;
-	for (auto& uv : uvs)
-	{
-		uv.x = bFlipV ? (2.0f * cx - uv.x) : uv.x;
-		uv.y = bFlipH ? (2.0f * cy - uv.y) : uv.y;
-	}
-
+	
 	if (!commandQueue_.empty())
 	{
 		RenderCommand& prevCommand = commandQueue_.back();
