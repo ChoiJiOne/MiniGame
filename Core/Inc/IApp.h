@@ -359,6 +359,8 @@ protected:
 
 	void BeginFrame(float red, float green, float blue, float alpha, float depth = 1.0f, uint8_t stencil = 0);
 	void EndFrame();
+
+	void ProcessEvent(void* e);
 	
 protected:
 	static IApp* instance_;

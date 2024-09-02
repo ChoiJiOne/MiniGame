@@ -177,15 +177,7 @@ void IApp::RunLoop(const std::function<void(float)>& frameCallback)
 		if (SDL_PollEvent(&e))
 		{
 			ImGui_ImplSDL2_ProcessEvent(&e);
-
-			switch (e.type)
-			{
-			case SDL_QUIT:
-				bIsQuit_ = true;
-				break;
-			case SDL_WINDOWEVENT:
-				break;
-			}
+			ProcessEvent(&e);
 		}
 		else
 		{
@@ -220,6 +212,26 @@ void IApp::EndFrame()
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 	SDL_GL_SwapWindow(reinterpret_cast<SDL_Window*>(window_));
+}
+
+void IApp::ProcessEvent(void* e)
+{
+	SDL_Event* sdlEvent = reinterpret_cast<SDL_Event*>(e);
+
+	switch (sdlEvent->type)
+	{
+		case SDL_QUIT:
+		{
+			bIsQuit_ = true;
+		}
+		break;
+
+		case SDL_WINDOWEVENT:
+		{
+
+		}
+		break;
+	}
 }
 
 void IApp::SetViewport(int32_t x, int32_t y, int32_t width, int32_t height)
