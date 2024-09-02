@@ -1,6 +1,8 @@
 #include <cstdint>
 #include <Windows.h>
 
+#include <imgui.h>
+
 #if defined(DEBUG_MODE) || defined(RELEASE_MODE) || defined(DEVELOPMENT_MODE)
 #include <crtdbg.h>
 #endif
@@ -11,7 +13,7 @@
 class DemoApp : public IApp
 {
 public:
-	DemoApp() : IApp("11.Collision2D", 100, 100, 800, 600, false, false) {}
+	DemoApp() : IApp("11.Input", 100, 100, 800, 600, false, false) {}
 	virtual ~DemoApp() {}
 
 	DISALLOW_COPY_AND_ASSIGN(DemoApp);
@@ -29,6 +31,11 @@ public:
 		RunLoop(
 			[&](float deltaSeconds)
 			{
+				ImGui::Begin("");
+
+
+				ImGui::End();
+
 				BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
 				EndFrame();
 			}
