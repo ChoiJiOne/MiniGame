@@ -112,6 +112,7 @@ IApp::IApp(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool b
 	RenderManager2D::Get().Startup();
 
 	RegisterAppWindowEvent();
+	SetAlphaBlendMode(true);
 }
 
 IApp::~IApp()
