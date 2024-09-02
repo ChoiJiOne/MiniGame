@@ -66,10 +66,15 @@ public:
 				{
 					bIsFlipV_ = !bIsFlipV_;
 				}
+				ImGui::SameLine();
 				if (ImGui::Button("FLIP-H"))
 				{
 					bIsFlipH_ = !bIsFlipH_;
 				}
+				ImGui::SameLine();
+				ImGui::Text("FLIP-V [%s]", bIsFlipV_ ? "ON" : "OFF");
+				ImGui::SameLine();
+				ImGui::Text("FLIP-H [%s]", bIsFlipH_ ? "ON" : "OFF");
 				ImGui::End();
 
 				BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
@@ -88,7 +93,7 @@ public:
 						RenderManager2D::Get().DrawLine(GameMath::Vec2f(minX, y), GameMath::Vec2f(maxX, y), color);
 					}
 
-					RenderManager2D::Get().DrawSprite(bird_, keys[current_], GameMath::Vec2f(0.0f, 0.0f), 64.0f, 64.0f, bIsFlipH_, bIsFlipV_);
+					RenderManager2D::Get().DrawSprite(bird_, keys[current_], GameMath::Vec2f(0.0f, 0.0f), 128.0f, 128.0f, 0.0f, bIsFlipH_, bIsFlipV_);
 				}
 				RenderManager2D::Get().End();
 
