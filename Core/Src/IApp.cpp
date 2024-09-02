@@ -177,10 +177,34 @@ void IApp::RunLoop(const std::function<void(float)>& frameCallback)
 		if (SDL_PollEvent(&e))
 		{
 			ImGui_ImplSDL2_ProcessEvent(&e);
-			ProcessEvent(&e);
+
+			if (e.type == SDL_QUIT)
+			{
+				bIsQuit_ = true;
+			}
+
+			WindowEvent windowEvent = static_cast<WindowEvent>(e.window.event);
+			for (std::size_t index = 0; index < windowEventActionSize_; ++index)
+			{
+				if (windowEvent == windowEventActions_[index].windowEvent)
+				{
+					if (windowEventActions_[index].bIsActive && !windowEventActions_[index].windowEventAction)
+					{
+						windowEventActions_[index].windowEventAction();
+					}
+				}
+			}
 		}
 		else
 		{
+			const void* currKeyboardState = reinterpret_cast<const void*>(SDL_GetKeyboardState(nullptr));
+
+			std::memcpy(prevKeyboardState_.keybordState.data(), currKeyboardState_.keybordState.data(), KeyboardState::BUFFER_SIZE);
+			std::memcpy(currKeyboardState_.keybordState.data(), currKeyboardState, KeyboardState::BUFFER_SIZE);
+
+			prevMouseState_ = currMouseState_;
+			currMouseState_.state = SDL_GetMouseState(&currMouseState_.position.x, &currMouseState_.position.y);
+
 			timer_.Tick();
 
 			ImGui_ImplOpenGL3_NewFrame();
@@ -214,24 +238,14 @@ void IApp::EndFrame()
 	SDL_GL_SwapWindow(reinterpret_cast<SDL_Window*>(window_));
 }
 
-void IApp::ProcessEvent(void* e)
+bool IApp::IsPressKey(const KeyboardState& keyboardState, const Key& key)
 {
-	SDL_Event* sdlEvent = reinterpret_cast<SDL_Event*>(e);
+	return keyboardState.keybordState.at(static_cast<int32_t>(key)) == 0 ? false : true;
+}
 
-	switch (sdlEvent->type)
-	{
-		case SDL_QUIT:
-		{
-			bIsQuit_ = true;
-		}
-		break;
-
-		case SDL_WINDOWEVENT:
-		{
-
-		}
-		break;
-	}
+bool IApp::IsPressMouse(const MouseState& mouseState, const Mouse& mouse)
+{
+	return (mouseState.state & static_cast<uint32_t>(mouse)) == 0 ? false : true;
 }
 
 void IApp::SetViewport(int32_t x, int32_t y, int32_t width, int32_t height)
@@ -317,4 +331,105 @@ bool IApp::HasGLExtension(const std::string& extension)
 {
 	auto it = std::find(extensions_.begin(), extensions_.end(), extension);
 	return it != extensions_.end();
+}
+
+Press IApp::GetKeyPress(const Key& key)
+{
+	Press press = Press::NONE;
+
+	if (IsPressKey(prevKeyboardState_, key))
+	{
+		if (IsPressKey(currKeyboardState_, key))
+		{
+			press = Press::HELD;
+		}
+		else
+		{
+			press = Press::RELEASED;
+		}
+	}
+	else
+	{
+		if (IsPressKey(currKeyboardState_, key))
+		{
+			press = Press::PRESSED;
+		}
+		else
+		{
+			press = Press::NONE;
+		}
+	}
+
+	return press;
+}
+
+Press IApp::GetMousePress(const Mouse& mouse)
+{
+	Press press = Press::NONE;
+
+	if (IsPressMouse(prevMouseState_, mouse))
+	{
+		if (IsPressMouse(currMouseState_, mouse))
+		{
+			press = Press::HELD;
+		}
+		else
+		{
+			press = Press::RELEASED;
+		}
+	}
+	else
+	{
+		if (IsPressMouse(currMouseState_, mouse))
+		{
+			press = Press::PRESSED;
+		}
+		else
+		{
+			press = Press::NONE;
+		}
+	}
+
+	return press;
+}
+
+WindowEventID IApp::AddWindowEventAction(const WindowEvent& windowEvent, const std::function<void()>& eventAction, bool bIsActive)
+{
+	CHECK(0 <= windowEventActionSize_ && windowEventActionSize_ < MAX_EVENT_ACTION_SIZE);
+
+	WindowEventID windowEventID = -1;
+	for (int32_t index = 0; index < windowEventActionSize_; ++index)
+	{
+		if (windowEventActions_[index].windowEvent == WindowEvent::NONE)
+		{
+			windowEventID = static_cast<WindowEventID>(index);
+			break;
+		}
+	}
+
+	if (windowEventID == -1)
+	{
+		windowEventID = windowEventActionSize_++;
+	}
+
+	windowEventActions_[windowEventID].windowEvent = windowEvent;
+	windowEventActions_[windowEventID].windowEventAction = eventAction;
+	windowEventActions_[windowEventID].bIsActive = bIsActive;
+
+	return windowEventID;
+}
+
+void IApp::DeleteWindowEventAction(const WindowEventID& windowEventID)
+{
+	CHECK(0 <= windowEventID && windowEventID < MAX_EVENT_ACTION_SIZE);
+
+	windowEventActions_[windowEventID].windowEvent = WindowEvent::NONE;
+	windowEventActions_[windowEventID].windowEventAction = nullptr;
+	windowEventActions_[windowEventID].bIsActive = false;
+}
+
+void IApp::SetActiveWindowEventAction(const WindowEventID& windowEventID, bool bIsActive)
+{
+	CHECK(0 <= windowEventID && windowEventID < MAX_EVENT_ACTION_SIZE);
+	windowEventActions_[windowEventID].bIsActive = bIsActive;
 }
