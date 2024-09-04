@@ -138,8 +138,36 @@ public:
 		RunLoop(
 			[&](float deltaSeconds)
 			{
-				camera_->Tick(deltaSeconds);
+				ImGui::Begin("Transform", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+				{
+					ImGui::SetWindowPos(ImVec2(0.0f, 0.0f));
+					ImGui::SetWindowSize(ImVec2(350.0f, 120.0f));
+					ImGui::SliderFloat3("POSITION", transform_.position.data, -50.0f, +50.0f);
+					ImGui::SameLine();
+					if(ImGui::Button("RESET##POSITION"))
+					{
+						transform_.position = GameMath::Vec3f();
+					}
+					ImGui::SliderFloat4("ROTATE", transform_.rotate.data, 0.0f, 1.0f);
+					ImGui::SameLine();
+					if (ImGui::Button("RESET##ROTATE"))
+					{
+						transform_.rotate = GameMath::Quat();
+					}
+					ImGui::SliderFloat3("SCALE", transform_.scale.data, 0.0f, 100.0f);
+					ImGui::SameLine();
+					if (ImGui::Button("RESET##SCALE"))
+					{
+						transform_.scale = GameMath::Vec3f(1.0f, 1.0f, 1.0f);
+					}
 
+					if (!ImGui::IsWindowFocused())
+					{
+						camera_->Tick(deltaSeconds);
+					}
+				}
+				ImGui::End();
+				
 				BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
 
 				DebugDrawManager3D::Get().Begin(camera_);
@@ -152,7 +180,7 @@ public:
 				{
 					texture_->Active(0);
 
-					shader_->SetUniform("world", GameMath::Mat4x4::Identity());
+					shader_->SetUniform("world", GameMath::Transform::ToMat(transform_));
 					shader_->SetUniform("view", camera_->GetView());
 					shader_->SetUniform("projection", camera_->GetProjection());
 
@@ -201,6 +229,8 @@ private:
 	VertexBuffer* vertexBuffer_ = nullptr;
 	Shader* shader_ = nullptr;
 	Texture2D* texture_ = nullptr;
+
+	GameMath::Transform transform_;
 };
 
 int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR pCmdLine, _In_ int32_t nCmdShow)
