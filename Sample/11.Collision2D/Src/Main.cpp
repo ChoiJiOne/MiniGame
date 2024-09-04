@@ -41,7 +41,7 @@ public:
 		line1_ = Line2D(GameMath::Vec2f(-200.0f, -50.0f), GameMath::Vec2f(200.0f, 50.0f));
 		circle1_ = Circle2D(GameMath::Vec2f(0.0f, 0.0f), 150.0f);
 		aabb1_ = Rect2D(GameMath::Vec2f(0.0f, 0.0f), GameMath::Vec2f(220.0f, 170.0f));
-		obb1_ = OrientedRect2D(GameMath::Vec2f(0.0f, 0.0f), GameMath::Vec2f(220.0f, 170.0f), GameMath::ToRadian(27.0f));
+		obb1_ = OrientedRect2D(GameMath::Vec2f(0.0f, 0.0f), GameMath::Vec2f(220.0f, 170.0f), GameMath::ToRadian(130.0f));
 
 		collisions0_ = { &line0_, &circle0_, &aabb0_, &obb0_, };
 		collisions1_ = { &line1_, &circle1_, &aabb1_, &obb1_, };
@@ -65,8 +65,8 @@ public:
 				{
 					ImGui::SetWindowPos(ImVec2(0.0f, 0.0f));
 					ImGui::SetWindowSize(ImVec2(300.0f, 120.0f));
-					DisplayObjectGUI("OBJECT0", &select0_, red_);
-					DisplayObjectGUI("OBJECT1", &select1_, blue_);
+					SelectObjectGUI("OBJECT0", &select0_, red_);
+					SelectObjectGUI("OBJECT1", &select1_, blue_);
 				}
 				ImGui::End();
 
@@ -97,7 +97,7 @@ public:
 	}
 
 private:
-	void DisplayObjectGUI(const char* name, int32_t* selectPtr, const GameMath::Vec4f& color)
+	void SelectObjectGUI(const char* name, int32_t* selectPtr, const GameMath::Vec4f& color)
 	{
 		ImGui::TextColored(ImVec4(color.x, color.y, color.z, color.w), name);
 		ImGui::RadioButton(GameUtils::PrintF("LINE##%s", name).c_str(), selectPtr, static_cast<int32_t>(Type::LINE));
@@ -150,7 +150,6 @@ private:
 			OrientedRect2D* orientedRect = reinterpret_cast<OrientedRect2D*>(collision);
 			orientedRect->center = currPos_;
 			orientedRect->size = GameMath::Vec2f(50.0f, 25.0f);
-			orientedRect->rotate = GameMath::ToRadian(130.0f);
 		}
 		break;
 		}
