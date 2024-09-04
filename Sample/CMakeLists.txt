@@ -12,6 +12,7 @@ add_subdirectory(09.Atlas2D)
 add_subdirectory(10.Sound)
 add_subdirectory(11.Collision2D)
 add_subdirectory(12.FreeEulerCamera3D)
+add_subdirectory(13.Cube)
 
 set_target_properties(
     01.Initialize
@@ -26,5 +27,6 @@ set_target_properties(
     10.Sound
     11.Collision2D
     12.FreeEulerCamera3D
+    13.Cube
     PROPERTIES FOLDER "Sample"
 )
