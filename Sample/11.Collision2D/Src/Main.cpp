@@ -64,9 +64,11 @@ public:
 				ImGui::Begin("Collision", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 				{
 					ImGui::SetWindowPos(ImVec2(0.0f, 0.0f));
-					ImGui::SetWindowSize(ImVec2(300.0f, 120.0f));
+					ImGui::SetWindowSize(ImVec2(350.0f, 120.0f));
 					SelectObjectGUI("OBJECT0", &select0_, red_);
 					SelectObjectGUI("OBJECT1", &select1_, blue_);
+					RotateObjectGUI("OBJECT0", &select0_, collisions0_[select0_]);
+					RotateObjectGUI("OBJECT1", &select1_, collisions1_[select1_]);
 				}
 				ImGui::End();
 
@@ -107,6 +109,17 @@ private:
 		ImGui::RadioButton(GameUtils::PrintF("AABB##%s", name).c_str(), selectPtr, static_cast<int32_t>(Type::AABB));
 		ImGui::SameLine();
 		ImGui::RadioButton(GameUtils::PrintF("OBB##%s", name).c_str(), selectPtr, static_cast<int32_t>(Type::OBB));
+	}
+
+	void RotateObjectGUI(const char* name, int32_t* selectPtr, ICollision2D* collision)
+	{
+		if (*selectPtr != 3)
+		{
+			return;
+		}
+
+		OrientedRect2D* orientedRect = reinterpret_cast<OrientedRect2D*>(collision);
+		ImGui::SliderFloat(GameUtils::PrintF("%s##%s", name, name).c_str(), &orientedRect->rotate, 0.0f, GameMath::ToRadian(360.0f));
 	}
 
 	void UpdateObject(ICollision2D* collision)
