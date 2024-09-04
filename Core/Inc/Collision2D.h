@@ -4,7 +4,7 @@
 
 struct ICollision2D
 {
-	enum class EType
+	enum class Type
 	{
 		NONE          = 0x00,
 		POINT         = 0x01,
@@ -17,7 +17,7 @@ struct ICollision2D
 	ICollision2D() = default;
 	virtual ~ICollision2D() {}
 
-	virtual EType GetType() const = 0;
+	virtual Type GetType() const = 0;
 	virtual bool Intersect(const ICollision2D* target) const = 0;
 };
 
@@ -47,7 +47,7 @@ struct Point2D : public ICollision2D
 		return *this;
 	}
 
-	virtual EType GetType() const override { return EType::POINT; }
+	virtual Type GetType() const override { return Type::POINT; }
 	virtual bool Intersect(const ICollision2D* target) const override;
 
 	GameMath::Vec2f center;
@@ -81,7 +81,7 @@ struct Line2D : public ICollision2D
 		return *this;
 	}
 
-	virtual EType GetType() const override { return EType::LINE; }
+	virtual Type GetType() const override { return Type::LINE; }
 	virtual bool Intersect(const ICollision2D* target) const override;
 
 	GameMath::Vec2f start;
@@ -116,7 +116,7 @@ struct Circle2D : public ICollision2D
 		return *this;
 	}
 
-	virtual EType GetType() const override { return EType::CIRCLE; }
+	virtual Type GetType() const override { return Type::CIRCLE; }
 	virtual bool Intersect(const ICollision2D* target) const override;
 
 	GameMath::Vec2f center;
@@ -154,7 +154,7 @@ struct Rect2D : public ICollision2D /** 이 사각형은 AABB(Axis-Aligned Bounding B
 	GameMath::Vec2f GetMin() const { return center - size * 0.5f; }
 	GameMath::Vec2f GetMax() const { return center + size * 0.5f; }
 
-	virtual EType GetType() const override { return EType::RECT; }
+	virtual Type GetType() const override { return Type::RECT; }
 	virtual bool Intersect(const ICollision2D* target) const override;
 
 	void GetInterval(const GameMath::Vec2f& axis, float& outMin, float& outMax) const;
@@ -193,7 +193,7 @@ struct OrientedRect2D : public ICollision2D /** 이 사각형은 OBB(Oriented Boundin
 		return *this;
 	}
 
-	virtual EType GetType() const override { return EType::ORIENTED_RECT; }
+	virtual Type GetType() const override { return Type::ORIENTED_RECT; }
 	virtual bool Intersect(const ICollision2D* target) const override;
 
 	void GetInterval(const GameMath::Vec2f& axis, float& outMin, float& outMax) const;

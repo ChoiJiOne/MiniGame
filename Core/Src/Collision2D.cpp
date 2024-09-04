@@ -323,40 +323,40 @@ bool Point2D::Intersect(const ICollision2D* target) const
 {
 	CHECK(target != nullptr);
 
-	EType type = target->GetType();
+	Type type = target->GetType();
 	bool bIsIntersect = false;
 
 	switch (type)
 	{
-	case ICollision2D::EType::POINT:
+	case ICollision2D::Type::POINT:
 	{
 		const Point2D* other = reinterpret_cast<const Point2D*>(target);
 		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
-	case ICollision2D::EType::LINE:
+	case ICollision2D::Type::LINE:
 	{
 		const Line2D* other = reinterpret_cast<const Line2D*>(target);
 		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
-	case ICollision2D::EType::CIRCLE: 
+	case ICollision2D::Type::CIRCLE: 
 	{
 		const Circle2D* other = reinterpret_cast<const Circle2D*>(target);
 		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
-	case ICollision2D::EType::RECT:
+	case ICollision2D::Type::RECT:
 	{
 		const Rect2D* other = reinterpret_cast<const Rect2D*>(target);
 		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
-	case ICollision2D::EType::ORIENTED_RECT:
+	case ICollision2D::Type::ORIENTED_RECT:
 	{
 		const OrientedRect2D* other = reinterpret_cast<const OrientedRect2D*>(target);
 		bIsIntersect = IsCollision(this, other);
@@ -364,7 +364,7 @@ bool Point2D::Intersect(const ICollision2D* target) const
 	}
 	break;
 
-	default: break;// ICollision2D::EType::NONE:
+	default: break;// ICollision2D::Type::NONE:
 	}
 
 	return bIsIntersect;
@@ -374,47 +374,47 @@ bool Line2D::Intersect(const ICollision2D* target) const
 {
 	CHECK(target != nullptr);
 
-	EType type = target->GetType();
+	Type type = target->GetType();
 	bool bIsIntersect = false;
 
 	switch (type)
 	{
-	case ICollision2D::EType::POINT:
+	case ICollision2D::Type::POINT:
 	{
 		const Point2D* other = reinterpret_cast<const Point2D*>(target);
 		bIsIntersect = IsCollision(other, this);
 		break;
 	}
 
-	case ICollision2D::EType::LINE:
+	case ICollision2D::Type::LINE:
 	{
 		const Line2D* other = reinterpret_cast<const Line2D*>(target);
 		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
-	case ICollision2D::EType::CIRCLE:
+	case ICollision2D::Type::CIRCLE:
 	{
 		const Circle2D* other = reinterpret_cast<const Circle2D*>(target);
 		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
-	case ICollision2D::EType::RECT:
+	case ICollision2D::Type::RECT:
 	{
 		const Rect2D* other = reinterpret_cast<const Rect2D*>(target);
 		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
-	case ICollision2D::EType::ORIENTED_RECT:
+	case ICollision2D::Type::ORIENTED_RECT:
 	{
 		const OrientedRect2D* other = reinterpret_cast<const OrientedRect2D*>(target);
 		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
-	default: break;// ICollision2D::EType::NONE:
+	default: break;// ICollision2D::Type::NONE:
 	}
 
 	return bIsIntersect;
@@ -424,47 +424,47 @@ bool Circle2D::Intersect(const ICollision2D* target) const
 {
 	CHECK(target != nullptr);
 
-	EType type = target->GetType();
+	Type type = target->GetType();
 	bool bIsIntersect = false;
 
 	switch (type)
 	{
-	case ICollision2D::EType::POINT:
+	case ICollision2D::Type::POINT:
 	{
 		const Point2D* other = reinterpret_cast<const Point2D*>(target);
 		bIsIntersect = IsCollision(other, this);
 		break;
 	}
 
-	case ICollision2D::EType::LINE:
+	case ICollision2D::Type::LINE:
 	{
 		const Line2D* other = reinterpret_cast<const Line2D*>(target);
 		bIsIntersect = IsCollision(other, this);
 		break;
 	}
 
-	case ICollision2D::EType::CIRCLE:
+	case ICollision2D::Type::CIRCLE:
 	{
 		const Circle2D* other = reinterpret_cast<const Circle2D*>(target);
 		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
-	case ICollision2D::EType::RECT:
+	case ICollision2D::Type::RECT:
 	{
 		const Rect2D* other = reinterpret_cast<const Rect2D*>(target);
 		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
-	case ICollision2D::EType::ORIENTED_RECT:
+	case ICollision2D::Type::ORIENTED_RECT:
 	{
 		const OrientedRect2D* other = reinterpret_cast<const OrientedRect2D*>(target);
 		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
-	default: break;// ICollision2D::EType::NONE:
+	default: break;// ICollision2D::Type::NONE:
 	}
 
 	return bIsIntersect;
@@ -474,47 +474,47 @@ bool Rect2D::Intersect(const ICollision2D* target) const
 {
 	CHECK(target != nullptr);
 
-	EType type = target->GetType();
+	Type type = target->GetType();
 	bool bIsIntersect = false;
 
 	switch (type)
 	{
-	case ICollision2D::EType::POINT:
+	case ICollision2D::Type::POINT:
 	{
 		const Point2D* other = reinterpret_cast<const Point2D*>(target);
 		bIsIntersect = IsCollision(other, this);
 		break;
 	}
 
-	case ICollision2D::EType::LINE:
+	case ICollision2D::Type::LINE:
 	{
 		const Line2D* other = reinterpret_cast<const Line2D*>(target);
 		bIsIntersect = IsCollision(other, this);
 		break;
 	}
 
-	case ICollision2D::EType::CIRCLE:
+	case ICollision2D::Type::CIRCLE:
 	{
 		const Circle2D* other = reinterpret_cast<const Circle2D*>(target);
 		bIsIntersect = IsCollision(other, this);
 		break;
 	}
 
-	case ICollision2D::EType::RECT:
+	case ICollision2D::Type::RECT:
 	{
 		const Rect2D* other = reinterpret_cast<const Rect2D*>(target);
 		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
-	case ICollision2D::EType::ORIENTED_RECT:
+	case ICollision2D::Type::ORIENTED_RECT:
 	{
 		const OrientedRect2D* other = reinterpret_cast<const OrientedRect2D*>(target);
 		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
-	default: break;// ICollision2D::EType::NONE:
+	default: break;// ICollision2D::Type::NONE:
 	}
 
 	return bIsIntersect;
@@ -556,47 +556,47 @@ bool OrientedRect2D::Intersect(const ICollision2D* target) const
 {
 	CHECK(target != nullptr);
 
-	EType type = target->GetType();
+	Type type = target->GetType();
 	bool bIsIntersect = false;
 
 	switch (type)
 	{
-	case ICollision2D::EType::POINT:
+	case ICollision2D::Type::POINT:
 	{
 		const Point2D* other = reinterpret_cast<const Point2D*>(target);
 		bIsIntersect = IsCollision(other, this);
 		break;
 	}
 
-	case ICollision2D::EType::LINE:
+	case ICollision2D::Type::LINE:
 	{
 		const Line2D* other = reinterpret_cast<const Line2D*>(target);
 		bIsIntersect = IsCollision(other, this);
 		break;
 	}
 
-	case ICollision2D::EType::CIRCLE:
+	case ICollision2D::Type::CIRCLE:
 	{
 		const Circle2D* other = reinterpret_cast<const Circle2D*>(target);
 		bIsIntersect = IsCollision(other, this);
 		break;
 	}
 
-	case ICollision2D::EType::RECT:
+	case ICollision2D::Type::RECT:
 	{
 		const Rect2D* other = reinterpret_cast<const Rect2D*>(target);
 		bIsIntersect = IsCollision(other, this);
 		break;
 	}
 
-	case ICollision2D::EType::ORIENTED_RECT:
+	case ICollision2D::Type::ORIENTED_RECT:
 	{
 		const OrientedRect2D* other = reinterpret_cast<const OrientedRect2D*>(target);
 		bIsIntersect = IsCollision(this, other);
 		break;
 	}
 
-	default: break;// ICollision2D::EType::NONE:
+	default: break;// ICollision2D::Type::NONE:
 	}
 
 	return bIsIntersect;
