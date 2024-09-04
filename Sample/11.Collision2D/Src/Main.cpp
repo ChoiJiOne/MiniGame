@@ -17,6 +17,15 @@
 class DemoApp : public IApp
 {
 public:
+	enum class Type
+	{
+		LINE   = 0x00,
+		CIRCLE = 0x01,
+		AABB   = 0x02,
+		OBB    = 0x03,
+	};
+
+public:
 	DemoApp() : IApp("11.Collision2D", 100, 100, 800, 600, false, false) {}
 	virtual ~DemoApp() {}
 
@@ -24,10 +33,18 @@ public:
 
 	virtual void Startup() override
 	{
-		line_ = Line2D(GameMath::Vec2f(-100.0f, -200.0f), GameMath::Vec2f(100.0f, -10.0f));
-		circle_ = Circle2D(GameMath::Vec2f(270.0f, 150.0f), 50.0f);
-		aabb_ = Rect2D(GameMath::Vec2f(-270.0f, -150.0f), GameMath::Vec2f(200.0f, 100.0f));
-		obb_ = OrientedRect2D(GameMath::Vec2f(270.0f, -150.0f), GameMath::Vec2f(200.0f, 100.0f), GameMath::ToRadian(45.0f));
+		line0_ = Line2D(GameMath::Vec2f(-100.0f, -200.0f), GameMath::Vec2f(100.0f, -10.0f));
+		circle0_ = Circle2D(GameMath::Vec2f(270.0f, 150.0f), 50.0f);
+		aabb0_ = Rect2D(GameMath::Vec2f(-270.0f, -150.0f), GameMath::Vec2f(200.0f, 100.0f));
+		obb0_ = OrientedRect2D(GameMath::Vec2f(270.0f, -150.0f), GameMath::Vec2f(200.0f, 100.0f), GameMath::ToRadian(45.0f));
+
+		line1_ = Line2D(GameMath::Vec2f(-200.0f, -50.0f), GameMath::Vec2f(200.0f, 50.0f));
+		circle1_ = Circle2D(GameMath::Vec2f(0.0f, 0.0f), 150.0f);
+		aabb1_ = Rect2D(GameMath::Vec2f(0.0f, 0.0f), GameMath::Vec2f(220.0f, 170.0f));
+		obb1_ = OrientedRect2D(GameMath::Vec2f(0.0f, 0.0f), GameMath::Vec2f(220.0f, 170.0f), GameMath::ToRadian(27.0f));
+
+		collisions0_ = { &line0_, &circle0_, &aabb0_, &obb0_, };
+		collisions1_ = { &line1_, &circle1_, &aabb1_, &obb1_, };
 	}
 
 	virtual void Shutdown() override
@@ -40,7 +57,6 @@ public:
 			[&](float deltaSeconds)
 			{
 				GameMath::Vec2i currPos = GetCurrMousePos();
-
 				GetScreenSize<float>(screenSize_.x, screenSize_.y);
 				currPos_.x = -screenSize_.x * 0.5f + static_cast<float>(currPos.x);
 				currPos_.y = +screenSize_.y * 0.5f - static_cast<float>(currPos.y);
@@ -48,73 +64,30 @@ public:
 				ImGui::Begin("Collision", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 				{
 					ImGui::SetWindowPos(ImVec2(0.0f, 0.0f));
-					ImGui::SetWindowSize(ImVec2(400.0f, 150.0f));
-					ImGui::RadioButton("1.POINT", &select_, 0);
-					ImGui::RadioButton("2.LINE ", &select_, 1);
-					ImGui::RadioButton("3.CIRCLE", &select_, 2);
-					ImGui::RadioButton("4.AABB", &select_, 3);
-					ImGui::RadioButton("5.OBB", &select_, 4);
+					ImGui::SetWindowSize(ImVec2(300.0f, 120.0f));
+					DisplayObjectGUI("OBJECT0", &select0_, red_);
+					DisplayObjectGUI("OBJECT1", &select1_, blue_);
 				}
 				ImGui::End();
 
-				switch (select_)
-				{
-				case 0:
-					selectPoint_.center = currPos_;
-					current_ = &selectPoint_;
-					break;
-				case 1:
-					selectLine_.start = currPos_ + GameMath::Vec2f(50.0f, 25.0f);
-					selectLine_.end = currPos_ + GameMath::Vec2f(-50.0f, -25.0f);
-					current_ = &selectLine_;
-					break;
-				case 2:
-					selectCircle_.center = currPos_;
-					selectCircle_.radius = 50.0f;
-					current_ = &selectCircle_;
-					break;
-				case 3:
-					selectAABB_.center = currPos_;
-					selectAABB_.size = GameMath::Vec2f(50.0f, 25.0f);
-					current_ = &selectAABB_;
-					break;
-				case 4:
-					selectOBB_.center = currPos_;
-					selectOBB_.size = GameMath::Vec2f(50.0f, 25.0f);
-					selectOBB_.rotate = GameMath::ToRadian(30.0f);
-					current_ = &selectOBB_;
-					break;
-				}
-				
+				UpdateObject(collisions0_[select0_]);
+
 				BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
 
 				RenderManager2D::Get().Begin();
 				{
 					DrawGrid();
-					
-					switch (select_)
-					{
-					case 0:
-						RenderManager2D::Get().DrawPoint(selectPoint_.center, white_);
-						break;
-					case 1:
-						RenderManager2D::Get().DrawLine(selectLine_.start, selectLine_.end, white_);
-						break;
-					case 2:
-						RenderManager2D::Get().DrawCircleWireframe(selectCircle_.center, selectCircle_.radius, white_);
-						break;
-					case 3:
-						RenderManager2D::Get().DrawRectWireframe(selectAABB_.center, selectAABB_.size.x, selectAABB_.size.y, white_);
-						break;
-					case 4:
-						RenderManager2D::Get().DrawRectWireframe(selectOBB_.center, selectOBB_.size.x, selectOBB_.size.y, white_, selectOBB_.rotate);
-						break;
-					}
 
-					RenderManager2D::Get().DrawLine(line_.start, line_.end, line_.Intersect(current_) ? red_ : blue_);
-					RenderManager2D::Get().DrawCircleWireframe(circle_.center, circle_.radius, circle_.Intersect(current_) ? red_ : blue_);
-					RenderManager2D::Get().DrawRectWireframe(aabb_.center, aabb_.size.x, aabb_.size.y, aabb_.Intersect(current_) ? red_ : blue_);
-					RenderManager2D::Get().DrawRectWireframe(obb_.center, obb_.size.x, obb_.size.y, obb_.Intersect(current_) ? red_ : blue_, obb_.rotate);
+					if (collisions0_[select0_]->Intersect(collisions1_[select1_]))
+					{
+						DrawCollision(collisions0_[select0_], green_);
+						DrawCollision(collisions1_[select1_], green_);
+					}
+					else
+					{
+						DrawCollision(collisions0_[select0_], red_);
+						DrawCollision(collisions1_[select1_], blue_);
+					}
 				}
 				RenderManager2D::Get().End();
 
@@ -124,18 +97,121 @@ public:
 	}
 
 private:
+	void DisplayObjectGUI(const char* name, int32_t* selectPtr, const GameMath::Vec4f& color)
+	{
+		ImGui::TextColored(ImVec4(color.x, color.y, color.z, color.w), name);
+		ImGui::RadioButton(GameUtils::PrintF("LINE##%s", name).c_str(), selectPtr, static_cast<int32_t>(Type::LINE));
+		ImGui::SameLine();
+		ImGui::RadioButton(GameUtils::PrintF("CIRCLE##%s", name).c_str(), selectPtr, static_cast<int32_t>(Type::CIRCLE));
+		ImGui::SameLine();
+		ImGui::RadioButton(GameUtils::PrintF("AABB##%s", name).c_str(), selectPtr, static_cast<int32_t>(Type::AABB));
+		ImGui::SameLine();
+		ImGui::RadioButton(GameUtils::PrintF("OBB##%s", name).c_str(), selectPtr, static_cast<int32_t>(Type::OBB));
+	}
+
+	void UpdateObject(ICollision2D* collision)
+	{
+		ICollision2D::Type type = collision->GetType();
+		switch (type)
+		{
+		case ICollision2D::Type::POINT:
+		{
+			Point2D* point = reinterpret_cast<Point2D*>(collision);
+			point->center = currPos_;
+		}
+		break;
+
+		case ICollision2D::Type::LINE:
+		{
+			Line2D* line = reinterpret_cast<Line2D*>(collision);
+			line->start = currPos_ + GameMath::Vec2f(50.0f, 25.0f);
+			line->end = currPos_ + GameMath::Vec2f(-50.0f, -25.0f);
+		}
+		break;
+
+		case ICollision2D::Type::CIRCLE:
+		{
+			Circle2D* circle = reinterpret_cast<Circle2D*>(collision);
+			circle->center = currPos_;
+			circle->radius = 50.0f;
+		}
+		break;
+
+		case ICollision2D::Type::RECT:
+		{
+			Rect2D* rect = reinterpret_cast<Rect2D*>(collision);
+			rect->center = currPos_;
+			rect->size = GameMath::Vec2f(50.0f, 25.0f);
+		}
+		break;
+
+		case ICollision2D::Type::ORIENTED_RECT:
+		{
+			OrientedRect2D* orientedRect = reinterpret_cast<OrientedRect2D*>(collision);
+			orientedRect->center = currPos_;
+			orientedRect->size = GameMath::Vec2f(50.0f, 25.0f);
+			orientedRect->rotate = GameMath::ToRadian(130.0f);
+		}
+		break;
+		}
+	}
+
 	void DrawGrid()
 	{
+		GameMath::Vec4f color;
+
 		for (float x = minX_; x <= maxX_; x += strideX_)
 		{
-			GameMath::Vec4f color = (x == 0.0f) ? red_ : gray_;
+			color = (x == 0.0f) ? red_ : gray_;
 			RenderManager2D::Get().DrawLine(GameMath::Vec2f(x, minX_), GameMath::Vec2f(x, maxY_), color);
 		}
 
 		for (float y = minY_; y <= maxY_; y += strideY_)
 		{
-			GameMath::Vec4f color = (y == 0.0f) ? blue_ : gray_;
+			color = (y == 0.0f) ? blue_ : gray_;
 			RenderManager2D::Get().DrawLine(GameMath::Vec2f(minX_, y), GameMath::Vec2f(maxX_, y), color);
+		}
+	}
+
+	void DrawCollision(ICollision2D* collision, const GameMath::Vec4f& color)
+	{
+		ICollision2D::Type type = collision->GetType();
+		switch (type)
+		{
+		case ICollision2D::Type::POINT:
+		{
+			Point2D* point = reinterpret_cast<Point2D*>(collision);
+			RenderManager2D::Get().DrawPoint(point->center, color);
+		}
+		break;
+
+		case ICollision2D::Type::LINE:
+		{
+			Line2D* line = reinterpret_cast<Line2D*>(collision);
+			RenderManager2D::Get().DrawLine(line->start, line->end, color);
+		}
+		break;
+
+		case ICollision2D::Type::CIRCLE:
+		{
+			Circle2D* circle = reinterpret_cast<Circle2D*>(collision);
+			RenderManager2D::Get().DrawCircleWireframe(circle->center, circle->radius, color);
+		}
+		break;
+
+		case ICollision2D::Type::RECT:
+		{
+			Rect2D* rect = reinterpret_cast<Rect2D*>(collision);
+			RenderManager2D::Get().DrawRectWireframe(rect->center, rect->size.x, rect->size.y, color);
+		}
+		break;
+
+		case ICollision2D::Type::ORIENTED_RECT:
+		{
+			OrientedRect2D* orientedRect = reinterpret_cast<OrientedRect2D*>(collision);
+			RenderManager2D::Get().DrawRectWireframe(orientedRect->center, orientedRect->size.x, orientedRect->size.y, color, orientedRect->rotate);
+		}
+		break;
 		}
 	}
 	
@@ -147,26 +223,28 @@ private:
 	float maxY_ = +300.0f;
 	float strideY_ = 10.0f;
 
-	int32_t select_ = 0;
 	GameMath::Vec2f screenSize_;
 	GameMath::Vec2f currPos_;
 
-	ICollision2D* current_ = nullptr;
-	Point2D selectPoint_;
-	Line2D selectLine_;
-	Circle2D selectCircle_;
-	Rect2D selectAABB_;
-	OrientedRect2D selectOBB_;
-
-	Line2D line_;
-	Circle2D circle_;
-	Rect2D aabb_;
-	OrientedRect2D obb_;
-
 	GameMath::Vec4f red_ = GameMath::Vec4f(1.0f, 0.0f, 0.0f, 1.0f);
 	GameMath::Vec4f blue_ = GameMath::Vec4f(0.0f, 0.0f, 1.0f, 1.0f);
+	GameMath::Vec4f green_ = GameMath::Vec4f(0.0f, 1.0f, 0.0f, 1.0f);
 	GameMath::Vec4f gray_ = GameMath::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
 	GameMath::Vec4f white_ = GameMath::Vec4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+	int32_t select0_ = 0;
+	std::array<ICollision2D*, 4> collisions0_;
+	Line2D line0_;
+	Circle2D circle0_;
+	Rect2D aabb0_;
+	OrientedRect2D obb0_;
+
+	int32_t select1_ = 0;
+	std::array<ICollision2D*, 4> collisions1_;
+	Line2D line1_;
+	Circle2D circle1_;
+	Rect2D aabb1_;
+	OrientedRect2D obb1_;
 };
 
 int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR pCmdLine, _In_ int32_t nCmdShow)
