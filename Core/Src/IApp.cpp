@@ -18,6 +18,7 @@
 #include "AudioManager.h"
 #include "CrashManager.h"
 #include "Config.h"
+#include "DebugDrawManager3D.h"
 #include "EntityManager.h"
 #include "IApp.h"
 #include "RenderManager2D.h"
@@ -110,6 +111,7 @@ IApp::IApp(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool b
 
 	AudioManager::Get().Startup();
 	RenderManager2D::Get().Startup();
+	DebugDrawManager3D::Get().Startup();
 
 	RegisterAppWindowEvent();
 	SetAlphaBlendMode(true);
@@ -118,6 +120,7 @@ IApp::IApp(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool b
 IApp::~IApp()
 {
 	EntityManager::Get().Cleanup();
+	DebugDrawManager3D::Get().Shutdown();
 	RenderManager2D::Get().Shutdown();
 	ResourceManager::Get().Cleanup();
 	AudioManager::Get().Shutdown();
