@@ -35,8 +35,9 @@ IApp::IApp(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool b
 
 	instance_ = this;
 
+	ASSERT(SDL_SetMemoryFunctions(mi_malloc, mi_calloc, mi_realloc, mi_free) == 0, "%s", SDL_GetError());
 	ASSERT(SDL_Init(SDL_INIT_EVERYTHING) == 0, "%s", SDL_GetError());
-
+	
 	std::map<SDL_GLattr, int32_t> attributes =
 	{
 		{ SDL_GL_CONTEXT_FLAGS,         SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG },
