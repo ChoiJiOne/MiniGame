@@ -58,7 +58,7 @@ std::vector<std::string> GLTFUtils::GetAllNodeNames(cgltf_data* data)
 	for (uint32_t index = 0; index < count; ++index)
 	{
 		cgltf_node* node = &data->nodes[index];
-		names[index] = node->name;
+		names[index] = node->name ? node->name : "EMPTY";
 	}
 
 	return names;
