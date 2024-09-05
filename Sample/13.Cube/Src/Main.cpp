@@ -141,32 +141,12 @@ public:
 				ImGui::Begin("Transform", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 				{
 					ImGui::SetWindowPos(ImVec2(0.0f, 0.0f));
-					ImGui::SetWindowSize(ImVec2(350.0f, 120.0f));
-					ImGui::SliderFloat3("POSITION", transform_.position.data, -50.0f, +50.0f);
-					ImGui::SameLine();
-					if(ImGui::Button("RESET##POSITION"))
-					{
-						transform_.position = GameMath::Vec3f();
-					}
-					ImGui::SliderFloat4("ROTATE", transform_.rotate.data, 0.0f, 1.0f);
-					ImGui::SameLine();
-					if (ImGui::Button("RESET##ROTATE"))
-					{
-						transform_.rotate = GameMath::Quat();
-					}
-					ImGui::SliderFloat3("SCALE", transform_.scale.data, 0.0f, 100.0f);
-					ImGui::SameLine();
-					if (ImGui::Button("RESET##SCALE"))
-					{
-						transform_.scale = GameMath::Vec3f(1.0f, 1.0f, 1.0f);
-					}
-
-					if (!ImGui::IsWindowFocused())
-					{
-						camera_->Tick(deltaSeconds);
-					}
+					ImGui::SetWindowSize(ImVec2(400.0f, 130.0f));
+					UpdateTransformUI(deltaSeconds);
 				}
 				ImGui::End();
+
+				transform_.rotate = GameMath::Quat::AxisAngle(axis_, angle_);
 				
 				BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -196,6 +176,35 @@ public:
 	}
 
 private:
+	void UpdateTransformUI(float deltaSeconds)
+	{
+		ImGui::SliderFloat3("POSITION", transform_.position.data, -50.0f, +50.0f);
+		ImGui::SameLine();
+		if (ImGui::Button("RESET##POSITION"))
+		{
+			transform_.position = GameMath::Vec3f(0.0f, 0.0f, 0.0f);
+		}
+		ImGui::SliderFloat3("AXIS", axis_.data, -1.0f, 1.0f);
+		ImGui::SliderFloat("ANGLE", &angle_, 0.0f, 360.0f);
+		ImGui::SameLine();
+		if (ImGui::Button("RESET##ROTATE"))
+		{
+			axis_ = GameMath::Vec3f();
+			angle_ = 0.0f;
+		}
+		ImGui::SliderFloat3("SCALE", transform_.scale.data, 0.0f, 100.0f);
+		ImGui::SameLine();
+		if (ImGui::Button("RESET##SCALE"))
+		{
+			transform_.scale = GameMath::Vec3f(1.0f, 1.0f, 1.0f);
+		}
+
+		if (!ImGui::IsWindowFocused())
+		{
+			camera_->Tick(deltaSeconds);
+		}
+	}
+
 	void DrawGrid3D()
 	{
 		GameMath::Vec4f color;
@@ -229,6 +238,9 @@ private:
 	VertexBuffer* vertexBuffer_ = nullptr;
 	Shader* shader_ = nullptr;
 	Texture2D* texture_ = nullptr;
+
+	GameMath::Vec3f axis_ = GameMath::Vec3f(0.0f, 0.0f, 0.0f);
+	float angle_ = 0.0f;
 
 	GameMath::Transform transform_;
 };
