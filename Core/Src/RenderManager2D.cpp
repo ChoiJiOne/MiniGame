@@ -1090,12 +1090,12 @@ void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& cente
 
 	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> uvs =
 	{
-		GameMath::Vec2f(0.0f, 0.0f),
-		GameMath::Vec2f(1.0f, 1.0f),
 		GameMath::Vec2f(0.0f, 1.0f),
-		GameMath::Vec2f(0.0f, 0.0f),
 		GameMath::Vec2f(1.0f, 0.0f),
+		GameMath::Vec2f(0.0f, 0.0f),
+		GameMath::Vec2f(0.0f, 1.0f),
 		GameMath::Vec2f(1.0f, 1.0f),
+		GameMath::Vec2f(1.0f, 0.0f),
 	};
 
 	GameMath::Mat2x2 rotateMat = GameMath::Mat2x2(
@@ -1220,12 +1220,12 @@ void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& cente
 
 	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> uvs =
 	{
-		GameMath::Vec2f(0.0f, 0.0f),
-		GameMath::Vec2f(1.0f, 1.0f),
 		GameMath::Vec2f(0.0f, 1.0f),
-		GameMath::Vec2f(0.0f, 0.0f),
 		GameMath::Vec2f(1.0f, 0.0f),
+		GameMath::Vec2f(0.0f, 0.0f),
+		GameMath::Vec2f(0.0f, 1.0f),
 		GameMath::Vec2f(1.0f, 1.0f),
+		GameMath::Vec2f(1.0f, 0.0f),
 	};
 
 	GameMath::Mat2x2 rotateMat = GameMath::Mat2x2(
@@ -1354,12 +1354,12 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 
 	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> uvs =
 	{
-		GameMath::Vec2f(static_cast<float>(block.pos.x               ) / atlasWidth, static_cast<float>(block.pos.y               ) / atlasHeight),
-		GameMath::Vec2f(static_cast<float>(block.pos.x + block.size.x) / atlasWidth, static_cast<float>(block.pos.y + block.size.y) / atlasHeight),
 		GameMath::Vec2f(static_cast<float>(block.pos.x               ) / atlasWidth, static_cast<float>(block.pos.y + block.size.y) / atlasHeight),
-		GameMath::Vec2f(static_cast<float>(block.pos.x               ) / atlasWidth, static_cast<float>(block.pos.y               ) / atlasHeight),
 		GameMath::Vec2f(static_cast<float>(block.pos.x + block.size.x) / atlasWidth, static_cast<float>(block.pos.y               ) / atlasHeight),
+		GameMath::Vec2f(static_cast<float>(block.pos.x               ) / atlasWidth, static_cast<float>(block.pos.y               ) / atlasHeight),
+		GameMath::Vec2f(static_cast<float>(block.pos.x               ) / atlasWidth, static_cast<float>(block.pos.y + block.size.y) / atlasHeight),
 		GameMath::Vec2f(static_cast<float>(block.pos.x + block.size.x) / atlasWidth, static_cast<float>(block.pos.y + block.size.y) / atlasHeight),
+		GameMath::Vec2f(static_cast<float>(block.pos.x + block.size.x) / atlasWidth, static_cast<float>(block.pos.y               ) / atlasHeight),
 	};
 
 	GameMath::Mat2x2 rotateMat = GameMath::Mat2x2(
