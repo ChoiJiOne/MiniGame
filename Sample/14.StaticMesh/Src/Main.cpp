@@ -7,7 +7,6 @@
 
 #include "Assertion.h"
 #include "IApp.h"
-
 #include "DebugDrawManager3D.h"
 #include "EntityManager.h"
 #include "FreeEulerCamera3D.h"
@@ -15,7 +14,7 @@
 class DemoApp : public IApp
 {
 public:
-	DemoApp() : IApp("14.GLTF", 100, 100, 800, 600, false, false) {}
+	DemoApp() : IApp("14.StaticMesh", 100, 100, 800, 600, false, false) {}
 	virtual ~DemoApp() {}
 
 	DISALLOW_COPY_AND_ASSIGN(DemoApp);
@@ -51,26 +50,32 @@ public:
 
 				DebugDrawManager3D::Get().Begin(camera_);
 				{
-					GameMath::Vec4f color;
-					for (float x = minX_; x <= maxX_; x += stride_)
-					{
-						color = (x == 0.0f) ? GameMath::Vec4f(0.0f, 0.0f, 1.0f, 1.0f) : GameMath::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
-						DebugDrawManager3D::Get().DrawLine(GameMath::Vec3f(x, 0.0f, minZ_), GameMath::Vec3f(x, 0.0f, maxZ_), color);
-					}
-
-					for (float z = minZ_; z <= maxZ_; z += stride_)
-					{
-						color = (z == 0.0f) ? GameMath::Vec4f(1.0f, 0.0f, 0.0f, 1.0f) : GameMath::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
-						DebugDrawManager3D::Get().DrawLine(GameMath::Vec3f(minX_, 0.0f, z), GameMath::Vec3f(maxX_, 0.0f, z), color);
-					}
-
-					DebugDrawManager3D::Get().DrawLine(GameMath::Vec3f(0.0f, minY_, 0.0f), GameMath::Vec3f(0.0f, maxY_, 0.0f), GameMath::Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
+					DrawGrid();
 				}
 				DebugDrawManager3D::Get().End();
 				
 				EndFrame();
 			}
 		);
+	}
+
+private:
+	void DrawGrid()
+	{
+		GameMath::Vec4f color;
+		for (float x = minX_; x <= maxX_; x += stride_)
+		{
+			color = (x == 0.0f) ? GameMath::Vec4f(0.0f, 0.0f, 1.0f, 1.0f) : GameMath::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
+			DebugDrawManager3D::Get().DrawLine(GameMath::Vec3f(x, 0.0f, minZ_), GameMath::Vec3f(x, 0.0f, maxZ_), color);
+		}
+
+		for (float z = minZ_; z <= maxZ_; z += stride_)
+		{
+			color = (z == 0.0f) ? GameMath::Vec4f(1.0f, 0.0f, 0.0f, 1.0f) : GameMath::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
+			DebugDrawManager3D::Get().DrawLine(GameMath::Vec3f(minX_, 0.0f, z), GameMath::Vec3f(maxX_, 0.0f, z), color);
+		}
+
+		DebugDrawManager3D::Get().DrawLine(GameMath::Vec3f(0.0f, minY_, 0.0f), GameMath::Vec3f(0.0f, maxY_, 0.0f), GameMath::Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
 	}
 
 private:

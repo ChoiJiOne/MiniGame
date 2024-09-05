@@ -13,7 +13,7 @@ add_subdirectory(10.Sound)
 add_subdirectory(11.Collision2D)
 add_subdirectory(12.FreeEulerCamera3D)
 add_subdirectory(13.Cube)
-add_subdirectory(14.GLTF)
+add_subdirectory(14.StaticMesh)
 
 set_target_properties(
     01.Initialize
@@ -29,6 +29,6 @@ set_target_properties(
     11.Collision2D
     12.FreeEulerCamera3D
     13.Cube
-    14.GLTF
+    14.StaticMesh
     PROPERTIES FOLDER "Sample"
 )
