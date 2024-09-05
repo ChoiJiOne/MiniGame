@@ -11,6 +11,7 @@ public:
 
 	DISALLOW_COPY_AND_ASSIGN(IEntity);
 
+	virtual void Tick(float deltaSeconds) = 0;
 	virtual void Release() = 0;
 	bool IsInitialized() const { return bIsInitialized_; }
 
