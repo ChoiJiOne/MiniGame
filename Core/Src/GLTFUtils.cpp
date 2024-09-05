@@ -50,18 +50,4 @@ void GLTFUtils::Free(cgltf_data* data)
 	}
 }
 
-std::vector<std::string> GLTFUtils::GetAllNodeNames(cgltf_data* data)
-{
-	uint32_t count = data->nodes_count;
-	std::vector<std::string> names(count);
-
-	for (uint32_t index = 0; index < count; ++index)
-	{
-		cgltf_node* node = &data->nodes[index];
-		names[index] = node->name ? node->name : "EMPTY";
-	}
-
-	return names;
-}
-
 #pragma warning(pop)
