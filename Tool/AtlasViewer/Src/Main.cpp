@@ -29,7 +29,7 @@ public:
 		RunLoop(
 			[&](float deltaSeconds)
 			{
-				BeginFrame(1.0f, 0.0f, 0.0f, 1.0f);
+				BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
 				EndFrame();
 			}
 		);
