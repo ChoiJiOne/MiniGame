@@ -499,16 +499,16 @@ if (MI_BUILD_STATIC)
     set_target_properties(mimalloc-static PROPERTIES OUTPUT_NAME ${mi_basename})
   endif()
 
-  install(TARGETS mimalloc-static EXPORT mimalloc DESTINATION ${mi_install_objdir} LIBRARY)
-  install(EXPORT mimalloc DESTINATION ${mi_install_cmakedir})
+  # install(TARGETS mimalloc-static EXPORT mimalloc DESTINATION ${mi_install_objdir} LIBRARY)
+  # install(EXPORT mimalloc DESTINATION ${mi_install_cmakedir})
 endif()
 
 # install include files
-install(FILES include/mimalloc.h DESTINATION ${mi_install_incdir})
-install(FILES include/mimalloc-override.h DESTINATION ${mi_install_incdir})
-install(FILES include/mimalloc-new-delete.h DESTINATION ${mi_install_incdir})
-install(FILES cmake/mimalloc-config.cmake DESTINATION ${mi_install_cmakedir})
-install(FILES cmake/mimalloc-config-version.cmake DESTINATION ${mi_install_cmakedir})
+# install(FILES include/mimalloc.h DESTINATION ${mi_install_incdir})
+# install(FILES include/mimalloc-override.h DESTINATION ${mi_install_incdir})
+# install(FILES include/mimalloc-new-delete.h DESTINATION ${mi_install_incdir})
+# install(FILES cmake/mimalloc-config.cmake DESTINATION ${mi_install_cmakedir})
+# install(FILES cmake/mimalloc-config-version.cmake DESTINATION ${mi_install_cmakedir})
 
 
 # single object file for more predictable static overriding
@@ -535,28 +535,28 @@ if (MI_BUILD_OBJECT)
 
   # the FILES expression can also be: $<TARGET_OBJECTS:mimalloc-obj>
   # but that fails cmake versions less than 3.10 so we leave it as is for now
-  install(FILES ${mimalloc-obj-static}
-          DESTINATION ${mi_install_objdir}
-          RENAME ${mi_basename}${CMAKE_C_OUTPUT_EXTENSION} )
+  # install(FILES ${mimalloc-obj-static}
+  #         DESTINATION ${mi_install_objdir}
+  #         RENAME ${mi_basename}${CMAKE_C_OUTPUT_EXTENSION} )
 endif()
 
 # pkg-config file support
-set(pc_libraries "")
-foreach(item IN LISTS mi_libraries)
-  if(item MATCHES " *[-].*")
-    set(pc_libraries "${pc_libraries} ${item}")
-  else()
-    set(pc_libraries "${pc_libraries} -l${item}")
-  endif()
-endforeach()
+# set(pc_libraries "")
+# foreach(item IN LISTS mi_libraries)
+#   if(item MATCHES " *[-].*")
+#     set(pc_libraries "${pc_libraries} ${item}")
+#   else()
+#     set(pc_libraries "${pc_libraries} -l${item}")
+#   endif()
+# endforeach()
 
-include("cmake/JoinPaths.cmake")
-join_paths(includedir_for_pc_file "\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}")
-join_paths(libdir_for_pc_file "\${prefix}" "${CMAKE_INSTALL_LIBDIR}")
+# include("cmake/JoinPaths.cmake")
+# join_paths(includedir_for_pc_file "\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}")
+# join_paths(libdir_for_pc_file "\${prefix}" "${CMAKE_INSTALL_LIBDIR}")
 
-configure_file(mimalloc.pc.in mimalloc.pc @ONLY)
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/mimalloc.pc"
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig/")
+# configure_file(mimalloc.pc.in mimalloc.pc @ONLY)
+# install(FILES "${CMAKE_CURRENT_BINARY_DIR}/mimalloc.pc"
+#         DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig/")
 
 
 
