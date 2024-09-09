@@ -8,7 +8,7 @@ SpriteAnim2D::SpriteAnim2D(Atlas2D* atlas, const std::vector<std::string>& clipN
 	, animationTime_(animationTime)
 	, clips_(clipNames.size() + 1)
 {
-	for (uint32_t index = 0; index < clips_.size(); ++index)
+	for (uint32_t index = 0; index < clips_.size() - 1; ++index)
 	{
 		float rate = static_cast<float>(index) / static_cast<float>(clips_.size());
 
