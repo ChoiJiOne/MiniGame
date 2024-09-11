@@ -39,3 +39,11 @@ To update the `GameMaker` to the latest version, execute the following command.
 ```
 git submodule update --remote
 ```
+
+## Game
+
+### [Runner2D](https://github.com/ChoiJiOne/Runner2D)
+- `Runner2D` is a project for developing a Runner 2D game based on GameMaker.
+
+### [CoinDash2D](https://github.com/ChoiJiOne/CoinDash2D)
+- `CoinDash2D` is a project for developing a Coin dash 2D game based on GameMaker.
