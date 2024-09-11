@@ -44,6 +44,8 @@ git submodule update --remote
 
 ### [Runner2D](https://github.com/ChoiJiOne/Runner2D)
 - `Runner2D` is a project for developing a Runner 2D game based on GameMaker.
+  ![Runner2D](./Image/Runner2D.png)
 
 ### [CoinDash2D](https://github.com/ChoiJiOne/CoinDash2D)
 - `CoinDash2D` is a project for developing a Coin dash 2D game based on GameMaker.
+  ![CoinDash2D](./Image/CoinDash2D.png)
