@@ -23,14 +23,14 @@ public:
 	{
 		SetDepthMode(true);
 
-		camera_ = EntityManager::Get().Create<FreeEulerCamera3D>(
-			GameMath::Vec3f(3.0f, 3.0f, 3.0f), 
-			-GameMath::ToRadian(135.0f), 
-			-GameMath::PI / 6.0f, 
-			GameMath::PI_DIV_4, 
-			0.01f, 
-			100.0f
-		);
+		GameMath::Vec3f cameraPos(3.0f, 3.0f, 3.0f);
+		float yaw = -GameMath::ToRadian(135.0f);
+		float pitch = -GameMath::PI / 6.0f;
+		float fov = GameMath::PI_DIV_4;
+		float nearZ = 0.01f;
+		float farZ = 100.0f;
+
+		camera_ = EntityManager::Get().Create<FreeEulerCamera3D>(cameraPos, yaw, pitch, fov, nearZ, farZ);
 	}
 
 	virtual void Shutdown() override
