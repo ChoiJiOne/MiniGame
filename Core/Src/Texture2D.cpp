@@ -187,7 +187,7 @@ uint32_t Texture2D::CreateTextureFromDDS(const std::string& path, const Filter& 
 
 	int32_t width = width_;
 	int32_t height = height_;
-	for (uint32_t level = 0, offset = 0; level < mipMapCount; ++level)
+	for (uint32_t level = 0, offset = 0; level <= mipMapCount; ++level)
 	{
 		if (width == 0 || height == 0)
 		{
