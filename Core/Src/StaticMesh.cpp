@@ -102,7 +102,8 @@ StaticMesh* StaticMesh::CreateBox(const GameMath::Vec3f& size)
 		GameMath::Vec2f(1.0f, 0.0f),
 		GameMath::Vec2f(0.0f, 0.0f),
 	};
-	
+
+	GameMath::Vec3f size2 = size * 0.5f;
 	for (int32_t index = 0; index < faceCount; ++index)
 	{
 		const GameMath::Vec3f normal = normals[index];
@@ -119,27 +120,10 @@ StaticMesh* StaticMesh::CreateBox(const GameMath::Vec3f& size)
 		indices.push_back(vertexBase + 2);
 		indices.push_back(vertexBase + 3);
 
-		Vertex vertex;
-
-		vertex.position = (normal + side1 + side2) * size * 0.5f;
-		vertex.normal = normal;
-		vertex.uv = uvs[0];
-		vertices.push_back(vertex);
-
-		vertex.position = (normal - side1 + side2) * size * 0.5f;
-		vertex.normal = normal;
-		vertex.uv = uvs[1];
-		vertices.push_back(vertex);
-
-		vertex.position = (normal - side1 - side2) * size * 0.5f;
-		vertex.normal = normal;
-		vertex.uv = uvs[2];
-		vertices.push_back(vertex);
-
-		vertex.position = (normal + side1 - side2) * size * 0.5f;
-		vertex.normal = normal;
-		vertex.uv = uvs[3];
-		vertices.push_back(vertex);
+		vertices.push_back(Vertex{ (normal + side1 + side2) * size2, normal, GameMath::Vec3f(0.0f, 0.0f, 0.0f), uvs[0] });
+		vertices.push_back(Vertex{ (normal - side1 + side2) * size2, normal, GameMath::Vec3f(0.0f, 0.0f, 0.0f), uvs[1] });
+		vertices.push_back(Vertex{ (normal - side1 - side2) * size2, normal, GameMath::Vec3f(0.0f, 0.0f, 0.0f), uvs[2] });
+		vertices.push_back(Vertex{ (normal + side1 - side2) * size2, normal, GameMath::Vec3f(0.0f, 0.0f, 0.0f), uvs[3] });
 	}
 
 	return ResourceManager::Get().Create<StaticMesh>(vertices, indices);
