@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <Windows.h>
+#include <tuple>
 
 #include <glad/glad.h>
 
@@ -37,9 +38,17 @@ public:
 		float farZ = 100.0f;
 
 		camera_ = EntityManager::Get().Create<FreeEulerCamera3D>(cameraPos, yaw, pitch, fov, nearZ, farZ);
-		texture_ = ResourceManager::Get().Create<Texture2D>("GameMaker/Sample/14.StaticMesh/Res/Box.png", Texture2D::Filter::LINEAR);
 		shader_ = ResourceManager::Get().Create<Shader>("GameMaker/Sample/14.StaticMesh/Res/Shader.vert", "GameMaker/Sample/14.StaticMesh/Res/Shader.frag");
-		mesh_ = StaticMesh::CreateBox(GameMath::Vec3f(1.0f, 1.0f, 1.0f));
+
+		StaticMesh* cube = StaticMesh::CreateBox(GameMath::Vec3f(1.0f, 1.0f, 1.0f));
+		Texture2D* box = ResourceManager::Get().Create<Texture2D>("GameMaker/Sample/14.StaticMesh/Res/Box.png", Texture2D::Filter::LINEAR);
+		std::tuple<StaticMesh*, Texture2D*, GameMath::Mat4x4> boxObject(cube, box, GameMath::Mat4x4::Translation(-1.0f, 0.0f, 0.0f));
+		objects_.push_back(boxObject);
+
+		StaticMesh* sphere = StaticMesh::CreateSphere(1.0f, 30);
+		Texture2D* earth = ResourceManager::Get().Create<Texture2D>("GameMaker/Sample/14.StaticMesh/Res/Earth.png", Texture2D::Filter::LINEAR);
+		std::tuple<StaticMesh*, Texture2D*, GameMath::Mat4x4> sphereObject(sphere, earth, GameMath::Mat4x4::Translation(+1.0f, 0.0f, 0.0f));
+		objects_.push_back(sphereObject);
 	}
 
 	virtual void Shutdown() override
@@ -65,15 +74,18 @@ public:
 
 				shader_->Bind();
 				{
-					texture_->Active(0);
-
-					shader_->SetUniform("world", GameMath::Mat4x4::Identity());
 					shader_->SetUniform("view", camera_->GetView());
 					shader_->SetUniform("projection", camera_->GetProjection());
 
-					mesh_->Bind();
-					GL_CHECK(glDrawElements(static_cast<GLenum>(DrawMode::TRIANGLES), mesh_->GetIndexCount(), GL_UNSIGNED_INT, nullptr));
-					mesh_->Unbind();
+					for (auto& object : objects_)
+					{
+						std::get<1>(object)->Active(0);
+						shader_->SetUniform("world", std::get<2>(object));
+
+						std::get<0>(object)->Bind();
+						GL_CHECK(glDrawElements(static_cast<GLenum>(DrawMode::TRIANGLES), std::get<0>(object)->GetIndexCount(), GL_UNSIGNED_INT, nullptr));
+						std::get<0>(object)->Unbind();
+					}
 				}
 				shader_->Unbind();
 				
@@ -111,9 +123,9 @@ private:
 	float stride_ = 1.0f;
 
 	FreeEulerCamera3D* camera_ = nullptr;
-	Texture2D* texture_ = nullptr;
 	Shader* shader_ = nullptr;
-	StaticMesh* mesh_ = nullptr;
+
+	std::vector<std::tuple<StaticMesh*, Texture2D*, GameMath::Mat4x4>> objects_;
 };
 
 int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR pCmdLine, _In_ int32_t nCmdShow)
