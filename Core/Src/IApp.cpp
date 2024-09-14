@@ -22,6 +22,7 @@
 #include "EntityManager.h"
 #include "IApp.h"
 #include "RenderManager2D.h"
+#include "RenderManager3D.h"
 #include "ResourceManager.h"
 
 static LPTOP_LEVEL_EXCEPTION_FILTER topLevelExceptionFilter_;
@@ -112,6 +113,7 @@ IApp::IApp(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool b
 
 	AudioManager::Get().Startup();
 	RenderManager2D::Get().Startup();
+	RenderManager3D::Get().Startup();
 	DebugDrawManager3D::Get().Startup();
 
 	RegisterAppWindowEvent();
@@ -122,6 +124,7 @@ IApp::~IApp()
 {
 	EntityManager::Get().Cleanup();
 	DebugDrawManager3D::Get().Shutdown();
+	RenderManager3D::Get().Shutdown();
 	RenderManager2D::Get().Shutdown();
 	ResourceManager::Get().Cleanup();
 	AudioManager::Get().Shutdown();
