@@ -40,6 +40,7 @@ public:
 	virtual uint32_t GetVertexCount() const override { return static_cast<uint32_t>(vertices_.size()); }
 
 	static StaticMesh* CreateBox(const GameMath::Vec3f& size);
+	static StaticMesh* CreateSphere(float radius, uint32_t tessellation);
 
 private:
 	std::vector<Vertex> vertices_;

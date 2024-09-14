@@ -128,3 +128,61 @@ StaticMesh* StaticMesh::CreateBox(const GameMath::Vec3f& size)
 
 	return ResourceManager::Get().Create<StaticMesh>(vertices, indices);
 }
+
+/** https://github.com/microsoft/DirectXTK/blob/main/Src/Geometry.cpp#L147 */
+StaticMesh* StaticMesh::CreateSphere(float radius, uint32_t tessellation)
+{
+	ASSERT(tessellation >= 3, "Tessellation '%d' is invalid parameter. Tesselation parameter must be at least 3", tessellation);
+	
+	std::vector<Vertex> vertices;
+	std::vector<uint32_t> indices;
+
+	const uint32_t vertical = tessellation;
+	const uint32_t horizon = tessellation * 2;
+	for (uint32_t vIndex = 0; vIndex <= vertical; ++vIndex)
+	{
+		const float v = 1.0f - static_cast<float>(vIndex) / static_cast<float>(vertical);
+
+		// 구면 좌표계의 위도(latitude) 각 계산.
+		const float latitude = (GameMath::PI * static_cast<float>(vIndex) / static_cast<float>(vertical)) - GameMath::PI_DIV_2; // -pi/2 <= latitude <= pi/2
+
+		float dy = GameMath::Sin(latitude);
+		float dxz = GameMath::Cos(latitude);
+
+		for (uint32_t hIndex = 0; hIndex <= horizon; ++hIndex)
+		{
+			const float u = static_cast<float>(hIndex) / static_cast<float>(horizon);
+
+			// 구면 좌표계의 경도(longitude) 각 계산.
+			const float longitude = (GameMath::TWO_PI * static_cast<float>(hIndex) / static_cast<float>(horizon));
+
+			float dx = dxz * GameMath::Sin(longitude);
+			float dz = dxz * GameMath::Cos(longitude);
+
+			const GameMath::Vec3f position(radius * dx, radius * dy, radius * dz);
+			const GameMath::Vec3f normal(dx, dy, dz);
+			const GameMath::Vec2f uv(u, v);
+			vertices.push_back(Vertex{ position, normal, GameMath::Vec3f(0.0f, 0.0f, 0.0f), uv });
+		}
+	}
+
+	const uint32_t stride = horizon + 1;
+	for (uint32_t vIndex = 0; vIndex < vertical; ++vIndex)
+	{
+		for (uint32_t hIndex = 0; hIndex <= horizon; ++hIndex)
+		{
+			const uint32_t nextV = vIndex + 1;
+			const uint32_t nextH = (hIndex + 1) % stride;
+
+			indices.push_back(vIndex * stride + hIndex);
+			indices.push_back(vIndex * stride + nextH);
+			indices.push_back( nextV * stride + hIndex);
+
+			indices.push_back(vIndex * stride + nextH);
+			indices.push_back( nextV * stride + nextH);
+			indices.push_back( nextV * stride + hIndex);
+		}
+	}
+
+	return ResourceManager::Get().Create<StaticMesh>(vertices, indices);
+}
