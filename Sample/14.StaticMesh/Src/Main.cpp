@@ -1,6 +1,8 @@
 #include <cstdint>
 #include <Windows.h>
 
+#include <glad/glad.h>
+
 #if defined(DEBUG_MODE) || defined(RELEASE_MODE) || defined(DEVELOPMENT_MODE)
 #include <crtdbg.h>
 #endif
@@ -10,6 +12,10 @@
 #include "DebugDrawManager3D.h"
 #include "EntityManager.h"
 #include "FreeEulerCamera3D.h"
+#include "ResourceManager.h"
+#include "Shader.h"
+#include "StaticMesh.h"
+#include "Texture2D.h"
 
 class DemoApp : public IApp
 {
@@ -31,6 +37,9 @@ public:
 		float farZ = 100.0f;
 
 		camera_ = EntityManager::Get().Create<FreeEulerCamera3D>(cameraPos, yaw, pitch, fov, nearZ, farZ);
+		texture_ = ResourceManager::Get().Create<Texture2D>("GameMaker/Sample/14.StaticMesh/Res/Box.png", Texture2D::Filter::LINEAR);
+		shader_ = ResourceManager::Get().Create<Shader>("GameMaker/Sample/14.StaticMesh/Res/Shader.vert", "GameMaker/Sample/14.StaticMesh/Res/Shader.frag");
+		mesh_ = StaticMesh::CreateBox(GameMath::Vec3f(1.0f, 1.0f, 1.0f));
 	}
 
 	virtual void Shutdown() override
@@ -53,6 +62,20 @@ public:
 					DrawGrid();
 				}
 				DebugDrawManager3D::Get().End();
+
+				shader_->Bind();
+				{
+					texture_->Active(0);
+
+					shader_->SetUniform("world", GameMath::Mat4x4::Identity());
+					shader_->SetUniform("view", camera_->GetView());
+					shader_->SetUniform("projection", camera_->GetProjection());
+
+					mesh_->Bind();
+					GL_CHECK(glDrawElements(static_cast<GLenum>(DrawMode::TRIANGLES), mesh_->GetIndexCount(), GL_UNSIGNED_INT, nullptr));
+					mesh_->Unbind();
+				}
+				shader_->Unbind();
 				
 				EndFrame();
 			}
@@ -88,6 +111,9 @@ private:
 	float stride_ = 1.0f;
 
 	FreeEulerCamera3D* camera_ = nullptr;
+	Texture2D* texture_ = nullptr;
+	Shader* shader_ = nullptr;
+	StaticMesh* mesh_ = nullptr;
 };
 
 int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR pCmdLine, _In_ int32_t nCmdShow)
