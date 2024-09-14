@@ -78,3 +78,69 @@ void StaticMesh::Unbind() const
 {
 	GL_CHECK(glBindVertexArray(0));
 }
+
+/** https://github.com/microsoft/DirectXTK/blob/main/Src/Geometry.cpp#L71 */
+StaticMesh* StaticMesh::CreateBox(const GameMath::Vec3f& size)
+{
+	std::vector<Vertex> vertices;
+	std::vector<uint32_t> indices;
+
+	static const int32_t faceCount = 6;
+	static const std::array<GameMath::Vec3f, 6> normals =
+	{
+		GameMath::Vec3f( 0.0f,  0.0f, +1.0f),
+		GameMath::Vec3f( 0.0f,  0.0f, -1.0f),
+		GameMath::Vec3f(+1.0f,  0.0f,  0.0f),
+		GameMath::Vec3f(-1.0f,  0.0f,  0.0f),
+		GameMath::Vec3f( 0.0f, +1.0f,  0.0f),
+		GameMath::Vec3f( 0.0f, -1.0f,  0.0f),
+	};
+	static const std::array<GameMath::Vec2f, 4> uvs =
+	{
+		GameMath::Vec2f(0.0f, 1.0f),
+		GameMath::Vec2f(1.0f, 1.0f),
+		GameMath::Vec2f(1.0f, 0.0f),
+		GameMath::Vec2f(0.0f, 0.0f),
+	};
+	
+	for (int32_t index = 0; index < faceCount; ++index)
+	{
+		const GameMath::Vec3f normal = normals[index];
+		const GameMath::Vec3f basis = (index >= 4) ? GameMath::Vec3f(0.0f, 0.0f, 1.0f) : GameMath::Vec3f(0.0f, 1.0f, 0.0f);
+		const GameMath::Vec3f side1 = GameMath::Vec3f::Cross(normal, basis);
+		const GameMath::Vec3f side2 = GameMath::Vec3f::Cross(normal, side1);
+		
+		const std::size_t vertexBase = vertices.size();
+		indices.push_back(vertexBase + 0);
+		indices.push_back(vertexBase + 1);
+		indices.push_back(vertexBase + 2);
+
+		indices.push_back(vertexBase + 0);
+		indices.push_back(vertexBase + 2);
+		indices.push_back(vertexBase + 3);
+
+		Vertex vertex;
+
+		vertex.position = (normal + side1 + side2) * size * 0.5f;
+		vertex.normal = normal;
+		vertex.uv = uvs[0];
+		vertices.push_back(vertex);
+
+		vertex.position = (normal - side1 + side2) * size * 0.5f;
+		vertex.normal = normal;
+		vertex.uv = uvs[1];
+		vertices.push_back(vertex);
+
+		vertex.position = (normal - side1 - side2) * size * 0.5f;
+		vertex.normal = normal;
+		vertex.uv = uvs[2];
+		vertices.push_back(vertex);
+
+		vertex.position = (normal + side1 - side2) * size * 0.5f;
+		vertex.normal = normal;
+		vertex.uv = uvs[3];
+		vertices.push_back(vertex);
+	}
+
+	return ResourceManager::Get().Create<StaticMesh>(vertices, indices);
+}

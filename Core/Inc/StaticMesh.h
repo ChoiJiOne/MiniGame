@@ -39,6 +39,8 @@ public:
 	virtual uint32_t GetIndexCount() const override { return static_cast<uint32_t>(indices_.size()); }
 	virtual uint32_t GetVertexCount() const override { return static_cast<uint32_t>(vertices_.size()); }
 
+	static StaticMesh* CreateBox(const GameMath::Vec3f& size);
+
 private:
 	std::vector<Vertex> vertices_;
 	VertexBuffer* vertexBuffer_ = nullptr;
