@@ -14,7 +14,7 @@ add_subdirectory(11.Collision2D)
 add_subdirectory(12.FreeEulerCamera3D)
 add_subdirectory(13.Cube)
 add_subdirectory(14.StaticMesh)
-add_subdirectory(15.PostProcessing)
+add_subdirectory(15.Skybox)
 
 set_target_properties(
     01.Initialize
@@ -31,6 +31,6 @@ set_target_properties(
     12.FreeEulerCamera3D
     13.Cube
     14.StaticMesh
-    15.PostProcessing
+    15.Skybox
     PROPERTIES FOLDER "Sample"
 )

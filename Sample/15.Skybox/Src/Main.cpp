@@ -21,7 +21,7 @@
 class DemoApp : public IApp
 {
 public:
-	DemoApp() : IApp("15.PostProcessing", 100, 100, 800, 600, false, false) {}
+	DemoApp() : IApp("15.Skybox", 100, 100, 800, 600, false, false) {}
 	virtual ~DemoApp() {}
 
 	DISALLOW_COPY_AND_ASSIGN(DemoApp);
