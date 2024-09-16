@@ -5,8 +5,7 @@ layout(location = 0) in vec4 inColor;
 layout(location = 0) out vec4 outFragColor;
 
 uniform bool bEnableGammaCorrection;
-
-const float GAMMA = 2.2;
+uniform float gamma;
 
 void main()
 {
@@ -15,7 +14,7 @@ void main()
 
     if(bEnableGammaCorrection)
     {
-        fragColor = pow(fragColor, vec3(1.0f / GAMMA));
+        fragColor = pow(fragColor, vec3(1.0f / gamma));
     }
 
     outFragColor = vec4(fragColor, alpha);
