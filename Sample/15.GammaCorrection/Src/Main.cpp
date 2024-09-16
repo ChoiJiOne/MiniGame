@@ -121,7 +121,7 @@ public:
 				ImGui::Begin("GAMMA", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 				ImGui::SetWindowPos(ImVec2(0.0f, 0.0f));
 				ImGui::SetWindowSize(ImVec2(400.0f, 55.0f));
-				ImGui::SliderFloat("Gamma", &gamma_, 1.0f, 3.0f);
+				ImGui::SliderFloat("Gamma", &gamma_, 1.0f, 2.2f);
 				ImGui::End();
 
 				BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
