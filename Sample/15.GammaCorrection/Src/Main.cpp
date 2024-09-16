@@ -127,7 +127,7 @@ public:
 				BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
 				shader_->Bind();
 				{
-					shader_->SetUniform("gamma", gamma_);
+					shader_->SetUniform("gamma", 1.0f / gamma_);
 					for (auto& object : objects_)
 					{
 						shader_->SetUniform("bEnableGammaCorrection", bbEnableGammaCorrection_);

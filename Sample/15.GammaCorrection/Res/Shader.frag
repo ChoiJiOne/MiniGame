@@ -14,7 +14,7 @@ void main()
 
     if(bEnableGammaCorrection)
     {
-        fragColor = pow(fragColor, vec3(1.0f / gamma));
+        fragColor = pow(fragColor, vec3(gamma));
     }
 
     outFragColor = vec4(fragColor, alpha);
