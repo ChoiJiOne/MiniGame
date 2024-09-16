@@ -3,6 +3,7 @@
 #include <tuple>
 
 #include <glad/glad.h>
+#include <imgui.h>
 
 #if defined(DEBUG_MODE) || defined(RELEASE_MODE) || defined(DEVELOPMENT_MODE)
 #include <crtdbg.h>
@@ -117,9 +118,16 @@ public:
 		RunLoop(
 			[&](float deltaSeconds)
 			{
+				ImGui::Begin("GAMMA", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+				ImGui::SetWindowPos(ImVec2(0.0f, 0.0f));
+				ImGui::SetWindowSize(ImVec2(400.0f, 55.0f));
+				ImGui::SliderFloat("Gamma", &gamma_, 1.0f, 3.0f);
+				ImGui::End();
+
 				BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
 				shader_->Bind();
 				{
+					shader_->SetUniform("gamma", gamma_);
 					for (auto& object : objects_)
 					{
 						shader_->SetUniform("bEnableGammaCorrection", bbEnableGammaCorrection_);
@@ -138,6 +146,7 @@ public:
 
 private:
 	Shader* shader_ = nullptr;
+	float gamma_ = 2.2f;
 	bool bbEnableGammaCorrection_ = false;
 
 	std::vector<std::pair<uint32_t, VertexBuffer*>> objects_;
