@@ -122,6 +122,9 @@ public:
 				{
 					for (auto& object : objects_)
 					{
+						shader_->SetUniform("bEnableGammaCorrection", bbEnableGammaCorrection_);
+						bbEnableGammaCorrection_ = !bbEnableGammaCorrection_;
+
 						GL_CHECK(glBindVertexArray(object.first));
 						GL_CHECK(glDrawArrays(static_cast<GLenum>(DrawMode::TRIANGLE_FAN), 0, 4));
 						GL_CHECK(glBindVertexArray(0));
@@ -135,6 +138,7 @@ public:
 
 private:
 	Shader* shader_ = nullptr;
+	bool bbEnableGammaCorrection_ = false;
 
 	std::vector<std::pair<uint32_t, VertexBuffer*>> objects_;
 };
