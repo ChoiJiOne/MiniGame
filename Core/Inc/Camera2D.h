@@ -1,12 +1,19 @@
 #pragma once
 
+#include "Collision2D.h"
 #include "GameMath.h"
 #include "IEntity.h"
 
 class Camera2D : public IEntity
 {
 public:
-	Camera2D() = default;
+	Camera2D(const GameMath::Vec2f& center, const GameMath::Vec2f& size)
+		: center_(center)
+		, size_(size)
+	{
+		ortho_ = CalculateOrtho(center_, size_);
+		collision_ = Rect2D(center_, size_);
+	}
 	virtual ~Camera2D() {}
 
 	DISALLOW_COPY_AND_ASSIGN(Camera2D);
@@ -19,6 +26,7 @@ public:
 	const float& GetWidth() const { return size_.x; }
 	const float& GetHeight() const { return size_.y; }
 	const GameMath::Mat4x4& GetOrtho() const { return ortho_; }
+	ICollision2D* GetCollision() { return &collision_; }
 
 protected:
 	GameMath::Mat4x4 CalculateOrtho(const GameMath::Vec2f& center, const GameMath::Vec2f& size, float zNear = -1.0f, float zFar = 1.0f)
@@ -30,4 +38,5 @@ protected:
 	GameMath::Vec2f center_;
 	GameMath::Vec2f size_;
 	GameMath::Mat4x4 ortho_;
+	Rect2D collision_;
 };
