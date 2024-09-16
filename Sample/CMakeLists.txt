@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.27)
 
+add_subdirectory(00.Empty)
 add_subdirectory(01.Initialize)
 add_subdirectory(02.Crash)
 add_subdirectory(03.Triangle)
@@ -17,6 +18,7 @@ add_subdirectory(14.StaticMesh)
 add_subdirectory(15.Skybox)
 
 set_target_properties(
+    00.Empty
     01.Initialize
     02.Crash
     03.Triangle
