@@ -1349,17 +1349,21 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 	};
 
 	const Atlas2D::Block& block = atlas->GetByName(name);
+	float x0 = static_cast<float>(block.pos.x + 1);
+	float y0 = static_cast<float>(block.pos.y + 1);
+	float x1 = static_cast<float>(block.pos.x + block.size.x - 1);
+	float y1 = static_cast<float>(block.pos.y + block.size.y - 1);
 	float atlasWidth = static_cast<float>(atlas->GetWidth());
 	float atlasHeight = static_cast<float>(atlas->GetHeight());
 
 	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> uvs =
 	{
-		GameMath::Vec2f(static_cast<float>(block.pos.x               ) / atlasWidth, static_cast<float>(block.pos.y + block.size.y) / atlasHeight),
-		GameMath::Vec2f(static_cast<float>(block.pos.x + block.size.x) / atlasWidth, static_cast<float>(block.pos.y               ) / atlasHeight),
-		GameMath::Vec2f(static_cast<float>(block.pos.x               ) / atlasWidth, static_cast<float>(block.pos.y               ) / atlasHeight),
-		GameMath::Vec2f(static_cast<float>(block.pos.x               ) / atlasWidth, static_cast<float>(block.pos.y + block.size.y) / atlasHeight),
-		GameMath::Vec2f(static_cast<float>(block.pos.x + block.size.x) / atlasWidth, static_cast<float>(block.pos.y + block.size.y) / atlasHeight),
-		GameMath::Vec2f(static_cast<float>(block.pos.x + block.size.x) / atlasWidth, static_cast<float>(block.pos.y               ) / atlasHeight),
+		GameMath::Vec2f(x0 / atlasWidth, y1 / atlasHeight),
+		GameMath::Vec2f(x1 / atlasWidth, y0 / atlasHeight),
+		GameMath::Vec2f(x0 / atlasWidth, y0 / atlasHeight),
+		GameMath::Vec2f(x0 / atlasWidth, y1 / atlasHeight),
+		GameMath::Vec2f(x1 / atlasWidth, y1 / atlasHeight),
+		GameMath::Vec2f(x1 / atlasWidth, y0 / atlasHeight),
 	};
 
 	GameMath::Mat2x2 rotateMat = GameMath::Mat2x2(
@@ -1483,17 +1487,21 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 	};
 
 	const Atlas2D::Block& block = atlas->GetByName(name);
+	float x0 = static_cast<float>(block.pos.x + 1);
+	float y0 = static_cast<float>(block.pos.y + 1);
+	float x1 = static_cast<float>(block.pos.x + block.size.x - 1);
+	float y1 = static_cast<float>(block.pos.y + block.size.y - 1);
 	float atlasWidth = static_cast<float>(atlas->GetWidth());
 	float atlasHeight = static_cast<float>(atlas->GetHeight());
 
 	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> uvs =
 	{
-		GameMath::Vec2f(static_cast<float>(block.pos.x               ) / atlasWidth, static_cast<float>(block.pos.y + block.size.y) / atlasHeight),
-		GameMath::Vec2f(static_cast<float>(block.pos.x + block.size.x) / atlasWidth, static_cast<float>(block.pos.y               ) / atlasHeight),
-		GameMath::Vec2f(static_cast<float>(block.pos.x               ) / atlasWidth, static_cast<float>(block.pos.y               ) / atlasHeight),
-		GameMath::Vec2f(static_cast<float>(block.pos.x               ) / atlasWidth, static_cast<float>(block.pos.y + block.size.y) / atlasHeight),
-		GameMath::Vec2f(static_cast<float>(block.pos.x + block.size.x) / atlasWidth, static_cast<float>(block.pos.y + block.size.y) / atlasHeight),
-		GameMath::Vec2f(static_cast<float>(block.pos.x + block.size.x) / atlasWidth, static_cast<float>(block.pos.y               ) / atlasHeight),
+		GameMath::Vec2f(x0 / atlasWidth, y1 / atlasHeight),
+		GameMath::Vec2f(x1 / atlasWidth, y0 / atlasHeight),
+		GameMath::Vec2f(x0 / atlasWidth, y0 / atlasHeight),
+		GameMath::Vec2f(x0 / atlasWidth, y1 / atlasHeight),
+		GameMath::Vec2f(x1 / atlasWidth, y1 / atlasHeight),
+		GameMath::Vec2f(x1 / atlasWidth, y0 / atlasHeight),
 	};
 
 	GameMath::Mat2x2 rotateMat = GameMath::Mat2x2(
