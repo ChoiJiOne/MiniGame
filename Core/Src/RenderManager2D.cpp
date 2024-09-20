@@ -16,6 +16,13 @@
 #include "TTFont.h"
 #include "VertexBuffer.h"
 
+/**
+ * (0.5f, 0.5f) vs (0.375f, 0.375f) => WTF! ¹¹°¡ ¸ÂÀ½? 
+ * https://community.khronos.org/t/pixel-perfect-drawing/38454
+ * https://stackoverflow.com/questions/10040961/opengl-pixel-perfect-2d-drawing
+ */
+static const GameMath::Vec2f PIXEL_OFFSET = GameMath::Vec2f(0.375f, 0.375f);
+
 RenderManager2D& RenderManager2D::Get()
 {
 	static RenderManager2D instance;
@@ -154,7 +161,7 @@ void RenderManager2D::DrawPoint(const GameMath::Vec2f& point, const GameMath::Ve
 
 	for (auto& vertex : vertices)
 	{
-		vertex += (point + GameMath::Vec2f(0.375f, 0.375f));
+		vertex += (point + PIXEL_OFFSET);
 	}
 
 	if (!commandQueue_.empty())
@@ -207,8 +214,8 @@ void RenderManager2D::DrawLine(const GameMath::Vec2f& startPos, const GameMath::
 
 	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
-		startPos + GameMath::Vec2f(0.375f, 0.375f),
-		endPos + GameMath::Vec2f(0.375f, 0.375f),
+		startPos + PIXEL_OFFSET,
+		  endPos + PIXEL_OFFSET,
 	};
 
 	if (!commandQueue_.empty())
@@ -262,8 +269,8 @@ void RenderManager2D::DrawLine(const GameMath::Vec2f& startPos, const GameMath::
 
 	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
-		startPos + GameMath::Vec2f(0.375f, 0.375f),
-		  endPos + GameMath::Vec2f(0.375f, 0.375f),
+		startPos + PIXEL_OFFSET,
+		  endPos + PIXEL_OFFSET,
 	};
 
 	std::array<GameMath::Vec4f, MAX_VERTEX_SIZE> colors =
@@ -323,9 +330,9 @@ void RenderManager2D::DrawTriangle(const GameMath::Vec2f& fromPos, const GameMat
 
 	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
-		fromPos + GameMath::Vec2f(0.375f, 0.375f),
-		  byPos + GameMath::Vec2f(0.375f, 0.375f),
-		  toPos + GameMath::Vec2f(0.375f, 0.375f),
+		fromPos + PIXEL_OFFSET,
+		  byPos + PIXEL_OFFSET,
+		  toPos + PIXEL_OFFSET,
 	};
 
 	if (!commandQueue_.empty())
@@ -379,16 +386,16 @@ void RenderManager2D::DrawTriangle(const GameMath::Vec2f& fromPos, const GameMat
 
 	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
-		fromPos + GameMath::Vec2f(0.375f, 0.375f),
-		  byPos + GameMath::Vec2f(0.375f, 0.375f),
-		  toPos + GameMath::Vec2f(0.375f, 0.375f),
+		fromPos + PIXEL_OFFSET,
+		  byPos + PIXEL_OFFSET,
+		  toPos + PIXEL_OFFSET,
 	};
 
 	std::array<GameMath::Vec4f, MAX_VERTEX_SIZE> colors =
 	{
 		fromColor,
-		byColor,
-		toColor,
+		  byColor,
+		  toColor,
 	};
 
 	if (!commandQueue_.empty())
@@ -442,9 +449,9 @@ void RenderManager2D::DrawTriangleWireframe(const GameMath::Vec2f& fromPos, cons
 
 	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
-		fromPos + GameMath::Vec2f(0.375f, 0.375f),   byPos + GameMath::Vec2f(0.375f, 0.375f),
-		byPos + GameMath::Vec2f(0.375f, 0.375f),   toPos + GameMath::Vec2f(0.375f, 0.375f),
-		toPos + GameMath::Vec2f(0.375f, 0.375f), fromPos + GameMath::Vec2f(0.375f, 0.375f),
+		fromPos + PIXEL_OFFSET,   byPos + PIXEL_OFFSET,
+		  byPos + PIXEL_OFFSET,   toPos + PIXEL_OFFSET,
+		  toPos + PIXEL_OFFSET, fromPos + PIXEL_OFFSET,
 	};
 
 	if (!commandQueue_.empty())
@@ -498,16 +505,16 @@ void RenderManager2D::DrawTriangleWireframe(const GameMath::Vec2f& fromPos, cons
 
 	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
-		fromPos + GameMath::Vec2f(0.375f, 0.375f),   byPos + GameMath::Vec2f(0.375f, 0.375f),
-		byPos + GameMath::Vec2f(0.375f, 0.375f),   toPos + GameMath::Vec2f(0.375f, 0.375f),
-		toPos + GameMath::Vec2f(0.375f, 0.375f), fromPos + GameMath::Vec2f(0.375f, 0.375f),
+		fromPos + PIXEL_OFFSET,   byPos + PIXEL_OFFSET,
+		  byPos + PIXEL_OFFSET,   toPos + PIXEL_OFFSET,
+		  toPos + PIXEL_OFFSET, fromPos + PIXEL_OFFSET,
 	};
 
 	std::array<GameMath::Vec4f, MAX_VERTEX_SIZE> colors =
 	{
-		fromColor, byColor,
-		byColor,   toColor,
-		toColor,   fromColor,
+		fromColor,   byColor,
+	  	  byColor,   toColor,
+	  	  toColor, fromColor,
 	};
 
 	if (!commandQueue_.empty())
@@ -579,7 +586,7 @@ void RenderManager2D::DrawRect(const GameMath::Vec2f& center, float w, float h, 
 	for (auto& vertex : vertices)
 	{
 		vertex = rotateMat * vertex;
-		vertex += (center + GameMath::Vec2f(0.375f, 0.375f));
+		vertex += (center + PIXEL_OFFSET);
 	}
 
 	if (!commandQueue_.empty())
@@ -649,7 +656,7 @@ void RenderManager2D::DrawRectWireframe(const GameMath::Vec2f& center, float w, 
 	for (auto& vertex : vertices)
 	{
 		vertex = rotateMat * vertex;
-		vertex += (center + GameMath::Vec2f(0.375f, 0.375f));
+		vertex += (center + PIXEL_OFFSET);
 	}
 
 	if (!commandQueue_.empty())
@@ -773,9 +780,9 @@ void RenderManager2D::DrawRoundRect(const GameMath::Vec2f& center, float w, floa
 		vertices[index + 1] = rotateMat * vertices[index + 1];
 		vertices[index + 2] = rotateMat * vertices[index + 2];
 
-		vertices[index + 0] += (center + GameMath::Vec2f(0.375f, 0.375f));
-		vertices[index + 1] += (center + GameMath::Vec2f(0.375f, 0.375f));
-		vertices[index + 2] += (center + GameMath::Vec2f(0.375f, 0.375f));
+		vertices[index + 0] += (center + PIXEL_OFFSET);
+		vertices[index + 1] += (center + PIXEL_OFFSET);
+		vertices[index + 2] += (center + PIXEL_OFFSET);
 	}
 
 	if (!commandQueue_.empty())
@@ -893,8 +900,8 @@ void RenderManager2D::DrawRoundRectWireframe(const GameMath::Vec2f& center, floa
 		vertices[index + 0] = rotateMat * vertices[index + 0];
 		vertices[index + 1] = rotateMat * vertices[index + 1];
 
-		vertices[index + 0] += (center + GameMath::Vec2f(0.375f, 0.375f));
-		vertices[index + 1] += (center + GameMath::Vec2f(0.375f, 0.375f));
+		vertices[index + 0] += (center + PIXEL_OFFSET);
+		vertices[index + 1] += (center + PIXEL_OFFSET);
 	}
 
 	if (!commandQueue_.empty())
@@ -955,9 +962,9 @@ void RenderManager2D::DrawCircle(const GameMath::Vec2f& center, float radius, co
 		float radian0 = (static_cast<float>(slice + 0) * GameMath::TWO_PI) / static_cast<float>(MAX_SLICE_SIZE);
 		float radian1 = (static_cast<float>(slice + 1) * GameMath::TWO_PI) / static_cast<float>(MAX_SLICE_SIZE);
 
-		vertices[vertexCount + 0] = center + GameMath::Vec2f(0.375f, 0.375f);
-		vertices[vertexCount + 1] = center + GameMath::Vec2f(radius * GameMath::Cos(radian0), radius * GameMath::Sin(radian0)) + GameMath::Vec2f(0.375f, 0.375f);
-		vertices[vertexCount + 2] = center + GameMath::Vec2f(radius * GameMath::Cos(radian1), radius * GameMath::Sin(radian1)) + GameMath::Vec2f(0.375f, 0.375f);
+		vertices[vertexCount + 0] = center + PIXEL_OFFSET;
+		vertices[vertexCount + 1] = center + GameMath::Vec2f(radius * GameMath::Cos(radian0), radius * GameMath::Sin(radian0)) + PIXEL_OFFSET;
+		vertices[vertexCount + 2] = center + GameMath::Vec2f(radius * GameMath::Cos(radian1), radius * GameMath::Sin(radian1)) + PIXEL_OFFSET;
 
 		vertexCount += 3;
 	}
@@ -1020,8 +1027,8 @@ void RenderManager2D::DrawCircleWireframe(const GameMath::Vec2f& center, float r
 		float radian0 = (static_cast<float>(slice + 0) * GameMath::TWO_PI) / static_cast<float>(MAX_SLICE_SIZE);
 		float radian1 = (static_cast<float>(slice + 1) * GameMath::TWO_PI) / static_cast<float>(MAX_SLICE_SIZE);
 
-		vertices[vertexCount + 0] = center + GameMath::Vec2f(radius * GameMath::Cos(radian0), radius * GameMath::Sin(radian0)) + GameMath::Vec2f(0.375f, 0.375f);
-		vertices[vertexCount + 1] = center + GameMath::Vec2f(radius * GameMath::Cos(radian1), radius * GameMath::Sin(radian1)) + GameMath::Vec2f(0.375f, 0.375f);
+		vertices[vertexCount + 0] = center + GameMath::Vec2f(radius * GameMath::Cos(radian0), radius * GameMath::Sin(radian0)) + PIXEL_OFFSET;
+		vertices[vertexCount + 1] = center + GameMath::Vec2f(radius * GameMath::Cos(radian1), radius * GameMath::Sin(radian1)) + PIXEL_OFFSET;
 
 		vertexCount += 2;
 	}
@@ -1108,7 +1115,7 @@ void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& cente
 		vertex.y = bFlipV ? -vertex.y : vertex.y;
 		
 		vertex = rotateMat * vertex;
-		vertex += (center + GameMath::Vec2f(0.375f, 0.375f));
+		vertex += (center + PIXEL_OFFSET);
 	}
 
 	if (!commandQueue_.empty())
@@ -1238,7 +1245,7 @@ void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& cente
 		vertex.y = bFlipV ? -vertex.y : vertex.y;
 
 		vertex = rotateMat * vertex;
-		vertex += (center + GameMath::Vec2f(0.375f, 0.375f));
+		vertex += (center + PIXEL_OFFSET);
 	}
 
 	if (!commandQueue_.empty())
@@ -1376,7 +1383,7 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 		vertex.y = bFlipV ? -vertex.y : vertex.y;
 
 		vertex = rotateMat * vertex;
-		vertex += (center + GameMath::Vec2f(0.375f, 0.375f));
+		vertex += (center + PIXEL_OFFSET);
 	}
 	
 	if (!commandQueue_.empty())
@@ -1514,7 +1521,7 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 		vertex.y = bFlipV ? -vertex.y : vertex.y;
 
 		vertex = rotateMat * vertex;
-		vertex += (center + GameMath::Vec2f(0.375f, 0.375f));
+		vertex += (center + PIXEL_OFFSET);
 	}
 	
 	if (!commandQueue_.empty())
