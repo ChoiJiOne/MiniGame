@@ -1349,10 +1349,10 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 	};
 
 	const Atlas2D::Block& block = atlas->GetByName(name);
-	float x0 = static_cast<float>(block.pos.x + 1);
-	float y0 = static_cast<float>(block.pos.y + 1);
-	float x1 = static_cast<float>(block.pos.x + block.size.x - 1);
-	float y1 = static_cast<float>(block.pos.y + block.size.y - 1);
+	float x0 = static_cast<float>(block.pos.x);
+	float y0 = static_cast<float>(block.pos.y);
+	float x1 = static_cast<float>(block.pos.x + block.size.x);
+	float y1 = static_cast<float>(block.pos.y + block.size.y);
 	float atlasWidth = static_cast<float>(atlas->GetWidth());
 	float atlasHeight = static_cast<float>(atlas->GetHeight());
 
@@ -1487,10 +1487,10 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 	};
 
 	const Atlas2D::Block& block = atlas->GetByName(name);
-	float x0 = static_cast<float>(block.pos.x + 1);
-	float y0 = static_cast<float>(block.pos.y + 1);
-	float x1 = static_cast<float>(block.pos.x + block.size.x - 1);
-	float y1 = static_cast<float>(block.pos.y + block.size.y - 1);
+	float x0 = static_cast<float>(block.pos.x);
+	float y0 = static_cast<float>(block.pos.y);
+	float x1 = static_cast<float>(block.pos.x + block.size.x);
+	float y1 = static_cast<float>(block.pos.y + block.size.y);
 	float atlasWidth = static_cast<float>(atlas->GetWidth());
 	float atlasHeight = static_cast<float>(atlas->GetHeight());
 
