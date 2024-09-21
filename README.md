@@ -49,3 +49,7 @@ git submodule update --remote
 ### [CoinDash2D](https://github.com/ChoiJiOne/CoinDash2D)
 - `CoinDash2D` is a project for developing a Coin dash 2D game based on GameMaker.
   ![CoinDash2D](./Image/CoinDash2D.png)
+
+### [FlappyBird2D](https://github.com/ChoiJiOne/FlappyBird2D)
+- `FlappyBird2D` is a project for developing a 2D Flappy Bird game based on GameMaker.
+  ![FlappyBird2D](./Image/FlappyBird2D.png)
