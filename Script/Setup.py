@@ -46,8 +46,7 @@ def is_already_setup(root_path, project_name):
         
     return False
 
-def generate_files(project_name):
-    root_path = os.getcwd()
+def generate_files(root_path, project_name):
     path = root_path + "\\GameMaker\\"
     project_path = root_path + "\\" + project_name
 
@@ -78,11 +77,42 @@ def generate_files(project_name):
 
     gitignore_file = read_text_file(path + "Misc\\.gitignore")
     license_file = read_text_file(path + "Misc\\LICENSE.txt")
-    
+
+    generate_target_files = {}
+
+    for mode in modes:
+        generate_target_files[root_path + "\\Build_" + mode + ".bat"] = build_scripts[mode]
+        generate_target_files[root_path + "\\Package_" + mode + ".bat"] = package_scripts[mode]
+
+    generate_target_files[root_path + "\\.gitignore"] = gitignore_file
+    generate_target_files[root_path + "\\CMakeLists.txt"] = solution_script
+    generate_target_files[root_path + "\\GenerateProjectFiles.bat"] = project_setting_scripts["GenerateProjectFiles"]
+    generate_target_files[root_path + "\\HotReload.bat"] = project_setting_scripts["HotReload"]
+    generate_target_files[root_path + "\\LICENSE.txt"] = license_file
+    generate_target_files[project_path + "\\CMakeLists.txt"] = project_script
+    generate_target_files[project_path + "\\Src\\Main.cpp"] = f"""#include <cstdint>
+#include <Windows.h>
+
+#if defined(DEBUG_MODE) || defined(RELEASE_MODE) || defined(DEVELOPMENT_MODE)
+#include <crtdbg.h>
+#endif
+
+int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR pCmdLine, _In_ int32_t nCmdShow)
+{{
+#if defined(DEBUG_MODE) || defined(RELEASE_MODE) || defined(DEVELOPMENT_MODE)
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+	return 0;
+}}
+"""
+
+    for path, text in generate_target_files.items():
+        write_text_file(path, text)
+
 if __name__ == "__main__":
     root_path = os.getcwd()
     project_name = sys.argv[1]
 
     if not is_already_setup(root_path, project_name):
-        generate_files(project_name)
-        print(f"\n\nSuccessed Setup '{project_name}'!")
+        generate_files(root_path, project_name)
+        print(f"\nSuccessed Setup '{project_name}'!")
