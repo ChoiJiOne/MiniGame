@@ -40,6 +40,9 @@ def generate_script_files(project_name):
     project_script_template = read_text_file(path + "CMake\\Project_CMakeLists_Template.txt")
     project_script = project_script_template.replace("{NAME}", project_name, 1)
 
+    gitignore_file = read_text_file(path + "Misc\\.gitignore")
+    license_file = read_text_file(path + "Misc\\LICENSE.txt")
+    
 if __name__ == "__main__":
     project_name = "Tetris3D"
 
