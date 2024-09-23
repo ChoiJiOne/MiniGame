@@ -31,4 +31,9 @@ if __name__ == "__main__":
         script = package_script_template.format(MODE=mode)
         package_scripts[mode] = script
 
+    project_scripts = {}
+    project_script_template = read_text_file(template_path + "ProjectScript.bat")
+    project_scripts["HotReload"] = project_script_template.format(NAME=project_name, OPTION="Off")
+    project_scripts["GenerateProjectFiles"] = project_script_template.format(NAME=project_name, OPTION="On")
+    
     print(f"Successed setup {project_name}!")
