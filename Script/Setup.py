@@ -39,7 +39,7 @@ if __name__ == "__main__":
     solution_script_template = read_text_file(template_path + "SolutionScript.txt")
     solution_script = solution_script_template.replace("${SOLUTION_NAME}", project_name, 2)
 
-
-
-
-    print(f"Successed setup {project_name}!")
+    project_script_template = read_text_file(template_path + "ProjectScript.txt")
+    project_script = project_script_template.replace("{NAME}", project_name, 1)
+    
+    print(f"\nSuccessed setup {project_name}!")
