@@ -9,10 +9,8 @@ def read_text_file(path)->str:
 def write_text_file(path, text):
     with open(path, 'w') as file:
         file.write(text)
-    
-if __name__ == "__main__":
-    project_name = "Tetris3D"
 
+def run(project_name):
     root_path = os.getcwd()
     path = root_path + "\\GameMaker\\"
     project_path = root_path + "\\" + project_name
@@ -41,5 +39,10 @@ if __name__ == "__main__":
 
     project_script_template = read_text_file(path + "CMake\\Project_CMakeLists_Template.txt")
     project_script = project_script_template.replace("{NAME}", project_name, 1)
+
+if __name__ == "__main__":
+    project_name = "Tetris3D"
+
+    run(project_name)
     
     print(f"\nSuccessed setup {project_name}!")
