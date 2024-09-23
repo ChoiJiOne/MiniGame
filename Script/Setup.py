@@ -10,6 +10,42 @@ def write_text_file(path, text):
     with open(path, 'w') as file:
         file.write(text)
 
+def is_already_setup(root_path, project_name):
+    project_path = root_path + "\\" + project_name
+    check_files = [
+        root_path + "\\.gitignore",
+        root_path + "\\Build_Debug.bat",
+        root_path + "\\Build_MinSizeRel.bat",
+        root_path + "\\Build_RelWithDebInfo.bat",
+        root_path + "\\Build_Release.bat",
+        root_path + "\\CMakeLists.txt",
+        root_path + "\\GenerateProjectFiles.bat",
+        root_path + "\\HotReload.bat",
+        root_path + "\\LICENSE.txt",
+        root_path + "\\Package_Debug.bat",
+        root_path + "\\Package_MinSizeRel.bat",
+        root_path + "\\Package_RelWithDebInfo.bat",
+        root_path + "\\Package_Release.bat",
+
+        project_path + "\\CMakeLists.txt",
+        project_path + "\\Src\\Main.cpp",
+    ]
+
+    for check_file in check_files:
+        is_already_exist = os.path.exists(check_file)
+        output_message = f"[CHECK] {check_file} => "
+
+        if is_already_exist:
+            output_message += "Failed."
+        else:
+            output_message += "Ok."
+        print(output_message)
+            
+        if is_already_exist:
+            return True
+        
+    return False
+
 def generate_files(project_name):
     root_path = os.getcwd()
     path = root_path + "\\GameMaker\\"
@@ -44,8 +80,8 @@ def generate_files(project_name):
     license_file = read_text_file(path + "Misc\\LICENSE.txt")
     
 if __name__ == "__main__":
-    project_name = "Tetris3D"
+    root_path = os.getcwd()
+    project_name = sys.argv[1]
 
-    generate_files(project_name)
-
-    print(f"\nSuccessed setup {project_name}!")
+    if not is_already_setup(root_path, project_name):
+        generate_files(project_name)
