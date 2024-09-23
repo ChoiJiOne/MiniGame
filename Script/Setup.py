@@ -10,7 +10,7 @@ def write_text_file(path, text):
     with open(path, 'w') as file:
         file.write(text)
 
-def generate_script_files(project_name):
+def generate_files(project_name):
     root_path = os.getcwd()
     path = root_path + "\\GameMaker\\"
     project_path = root_path + "\\" + project_name
@@ -46,6 +46,6 @@ def generate_script_files(project_name):
 if __name__ == "__main__":
     project_name = "Tetris3D"
 
-    generate_script_files(project_name)
+    generate_files(project_name)
 
     print(f"\nSuccessed setup {project_name}!")
