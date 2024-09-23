@@ -57,13 +57,8 @@ if not exist "%cd%\\%PROJECT_NAME%\\Res" (
     mkdir "%cd%\\%PROJECT_NAME%\\Res"
 )
 
-SET OPTION=%2
-if "%OPTION%" == "" (
-    SET OPTION="NONE"
-)
-
 SET SETUP_SCRIPT_PATH=%~dp0Setup.py
-python "%SETUP_SCRIPT_PATH%" "%PROJECT_NAME%" "%OPTION%"
+python "%SETUP_SCRIPT_PATH%" "%PROJECT_NAME%"
 
 POPD
 POPD
