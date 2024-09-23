@@ -25,4 +25,10 @@ if __name__ == "__main__":
         script = build_script_template.format(MODE=mode)
         build_scripts[mode] = script
 
+    package_scripts = {}
+    package_script_template = read_text_file(template_path + "PackageScript.bat")
+    for mode in modes:
+        script = package_script_template.format(MODE=mode)
+        package_scripts[mode] = script
+
     print(f"Successed setup {project_name}!")
