@@ -85,3 +85,4 @@ if __name__ == "__main__":
 
     if not is_already_setup(root_path, project_name):
         generate_files(project_name)
+        print(f"\n\nSuccessed Setup '{project_name}'!")
