@@ -16,7 +16,7 @@ add_subdirectory(12.FreeEulerCamera3D)
 add_subdirectory(13.Cube)
 add_subdirectory(14.StaticMesh)
 add_subdirectory(15.GammaCorrection)
-add_subdirectory(16.Skybox)
+add_subdirectory(16.Light)
 
 set_target_properties(
     00.Empty
@@ -35,6 +35,6 @@ set_target_properties(
     13.Cube
     14.StaticMesh
     15.GammaCorrection
-    16.Skybox
+    16.Light
     PROPERTIES FOLDER "Sample"
 )
