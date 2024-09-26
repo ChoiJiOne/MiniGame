@@ -41,6 +41,7 @@ target_link_libraries(
     glad
     imgui
     jsoncpp
+    lua
     miniaudio
     SDL2
     stb
