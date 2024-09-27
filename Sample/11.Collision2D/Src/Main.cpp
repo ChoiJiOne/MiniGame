@@ -33,15 +33,15 @@ public:
 
 	virtual void Startup() override
 	{
-		line0_ = Line2D(GameMath::Vec2f(-100.0f, -200.0f), GameMath::Vec2f(100.0f, -10.0f));
-		circle0_ = Circle2D(GameMath::Vec2f(270.0f, 150.0f), 50.0f);
-		aabb0_ = Rect2D(GameMath::Vec2f(-270.0f, -150.0f), GameMath::Vec2f(200.0f, 100.0f));
-		obb0_ = OrientedRect2D(GameMath::Vec2f(270.0f, -150.0f), GameMath::Vec2f(200.0f, 100.0f), GameMath::ToRadian(45.0f));
+		line0_ = Line2D(Vec2f(-100.0f, -200.0f), Vec2f(100.0f, -10.0f));
+		circle0_ = Circle2D(Vec2f(270.0f, 150.0f), 50.0f);
+		aabb0_ = Rect2D(Vec2f(-270.0f, -150.0f), Vec2f(200.0f, 100.0f));
+		obb0_ = OrientedRect2D(Vec2f(270.0f, -150.0f), Vec2f(200.0f, 100.0f), GameMath::ToRadian(45.0f));
 
-		line1_ = Line2D(GameMath::Vec2f(-200.0f, -50.0f), GameMath::Vec2f(200.0f, 50.0f));
-		circle1_ = Circle2D(GameMath::Vec2f(0.0f, 0.0f), 150.0f);
-		aabb1_ = Rect2D(GameMath::Vec2f(0.0f, 0.0f), GameMath::Vec2f(220.0f, 170.0f));
-		obb1_ = OrientedRect2D(GameMath::Vec2f(0.0f, 0.0f), GameMath::Vec2f(220.0f, 170.0f), GameMath::ToRadian(130.0f));
+		line1_ = Line2D(Vec2f(-200.0f, -50.0f), Vec2f(200.0f, 50.0f));
+		circle1_ = Circle2D(Vec2f(0.0f, 0.0f), 150.0f);
+		aabb1_ = Rect2D(Vec2f(0.0f, 0.0f), Vec2f(220.0f, 170.0f));
+		obb1_ = OrientedRect2D(Vec2f(0.0f, 0.0f), Vec2f(220.0f, 170.0f), GameMath::ToRadian(130.0f));
 
 		collisions0_ = { &line0_, &circle0_, &aabb0_, &obb0_, };
 		collisions1_ = { &line1_, &circle1_, &aabb1_, &obb1_, };
@@ -56,7 +56,7 @@ public:
 		RunLoop(
 			[&](float deltaSeconds)
 			{
-				GameMath::Vec2i currPos = GetCurrMousePos();
+				Vec2i currPos = GetCurrMousePos();
 				GetScreenSize<float>(screenSize_.x, screenSize_.y);
 				currPos_.x = -screenSize_.x * 0.5f + static_cast<float>(currPos.x);
 				currPos_.y = +screenSize_.y * 0.5f - static_cast<float>(currPos.y);
@@ -99,7 +99,7 @@ public:
 	}
 
 private:
-	void SelectObjectGUI(const char* name, int32_t* selectPtr, const GameMath::Vec4f& color)
+	void SelectObjectGUI(const char* name, int32_t* selectPtr, const Vec4f& color)
 	{
 		ImGui::TextColored(ImVec4(color.x, color.y, color.z, color.w), name);
 		ImGui::RadioButton(GameUtils::PrintF("LINE##%s", name).c_str(), selectPtr, static_cast<int32_t>(Type::LINE));
@@ -137,8 +137,8 @@ private:
 		case ICollision2D::Type::LINE:
 		{
 			Line2D* line = reinterpret_cast<Line2D*>(collision);
-			line->start = currPos_ + GameMath::Vec2f(50.0f, 25.0f);
-			line->end = currPos_ + GameMath::Vec2f(-50.0f, -25.0f);
+			line->start = currPos_ + Vec2f(50.0f, 25.0f);
+			line->end = currPos_ + Vec2f(-50.0f, -25.0f);
 		}
 		break;
 
@@ -154,7 +154,7 @@ private:
 		{
 			Rect2D* rect = reinterpret_cast<Rect2D*>(collision);
 			rect->center = currPos_;
-			rect->size = GameMath::Vec2f(50.0f, 25.0f);
+			rect->size = Vec2f(50.0f, 25.0f);
 		}
 		break;
 
@@ -162,7 +162,7 @@ private:
 		{
 			OrientedRect2D* orientedRect = reinterpret_cast<OrientedRect2D*>(collision);
 			orientedRect->center = currPos_;
-			orientedRect->size = GameMath::Vec2f(50.0f, 25.0f);
+			orientedRect->size = Vec2f(50.0f, 25.0f);
 		}
 		break;
 		}
@@ -170,22 +170,22 @@ private:
 
 	void DrawGrid()
 	{
-		GameMath::Vec4f color;
+		Vec4f color;
 
 		for (float x = minX_; x <= maxX_; x += strideX_)
 		{
 			color = (x == 0.0f) ? red_ : gray_;
-			RenderManager2D::Get().DrawLine(GameMath::Vec2f(x, minX_), GameMath::Vec2f(x, maxY_), color);
+			RenderManager2D::Get().DrawLine(Vec2f(x, minX_), Vec2f(x, maxY_), color);
 		}
 
 		for (float y = minY_; y <= maxY_; y += strideY_)
 		{
 			color = (y == 0.0f) ? blue_ : gray_;
-			RenderManager2D::Get().DrawLine(GameMath::Vec2f(minX_, y), GameMath::Vec2f(maxX_, y), color);
+			RenderManager2D::Get().DrawLine(Vec2f(minX_, y), Vec2f(maxX_, y), color);
 		}
 	}
 
-	void DrawCollision(ICollision2D* collision, const GameMath::Vec4f& color)
+	void DrawCollision(ICollision2D* collision, const Vec4f& color)
 	{
 		ICollision2D::Type type = collision->GetType();
 		switch (type)
@@ -235,14 +235,14 @@ private:
 	float maxY_ = +300.0f;
 	float strideY_ = 10.0f;
 
-	GameMath::Vec2f screenSize_;
-	GameMath::Vec2f currPos_;
+	Vec2f screenSize_;
+	Vec2f currPos_;
 
-	GameMath::Vec4f red_ = GameMath::Vec4f(1.0f, 0.0f, 0.0f, 1.0f);
-	GameMath::Vec4f blue_ = GameMath::Vec4f(0.0f, 0.0f, 1.0f, 1.0f);
-	GameMath::Vec4f green_ = GameMath::Vec4f(0.0f, 1.0f, 0.0f, 1.0f);
-	GameMath::Vec4f gray_ = GameMath::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
-	GameMath::Vec4f white_ = GameMath::Vec4f(1.0f, 1.0f, 1.0f, 1.0f);
+	Vec4f red_ = Vec4f(1.0f, 0.0f, 0.0f, 1.0f);
+	Vec4f blue_ = Vec4f(0.0f, 0.0f, 1.0f, 1.0f);
+	Vec4f green_ = Vec4f(0.0f, 1.0f, 0.0f, 1.0f);
+	Vec4f gray_ = Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
+	Vec4f white_ = Vec4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	int32_t select0_ = 0;
 	std::array<ICollision2D*, 4> collisions0_;

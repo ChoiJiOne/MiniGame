@@ -22,8 +22,8 @@
 
 struct Vertex
 {
-	GameMath::Vec3f position;
-	GameMath::Vec2f uv;
+	Vec3f position;
+	Vec2f uv;
 };
 
 class DemoApp : public IApp
@@ -40,57 +40,57 @@ public:
 		SetCullFaceMode(false);
 
 		camera_ = EntityManager::Get().Create<FreeEulerCamera3D>(
-			GameMath::Vec3f(3.0f, 3.0f, 3.0f), 
+			Vec3f(3.0f, 3.0f, 3.0f), 
 			-GameMath::ToRadian(135.0f), 
-			-GameMath::PI / 6.0f, 
-			GameMath::PI_DIV_4, 
+			-PI / 6.0f, 
+			PI_DIV_4, 
 			0.01f, 
 			100.0f
 		);
 
 		std::array<Vertex, 36> vertices =
 		{
-			Vertex{ GameMath::Vec3f(-0.5f, -0.5f, -0.5f),  GameMath::Vec2f(0.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f( 0.5f, -0.5f, -0.5f),  GameMath::Vec2f(1.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f( 0.5f,  0.5f, -0.5f),  GameMath::Vec2f(1.0f, 1.0f) },
-			Vertex{ GameMath::Vec3f( 0.5f,  0.5f, -0.5f),  GameMath::Vec2f(1.0f, 1.0f) },
-			Vertex{ GameMath::Vec3f(-0.5f,  0.5f, -0.5f),  GameMath::Vec2f(0.0f, 1.0f) },
-			Vertex{ GameMath::Vec3f(-0.5f, -0.5f, -0.5f),  GameMath::Vec2f(0.0f, 0.0f) },
+			Vertex{ Vec3f(-0.5f, -0.5f, -0.5f),  Vec2f(0.0f, 0.0f) },
+			Vertex{ Vec3f( 0.5f, -0.5f, -0.5f),  Vec2f(1.0f, 0.0f) },
+			Vertex{ Vec3f( 0.5f,  0.5f, -0.5f),  Vec2f(1.0f, 1.0f) },
+			Vertex{ Vec3f( 0.5f,  0.5f, -0.5f),  Vec2f(1.0f, 1.0f) },
+			Vertex{ Vec3f(-0.5f,  0.5f, -0.5f),  Vec2f(0.0f, 1.0f) },
+			Vertex{ Vec3f(-0.5f, -0.5f, -0.5f),  Vec2f(0.0f, 0.0f) },
 
-			Vertex{ GameMath::Vec3f(-0.5f, -0.5f,  0.5f),  GameMath::Vec2f(0.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f( 0.5f, -0.5f,  0.5f),  GameMath::Vec2f(1.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f( 0.5f,  0.5f,  0.5f),  GameMath::Vec2f(1.0f, 1.0f) },
-			Vertex{ GameMath::Vec3f( 0.5f,  0.5f,  0.5f),  GameMath::Vec2f(1.0f, 1.0f) },
-			Vertex{ GameMath::Vec3f(-0.5f,  0.5f,  0.5f),  GameMath::Vec2f(0.0f, 1.0f) },
-			Vertex{ GameMath::Vec3f(-0.5f, -0.5f,  0.5f),  GameMath::Vec2f(0.0f, 0.0f) },
+			Vertex{ Vec3f(-0.5f, -0.5f,  0.5f),  Vec2f(0.0f, 0.0f) },
+			Vertex{ Vec3f( 0.5f, -0.5f,  0.5f),  Vec2f(1.0f, 0.0f) },
+			Vertex{ Vec3f( 0.5f,  0.5f,  0.5f),  Vec2f(1.0f, 1.0f) },
+			Vertex{ Vec3f( 0.5f,  0.5f,  0.5f),  Vec2f(1.0f, 1.0f) },
+			Vertex{ Vec3f(-0.5f,  0.5f,  0.5f),  Vec2f(0.0f, 1.0f) },
+			Vertex{ Vec3f(-0.5f, -0.5f,  0.5f),  Vec2f(0.0f, 0.0f) },
 
-			Vertex{ GameMath::Vec3f(-0.5f,  0.5f,  0.5f),  GameMath::Vec2f(1.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f(-0.5f,  0.5f, -0.5f),  GameMath::Vec2f(1.0f, 1.0f) },
-			Vertex{ GameMath::Vec3f(-0.5f, -0.5f, -0.5f),  GameMath::Vec2f(0.0f, 1.0f) },
-			Vertex{ GameMath::Vec3f(-0.5f, -0.5f, -0.5f),  GameMath::Vec2f(0.0f, 1.0f) },
-			Vertex{ GameMath::Vec3f(-0.5f, -0.5f,  0.5f),  GameMath::Vec2f(0.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f(-0.5f,  0.5f,  0.5f),  GameMath::Vec2f(1.0f, 0.0f) },
+			Vertex{ Vec3f(-0.5f,  0.5f,  0.5f),  Vec2f(1.0f, 0.0f) },
+			Vertex{ Vec3f(-0.5f,  0.5f, -0.5f),  Vec2f(1.0f, 1.0f) },
+			Vertex{ Vec3f(-0.5f, -0.5f, -0.5f),  Vec2f(0.0f, 1.0f) },
+			Vertex{ Vec3f(-0.5f, -0.5f, -0.5f),  Vec2f(0.0f, 1.0f) },
+			Vertex{ Vec3f(-0.5f, -0.5f,  0.5f),  Vec2f(0.0f, 0.0f) },
+			Vertex{ Vec3f(-0.5f,  0.5f,  0.5f),  Vec2f(1.0f, 0.0f) },
 
-			Vertex{ GameMath::Vec3f(0.5f,  0.5f,  0.5f),  GameMath::Vec2f(1.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f(0.5f,  0.5f, -0.5f),  GameMath::Vec2f(1.0f, 1.0f) },
-			Vertex{ GameMath::Vec3f(0.5f, -0.5f, -0.5f),  GameMath::Vec2f(0.0f, 1.0f) },
-			Vertex{ GameMath::Vec3f(0.5f, -0.5f, -0.5f),  GameMath::Vec2f(0.0f, 1.0f) },
-			Vertex{ GameMath::Vec3f(0.5f, -0.5f,  0.5f),  GameMath::Vec2f(0.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f(0.5f,  0.5f,  0.5f),  GameMath::Vec2f(1.0f, 0.0f) },
+			Vertex{ Vec3f(0.5f,  0.5f,  0.5f),  Vec2f(1.0f, 0.0f) },
+			Vertex{ Vec3f(0.5f,  0.5f, -0.5f),  Vec2f(1.0f, 1.0f) },
+			Vertex{ Vec3f(0.5f, -0.5f, -0.5f),  Vec2f(0.0f, 1.0f) },
+			Vertex{ Vec3f(0.5f, -0.5f, -0.5f),  Vec2f(0.0f, 1.0f) },
+			Vertex{ Vec3f(0.5f, -0.5f,  0.5f),  Vec2f(0.0f, 0.0f) },
+			Vertex{ Vec3f(0.5f,  0.5f,  0.5f),  Vec2f(1.0f, 0.0f) },
 
-			Vertex{ GameMath::Vec3f(-0.5f, -0.5f, -0.5f),  GameMath::Vec2f(0.0f, 1.0f) },
-			Vertex{ GameMath::Vec3f( 0.5f, -0.5f, -0.5f),  GameMath::Vec2f(1.0f, 1.0f) },
-			Vertex{ GameMath::Vec3f( 0.5f, -0.5f,  0.5f),  GameMath::Vec2f(1.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f( 0.5f, -0.5f,  0.5f),  GameMath::Vec2f(1.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f(-0.5f, -0.5f,  0.5f),  GameMath::Vec2f(0.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f(-0.5f, -0.5f, -0.5f),  GameMath::Vec2f(0.0f, 1.0f) },
+			Vertex{ Vec3f(-0.5f, -0.5f, -0.5f),  Vec2f(0.0f, 1.0f) },
+			Vertex{ Vec3f( 0.5f, -0.5f, -0.5f),  Vec2f(1.0f, 1.0f) },
+			Vertex{ Vec3f( 0.5f, -0.5f,  0.5f),  Vec2f(1.0f, 0.0f) },
+			Vertex{ Vec3f( 0.5f, -0.5f,  0.5f),  Vec2f(1.0f, 0.0f) },
+			Vertex{ Vec3f(-0.5f, -0.5f,  0.5f),  Vec2f(0.0f, 0.0f) },
+			Vertex{ Vec3f(-0.5f, -0.5f, -0.5f),  Vec2f(0.0f, 1.0f) },
 
-			Vertex{ GameMath::Vec3f(-0.5f,  0.5f, -0.5f),  GameMath::Vec2f(0.0f, 1.0f) },
-			Vertex{ GameMath::Vec3f( 0.5f,  0.5f, -0.5f),  GameMath::Vec2f(1.0f, 1.0f) },
-			Vertex{ GameMath::Vec3f( 0.5f,  0.5f,  0.5f),  GameMath::Vec2f(1.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f( 0.5f,  0.5f,  0.5f),  GameMath::Vec2f(1.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f(-0.5f,  0.5f,  0.5f),  GameMath::Vec2f(0.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f(-0.5f,  0.5f, -0.5f),  GameMath::Vec2f(0.0f, 1.0f) },
+			Vertex{ Vec3f(-0.5f,  0.5f, -0.5f),  Vec2f(0.0f, 1.0f) },
+			Vertex{ Vec3f( 0.5f,  0.5f, -0.5f),  Vec2f(1.0f, 1.0f) },
+			Vertex{ Vec3f( 0.5f,  0.5f,  0.5f),  Vec2f(1.0f, 0.0f) },
+			Vertex{ Vec3f( 0.5f,  0.5f,  0.5f),  Vec2f(1.0f, 0.0f) },
+			Vertex{ Vec3f(-0.5f,  0.5f,  0.5f),  Vec2f(0.0f, 0.0f) },
+			Vertex{ Vec3f(-0.5f,  0.5f, -0.5f),  Vec2f(0.0f, 1.0f) },
 		};
 		
 		uint32_t stride = static_cast<uint32_t>(sizeof(Vertex));
@@ -146,7 +146,7 @@ public:
 				}
 				ImGui::End();
 
-				transform_.rotate = GameMath::Quat::AxisAngle(axis_, angle_);
+				transform_.rotate = Quat::AxisAngle(axis_, angle_);
 				
 				BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -160,7 +160,7 @@ public:
 				{
 					texture_->Active(0);
 
-					shader_->SetUniform("world", GameMath::Transform::ToMat(transform_));
+					shader_->SetUniform("world", Transform::ToMat(transform_));
 					shader_->SetUniform("view", camera_->GetView());
 					shader_->SetUniform("projection", camera_->GetProjection());
 
@@ -182,21 +182,21 @@ private:
 		ImGui::SameLine();
 		if (ImGui::Button("RESET##POSITION"))
 		{
-			transform_.position = GameMath::Vec3f(0.0f, 0.0f, 0.0f);
+			transform_.position = Vec3f(0.0f, 0.0f, 0.0f);
 		}
 		ImGui::SliderFloat3("AXIS", axis_.data, -1.0f, 1.0f);
 		ImGui::SliderFloat("ANGLE", &angle_, 0.0f, 360.0f);
 		ImGui::SameLine();
 		if (ImGui::Button("RESET##ROTATE"))
 		{
-			axis_ = GameMath::Vec3f();
+			axis_ = Vec3f();
 			angle_ = 0.0f;
 		}
 		ImGui::SliderFloat3("SCALE", transform_.scale.data, 0.0f, 100.0f);
 		ImGui::SameLine();
 		if (ImGui::Button("RESET##SCALE"))
 		{
-			transform_.scale = GameMath::Vec3f(1.0f, 1.0f, 1.0f);
+			transform_.scale = Vec3f(1.0f, 1.0f, 1.0f);
 		}
 
 		if (!ImGui::IsWindowFocused())
@@ -207,20 +207,20 @@ private:
 
 	void DrawGrid3D()
 	{
-		GameMath::Vec4f color;
+		Vec4f color;
 		for (float x = minX_; x <= maxX_; x += stride_)
 		{
-			color = (x == 0.0f) ? GameMath::Vec4f(0.0f, 0.0f, 1.0f, 1.0f) : GameMath::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
-			DebugDrawManager3D::Get().DrawLine(GameMath::Vec3f(x, 0.0f, minZ_), GameMath::Vec3f(x, 0.0f, maxZ_), color);
+			color = (x == 0.0f) ? Vec4f(0.0f, 0.0f, 1.0f, 1.0f) : Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
+			DebugDrawManager3D::Get().DrawLine(Vec3f(x, 0.0f, minZ_), Vec3f(x, 0.0f, maxZ_), color);
 		}
 
 		for (float z = minZ_; z <= maxZ_; z += stride_)
 		{
-			color = (z == 0.0f) ? GameMath::Vec4f(1.0f, 0.0f, 0.0f, 1.0f) : GameMath::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
-			DebugDrawManager3D::Get().DrawLine(GameMath::Vec3f(minX_, 0.0f, z), GameMath::Vec3f(maxX_, 0.0f, z), color);
+			color = (z == 0.0f) ? Vec4f(1.0f, 0.0f, 0.0f, 1.0f) : Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
+			DebugDrawManager3D::Get().DrawLine(Vec3f(minX_, 0.0f, z), Vec3f(maxX_, 0.0f, z), color);
 		}
 
-		DebugDrawManager3D::Get().DrawLine(GameMath::Vec3f(0.0f, minY_, 0.0f), GameMath::Vec3f(0.0f, maxY_, 0.0f), GameMath::Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
+		DebugDrawManager3D::Get().DrawLine(Vec3f(0.0f, minY_, 0.0f), Vec3f(0.0f, maxY_, 0.0f), Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
 	}
 
 private:
@@ -239,10 +239,10 @@ private:
 	Shader* shader_ = nullptr;
 	Texture2D* texture_ = nullptr;
 
-	GameMath::Vec3f axis_ = GameMath::Vec3f(0.0f, 0.0f, 0.0f);
+	Vec3f axis_ = Vec3f(0.0f, 0.0f, 0.0f);
 	float angle_ = 0.0f;
 
-	GameMath::Transform transform_;
+	Transform transform_;
 };
 
 int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR pCmdLine, _In_ int32_t nCmdShow)

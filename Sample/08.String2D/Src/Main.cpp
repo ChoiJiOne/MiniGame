@@ -70,20 +70,20 @@ public:
 				{
 					for (float x = minX; x <= maxX; x += strideX)
 					{
-						GameMath::Vec4f color = (x == 0.0f) ? GameMath::Vec4f(0.0f, 0.0f, 1.0f, 1.0f) : GameMath::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
-						RenderManager2D::Get().DrawLine(GameMath::Vec2f(x, minX), GameMath::Vec2f(x, maxY), color);
+						Vec4f color = (x == 0.0f) ? Vec4f(0.0f, 0.0f, 1.0f, 1.0f) : Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
+						RenderManager2D::Get().DrawLine(Vec2f(x, minX), Vec2f(x, maxY), color);
 					}
 
 					for (float y = minY; y <= maxY; y += strideY)
 					{
-						GameMath::Vec4f color = (y == 0.0f) ? GameMath::Vec4f(1.0f, 0.0f, 0.0f, 1.0f) : GameMath::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
-						RenderManager2D::Get().DrawLine(GameMath::Vec2f(minX, y), GameMath::Vec2f(maxX, y), color);
+						Vec4f color = (y == 0.0f) ? Vec4f(1.0f, 0.0f, 0.0f, 1.0f) : Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
+						RenderManager2D::Get().DrawLine(Vec2f(minX, y), Vec2f(maxX, y), color);
 					}
 
-					RenderManager2D::Get().DrawString(font16_, L"こんにちは", GameMath::Vec2f(-380.0f, 130.0f), GameMath::Vec4f(1.0f, 0.5f, 0.5f, 1.0f));
-					RenderManager2D::Get().DrawString(font32_, L"안녕하세요", GameMath::Vec2f(-380.0f, 110.0f), GameMath::Vec4f(0.5f, 1.0f, 0.5f, 1.0f));
-					RenderManager2D::Get().DrawString(font64_, L"Hello, World!", GameMath::Vec2f(-380.0f, 80.0f), GameMath::Vec4f(0.5f, 0.5f, 1.0f, 1.0f));
-					RenderManager2D::Get().DrawString(font128_, L"Big String!", GameMath::Vec2f(-380.0f, 30.0f), GameMath::Vec4f(0.5f, 0.5f, 0.5f, 1.0f));
+					RenderManager2D::Get().DrawString(font16_, L"こんにちは", Vec2f(-380.0f, 130.0f), Vec4f(1.0f, 0.5f, 0.5f, 1.0f));
+					RenderManager2D::Get().DrawString(font32_, L"안녕하세요", Vec2f(-380.0f, 110.0f), Vec4f(0.5f, 1.0f, 0.5f, 1.0f));
+					RenderManager2D::Get().DrawString(font64_, L"Hello, World!", Vec2f(-380.0f, 80.0f), Vec4f(0.5f, 0.5f, 1.0f, 1.0f));
+					RenderManager2D::Get().DrawString(font128_, L"Big String!", Vec2f(-380.0f, 30.0f), Vec4f(0.5f, 0.5f, 0.5f, 1.0f));
 				}
 				RenderManager2D::Get().End();
 

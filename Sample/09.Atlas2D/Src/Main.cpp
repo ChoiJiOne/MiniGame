@@ -83,17 +83,17 @@ public:
 				{
 					for (float x = minX; x <= maxX; x += strideX)
 					{
-						GameMath::Vec4f color = (x == 0.0f) ? GameMath::Vec4f(0.0f, 0.0f, 1.0f, 1.0f) : GameMath::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
-						RenderManager2D::Get().DrawLine(GameMath::Vec2f(x, minX), GameMath::Vec2f(x, maxY), color);
+						Vec4f color = (x == 0.0f) ? Vec4f(0.0f, 0.0f, 1.0f, 1.0f) : Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
+						RenderManager2D::Get().DrawLine(Vec2f(x, minX), Vec2f(x, maxY), color);
 					}
 
 					for (float y = minY; y <= maxY; y += strideY)
 					{
-						GameMath::Vec4f color = (y == 0.0f) ? GameMath::Vec4f(1.0f, 0.0f, 0.0f, 1.0f) : GameMath::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
-						RenderManager2D::Get().DrawLine(GameMath::Vec2f(minX, y), GameMath::Vec2f(maxX, y), color);
+						Vec4f color = (y == 0.0f) ? Vec4f(1.0f, 0.0f, 0.0f, 1.0f) : Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
+						RenderManager2D::Get().DrawLine(Vec2f(minX, y), Vec2f(maxX, y), color);
 					}
 
-					RenderManager2D::Get().DrawSprite(bird_, keys[current_], GameMath::Vec2f(0.0f, 0.0f), 128.0f, 128.0f, 0.0f, bIsFlipH_, bIsFlipV_);
+					RenderManager2D::Get().DrawSprite(bird_, keys[current_], Vec2f(0.0f, 0.0f), 128.0f, 128.0f, 0.0f, bIsFlipH_, bIsFlipV_);
 				}
 				RenderManager2D::Get().End();
 

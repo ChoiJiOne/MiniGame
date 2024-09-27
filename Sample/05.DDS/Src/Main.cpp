@@ -18,8 +18,8 @@
 
 struct Vertex
 {
-	GameMath::Vec3f position;
-	GameMath::Vec2f uv;
+	Vec3f position;
+	Vec2f uv;
 };
 
 class DemoApp : public IApp
@@ -55,10 +55,10 @@ public:
 
 		std::array<Vertex, 4> vertices =
 		{
-			Vertex{ GameMath::Vec3f(-1.0f, +0.0f, 0.0f), GameMath::Vec2f(0.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f(+0.0f, +0.0f, 0.0f), GameMath::Vec2f(1.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f(+0.0f, +1.0f, 0.0f), GameMath::Vec2f(1.0f, 1.0f) },
-			Vertex{ GameMath::Vec3f(-1.0f, +1.0f, 0.0f), GameMath::Vec2f(0.0f, 1.0f) },
+			Vertex{ Vec3f(-1.0f, +0.0f, 0.0f), Vec2f(0.0f, 0.0f) },
+			Vertex{ Vec3f(+0.0f, +0.0f, 0.0f), Vec2f(1.0f, 0.0f) },
+			Vertex{ Vec3f(+0.0f, +1.0f, 0.0f), Vec2f(1.0f, 1.0f) },
+			Vertex{ Vec3f(-1.0f, +1.0f, 0.0f), Vec2f(0.0f, 1.0f) },
 		};
 
 		uint32_t stride = static_cast<uint32_t>(sizeof(Vertex));
@@ -86,10 +86,10 @@ public:
 		/** DXT1 */
 		vertices =
 		{
-			Vertex{ GameMath::Vec3f(+0.0f, +0.0f, 0.0f), GameMath::Vec2f(0.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f(+1.0f, +0.0f, 0.0f), GameMath::Vec2f(1.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f(+1.0f, +1.0f, 0.0f), GameMath::Vec2f(1.0f, 1.0f) },
-			Vertex{ GameMath::Vec3f(+0.0f, +1.0f, 0.0f), GameMath::Vec2f(0.0f, 1.0f) },
+			Vertex{ Vec3f(+0.0f, +0.0f, 0.0f), Vec2f(0.0f, 0.0f) },
+			Vertex{ Vec3f(+1.0f, +0.0f, 0.0f), Vec2f(1.0f, 0.0f) },
+			Vertex{ Vec3f(+1.0f, +1.0f, 0.0f), Vec2f(1.0f, 1.0f) },
+			Vertex{ Vec3f(+0.0f, +1.0f, 0.0f), Vec2f(0.0f, 1.0f) },
 		};
 
 		chunk.vertexBuffer = ResourceManager::Get().Create<VertexBuffer>(vertices.data(), byteSize, VertexBuffer::Usage::STATIC);
@@ -115,10 +115,10 @@ public:
 		/** DXT3 */
 		vertices =
 		{
-			Vertex{ GameMath::Vec3f(-1.0f, -1.0f, 0.0f), GameMath::Vec2f(0.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f(+0.0f, -1.0f, 0.0f), GameMath::Vec2f(1.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f(+0.0f, +0.0f, 0.0f), GameMath::Vec2f(1.0f, 1.0f) },
-			Vertex{ GameMath::Vec3f(-1.0f, +0.0f, 0.0f), GameMath::Vec2f(0.0f, 1.0f) },
+			Vertex{ Vec3f(-1.0f, -1.0f, 0.0f), Vec2f(0.0f, 0.0f) },
+			Vertex{ Vec3f(+0.0f, -1.0f, 0.0f), Vec2f(1.0f, 0.0f) },
+			Vertex{ Vec3f(+0.0f, +0.0f, 0.0f), Vec2f(1.0f, 1.0f) },
+			Vertex{ Vec3f(-1.0f, +0.0f, 0.0f), Vec2f(0.0f, 1.0f) },
 		};
 
 		chunk.vertexBuffer = ResourceManager::Get().Create<VertexBuffer>(vertices.data(), byteSize, VertexBuffer::Usage::STATIC);
@@ -144,10 +144,10 @@ public:
 		/** DXT5 */
 		vertices =
 		{
-			Vertex{ GameMath::Vec3f(+0.0f, -1.0f, 0.0f), GameMath::Vec2f(0.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f(+1.0f, -1.0f, 0.0f), GameMath::Vec2f(1.0f, 0.0f) },
-			Vertex{ GameMath::Vec3f(+1.0f, +0.0f, 0.0f), GameMath::Vec2f(1.0f, 1.0f) },
-			Vertex{ GameMath::Vec3f(+0.0f, +0.0f, 0.0f), GameMath::Vec2f(0.0f, 1.0f) },
+			Vertex{ Vec3f(+0.0f, -1.0f, 0.0f), Vec2f(0.0f, 0.0f) },
+			Vertex{ Vec3f(+1.0f, -1.0f, 0.0f), Vec2f(1.0f, 0.0f) },
+			Vertex{ Vec3f(+1.0f, +0.0f, 0.0f), Vec2f(1.0f, 1.0f) },
+			Vertex{ Vec3f(+0.0f, +0.0f, 0.0f), Vec2f(0.0f, 1.0f) },
 		};
 
 		chunk.vertexBuffer = ResourceManager::Get().Create<VertexBuffer>(vertices.data(), byteSize, VertexBuffer::Usage::STATIC);
@@ -212,10 +212,10 @@ public:
 
 				RenderManager2D::Get().Begin();
 				{
-					RenderManager2D::Get().DrawString(font_, L"RGBA", GameMath::Vec2f(-400.0f, 300.0f), GameMath::Vec4f(0.0f, 0.0f, 0.0f, 1.0f));
-					RenderManager2D::Get().DrawString(font_, L"DXT1", GameMath::Vec2f(   0.0f, 300.0f), GameMath::Vec4f(0.0f, 0.0f, 0.0f, 1.0f));
-					RenderManager2D::Get().DrawString(font_, L"DXT3", GameMath::Vec2f(-400.0f,   0.0f), GameMath::Vec4f(0.0f, 0.0f, 0.0f, 1.0f));
-					RenderManager2D::Get().DrawString(font_, L"DXT5", GameMath::Vec2f(   0.0f,   0.0f), GameMath::Vec4f(0.0f, 0.0f, 0.0f, 1.0f));
+					RenderManager2D::Get().DrawString(font_, L"RGBA", Vec2f(-400.0f, 300.0f), Vec4f(0.0f, 0.0f, 0.0f, 1.0f));
+					RenderManager2D::Get().DrawString(font_, L"DXT1", Vec2f(   0.0f, 300.0f), Vec4f(0.0f, 0.0f, 0.0f, 1.0f));
+					RenderManager2D::Get().DrawString(font_, L"DXT3", Vec2f(-400.0f,   0.0f), Vec4f(0.0f, 0.0f, 0.0f, 1.0f));
+					RenderManager2D::Get().DrawString(font_, L"DXT5", Vec2f(   0.0f,   0.0f), Vec4f(0.0f, 0.0f, 0.0f, 1.0f));
 				}
 				RenderManager2D::Get().End();
 

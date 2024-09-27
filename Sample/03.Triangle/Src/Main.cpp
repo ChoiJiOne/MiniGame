@@ -16,8 +16,8 @@
 
 struct Vertex
 {
-	GameMath::Vec3f position;
-	GameMath::Vec4f color;
+	Vec3f position;
+	Vec4f color;
 };
 
 class DemoApp : public IApp
@@ -32,9 +32,9 @@ public:
 	{
 		std::array<Vertex, 3> vertices =
 		{
-			Vertex{GameMath::Vec3f(-0.5f, -0.5f, 0.0f), GameMath::Vec4f(1.0f, 0.0f, 0.0f, 1.0f) },
-			Vertex{GameMath::Vec3f(+0.5f, -0.5f, 0.0f), GameMath::Vec4f(0.0f, 1.0f, 0.0f, 1.0f) },
-			Vertex{GameMath::Vec3f(+0.0f, +0.5f, 0.0f), GameMath::Vec4f(0.0f, 0.0f, 1.0f, 1.0f) },
+			Vertex{Vec3f(-0.5f, -0.5f, 0.0f), Vec4f(1.0f, 0.0f, 0.0f, 1.0f) },
+			Vertex{Vec3f(+0.5f, -0.5f, 0.0f), Vec4f(0.0f, 1.0f, 0.0f, 1.0f) },
+			Vertex{Vec3f(+0.0f, +0.5f, 0.0f), Vec4f(0.0f, 0.0f, 1.0f, 1.0f) },
 		};
 
 		uint32_t stride = static_cast<uint32_t>(sizeof(Vertex));

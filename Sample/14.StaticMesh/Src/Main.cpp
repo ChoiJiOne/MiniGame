@@ -30,24 +30,24 @@ public:
 	{
 		SetDepthMode(true);
 
-		GameMath::Vec3f cameraPos(3.0f, 3.0f, 3.0f);
+		Vec3f cameraPos(3.0f, 3.0f, 3.0f);
 		float yaw = -GameMath::ToRadian(135.0f);
-		float pitch = -GameMath::PI / 6.0f;
-		float fov = GameMath::PI_DIV_4;
+		float pitch = -PI / 6.0f;
+		float fov = PI_DIV_4;
 		float nearZ = 0.01f;
 		float farZ = 100.0f;
 
 		camera_ = EntityManager::Get().Create<FreeEulerCamera3D>(cameraPos, yaw, pitch, fov, nearZ, farZ);
 		shader_ = ResourceManager::Get().Create<Shader>("GameMaker/Sample/14.StaticMesh/Res/Shader.vert", "GameMaker/Sample/14.StaticMesh/Res/Shader.frag");
 
-		StaticMesh* cube = StaticMesh::CreateBox(GameMath::Vec3f(1.0f, 1.0f, 1.0f));
+		StaticMesh* cube = StaticMesh::CreateBox(Vec3f(1.0f, 1.0f, 1.0f));
 		Texture2D* box = ResourceManager::Get().Create<Texture2D>("GameMaker/Sample/14.StaticMesh/Res/Box.png", Texture2D::Filter::LINEAR);
-		std::tuple<StaticMesh*, Texture2D*, GameMath::Mat4x4> boxObject(cube, box, GameMath::Mat4x4::Translation(-1.0f, 0.0f, 0.0f));
+		std::tuple<StaticMesh*, Texture2D*, Mat4x4> boxObject(cube, box, Mat4x4::Translation(-1.0f, 0.0f, 0.0f));
 		objects_.push_back(boxObject);
 
 		StaticMesh* sphere = StaticMesh::CreateSphere(1.0f, 30);
 		Texture2D* earth = ResourceManager::Get().Create<Texture2D>("GameMaker/Sample/14.StaticMesh/Res/Earth.png", Texture2D::Filter::LINEAR);
-		std::tuple<StaticMesh*, Texture2D*, GameMath::Mat4x4> sphereObject(sphere, earth, GameMath::Mat4x4::Translation(+1.0f, 0.0f, 0.0f));
+		std::tuple<StaticMesh*, Texture2D*, Mat4x4> sphereObject(sphere, earth, Mat4x4::Translation(+1.0f, 0.0f, 0.0f));
 		objects_.push_back(sphereObject);
 	}
 
@@ -97,20 +97,20 @@ public:
 private:
 	void DrawGrid()
 	{
-		GameMath::Vec4f color;
+		Vec4f color;
 		for (float x = minX_; x <= maxX_; x += stride_)
 		{
-			color = (x == 0.0f) ? GameMath::Vec4f(0.0f, 0.0f, 1.0f, 1.0f) : GameMath::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
-			DebugDrawManager3D::Get().DrawLine(GameMath::Vec3f(x, 0.0f, minZ_), GameMath::Vec3f(x, 0.0f, maxZ_), color);
+			color = (x == 0.0f) ? Vec4f(0.0f, 0.0f, 1.0f, 1.0f) : Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
+			DebugDrawManager3D::Get().DrawLine(Vec3f(x, 0.0f, minZ_), Vec3f(x, 0.0f, maxZ_), color);
 		}
 
 		for (float z = minZ_; z <= maxZ_; z += stride_)
 		{
-			color = (z == 0.0f) ? GameMath::Vec4f(1.0f, 0.0f, 0.0f, 1.0f) : GameMath::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
-			DebugDrawManager3D::Get().DrawLine(GameMath::Vec3f(minX_, 0.0f, z), GameMath::Vec3f(maxX_, 0.0f, z), color);
+			color = (z == 0.0f) ? Vec4f(1.0f, 0.0f, 0.0f, 1.0f) : Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
+			DebugDrawManager3D::Get().DrawLine(Vec3f(minX_, 0.0f, z), Vec3f(maxX_, 0.0f, z), color);
 		}
 
-		DebugDrawManager3D::Get().DrawLine(GameMath::Vec3f(0.0f, minY_, 0.0f), GameMath::Vec3f(0.0f, maxY_, 0.0f), GameMath::Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
+		DebugDrawManager3D::Get().DrawLine(Vec3f(0.0f, minY_, 0.0f), Vec3f(0.0f, maxY_, 0.0f), Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
 	}
 
 private:
@@ -125,7 +125,7 @@ private:
 	FreeEulerCamera3D* camera_ = nullptr;
 	Shader* shader_ = nullptr;
 
-	std::vector<std::tuple<StaticMesh*, Texture2D*, GameMath::Mat4x4>> objects_;
+	std::vector<std::tuple<StaticMesh*, Texture2D*, Mat4x4>> objects_;
 };
 
 int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR pCmdLine, _In_ int32_t nCmdShow)

@@ -30,10 +30,10 @@ public:
 	{
 		SetDepthMode(true);
 
-		GameMath::Vec3f cameraPos(3.0f, 3.0f, 3.0f);
+		Vec3f cameraPos(3.0f, 3.0f, 3.0f);
 		float yaw = -GameMath::ToRadian(135.0f);
-		float pitch = -GameMath::PI / 6.0f;
-		float fov = GameMath::PI_DIV_4;
+		float pitch = -PI / 6.0f;
+		float fov = PI_DIV_4;
 		float nearZ = 0.01f;
 		float farZ = 100.0f;
 
@@ -69,20 +69,20 @@ public:
 private:
 	void DrawGrid()
 	{
-		GameMath::Vec4f color;
+		Vec4f color;
 		for (float x = minX_; x <= maxX_; x += stride_)
 		{
-			color = (x == 0.0f) ? GameMath::Vec4f(0.0f, 0.0f, 1.0f, 1.0f) : GameMath::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
-			DebugDrawManager3D::Get().DrawLine(GameMath::Vec3f(x, 0.0f, minZ_), GameMath::Vec3f(x, 0.0f, maxZ_), color);
+			color = (x == 0.0f) ? Vec4f(0.0f, 0.0f, 1.0f, 1.0f) : Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
+			DebugDrawManager3D::Get().DrawLine(Vec3f(x, 0.0f, minZ_), Vec3f(x, 0.0f, maxZ_), color);
 		}
 
 		for (float z = minZ_; z <= maxZ_; z += stride_)
 		{
-			color = (z == 0.0f) ? GameMath::Vec4f(1.0f, 0.0f, 0.0f, 1.0f) : GameMath::Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
-			DebugDrawManager3D::Get().DrawLine(GameMath::Vec3f(minX_, 0.0f, z), GameMath::Vec3f(maxX_, 0.0f, z), color);
+			color = (z == 0.0f) ? Vec4f(1.0f, 0.0f, 0.0f, 1.0f) : Vec4f(0.5f, 0.5f, 0.5f, 0.5f);
+			DebugDrawManager3D::Get().DrawLine(Vec3f(minX_, 0.0f, z), Vec3f(maxX_, 0.0f, z), color);
 		}
 
-		DebugDrawManager3D::Get().DrawLine(GameMath::Vec3f(0.0f, minY_, 0.0f), GameMath::Vec3f(0.0f, maxY_, 0.0f), GameMath::Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
+		DebugDrawManager3D::Get().DrawLine(Vec3f(0.0f, minY_, 0.0f), Vec3f(0.0f, maxY_, 0.0f), Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
 	}
 
 private:
