@@ -19,10 +19,10 @@ public:
 			return sizeof(Vertex);
 		}
 
-		GameMath::Vec3f position;
-		GameMath::Vec3f normal;
-		GameMath::Vec3f tangent;
-		GameMath::Vec2f uv;
+		Vec3f position;
+		Vec3f normal;
+		Vec3f tangent;
+		Vec2f uv;
 	};
 
 public:
@@ -39,7 +39,7 @@ public:
 	virtual uint32_t GetIndexCount() const override { return static_cast<uint32_t>(indices_.size()); }
 	virtual uint32_t GetVertexCount() const override { return static_cast<uint32_t>(vertices_.size()); }
 
-	static StaticMesh* CreateBox(const GameMath::Vec3f& size);
+	static StaticMesh* CreateBox(const Vec3f& size);
 	static StaticMesh* CreateSphere(float radius, uint32_t tessellation);
 
 private:

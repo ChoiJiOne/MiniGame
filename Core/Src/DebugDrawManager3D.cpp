@@ -96,7 +96,7 @@ void DebugDrawManager3D::End()
 	bIsBegin_ = false;
 }
 
-void DebugDrawManager3D::DrawLine(const GameMath::Vec3f& startPos, const GameMath::Vec3f& endPos, const GameMath::Vec4f& color)
+void DebugDrawManager3D::DrawLine(const Vec3f& startPos, const Vec3f& endPos, const Vec4f& color)
 {
 	static const uint32_t MAX_VERTEX_SIZE = 2;
 	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
@@ -113,9 +113,9 @@ void DebugDrawManager3D::DrawLine(const GameMath::Vec3f& startPos, const GameMat
 			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			prevCommand.vertexCount += MAX_VERTEX_SIZE;
 
-			vertices_[startVertexIndex + 0].position = GameMath::Vec4f(startPos.x, startPos.y, startPos.z, 1.0f);
+			vertices_[startVertexIndex + 0].position = Vec4f(startPos.x, startPos.y, startPos.z, 1.0f);
 			vertices_[startVertexIndex + 0].color = color;
-			vertices_[startVertexIndex + 1].position = GameMath::Vec4f(endPos.x, endPos.y, endPos.z, 1.0f);
+			vertices_[startVertexIndex + 1].position = Vec4f(endPos.x, endPos.y, endPos.z, 1.0f);
 			vertices_[startVertexIndex + 1].color = color;
 			return;
 		}
@@ -133,15 +133,15 @@ void DebugDrawManager3D::DrawLine(const GameMath::Vec3f& startPos, const GameMat
 	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = MAX_VERTEX_SIZE;
 
-	vertices_[command.startVertexIndex + 0].position = GameMath::Vec4f(startPos.x, startPos.y, startPos.z, 1.0f);
+	vertices_[command.startVertexIndex + 0].position = Vec4f(startPos.x, startPos.y, startPos.z, 1.0f);
 	vertices_[command.startVertexIndex + 0].color = color;
-	vertices_[command.startVertexIndex + 1].position = GameMath::Vec4f(endPos.x, endPos.y, endPos.z, 1.0f);
+	vertices_[command.startVertexIndex + 1].position = Vec4f(endPos.x, endPos.y, endPos.z, 1.0f);
 	vertices_[command.startVertexIndex + 1].color = color;
 
 	commandQueue_.push(command);
 }
 
-void DebugDrawManager3D::DrawLine(const GameMath::Vec3f& startPos, const GameMath::Vec4f& startColor, const GameMath::Vec3f& endPos, const GameMath::Vec4f& endColor)
+void DebugDrawManager3D::DrawLine(const Vec3f& startPos, const Vec4f& startColor, const Vec3f& endPos, const Vec4f& endColor)
 {
 	static const uint32_t MAX_VERTEX_SIZE = 2;
 	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
@@ -158,9 +158,9 @@ void DebugDrawManager3D::DrawLine(const GameMath::Vec3f& startPos, const GameMat
 			uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
 			prevCommand.vertexCount += MAX_VERTEX_SIZE;
 
-			vertices_[startVertexIndex + 0].position = GameMath::Vec4f(startPos.x, startPos.y, startPos.z, 1.0f);
+			vertices_[startVertexIndex + 0].position = Vec4f(startPos.x, startPos.y, startPos.z, 1.0f);
 			vertices_[startVertexIndex + 0].color = startColor;
-			vertices_[startVertexIndex + 1].position = GameMath::Vec4f(endPos.x, endPos.y, endPos.z, 1.0f);
+			vertices_[startVertexIndex + 1].position = Vec4f(endPos.x, endPos.y, endPos.z, 1.0f);
 			vertices_[startVertexIndex + 1].color = endColor;
 			return;
 		}
@@ -178,15 +178,15 @@ void DebugDrawManager3D::DrawLine(const GameMath::Vec3f& startPos, const GameMat
 	command.startVertexIndex = startVertexIndex;
 	command.vertexCount = MAX_VERTEX_SIZE;
 
-	vertices_[command.startVertexIndex + 0].position = GameMath::Vec4f(startPos.x, startPos.y, startPos.z, 1.0f);
+	vertices_[command.startVertexIndex + 0].position = Vec4f(startPos.x, startPos.y, startPos.z, 1.0f);
 	vertices_[command.startVertexIndex + 0].color = startColor;
-	vertices_[command.startVertexIndex + 1].position = GameMath::Vec4f(endPos.x, endPos.y, endPos.z, 1.0f);
+	vertices_[command.startVertexIndex + 1].position = Vec4f(endPos.x, endPos.y, endPos.z, 1.0f);
 	vertices_[command.startVertexIndex + 1].color = endColor;
 
 	commandQueue_.push(command);
 }
 
-void DebugDrawManager3D::DrawCube(const GameMath::Mat4x4& world, const GameMath::Vec3f& extents, const GameMath::Vec4f& color)
+void DebugDrawManager3D::DrawCube(const Mat4x4& world, const Vec3f& extents, const Vec4f& color)
 {
 	static const uint32_t MAX_VERTEX_SIZE = 24;
 	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
@@ -194,46 +194,46 @@ void DebugDrawManager3D::DrawCube(const GameMath::Mat4x4& world, const GameMath:
 		Flush();
 	}
 
-	GameMath::Vec3f minPos = -extents * 0.5f;
-	GameMath::Vec3f maxPos = extents * 0.5f;
+	Vec3f minPos = -extents * 0.5f;
+	Vec3f maxPos = extents * 0.5f;
 
 	auto composeVertexData = [&](uint32_t startVertexIndex)
 		{
-			vertices_[startVertexIndex + 0] = Vertex{ GameMath::Vec4f(maxPos.x, maxPos.y, maxPos.z, 1.0f), color };
-			vertices_[startVertexIndex + 1] = Vertex{ GameMath::Vec4f(minPos.x, maxPos.y, maxPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 0] = Vertex{ Vec4f(maxPos.x, maxPos.y, maxPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 1] = Vertex{ Vec4f(minPos.x, maxPos.y, maxPos.z, 1.0f), color };
 
-			vertices_[startVertexIndex + 2] = Vertex{ GameMath::Vec4f(minPos.x, maxPos.y, maxPos.z, 1.0f), color };
-			vertices_[startVertexIndex + 3] = Vertex{ GameMath::Vec4f(minPos.x, maxPos.y, minPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 2] = Vertex{ Vec4f(minPos.x, maxPos.y, maxPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 3] = Vertex{ Vec4f(minPos.x, maxPos.y, minPos.z, 1.0f), color };
 
-			vertices_[startVertexIndex + 4] = Vertex{ GameMath::Vec4f(minPos.x, maxPos.y, minPos.z, 1.0f), color };
-			vertices_[startVertexIndex + 5] = Vertex{ GameMath::Vec4f(maxPos.x, maxPos.y, minPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 4] = Vertex{ Vec4f(minPos.x, maxPos.y, minPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 5] = Vertex{ Vec4f(maxPos.x, maxPos.y, minPos.z, 1.0f), color };
 
-			vertices_[startVertexIndex + 6] = Vertex{ GameMath::Vec4f(maxPos.x, maxPos.y, minPos.z, 1.0f), color };
-			vertices_[startVertexIndex + 7] = Vertex{ GameMath::Vec4f(maxPos.x, maxPos.y, maxPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 6] = Vertex{ Vec4f(maxPos.x, maxPos.y, minPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 7] = Vertex{ Vec4f(maxPos.x, maxPos.y, maxPos.z, 1.0f), color };
 
-			vertices_[startVertexIndex + 8] = Vertex{ GameMath::Vec4f(maxPos.x, minPos.y, maxPos.z, 1.0f), color };
-			vertices_[startVertexIndex + 9] = Vertex{ GameMath::Vec4f(minPos.x, minPos.y, maxPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 8] = Vertex{ Vec4f(maxPos.x, minPos.y, maxPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 9] = Vertex{ Vec4f(minPos.x, minPos.y, maxPos.z, 1.0f), color };
 
-			vertices_[startVertexIndex + 10] = Vertex{ GameMath::Vec4f(minPos.x, minPos.y, maxPos.z, 1.0f), color };
-			vertices_[startVertexIndex + 11] = Vertex{ GameMath::Vec4f(minPos.x, minPos.y, minPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 10] = Vertex{ Vec4f(minPos.x, minPos.y, maxPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 11] = Vertex{ Vec4f(minPos.x, minPos.y, minPos.z, 1.0f), color };
 
-			vertices_[startVertexIndex + 12] = Vertex{ GameMath::Vec4f(minPos.x, minPos.y, minPos.z, 1.0f), color };
-			vertices_[startVertexIndex + 13] = Vertex{ GameMath::Vec4f(maxPos.x, minPos.y, minPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 12] = Vertex{ Vec4f(minPos.x, minPos.y, minPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 13] = Vertex{ Vec4f(maxPos.x, minPos.y, minPos.z, 1.0f), color };
 
-			vertices_[startVertexIndex + 14] = Vertex{ GameMath::Vec4f(maxPos.x, minPos.y, minPos.z, 1.0f), color };
-			vertices_[startVertexIndex + 15] = Vertex{ GameMath::Vec4f(maxPos.x, minPos.y, maxPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 14] = Vertex{ Vec4f(maxPos.x, minPos.y, minPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 15] = Vertex{ Vec4f(maxPos.x, minPos.y, maxPos.z, 1.0f), color };
 
-			vertices_[startVertexIndex + 16] = Vertex{ GameMath::Vec4f(maxPos.x, maxPos.y, maxPos.z, 1.0f), color };
-			vertices_[startVertexIndex + 17] = Vertex{ GameMath::Vec4f(maxPos.x, minPos.y, maxPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 16] = Vertex{ Vec4f(maxPos.x, maxPos.y, maxPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 17] = Vertex{ Vec4f(maxPos.x, minPos.y, maxPos.z, 1.0f), color };
 
-			vertices_[startVertexIndex + 18] = Vertex{ GameMath::Vec4f(minPos.x, maxPos.y, maxPos.z, 1.0f), color };
-			vertices_[startVertexIndex + 19] = Vertex{ GameMath::Vec4f(minPos.x, minPos.y, maxPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 18] = Vertex{ Vec4f(minPos.x, maxPos.y, maxPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 19] = Vertex{ Vec4f(minPos.x, minPos.y, maxPos.z, 1.0f), color };
 
-			vertices_[startVertexIndex + 20] = Vertex{ GameMath::Vec4f(minPos.x, maxPos.y, minPos.z, 1.0f), color };
-			vertices_[startVertexIndex + 21] = Vertex{ GameMath::Vec4f(minPos.x, minPos.y, minPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 20] = Vertex{ Vec4f(minPos.x, maxPos.y, minPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 21] = Vertex{ Vec4f(minPos.x, minPos.y, minPos.z, 1.0f), color };
 
-			vertices_[startVertexIndex + 22] = Vertex{ GameMath::Vec4f(maxPos.x, maxPos.y, minPos.z, 1.0f), color };
-			vertices_[startVertexIndex + 23] = Vertex{ GameMath::Vec4f(maxPos.x, minPos.y, minPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 22] = Vertex{ Vec4f(maxPos.x, maxPos.y, minPos.z, 1.0f), color };
+			vertices_[startVertexIndex + 23] = Vertex{ Vec4f(maxPos.x, minPos.y, minPos.z, 1.0f), color };
 		};
 
 	if (!commandQueue_.empty())
@@ -267,7 +267,7 @@ void DebugDrawManager3D::DrawCube(const GameMath::Mat4x4& world, const GameMath:
 	commandQueue_.push(command);
 }
 
-void DebugDrawManager3D::DrawViewfrustum(const GameMath::Mat4x4& view, const GameMath::Mat4x4& projection, const GameMath::Vec4f& color)
+void DebugDrawManager3D::DrawViewfrustum(const Mat4x4& view, const Mat4x4& projection, const Vec4f& color)
 {
 	static const uint32_t MAX_VERTEX_SIZE = 24;
 	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
@@ -276,23 +276,23 @@ void DebugDrawManager3D::DrawViewfrustum(const GameMath::Mat4x4& view, const Gam
 	}
 
 	static const uint32_t MAX_FRUSTUM_CORNER = 8;
-	static const std::array<GameMath::Vec3f, MAX_FRUSTUM_CORNER> corners =
+	static const std::array<Vec3f, MAX_FRUSTUM_CORNER> corners =
 	{
-		GameMath::Vec3f(0.0f, 0.0f, 0.0f),
-		GameMath::Vec3f(0.0f, 0.0f, 1.0f),
-		GameMath::Vec3f(0.0f, 1.0f, 0.0f),
-		GameMath::Vec3f(0.0f, 1.0f, 1.0f),
-		GameMath::Vec3f(1.0f, 0.0f, 0.0f),
-		GameMath::Vec3f(1.0f, 0.0f, 1.0f),
-		GameMath::Vec3f(1.0f, 1.0f, 0.0f),
-		GameMath::Vec3f(1.0f, 1.0f, 1.0f),
+		Vec3f(0.0f, 0.0f, 0.0f),
+		Vec3f(0.0f, 0.0f, 1.0f),
+		Vec3f(0.0f, 1.0f, 0.0f),
+		Vec3f(0.0f, 1.0f, 1.0f),
+		Vec3f(1.0f, 0.0f, 0.0f),
+		Vec3f(1.0f, 0.0f, 1.0f),
+		Vec3f(1.0f, 1.0f, 0.0f),
+		Vec3f(1.0f, 1.0f, 1.0f),
 	};
 
-	GameMath::Mat4x4 inv = GameMath::Mat4x4::Inverse(view * projection);
-	std::array<GameMath::Vec3f, MAX_FRUSTUM_CORNER> frustumCorners;
+	Mat4x4 inv = Mat4x4::Inverse(view * projection);
+	std::array<Vec3f, MAX_FRUSTUM_CORNER> frustumCorners;
 	for (int32_t index = 0; index < MAX_FRUSTUM_CORNER; ++index)
 	{
-		GameMath::Vec4f transform = GameMath::Vec4f(2.0f * corners[index].x - 1.0f, 2.0f * corners[index].y - 1.0f, 2.0f * corners[index].z - 1.0f, 1.0f) * inv;
+		Vec4f transform = Vec4f(2.0f * corners[index].x - 1.0f, 2.0f * corners[index].y - 1.0f, 2.0f * corners[index].z - 1.0f, 1.0f) * inv;
 		frustumCorners[index].x = transform.x / transform.w;
 		frustumCorners[index].y = transform.y / transform.w;
 		frustumCorners[index].z = transform.z / transform.w;
@@ -300,44 +300,44 @@ void DebugDrawManager3D::DrawViewfrustum(const GameMath::Mat4x4& view, const Gam
 
 	auto composeVertexData = [&](uint32_t startVertexIndex)
 		{
-			vertices_[startVertexIndex + 0] = Vertex{ GameMath::Vec4f(frustumCorners[0].x, frustumCorners[0].y, frustumCorners[0].z, 1.0f), color };
-			vertices_[startVertexIndex + 1] = Vertex{ GameMath::Vec4f(frustumCorners[1].x, frustumCorners[1].y, frustumCorners[1].z, 1.0f), color };
+			vertices_[startVertexIndex + 0] = Vertex{ Vec4f(frustumCorners[0].x, frustumCorners[0].y, frustumCorners[0].z, 1.0f), color };
+			vertices_[startVertexIndex + 1] = Vertex{ Vec4f(frustumCorners[1].x, frustumCorners[1].y, frustumCorners[1].z, 1.0f), color };
 
-			vertices_[startVertexIndex + 2] = Vertex{ GameMath::Vec4f(frustumCorners[2].x, frustumCorners[2].y, frustumCorners[2].z, 1.0f), color };
-			vertices_[startVertexIndex + 3] = Vertex{ GameMath::Vec4f(frustumCorners[3].x, frustumCorners[3].y, frustumCorners[3].z, 1.0f), color };
+			vertices_[startVertexIndex + 2] = Vertex{ Vec4f(frustumCorners[2].x, frustumCorners[2].y, frustumCorners[2].z, 1.0f), color };
+			vertices_[startVertexIndex + 3] = Vertex{ Vec4f(frustumCorners[3].x, frustumCorners[3].y, frustumCorners[3].z, 1.0f), color };
 
-			vertices_[startVertexIndex + 4] = Vertex{ GameMath::Vec4f(frustumCorners[4].x, frustumCorners[4].y, frustumCorners[4].z, 1.0f), color };
-			vertices_[startVertexIndex + 5] = Vertex{ GameMath::Vec4f(frustumCorners[5].x, frustumCorners[5].y, frustumCorners[5].z, 1.0f), color };
+			vertices_[startVertexIndex + 4] = Vertex{ Vec4f(frustumCorners[4].x, frustumCorners[4].y, frustumCorners[4].z, 1.0f), color };
+			vertices_[startVertexIndex + 5] = Vertex{ Vec4f(frustumCorners[5].x, frustumCorners[5].y, frustumCorners[5].z, 1.0f), color };
 
-			vertices_[startVertexIndex + 4] = Vertex{ GameMath::Vec4f(frustumCorners[4].x, frustumCorners[4].y, frustumCorners[4].z, 1.0f), color };
-			vertices_[startVertexIndex + 5] = Vertex{ GameMath::Vec4f(frustumCorners[5].x, frustumCorners[5].y, frustumCorners[5].z, 1.0f), color };
+			vertices_[startVertexIndex + 4] = Vertex{ Vec4f(frustumCorners[4].x, frustumCorners[4].y, frustumCorners[4].z, 1.0f), color };
+			vertices_[startVertexIndex + 5] = Vertex{ Vec4f(frustumCorners[5].x, frustumCorners[5].y, frustumCorners[5].z, 1.0f), color };
 
-			vertices_[startVertexIndex + 6] = Vertex{ GameMath::Vec4f(frustumCorners[6].x, frustumCorners[6].y, frustumCorners[6].z, 1.0f), color };
-			vertices_[startVertexIndex + 7] = Vertex{ GameMath::Vec4f(frustumCorners[7].x, frustumCorners[7].y, frustumCorners[7].z, 1.0f), color };
+			vertices_[startVertexIndex + 6] = Vertex{ Vec4f(frustumCorners[6].x, frustumCorners[6].y, frustumCorners[6].z, 1.0f), color };
+			vertices_[startVertexIndex + 7] = Vertex{ Vec4f(frustumCorners[7].x, frustumCorners[7].y, frustumCorners[7].z, 1.0f), color };
 
-			vertices_[startVertexIndex + 8] = Vertex{ GameMath::Vec4f(frustumCorners[0].x, frustumCorners[0].y, frustumCorners[0].z, 1.0f), color };
-			vertices_[startVertexIndex + 9] = Vertex{ GameMath::Vec4f(frustumCorners[2].x, frustumCorners[2].y, frustumCorners[2].z, 1.0f), color };
+			vertices_[startVertexIndex + 8] = Vertex{ Vec4f(frustumCorners[0].x, frustumCorners[0].y, frustumCorners[0].z, 1.0f), color };
+			vertices_[startVertexIndex + 9] = Vertex{ Vec4f(frustumCorners[2].x, frustumCorners[2].y, frustumCorners[2].z, 1.0f), color };
 
-			vertices_[startVertexIndex + 10] = Vertex{ GameMath::Vec4f(frustumCorners[1].x, frustumCorners[1].y, frustumCorners[1].z, 1.0f), color };
-			vertices_[startVertexIndex + 11] = Vertex{ GameMath::Vec4f(frustumCorners[3].x, frustumCorners[3].y, frustumCorners[3].z, 1.0f), color };
+			vertices_[startVertexIndex + 10] = Vertex{ Vec4f(frustumCorners[1].x, frustumCorners[1].y, frustumCorners[1].z, 1.0f), color };
+			vertices_[startVertexIndex + 11] = Vertex{ Vec4f(frustumCorners[3].x, frustumCorners[3].y, frustumCorners[3].z, 1.0f), color };
 
-			vertices_[startVertexIndex + 12] = Vertex{ GameMath::Vec4f(frustumCorners[4].x, frustumCorners[4].y, frustumCorners[4].z, 1.0f), color };
-			vertices_[startVertexIndex + 13] = Vertex{ GameMath::Vec4f(frustumCorners[6].x, frustumCorners[6].y, frustumCorners[6].z, 1.0f), color };
+			vertices_[startVertexIndex + 12] = Vertex{ Vec4f(frustumCorners[4].x, frustumCorners[4].y, frustumCorners[4].z, 1.0f), color };
+			vertices_[startVertexIndex + 13] = Vertex{ Vec4f(frustumCorners[6].x, frustumCorners[6].y, frustumCorners[6].z, 1.0f), color };
 
-			vertices_[startVertexIndex + 14] = Vertex{ GameMath::Vec4f(frustumCorners[5].x, frustumCorners[5].y, frustumCorners[5].z, 1.0f), color };
-			vertices_[startVertexIndex + 15] = Vertex{ GameMath::Vec4f(frustumCorners[7].x, frustumCorners[7].y, frustumCorners[7].z, 1.0f), color };
+			vertices_[startVertexIndex + 14] = Vertex{ Vec4f(frustumCorners[5].x, frustumCorners[5].y, frustumCorners[5].z, 1.0f), color };
+			vertices_[startVertexIndex + 15] = Vertex{ Vec4f(frustumCorners[7].x, frustumCorners[7].y, frustumCorners[7].z, 1.0f), color };
 
-			vertices_[startVertexIndex + 16] = Vertex{ GameMath::Vec4f(frustumCorners[0].x, frustumCorners[0].y, frustumCorners[0].z, 1.0f), color };
-			vertices_[startVertexIndex + 17] = Vertex{ GameMath::Vec4f(frustumCorners[4].x, frustumCorners[4].y, frustumCorners[4].z, 1.0f), color };
+			vertices_[startVertexIndex + 16] = Vertex{ Vec4f(frustumCorners[0].x, frustumCorners[0].y, frustumCorners[0].z, 1.0f), color };
+			vertices_[startVertexIndex + 17] = Vertex{ Vec4f(frustumCorners[4].x, frustumCorners[4].y, frustumCorners[4].z, 1.0f), color };
 
-			vertices_[startVertexIndex + 18] = Vertex{ GameMath::Vec4f(frustumCorners[1].x, frustumCorners[1].y, frustumCorners[1].z, 1.0f), color };
-			vertices_[startVertexIndex + 19] = Vertex{ GameMath::Vec4f(frustumCorners[5].x, frustumCorners[5].y, frustumCorners[5].z, 1.0f), color };
+			vertices_[startVertexIndex + 18] = Vertex{ Vec4f(frustumCorners[1].x, frustumCorners[1].y, frustumCorners[1].z, 1.0f), color };
+			vertices_[startVertexIndex + 19] = Vertex{ Vec4f(frustumCorners[5].x, frustumCorners[5].y, frustumCorners[5].z, 1.0f), color };
 
-			vertices_[startVertexIndex + 20] = Vertex{ GameMath::Vec4f(frustumCorners[2].x, frustumCorners[2].y, frustumCorners[2].z, 1.0f), color };
-			vertices_[startVertexIndex + 21] = Vertex{ GameMath::Vec4f(frustumCorners[6].x, frustumCorners[6].y, frustumCorners[6].z, 1.0f), color };
+			vertices_[startVertexIndex + 20] = Vertex{ Vec4f(frustumCorners[2].x, frustumCorners[2].y, frustumCorners[2].z, 1.0f), color };
+			vertices_[startVertexIndex + 21] = Vertex{ Vec4f(frustumCorners[6].x, frustumCorners[6].y, frustumCorners[6].z, 1.0f), color };
 
-			vertices_[startVertexIndex + 22] = Vertex{ GameMath::Vec4f(frustumCorners[3].x, frustumCorners[3].y, frustumCorners[3].z, 1.0f), color };
-			vertices_[startVertexIndex + 23] = Vertex{ GameMath::Vec4f(frustumCorners[7].x, frustumCorners[7].y, frustumCorners[7].z, 1.0f), color };
+			vertices_[startVertexIndex + 22] = Vertex{ Vec4f(frustumCorners[3].x, frustumCorners[3].y, frustumCorners[3].z, 1.0f), color };
+			vertices_[startVertexIndex + 23] = Vertex{ Vec4f(frustumCorners[7].x, frustumCorners[7].y, frustumCorners[7].z, 1.0f), color };
 		};
 
 	if (!commandQueue_.empty())

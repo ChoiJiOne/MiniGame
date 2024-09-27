@@ -30,30 +30,30 @@ public:
 	void SetUniform(const std::string& name, const int32_t* bufferPtr, uint32_t count);
 	void SetUniform(const std::string& name, float value);
 	void SetUniform(const std::string& name, const float* bufferPtr, uint32_t count);
-	void SetUniform(const std::string& name, const GameMath::Vec2f& value);
-	void SetUniform(const std::string& name, const GameMath::Vec2f* bufferPtr, uint32_t count);
+	void SetUniform(const std::string& name, const Vec2f& value);
+	void SetUniform(const std::string& name, const Vec2f* bufferPtr, uint32_t count);
 	void SetUniform(const std::string& name, float x, float y);
-	void SetUniform(const std::string& name, const GameMath::Vec2i& value);
-	void SetUniform(const std::string& name, const GameMath::Vec2i* bufferPtr, uint32_t count);
+	void SetUniform(const std::string& name, const Vec2i& value);
+	void SetUniform(const std::string& name, const Vec2i* bufferPtr, uint32_t count);
 	void SetUniform(const std::string& name, int32_t x, int32_t y);
-	void SetUniform(const std::string& name, const GameMath::Vec3f& value);
-	void SetUniform(const std::string& name, const GameMath::Vec3f* bufferPtr, uint32_t count);
+	void SetUniform(const std::string& name, const Vec3f& value);
+	void SetUniform(const std::string& name, const Vec3f* bufferPtr, uint32_t count);
 	void SetUniform(const std::string& name, float x, float y, float z);
-	void SetUniform(const std::string& name, const GameMath::Vec3i& value);
-	void SetUniform(const std::string& name, const GameMath::Vec3i* bufferPtr, uint32_t count);
+	void SetUniform(const std::string& name, const Vec3i& value);
+	void SetUniform(const std::string& name, const Vec3i* bufferPtr, uint32_t count);
 	void SetUniform(const std::string& name, int32_t x, int32_t y, int32_t z);
-	void SetUniform(const std::string& name, const GameMath::Vec4f& value);
-	void SetUniform(const std::string& name, const GameMath::Vec4f* bufferPtr, uint32_t count);
+	void SetUniform(const std::string& name, const Vec4f& value);
+	void SetUniform(const std::string& name, const Vec4f* bufferPtr, uint32_t count);
 	void SetUniform(const std::string& name, float x, float y, float z, float w);
-	void SetUniform(const std::string& name, const GameMath::Vec4i& value);
-	void SetUniform(const std::string& name, const GameMath::Vec4i* bufferPtr, uint32_t count);
+	void SetUniform(const std::string& name, const Vec4i& value);
+	void SetUniform(const std::string& name, const Vec4i* bufferPtr, uint32_t count);
 	void SetUniform(const std::string& name, int32_t x, int32_t y, int32_t z, int32_t w);
-	void SetUniform(const std::string& name, const GameMath::Mat2x2& value);
-	void SetUniform(const std::string& name, const GameMath::Mat2x2* bufferPtr, uint32_t count);
-	void SetUniform(const std::string& name, const GameMath::Mat3x3& value);
-	void SetUniform(const std::string& name, const GameMath::Mat3x3* bufferPtr, uint32_t count);
-	void SetUniform(const std::string& name, const GameMath::Mat4x4& value);
-	void SetUniform(const std::string& name, const GameMath::Mat4x4* bufferPtr, uint32_t count);
+	void SetUniform(const std::string& name, const Mat2x2& value);
+	void SetUniform(const std::string& name, const Mat2x2* bufferPtr, uint32_t count);
+	void SetUniform(const std::string& name, const Mat3x3& value);
+	void SetUniform(const std::string& name, const Mat3x3* bufferPtr, uint32_t count);
+	void SetUniform(const std::string& name, const Mat4x4& value);
+	void SetUniform(const std::string& name, const Mat4x4* bufferPtr, uint32_t count);
 
 protected:
 	enum class Type : int32_t

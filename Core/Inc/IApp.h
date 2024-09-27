@@ -339,7 +339,7 @@ public:
 	static IApp* Get();
 
 	int32_t GetNumVideoDisplay();
-	void GetVideoDisplaySize(int32_t index, GameMath::Vec2i& outSize);
+	void GetVideoDisplaySize(int32_t index, Vec2i& outSize);
 
 	template <typename T>
 	void GetScreenSize(T& outWidth, T& outHeight);
@@ -365,8 +365,8 @@ public:
 	/** 입력 관련 설정 */
 	Press GetKeyPress(const Key& key);
 	Press GetMousePress(const Mouse& mouse);
-	const GameMath::Vec2i& GetPrevMousePos() { return prevMouseState_.position; }
-	const GameMath::Vec2i& GetCurrMousePos() { return currMouseState_.position; }
+	const Vec2i& GetPrevMousePos() { return prevMouseState_.position; }
+	const Vec2i& GetCurrMousePos() { return currMouseState_.position; }
 	WindowEventID AddWindowEventAction(const WindowEvent& windowEvent, const std::function<void()>& eventAction, bool bIsActive = true);
 	void DeleteWindowEventAction(const WindowEventID& windowEventID);
 	void SetActiveWindowEventAction(const WindowEventID& windowEventID, bool bIsActive);
@@ -388,7 +388,7 @@ protected:
 	struct MouseState
 	{
 		uint32_t state; // 마우스 버튼의 상태입니다.
-		GameMath::Vec2i position; // 마우스 버튼의 위치입니다.
+		Vec2i position; // 마우스 버튼의 위치입니다.
 	};
 
 	void RunLoop(const std::function<void(float)>& frameCallback);
@@ -407,7 +407,7 @@ protected:
 	void* context_ = nullptr; /** OpenGL 컨텍스트 */
 
 	int32_t numVideoDisplay_ = 0;
-	std::vector<GameMath::Vec2i> displaySizes_;
+	std::vector<Vec2i> displaySizes_;
 
 	GameTimer timer_;
 

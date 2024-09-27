@@ -80,36 +80,36 @@ void StaticMesh::Unbind() const
 }
 
 /** https://github.com/microsoft/DirectXTK/blob/main/Src/Geometry.cpp#L71 */
-StaticMesh* StaticMesh::CreateBox(const GameMath::Vec3f& size)
+StaticMesh* StaticMesh::CreateBox(const Vec3f& size)
 {
 	std::vector<Vertex> vertices;
 	std::vector<uint32_t> indices;
 
 	static const int32_t faceCount = 6;
-	static const std::array<GameMath::Vec3f, 6> normals =
+	static const std::array<Vec3f, 6> normals =
 	{
-		GameMath::Vec3f( 0.0f,  0.0f, +1.0f),
-		GameMath::Vec3f( 0.0f,  0.0f, -1.0f),
-		GameMath::Vec3f(+1.0f,  0.0f,  0.0f),
-		GameMath::Vec3f(-1.0f,  0.0f,  0.0f),
-		GameMath::Vec3f( 0.0f, +1.0f,  0.0f),
-		GameMath::Vec3f( 0.0f, -1.0f,  0.0f),
+		Vec3f( 0.0f,  0.0f, +1.0f),
+		Vec3f( 0.0f,  0.0f, -1.0f),
+		Vec3f(+1.0f,  0.0f,  0.0f),
+		Vec3f(-1.0f,  0.0f,  0.0f),
+		Vec3f( 0.0f, +1.0f,  0.0f),
+		Vec3f( 0.0f, -1.0f,  0.0f),
 	};
-	static const std::array<GameMath::Vec2f, 4> uvs =
+	static const std::array<Vec2f, 4> uvs =
 	{
-		GameMath::Vec2f(0.0f, 1.0f),
-		GameMath::Vec2f(1.0f, 1.0f),
-		GameMath::Vec2f(1.0f, 0.0f),
-		GameMath::Vec2f(0.0f, 0.0f),
+		Vec2f(0.0f, 1.0f),
+		Vec2f(1.0f, 1.0f),
+		Vec2f(1.0f, 0.0f),
+		Vec2f(0.0f, 0.0f),
 	};
 
-	GameMath::Vec3f size2 = size * 0.5f;
+	Vec3f size2 = size * 0.5f;
 	for (int32_t index = 0; index < faceCount; ++index)
 	{
-		const GameMath::Vec3f normal = normals[index];
-		const GameMath::Vec3f basis = (index >= 4) ? GameMath::Vec3f(0.0f, 0.0f, 1.0f) : GameMath::Vec3f(0.0f, 1.0f, 0.0f);
-		const GameMath::Vec3f side1 = GameMath::Vec3f::Cross(normal, basis);
-		const GameMath::Vec3f side2 = GameMath::Vec3f::Cross(normal, side1);
+		const Vec3f normal = normals[index];
+		const Vec3f basis = (index >= 4) ? Vec3f(0.0f, 0.0f, 1.0f) : Vec3f(0.0f, 1.0f, 0.0f);
+		const Vec3f side1 = Vec3f::Cross(normal, basis);
+		const Vec3f side2 = Vec3f::Cross(normal, side1);
 		
 		const std::size_t vertexBase = vertices.size();
 		indices.push_back(vertexBase + 0);
@@ -120,10 +120,10 @@ StaticMesh* StaticMesh::CreateBox(const GameMath::Vec3f& size)
 		indices.push_back(vertexBase + 2);
 		indices.push_back(vertexBase + 3);
 
-		vertices.push_back(Vertex{ (normal + side1 + side2) * size2, normal, GameMath::Vec3f(0.0f, 0.0f, 0.0f), uvs[0] });
-		vertices.push_back(Vertex{ (normal - side1 + side2) * size2, normal, GameMath::Vec3f(0.0f, 0.0f, 0.0f), uvs[1] });
-		vertices.push_back(Vertex{ (normal - side1 - side2) * size2, normal, GameMath::Vec3f(0.0f, 0.0f, 0.0f), uvs[2] });
-		vertices.push_back(Vertex{ (normal + side1 - side2) * size2, normal, GameMath::Vec3f(0.0f, 0.0f, 0.0f), uvs[3] });
+		vertices.push_back(Vertex{ (normal + side1 + side2) * size2, normal, Vec3f(0.0f, 0.0f, 0.0f), uvs[0] });
+		vertices.push_back(Vertex{ (normal - side1 + side2) * size2, normal, Vec3f(0.0f, 0.0f, 0.0f), uvs[1] });
+		vertices.push_back(Vertex{ (normal - side1 - side2) * size2, normal, Vec3f(0.0f, 0.0f, 0.0f), uvs[2] });
+		vertices.push_back(Vertex{ (normal + side1 - side2) * size2, normal, Vec3f(0.0f, 0.0f, 0.0f), uvs[3] });
 	}
 
 	return ResourceManager::Get().Create<StaticMesh>(vertices, indices);
@@ -144,7 +144,7 @@ StaticMesh* StaticMesh::CreateSphere(float radius, uint32_t tessellation)
 		const float v = 1.0f - static_cast<float>(vIndex) / static_cast<float>(vertical);
 
 		// 구면 좌표계의 위도(latitude) 각 계산.
-		const float latitude = (GameMath::PI * static_cast<float>(vIndex) / static_cast<float>(vertical)) - GameMath::PI_DIV_2; // -pi/2 <= latitude <= pi/2
+		const float latitude = (PI * static_cast<float>(vIndex) / static_cast<float>(vertical)) - PI_DIV_2; // -pi/2 <= latitude <= pi/2
 
 		float dy = GameMath::Sin(latitude);
 		float dxz = GameMath::Cos(latitude);
@@ -154,15 +154,15 @@ StaticMesh* StaticMesh::CreateSphere(float radius, uint32_t tessellation)
 			const float u = static_cast<float>(hIndex) / static_cast<float>(horizon);
 
 			// 구면 좌표계의 경도(longitude) 각 계산.
-			const float longitude = (GameMath::TWO_PI * static_cast<float>(hIndex) / static_cast<float>(horizon));
+			const float longitude = (TWO_PI * static_cast<float>(hIndex) / static_cast<float>(horizon));
 
 			float dx = dxz * GameMath::Sin(longitude);
 			float dz = dxz * GameMath::Cos(longitude);
 
-			const GameMath::Vec3f position(radius * dx, radius * dy, radius * dz);
-			const GameMath::Vec3f normal(dx, dy, dz);
-			const GameMath::Vec2f uv(u, v);
-			vertices.push_back(Vertex{ position, normal, GameMath::Vec3f(0.0f, 0.0f, 0.0f), uv });
+			const Vec3f position(radius * dx, radius * dy, radius * dz);
+			const Vec3f normal(dx, dy, dz);
+			const Vec2f uv(u, v);
+			vertices.push_back(Vertex{ position, normal, Vec3f(0.0f, 0.0f, 0.0f), uv });
 		}
 	}
 

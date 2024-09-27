@@ -22,10 +22,10 @@ public:
 	void Begin(const Camera3D* camera3D = nullptr);
 	void End();
 
-	void DrawLine(const GameMath::Vec3f& startPos, const GameMath::Vec3f& endPos, const GameMath::Vec4f& color);
-	void DrawLine(const GameMath::Vec3f& startPos, const GameMath::Vec4f& startColor, const GameMath::Vec3f& endPos, const GameMath::Vec4f& endColor);
-	void DrawCube(const GameMath::Mat4x4& world, const GameMath::Vec3f& extents, const GameMath::Vec4f& color);
-	void DrawViewfrustum(const GameMath::Mat4x4& view, const GameMath::Mat4x4& projection, const GameMath::Vec4f& color);
+	void DrawLine(const Vec3f& startPos, const Vec3f& endPos, const Vec4f& color);
+	void DrawLine(const Vec3f& startPos, const Vec4f& startColor, const Vec3f& endPos, const Vec4f& endColor);
+	void DrawCube(const Mat4x4& world, const Vec3f& extents, const Vec4f& color);
+	void DrawViewfrustum(const Mat4x4& view, const Mat4x4& projection, const Vec4f& color);
 
 private:
 	friend class IApp;
@@ -40,8 +40,8 @@ private:
 			return sizeof(Vertex);
 		}
 
-		GameMath::Vec4f position;
-		GameMath::Vec4f color;
+		Vec4f position;
+		Vec4f color;
 	};
 
 	struct RenderCommand

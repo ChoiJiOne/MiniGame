@@ -135,7 +135,7 @@ void Shader::SetUniform(const std::string& name, const float* bufferPtr, uint32_
 	GL_CHECK(glUniform1fv(location, count, bufferPtr));
 }
 
-void Shader::SetUniform(const std::string& name, const GameMath::Vec2f& value)
+void Shader::SetUniform(const std::string& name, const Vec2f& value)
 {
 	int32_t location = GetUniformLocation(name);
 
@@ -143,7 +143,7 @@ void Shader::SetUniform(const std::string& name, const GameMath::Vec2f& value)
 	GL_CHECK(glUniform2fv(location, 1, valuePtr));
 }
 
-void Shader::SetUniform(const std::string& name, const GameMath::Vec2f* bufferPtr, uint32_t count)
+void Shader::SetUniform(const std::string& name, const Vec2f* bufferPtr, uint32_t count)
 {
 	int32_t location = GetUniformLocation(name);
 
@@ -157,7 +157,7 @@ void Shader::SetUniform(const std::string& name, float x, float y)
 	GL_CHECK(glUniform2f(location, x, y));
 }
 
-void Shader::SetUniform(const std::string& name, const GameMath::Vec2i& value)
+void Shader::SetUniform(const std::string& name, const Vec2i& value)
 {
 	int32_t location = GetUniformLocation(name);
 
@@ -165,7 +165,7 @@ void Shader::SetUniform(const std::string& name, const GameMath::Vec2i& value)
 	GL_CHECK(glUniform2iv(location, 1, valuePtr));
 }
 
-void Shader::SetUniform(const std::string& name, const GameMath::Vec2i* bufferPtr, uint32_t count)
+void Shader::SetUniform(const std::string& name, const Vec2i* bufferPtr, uint32_t count)
 {
 	int32_t location = GetUniformLocation(name);
 
@@ -179,7 +179,7 @@ void Shader::SetUniform(const std::string& name, int32_t x, int32_t y)
 	GL_CHECK(glUniform2i(location, x, y));
 }
 
-void Shader::SetUniform(const std::string& name, const GameMath::Vec3f& value)
+void Shader::SetUniform(const std::string& name, const Vec3f& value)
 {
 	int32_t location = GetUniformLocation(name);
 
@@ -187,7 +187,7 @@ void Shader::SetUniform(const std::string& name, const GameMath::Vec3f& value)
 	GL_CHECK(glUniform3fv(location, 1, valuePtr));
 }
 
-void Shader::SetUniform(const std::string& name, const GameMath::Vec3f* bufferPtr, uint32_t count)
+void Shader::SetUniform(const std::string& name, const Vec3f* bufferPtr, uint32_t count)
 {
 	int32_t location = GetUniformLocation(name);
 
@@ -201,7 +201,7 @@ void Shader::SetUniform(const std::string& name, float x, float y, float z)
 	GL_CHECK(glUniform3f(location, x, y, z));
 }
 
-void Shader::SetUniform(const std::string& name, const GameMath::Vec3i& value)
+void Shader::SetUniform(const std::string& name, const Vec3i& value)
 {
 	int32_t location = GetUniformLocation(name);
 
@@ -209,7 +209,7 @@ void Shader::SetUniform(const std::string& name, const GameMath::Vec3i& value)
 	GL_CHECK(glUniform3iv(location, 1, valuePtr));
 }
 
-void Shader::SetUniform(const std::string& name, const GameMath::Vec3i* bufferPtr, uint32_t count)
+void Shader::SetUniform(const std::string& name, const Vec3i* bufferPtr, uint32_t count)
 {
 	int32_t location = GetUniformLocation(name);
 
@@ -223,7 +223,7 @@ void Shader::SetUniform(const std::string& name, int32_t x, int32_t y, int32_t z
 	GL_CHECK(glUniform3i(location, x, y, z));
 }
 
-void Shader::SetUniform(const std::string& name, const GameMath::Vec4f& value)
+void Shader::SetUniform(const std::string& name, const Vec4f& value)
 {
 	int32_t location = GetUniformLocation(name);
 
@@ -231,7 +231,7 @@ void Shader::SetUniform(const std::string& name, const GameMath::Vec4f& value)
 	GL_CHECK(glUniform4fv(location, 1, valuePtr));
 }
 
-void Shader::SetUniform(const std::string& name, const GameMath::Vec4f* bufferPtr, uint32_t count)
+void Shader::SetUniform(const std::string& name, const Vec4f* bufferPtr, uint32_t count)
 {
 	int32_t location = GetUniformLocation(name);
 
@@ -245,7 +245,7 @@ void Shader::SetUniform(const std::string& name, float x, float y, float z, floa
 	GL_CHECK(glUniform4f(location, x, y, z, w));
 }
 
-void Shader::SetUniform(const std::string& name, const GameMath::Vec4i& value)
+void Shader::SetUniform(const std::string& name, const Vec4i& value)
 {
 	int32_t location = GetUniformLocation(name);
 
@@ -253,7 +253,7 @@ void Shader::SetUniform(const std::string& name, const GameMath::Vec4i& value)
 	GL_CHECK(glUniform4iv(location, 1, valuePtr));
 }
 
-void Shader::SetUniform(const std::string& name, const GameMath::Vec4i* bufferPtr, uint32_t count)
+void Shader::SetUniform(const std::string& name, const Vec4i* bufferPtr, uint32_t count)
 {
 	int32_t location = GetUniformLocation(name);
 
@@ -267,39 +267,39 @@ void Shader::SetUniform(const std::string& name, int32_t x, int32_t y, int32_t z
 	GL_CHECK(glUniform4i(location, x, y, z, w));
 }
 
-void Shader::SetUniform(const std::string& name, const GameMath::Mat2x2& value)
+void Shader::SetUniform(const std::string& name, const Mat2x2& value)
 {
 	int32_t location = GetUniformLocation(name);
 	GL_CHECK(glUniformMatrix2fv(location, 1, GL_FALSE, value.GetPtr()));
 }
 
-void Shader::SetUniform(const std::string& name, const GameMath::Mat2x2* bufferPtr, uint32_t count)
+void Shader::SetUniform(const std::string& name, const Mat2x2* bufferPtr, uint32_t count)
 {
 	int32_t location = GetUniformLocation(name);
 	const float* valuePtr = reinterpret_cast<const float*>(bufferPtr);
 	GL_CHECK(glUniformMatrix2fv(location, count, GL_FALSE, valuePtr));
 }
 
-void Shader::SetUniform(const std::string& name, const GameMath::Mat3x3& value)
+void Shader::SetUniform(const std::string& name, const Mat3x3& value)
 {
 	int32_t location = GetUniformLocation(name);
 	GL_CHECK(glUniformMatrix3fv(location, 1, GL_FALSE, value.GetPtr()));
 }
 
-void Shader::SetUniform(const std::string& name, const GameMath::Mat3x3* bufferPtr, uint32_t count)
+void Shader::SetUniform(const std::string& name, const Mat3x3* bufferPtr, uint32_t count)
 {
 	int32_t location = GetUniformLocation(name);
 	const float* valuePtr = reinterpret_cast<const float*>(bufferPtr);
 	GL_CHECK(glUniformMatrix3fv(location, count, GL_FALSE, valuePtr));
 }
 
-void Shader::SetUniform(const std::string& name, const GameMath::Mat4x4& value)
+void Shader::SetUniform(const std::string& name, const Mat4x4& value)
 {
 	int32_t location = GetUniformLocation(name);
 	GL_CHECK(glUniformMatrix4fv(location, 1, GL_FALSE, value.GetPtr()));
 }
 
-void Shader::SetUniform(const std::string& name, const GameMath::Mat4x4* bufferPtr, uint32_t count)
+void Shader::SetUniform(const std::string& name, const Mat4x4* bufferPtr, uint32_t count)
 {
 	int32_t location = GetUniformLocation(name);
 	const float* valuePtr = reinterpret_cast<const float*>(bufferPtr);

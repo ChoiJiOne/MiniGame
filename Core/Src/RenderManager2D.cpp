@@ -21,7 +21,7 @@
  * https://community.khronos.org/t/pixel-perfect-drawing/38454
  * https://stackoverflow.com/questions/10040961/opengl-pixel-perfect-2d-drawing
  */
-static const GameMath::Vec2f PIXEL_OFFSET = GameMath::Vec2f(0.375f, 0.375f);
+static const Vec2f PIXEL_OFFSET = Vec2f(0.375f, 0.375f);
 
 RenderManager2D& RenderManager2D::Get()
 {
@@ -86,7 +86,7 @@ void RenderManager2D::Begin(const Camera2D* camera2D)
 {
 	CHECK(!bIsBegin_);
 
-	GameMath::Mat4x4 ortho;
+	Mat4x4 ortho;
 	if (!camera2D)
 	{
 		float w = 0.0f;
@@ -95,7 +95,7 @@ void RenderManager2D::Begin(const Camera2D* camera2D)
 		static const float farZ = 1.0f;
 		app_->GetScreenSize<float>(w, h);
 
-		ortho = GameMath::Mat4x4::Ortho(-w * 0.5f, +w * 0.5f, -h * 0.5f, +h * 0.5f, nearZ, farZ);
+		ortho = Mat4x4::Ortho(-w * 0.5f, +w * 0.5f, -h * 0.5f, +h * 0.5f, nearZ, farZ);
 	}
 	else
 	{
@@ -140,7 +140,7 @@ void RenderManager2D::End()
 	bIsBegin_ = false;
 }
 
-void RenderManager2D::DrawPoint(const GameMath::Vec2f& point, const GameMath::Vec4f& color, float pointSize)
+void RenderManager2D::DrawPoint(const Vec2f& point, const Vec4f& color, float pointSize)
 {
 	static const uint32_t MAX_VERTEX_SIZE = 6;
 	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
@@ -149,14 +149,14 @@ void RenderManager2D::DrawPoint(const GameMath::Vec2f& point, const GameMath::Ve
 	}
 
 	float w = pointSize * 0.5f;
-	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices =
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
-		GameMath::Vec2f(-w, -w),
-		GameMath::Vec2f(+w, +w),
-		GameMath::Vec2f(-w, +w),
-		GameMath::Vec2f(-w, -w),
-		GameMath::Vec2f(+w, -w),
-		GameMath::Vec2f(+w, +w),
+		Vec2f(-w, -w),
+		Vec2f(+w, +w),
+		Vec2f(-w, +w),
+		Vec2f(-w, -w),
+		Vec2f(+w, -w),
+		Vec2f(+w, +w),
 	};
 
 	for (auto& vertex : vertices)
@@ -204,7 +204,7 @@ void RenderManager2D::DrawPoint(const GameMath::Vec2f& point, const GameMath::Ve
 	commandQueue_.push(command);
 }
 
-void RenderManager2D::DrawLine(const GameMath::Vec2f& startPos, const GameMath::Vec2f& endPos, const GameMath::Vec4f& color)
+void RenderManager2D::DrawLine(const Vec2f& startPos, const Vec2f& endPos, const Vec4f& color)
 {
 	static const uint32_t MAX_VERTEX_SIZE = 2;
 	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
@@ -212,7 +212,7 @@ void RenderManager2D::DrawLine(const GameMath::Vec2f& startPos, const GameMath::
 		Flush();
 	}
 
-	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices =
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
 		startPos + PIXEL_OFFSET,
 		  endPos + PIXEL_OFFSET,
@@ -259,7 +259,7 @@ void RenderManager2D::DrawLine(const GameMath::Vec2f& startPos, const GameMath::
 	commandQueue_.push(command);
 }
 
-void RenderManager2D::DrawLine(const GameMath::Vec2f& startPos, const GameMath::Vec4f& startColor, const GameMath::Vec2f& endPos, const GameMath::Vec4f& endColor)
+void RenderManager2D::DrawLine(const Vec2f& startPos, const Vec4f& startColor, const Vec2f& endPos, const Vec4f& endColor)
 {
 	static const uint32_t MAX_VERTEX_SIZE = 2;
 	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
@@ -267,13 +267,13 @@ void RenderManager2D::DrawLine(const GameMath::Vec2f& startPos, const GameMath::
 		Flush();
 	}
 
-	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices =
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
 		startPos + PIXEL_OFFSET,
 		  endPos + PIXEL_OFFSET,
 	};
 
-	std::array<GameMath::Vec4f, MAX_VERTEX_SIZE> colors =
+	std::array<Vec4f, MAX_VERTEX_SIZE> colors =
 	{
 		startColor,
 		endColor,
@@ -320,7 +320,7 @@ void RenderManager2D::DrawLine(const GameMath::Vec2f& startPos, const GameMath::
 	commandQueue_.push(command);
 }
 
-void RenderManager2D::DrawTriangle(const GameMath::Vec2f& fromPos, const GameMath::Vec2f& byPos, const GameMath::Vec2f& toPos, const GameMath::Vec4f& color)
+void RenderManager2D::DrawTriangle(const Vec2f& fromPos, const Vec2f& byPos, const Vec2f& toPos, const Vec4f& color)
 {
 	static const uint32_t MAX_VERTEX_SIZE = 3;
 	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
@@ -328,7 +328,7 @@ void RenderManager2D::DrawTriangle(const GameMath::Vec2f& fromPos, const GameMat
 		Flush();
 	}
 
-	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices =
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
 		fromPos + PIXEL_OFFSET,
 		  byPos + PIXEL_OFFSET,
@@ -376,7 +376,7 @@ void RenderManager2D::DrawTriangle(const GameMath::Vec2f& fromPos, const GameMat
 	commandQueue_.push(command);
 }
 
-void RenderManager2D::DrawTriangle(const GameMath::Vec2f& fromPos, const GameMath::Vec4f& fromColor, const GameMath::Vec2f& byPos, const GameMath::Vec4f& byColor, const GameMath::Vec2f& toPos, const GameMath::Vec4f& toColor)
+void RenderManager2D::DrawTriangle(const Vec2f& fromPos, const Vec4f& fromColor, const Vec2f& byPos, const Vec4f& byColor, const Vec2f& toPos, const Vec4f& toColor)
 {
 	static const uint32_t MAX_VERTEX_SIZE = 3;
 	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
@@ -384,14 +384,14 @@ void RenderManager2D::DrawTriangle(const GameMath::Vec2f& fromPos, const GameMat
 		Flush();
 	}
 
-	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices =
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
 		fromPos + PIXEL_OFFSET,
 		  byPos + PIXEL_OFFSET,
 		  toPos + PIXEL_OFFSET,
 	};
 
-	std::array<GameMath::Vec4f, MAX_VERTEX_SIZE> colors =
+	std::array<Vec4f, MAX_VERTEX_SIZE> colors =
 	{
 		fromColor,
 		  byColor,
@@ -439,7 +439,7 @@ void RenderManager2D::DrawTriangle(const GameMath::Vec2f& fromPos, const GameMat
 	commandQueue_.push(command);
 }
 
-void RenderManager2D::DrawTriangleWireframe(const GameMath::Vec2f& fromPos, const GameMath::Vec2f& byPos, const GameMath::Vec2f& toPos, const GameMath::Vec4f& color)
+void RenderManager2D::DrawTriangleWireframe(const Vec2f& fromPos, const Vec2f& byPos, const Vec2f& toPos, const Vec4f& color)
 {
 	static const uint32_t MAX_VERTEX_SIZE = 6;
 	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
@@ -447,7 +447,7 @@ void RenderManager2D::DrawTriangleWireframe(const GameMath::Vec2f& fromPos, cons
 		Flush();
 	}
 
-	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices =
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
 		fromPos + PIXEL_OFFSET,   byPos + PIXEL_OFFSET,
 		  byPos + PIXEL_OFFSET,   toPos + PIXEL_OFFSET,
@@ -495,7 +495,7 @@ void RenderManager2D::DrawTriangleWireframe(const GameMath::Vec2f& fromPos, cons
 	commandQueue_.push(command);
 }
 
-void RenderManager2D::DrawTriangleWireframe(const GameMath::Vec2f& fromPos, const GameMath::Vec4f& fromColor, const GameMath::Vec2f& byPos, const GameMath::Vec4f& byColor, const GameMath::Vec2f& toPos, const GameMath::Vec4f& toColor)
+void RenderManager2D::DrawTriangleWireframe(const Vec2f& fromPos, const Vec4f& fromColor, const Vec2f& byPos, const Vec4f& byColor, const Vec2f& toPos, const Vec4f& toColor)
 {
 	static const uint32_t MAX_VERTEX_SIZE = 6;
 	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
@@ -503,14 +503,14 @@ void RenderManager2D::DrawTriangleWireframe(const GameMath::Vec2f& fromPos, cons
 		Flush();
 	}
 
-	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices =
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
 		fromPos + PIXEL_OFFSET,   byPos + PIXEL_OFFSET,
 		  byPos + PIXEL_OFFSET,   toPos + PIXEL_OFFSET,
 		  toPos + PIXEL_OFFSET, fromPos + PIXEL_OFFSET,
 	};
 
-	std::array<GameMath::Vec4f, MAX_VERTEX_SIZE> colors =
+	std::array<Vec4f, MAX_VERTEX_SIZE> colors =
 	{
 		fromColor,   byColor,
 	  	  byColor,   toColor,
@@ -558,7 +558,7 @@ void RenderManager2D::DrawTriangleWireframe(const GameMath::Vec2f& fromPos, cons
 	commandQueue_.push(command);
 }
 
-void RenderManager2D::DrawRect(const GameMath::Vec2f& center, float w, float h, const GameMath::Vec4f& color, float rotate)
+void RenderManager2D::DrawRect(const Vec2f& center, float w, float h, const Vec4f& color, float rotate)
 {
 	static const uint32_t MAX_VERTEX_SIZE = 6;
 	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
@@ -569,17 +569,17 @@ void RenderManager2D::DrawRect(const GameMath::Vec2f& center, float w, float h, 
 	float w2 = w * 0.5f;
 	float h2 = h * 0.5f;
 
-	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices =
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
-		GameMath::Vec2f(-w2, -h2),
-		GameMath::Vec2f(+w2, +h2),
-		GameMath::Vec2f(-w2, +h2),
-		GameMath::Vec2f(-w2, -h2),
-		GameMath::Vec2f(+w2, -h2),
-		GameMath::Vec2f(+w2, +h2),
+		Vec2f(-w2, -h2),
+		Vec2f(+w2, +h2),
+		Vec2f(-w2, +h2),
+		Vec2f(-w2, -h2),
+		Vec2f(+w2, -h2),
+		Vec2f(+w2, +h2),
 	};
 
-	GameMath::Mat2x2 rotateMat = GameMath::Mat2x2(
+	Mat2x2 rotateMat = Mat2x2(
 		+GameMath::Cos(rotate), -GameMath::Sin(rotate),
 		+GameMath::Sin(rotate), +GameMath::Cos(rotate)
 	);
@@ -630,7 +630,7 @@ void RenderManager2D::DrawRect(const GameMath::Vec2f& center, float w, float h, 
 	commandQueue_.push(command);
 }
 
-void RenderManager2D::DrawRectWireframe(const GameMath::Vec2f& center, float w, float h, const GameMath::Vec4f& color, float rotate)
+void RenderManager2D::DrawRectWireframe(const Vec2f& center, float w, float h, const Vec4f& color, float rotate)
 {
 	static const uint32_t MAX_VERTEX_SIZE = 8;
 	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
@@ -641,15 +641,15 @@ void RenderManager2D::DrawRectWireframe(const GameMath::Vec2f& center, float w, 
 	float w2 = w * 0.5f;
 	float h2 = h * 0.5f;
 
-	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices =
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
-		GameMath::Vec2f(-w2, -h2), GameMath::Vec2f(+w2, -h2),
-		GameMath::Vec2f(+w2, -h2), GameMath::Vec2f(+w2, +h2),
-		GameMath::Vec2f(+w2, +h2), GameMath::Vec2f(-w2, +h2),
-		GameMath::Vec2f(-w2, +h2), GameMath::Vec2f(-w2, -h2),
+		Vec2f(-w2, -h2), Vec2f(+w2, -h2),
+		Vec2f(+w2, -h2), Vec2f(+w2, +h2),
+		Vec2f(+w2, +h2), Vec2f(-w2, +h2),
+		Vec2f(-w2, +h2), Vec2f(-w2, -h2),
 	};
 
-	GameMath::Mat2x2 rotateMat = GameMath::Mat2x2(
+	Mat2x2 rotateMat = Mat2x2(
 		+GameMath::Cos(rotate), -GameMath::Sin(rotate), 
 		+GameMath::Sin(rotate), +GameMath::Cos(rotate)
 	);
@@ -700,7 +700,7 @@ void RenderManager2D::DrawRectWireframe(const GameMath::Vec2f& center, float w, 
 	commandQueue_.push(command);
 }
 
-void RenderManager2D::DrawRoundRect(const GameMath::Vec2f& center, float w, float h, float side, const GameMath::Vec4f& color, float rotate)
+void RenderManager2D::DrawRoundRect(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate)
 {
 	static const uint32_t MAX_VERTEX_SIZE = 252;
 	static const uint32_t MAX_SLICE_SIZE = 20;
@@ -714,64 +714,64 @@ void RenderManager2D::DrawRoundRect(const GameMath::Vec2f& center, float w, floa
 	side = GameMath::Min<float>(side, GameMath::Min<float>(h2, h2));
 
 	uint32_t vertexCount = 0;
-	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices;
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices;
 
-	auto calculateBezierCurve = [&](const GameMath::Vec2f& startPos, const GameMath::Vec2f& endPos, const GameMath::Vec2f& controlPos, uint32_t sliceCount)
+	auto calculateBezierCurve = [&](const Vec2f& startPos, const Vec2f& endPos, const Vec2f& controlPos, uint32_t sliceCount)
 		{
 			for (int32_t slice = 0; slice < sliceCount; ++slice)
 			{
 				float t0 = static_cast<float>(slice + 0) / static_cast<float>(sliceCount);
 				float t1 = static_cast<float>(slice + 1) / static_cast<float>(sliceCount);
 
-				vertices[vertexCount + 0] = GameMath::Vec2f();
-				vertices[vertexCount + 1] = GameMath::Vec2f::Bezier(startPos, endPos, controlPos, t0);
-				vertices[vertexCount + 2] = GameMath::Vec2f::Bezier(startPos, endPos, controlPos, t1);
+				vertices[vertexCount + 0] = Vec2f();
+				vertices[vertexCount + 1] = Vec2f::Bezier(startPos, endPos, controlPos, t0);
+				vertices[vertexCount + 2] = Vec2f::Bezier(startPos, endPos, controlPos, t1);
 
 				vertexCount += 3;
 			}
 		};
 
-	GameMath::Vec2f control = GameMath::Vec2f(-w2, +h2);
-	GameMath::Vec2f start = control + GameMath::Vec2f(+side, 0.0f);
-	GameMath::Vec2f end = control + GameMath::Vec2f(0.0f, -side);
+	Vec2f control = Vec2f(-w2, +h2);
+	Vec2f start = control + Vec2f(+side, 0.0f);
+	Vec2f end = control + Vec2f(0.0f, -side);
 	calculateBezierCurve(start, end, control, MAX_SLICE_SIZE);
 
-	vertices[vertexCount + 0] = GameMath::Vec2f();
-	vertices[vertexCount + 1] = GameMath::Vec2f(-w2, +h2) + GameMath::Vec2f(0.0f, -side);
-	vertices[vertexCount + 2] = GameMath::Vec2f(-w2, -h2) + GameMath::Vec2f(0.0f, +side);
+	vertices[vertexCount + 0] = Vec2f();
+	vertices[vertexCount + 1] = Vec2f(-w2, +h2) + Vec2f(0.0f, -side);
+	vertices[vertexCount + 2] = Vec2f(-w2, -h2) + Vec2f(0.0f, +side);
 	vertexCount += 3;
 
-	control = GameMath::Vec2f(-w2, -h2);
-	start = control + GameMath::Vec2f(0.0f, +side);
-	end = control + GameMath::Vec2f(+side, 0.0f);
+	control = Vec2f(-w2, -h2);
+	start = control + Vec2f(0.0f, +side);
+	end = control + Vec2f(+side, 0.0f);
 	calculateBezierCurve(start, end, control, MAX_SLICE_SIZE);
 
-	vertices[vertexCount + 0] = GameMath::Vec2f();
-	vertices[vertexCount + 1] = GameMath::Vec2f(-w2, -h2) + GameMath::Vec2f(+side, 0.0f);
-	vertices[vertexCount + 2] = GameMath::Vec2f(+w2, -h2) + GameMath::Vec2f(-side, 0.0f);
+	vertices[vertexCount + 0] = Vec2f();
+	vertices[vertexCount + 1] = Vec2f(-w2, -h2) + Vec2f(+side, 0.0f);
+	vertices[vertexCount + 2] = Vec2f(+w2, -h2) + Vec2f(-side, 0.0f);
 	vertexCount += 3;
 
-	control = GameMath::Vec2f(+w2, -h2);
-	start = control + GameMath::Vec2f(-side, 0.0f);
-	end = control + GameMath::Vec2f(0.0f, +side);
+	control = Vec2f(+w2, -h2);
+	start = control + Vec2f(-side, 0.0f);
+	end = control + Vec2f(0.0f, +side);
 	calculateBezierCurve(start, end, control, MAX_SLICE_SIZE);
 
-	vertices[vertexCount + 0] = GameMath::Vec2f();
-	vertices[vertexCount + 1] = GameMath::Vec2f(+w2, -h2) + GameMath::Vec2f(0.0f, +side);
-	vertices[vertexCount + 2] = GameMath::Vec2f(+w2, +h2) + GameMath::Vec2f(0.0f, -side);
+	vertices[vertexCount + 0] = Vec2f();
+	vertices[vertexCount + 1] = Vec2f(+w2, -h2) + Vec2f(0.0f, +side);
+	vertices[vertexCount + 2] = Vec2f(+w2, +h2) + Vec2f(0.0f, -side);
 	vertexCount += 3;
 
-	control = GameMath::Vec2f(+w2, +h2);
-	start = control + GameMath::Vec2f(0.0f, -side);
-	end = control + GameMath::Vec2f(-side, 0.0f);
+	control = Vec2f(+w2, +h2);
+	start = control + Vec2f(0.0f, -side);
+	end = control + Vec2f(-side, 0.0f);
 	calculateBezierCurve(start, end, control, MAX_SLICE_SIZE);
 
-	vertices[vertexCount + 0] = GameMath::Vec2f();
-	vertices[vertexCount + 1] = GameMath::Vec2f(+w2, +h2) + GameMath::Vec2f(-side, 0.0f);
-	vertices[vertexCount + 2] = GameMath::Vec2f(-w2, +h2) + GameMath::Vec2f(+side, 0.0f);
+	vertices[vertexCount + 0] = Vec2f();
+	vertices[vertexCount + 1] = Vec2f(+w2, +h2) + Vec2f(-side, 0.0f);
+	vertices[vertexCount + 2] = Vec2f(-w2, +h2) + Vec2f(+side, 0.0f);
 	vertexCount += 3;
 
-	GameMath::Mat2x2 rotateMat = GameMath::Mat2x2(
+	Mat2x2 rotateMat = Mat2x2(
 		+GameMath::Cos(rotate), -GameMath::Sin(rotate),
 		+GameMath::Sin(rotate), +GameMath::Cos(rotate)
 	);
@@ -826,7 +826,7 @@ void RenderManager2D::DrawRoundRect(const GameMath::Vec2f& center, float w, floa
 	commandQueue_.push(command);
 }
 
-void RenderManager2D::DrawRoundRectWireframe(const GameMath::Vec2f& center, float w, float h, float side, const GameMath::Vec4f& color, float rotate)
+void RenderManager2D::DrawRoundRectWireframe(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate)
 {
 	static const uint32_t MAX_VERTEX_SIZE = 168;
 	static const uint32_t MAX_SLICE_SIZE = 20;
@@ -840,58 +840,58 @@ void RenderManager2D::DrawRoundRectWireframe(const GameMath::Vec2f& center, floa
 	side = GameMath::Min<float>(side, GameMath::Min<float>(h2, h2));
 
 	uint32_t vertexCount = 0;
-	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices;
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices;
 
-	auto calculateBezierCurve = [&](const GameMath::Vec2f& startPos, const GameMath::Vec2f& endPos, const GameMath::Vec2f& controlPos, uint32_t sliceCount)
+	auto calculateBezierCurve = [&](const Vec2f& startPos, const Vec2f& endPos, const Vec2f& controlPos, uint32_t sliceCount)
 		{
 			for (int32_t slice = 0; slice < sliceCount; ++slice)
 			{
 				float t0 = static_cast<float>(slice + 0) / static_cast<float>(sliceCount);
 				float t1 = static_cast<float>(slice + 1) / static_cast<float>(sliceCount);
 
-				vertices[vertexCount + 0] = GameMath::Vec2f::Bezier(startPos, endPos, controlPos, t0);
-				vertices[vertexCount + 1] = GameMath::Vec2f::Bezier(startPos, endPos, controlPos, t1);
+				vertices[vertexCount + 0] = Vec2f::Bezier(startPos, endPos, controlPos, t0);
+				vertices[vertexCount + 1] = Vec2f::Bezier(startPos, endPos, controlPos, t1);
 				vertexCount += 2;
 			}
 		};
 
-	GameMath::Vec2f control = GameMath::Vec2f(-w2, +h2);
-	GameMath::Vec2f start = control + GameMath::Vec2f(+side, 0.0f);
-	GameMath::Vec2f end = control + GameMath::Vec2f(0.0f, -side);
+	Vec2f control = Vec2f(-w2, +h2);
+	Vec2f start = control + Vec2f(+side, 0.0f);
+	Vec2f end = control + Vec2f(0.0f, -side);
 	calculateBezierCurve(start, end, control, MAX_SLICE_SIZE);
 
-	vertices[vertexCount + 0] = GameMath::Vec2f(-w2, +h2) + GameMath::Vec2f(0.0f, -side);
-	vertices[vertexCount + 1] = GameMath::Vec2f(-w2, -h2) + GameMath::Vec2f(0.0f, +side);
+	vertices[vertexCount + 0] = Vec2f(-w2, +h2) + Vec2f(0.0f, -side);
+	vertices[vertexCount + 1] = Vec2f(-w2, -h2) + Vec2f(0.0f, +side);
 	vertexCount += 2;
 
-	control = GameMath::Vec2f(-w2, -h2);
-	start = control + GameMath::Vec2f(0.0f, +side);
-	end = control + GameMath::Vec2f(+side, 0.0f);
+	control = Vec2f(-w2, -h2);
+	start = control + Vec2f(0.0f, +side);
+	end = control + Vec2f(+side, 0.0f);
 	calculateBezierCurve(start, end, control, MAX_SLICE_SIZE);
 
-	vertices[vertexCount + 0] = GameMath::Vec2f(-w2, -h2) + GameMath::Vec2f(+side, 0.0f);
-	vertices[vertexCount + 1] = GameMath::Vec2f(+w2, -h2) + GameMath::Vec2f(-side, 0.0f);
+	vertices[vertexCount + 0] = Vec2f(-w2, -h2) + Vec2f(+side, 0.0f);
+	vertices[vertexCount + 1] = Vec2f(+w2, -h2) + Vec2f(-side, 0.0f);
 	vertexCount += 2;
 
-	control = GameMath::Vec2f(+w2, -h2);
-	start = control + GameMath::Vec2f(-side, 0.0f);
-	end = control + GameMath::Vec2f(0.0f, +side);
+	control = Vec2f(+w2, -h2);
+	start = control + Vec2f(-side, 0.0f);
+	end = control + Vec2f(0.0f, +side);
 	calculateBezierCurve(start, end, control, MAX_SLICE_SIZE);
 
-	vertices[vertexCount + 0] = GameMath::Vec2f(+w2, -h2) + GameMath::Vec2f(0.0f, +side);
-	vertices[vertexCount + 1] = GameMath::Vec2f(+w2, +h2) + GameMath::Vec2f(0.0f, -side);
+	vertices[vertexCount + 0] = Vec2f(+w2, -h2) + Vec2f(0.0f, +side);
+	vertices[vertexCount + 1] = Vec2f(+w2, +h2) + Vec2f(0.0f, -side);
 	vertexCount += 2;
 
-	control = GameMath::Vec2f(+w2, +h2);
-	start = control + GameMath::Vec2f(0.0f, -side);
-	end = control + GameMath::Vec2f(-side, 0.0f);
+	control = Vec2f(+w2, +h2);
+	start = control + Vec2f(0.0f, -side);
+	end = control + Vec2f(-side, 0.0f);
 	calculateBezierCurve(start, end, control, MAX_SLICE_SIZE);
 
-	vertices[vertexCount + 0] = GameMath::Vec2f(+w2, +h2) + GameMath::Vec2f(-side, 0.0f);
-	vertices[vertexCount + 1] = GameMath::Vec2f(-w2, +h2) + GameMath::Vec2f(+side, 0.0f);
+	vertices[vertexCount + 0] = Vec2f(+w2, +h2) + Vec2f(-side, 0.0f);
+	vertices[vertexCount + 1] = Vec2f(-w2, +h2) + Vec2f(+side, 0.0f);
 	vertexCount += 2;
 
-	GameMath::Mat2x2 rotateMat = GameMath::Mat2x2(
+	Mat2x2 rotateMat = Mat2x2(
 		+GameMath::Cos(rotate), -GameMath::Sin(rotate),
 		+GameMath::Sin(rotate), +GameMath::Cos(rotate)
 	);
@@ -945,7 +945,7 @@ void RenderManager2D::DrawRoundRectWireframe(const GameMath::Vec2f& center, floa
 	commandQueue_.push(command);
 }
 
-void RenderManager2D::DrawCircle(const GameMath::Vec2f& center, float radius, const GameMath::Vec4f& color)
+void RenderManager2D::DrawCircle(const Vec2f& center, float radius, const Vec4f& color)
 {
 	static const uint32_t MAX_VERTEX_SIZE = 300;
 	static const uint32_t MAX_SLICE_SIZE = 100;
@@ -955,16 +955,16 @@ void RenderManager2D::DrawCircle(const GameMath::Vec2f& center, float radius, co
 	}
 
 	uint32_t vertexCount = 0;
-	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices;
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices;
 
 	for (int32_t slice = 0; slice < MAX_SLICE_SIZE; ++slice)
 	{
-		float radian0 = (static_cast<float>(slice + 0) * GameMath::TWO_PI) / static_cast<float>(MAX_SLICE_SIZE);
-		float radian1 = (static_cast<float>(slice + 1) * GameMath::TWO_PI) / static_cast<float>(MAX_SLICE_SIZE);
+		float radian0 = (static_cast<float>(slice + 0) * TWO_PI) / static_cast<float>(MAX_SLICE_SIZE);
+		float radian1 = (static_cast<float>(slice + 1) * TWO_PI) / static_cast<float>(MAX_SLICE_SIZE);
 
 		vertices[vertexCount + 0] = center + PIXEL_OFFSET;
-		vertices[vertexCount + 1] = center + GameMath::Vec2f(radius * GameMath::Cos(radian0), radius * GameMath::Sin(radian0)) + PIXEL_OFFSET;
-		vertices[vertexCount + 2] = center + GameMath::Vec2f(radius * GameMath::Cos(radian1), radius * GameMath::Sin(radian1)) + PIXEL_OFFSET;
+		vertices[vertexCount + 1] = center + Vec2f(radius * GameMath::Cos(radian0), radius * GameMath::Sin(radian0)) + PIXEL_OFFSET;
+		vertices[vertexCount + 2] = center + Vec2f(radius * GameMath::Cos(radian1), radius * GameMath::Sin(radian1)) + PIXEL_OFFSET;
 
 		vertexCount += 3;
 	}
@@ -1010,7 +1010,7 @@ void RenderManager2D::DrawCircle(const GameMath::Vec2f& center, float radius, co
 	commandQueue_.push(command);
 }
 
-void RenderManager2D::DrawCircleWireframe(const GameMath::Vec2f& center, float radius, const GameMath::Vec4f& color)
+void RenderManager2D::DrawCircleWireframe(const Vec2f& center, float radius, const Vec4f& color)
 {
 	static const uint32_t MAX_VERTEX_SIZE = 200;
 	static const uint32_t MAX_SLICE_SIZE = 100;
@@ -1020,15 +1020,15 @@ void RenderManager2D::DrawCircleWireframe(const GameMath::Vec2f& center, float r
 	}
 
 	uint32_t vertexCount = 0;
-	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices;
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices;
 
 	for (int32_t slice = 0; slice < MAX_SLICE_SIZE; ++slice)
 	{
-		float radian0 = (static_cast<float>(slice + 0) * GameMath::TWO_PI) / static_cast<float>(MAX_SLICE_SIZE);
-		float radian1 = (static_cast<float>(slice + 1) * GameMath::TWO_PI) / static_cast<float>(MAX_SLICE_SIZE);
+		float radian0 = (static_cast<float>(slice + 0) * TWO_PI) / static_cast<float>(MAX_SLICE_SIZE);
+		float radian1 = (static_cast<float>(slice + 1) * TWO_PI) / static_cast<float>(MAX_SLICE_SIZE);
 
-		vertices[vertexCount + 0] = center + GameMath::Vec2f(radius * GameMath::Cos(radian0), radius * GameMath::Sin(radian0)) + PIXEL_OFFSET;
-		vertices[vertexCount + 1] = center + GameMath::Vec2f(radius * GameMath::Cos(radian1), radius * GameMath::Sin(radian1)) + PIXEL_OFFSET;
+		vertices[vertexCount + 0] = center + Vec2f(radius * GameMath::Cos(radian0), radius * GameMath::Sin(radian0)) + PIXEL_OFFSET;
+		vertices[vertexCount + 1] = center + Vec2f(radius * GameMath::Cos(radian1), radius * GameMath::Sin(radian1)) + PIXEL_OFFSET;
 
 		vertexCount += 2;
 	}
@@ -1074,7 +1074,7 @@ void RenderManager2D::DrawCircleWireframe(const GameMath::Vec2f& center, float r
 	commandQueue_.push(command);
 }
 
-void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& center, float w, float h, float rotate, bool bFlipH, bool bFlipV)
+void RenderManager2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, float h, float rotate, bool bFlipH, bool bFlipV)
 {
 	static const uint32_t MAX_VERTEX_SIZE = 6;
 	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
@@ -1085,27 +1085,27 @@ void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& cente
 	float w2 = w * 0.5f;
 	float h2 = h * 0.5f;
 
-	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices =
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
-		GameMath::Vec2f(-w2, -h2),
-		GameMath::Vec2f(+w2, +h2),
-		GameMath::Vec2f(-w2, +h2),
-		GameMath::Vec2f(-w2, -h2),
-		GameMath::Vec2f(+w2, -h2),
-		GameMath::Vec2f(+w2, +h2),
+		Vec2f(-w2, -h2),
+		Vec2f(+w2, +h2),
+		Vec2f(-w2, +h2),
+		Vec2f(-w2, -h2),
+		Vec2f(+w2, -h2),
+		Vec2f(+w2, +h2),
 	};
 
-	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> uvs =
+	std::array<Vec2f, MAX_VERTEX_SIZE> uvs =
 	{
-		GameMath::Vec2f(0.0f, 1.0f),
-		GameMath::Vec2f(1.0f, 0.0f),
-		GameMath::Vec2f(0.0f, 0.0f),
-		GameMath::Vec2f(0.0f, 1.0f),
-		GameMath::Vec2f(1.0f, 1.0f),
-		GameMath::Vec2f(1.0f, 0.0f),
+		Vec2f(0.0f, 1.0f),
+		Vec2f(1.0f, 0.0f),
+		Vec2f(0.0f, 0.0f),
+		Vec2f(0.0f, 1.0f),
+		Vec2f(1.0f, 1.0f),
+		Vec2f(1.0f, 0.0f),
 	};
 
-	GameMath::Mat2x2 rotateMat = GameMath::Mat2x2(
+	Mat2x2 rotateMat = Mat2x2(
 		+GameMath::Cos(rotate), -GameMath::Sin(rotate),
 		+GameMath::Sin(rotate), +GameMath::Cos(rotate)
 	);
@@ -1142,7 +1142,7 @@ void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& cente
 				{
 					vertices_[startVertexIndex + index].position = vertices[index];
 					vertices_[startVertexIndex + index].uv = uvs[index];
-					vertices_[startVertexIndex + index].color = GameMath::Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
+					vertices_[startVertexIndex + index].color = Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
 					vertices_[startVertexIndex + index].unit = textureUnit;
 				}
 
@@ -1168,7 +1168,7 @@ void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& cente
 				{
 					vertices_[startVertexIndex + index].position = vertices[index];
 					vertices_[startVertexIndex + index].uv = uvs[index];
-					vertices_[startVertexIndex + index].color = GameMath::Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
+					vertices_[startVertexIndex + index].color = Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
 					vertices_[startVertexIndex + index].unit = textureUnit;
 				}
 
@@ -1197,14 +1197,14 @@ void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& cente
 	{
 		vertices_[command.startVertexIndex + index].position = vertices[index];
 		vertices_[command.startVertexIndex + index].uv = uvs[index];
-		vertices_[command.startVertexIndex + index].color = GameMath::Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
+		vertices_[command.startVertexIndex + index].color = Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
 		vertices_[command.startVertexIndex + index].unit = textureUnit;
 	}
 
 	commandQueue_.push(command);
 }
 
-void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& center, float w, float h, const GameMath::Vec3f& blend, float factor, float rotate, bool bFlipH, bool bFlipV)
+void RenderManager2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, float h, const Vec3f& blend, float factor, float rotate, bool bFlipH, bool bFlipV)
 {
 	static const uint32_t MAX_VERTEX_SIZE = 6;
 	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
@@ -1215,27 +1215,27 @@ void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& cente
 	float w2 = w * 0.5f;
 	float h2 = h * 0.5f;
 
-	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices =
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
-		GameMath::Vec2f(-w2, -h2),
-		GameMath::Vec2f(+w2, +h2),
-		GameMath::Vec2f(-w2, +h2),
-		GameMath::Vec2f(-w2, -h2),
-		GameMath::Vec2f(+w2, -h2),
-		GameMath::Vec2f(+w2, +h2),
+		Vec2f(-w2, -h2),
+		Vec2f(+w2, +h2),
+		Vec2f(-w2, +h2),
+		Vec2f(-w2, -h2),
+		Vec2f(+w2, -h2),
+		Vec2f(+w2, +h2),
 	};
 
-	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> uvs =
+	std::array<Vec2f, MAX_VERTEX_SIZE> uvs =
 	{
-		GameMath::Vec2f(0.0f, 1.0f),
-		GameMath::Vec2f(1.0f, 0.0f),
-		GameMath::Vec2f(0.0f, 0.0f),
-		GameMath::Vec2f(0.0f, 1.0f),
-		GameMath::Vec2f(1.0f, 1.0f),
-		GameMath::Vec2f(1.0f, 0.0f),
+		Vec2f(0.0f, 1.0f),
+		Vec2f(1.0f, 0.0f),
+		Vec2f(0.0f, 0.0f),
+		Vec2f(0.0f, 1.0f),
+		Vec2f(1.0f, 1.0f),
+		Vec2f(1.0f, 0.0f),
 	};
 
-	GameMath::Mat2x2 rotateMat = GameMath::Mat2x2(
+	Mat2x2 rotateMat = Mat2x2(
 		+GameMath::Cos(rotate), -GameMath::Sin(rotate),
 		+GameMath::Sin(rotate), +GameMath::Cos(rotate)
 	);
@@ -1272,7 +1272,7 @@ void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& cente
 				{
 					vertices_[startVertexIndex + index].position = vertices[index];
 					vertices_[startVertexIndex + index].uv = uvs[index];
-					vertices_[startVertexIndex + index].color = GameMath::Vec4f(blend.x, blend.y, blend.z, factor);
+					vertices_[startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
 					vertices_[startVertexIndex + index].unit = textureUnit;
 				}
 
@@ -1298,7 +1298,7 @@ void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& cente
 				{
 					vertices_[startVertexIndex + index].position = vertices[index];
 					vertices_[startVertexIndex + index].uv = uvs[index];
-					vertices_[startVertexIndex + index].color = GameMath::Vec4f(blend.x, blend.y, blend.z, factor);
+					vertices_[startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
 					vertices_[startVertexIndex + index].unit = textureUnit;
 				}
 
@@ -1327,14 +1327,14 @@ void RenderManager2D::DrawSprite(ITexture* texture, const GameMath::Vec2f& cente
 	{
 		vertices_[command.startVertexIndex + index].position = vertices[index];
 		vertices_[command.startVertexIndex + index].uv = uvs[index];
-		vertices_[command.startVertexIndex + index].color = GameMath::Vec4f(blend.x, blend.y, blend.z, factor);
+		vertices_[command.startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
 		vertices_[command.startVertexIndex + index].unit = textureUnit;
 	}
 
 	commandQueue_.push(command);
 }
 
-void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const GameMath::Vec2f& center, float w, float h, float rotate, bool bFlipH, bool bFlipV)
+void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const Vec2f& center, float w, float h, float rotate, bool bFlipH, bool bFlipV)
 {
 	static const uint32_t MAX_VERTEX_SIZE = 6;
 	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
@@ -1345,14 +1345,14 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 	float w2 = w * 0.5f;
 	float h2 = h * 0.5f;
 
-	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices =
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
-		GameMath::Vec2f(-w2, -h2),
-		GameMath::Vec2f(+w2, +h2),
-		GameMath::Vec2f(-w2, +h2),
-		GameMath::Vec2f(-w2, -h2),
-		GameMath::Vec2f(+w2, -h2),
-		GameMath::Vec2f(+w2, +h2),
+		Vec2f(-w2, -h2),
+		Vec2f(+w2, +h2),
+		Vec2f(-w2, +h2),
+		Vec2f(-w2, -h2),
+		Vec2f(+w2, -h2),
+		Vec2f(+w2, +h2),
 	};
 
 	const Atlas2D::Block& block = atlas->GetByName(name);
@@ -1363,17 +1363,17 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 	float atlasWidth = static_cast<float>(atlas->GetWidth());
 	float atlasHeight = static_cast<float>(atlas->GetHeight());
 
-	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> uvs =
+	std::array<Vec2f, MAX_VERTEX_SIZE> uvs =
 	{
-		GameMath::Vec2f(x0 / atlasWidth, y1 / atlasHeight),
-		GameMath::Vec2f(x1 / atlasWidth, y0 / atlasHeight),
-		GameMath::Vec2f(x0 / atlasWidth, y0 / atlasHeight),
-		GameMath::Vec2f(x0 / atlasWidth, y1 / atlasHeight),
-		GameMath::Vec2f(x1 / atlasWidth, y1 / atlasHeight),
-		GameMath::Vec2f(x1 / atlasWidth, y0 / atlasHeight),
+		Vec2f(x0 / atlasWidth, y1 / atlasHeight),
+		Vec2f(x1 / atlasWidth, y0 / atlasHeight),
+		Vec2f(x0 / atlasWidth, y0 / atlasHeight),
+		Vec2f(x0 / atlasWidth, y1 / atlasHeight),
+		Vec2f(x1 / atlasWidth, y1 / atlasHeight),
+		Vec2f(x1 / atlasWidth, y0 / atlasHeight),
 	};
 
-	GameMath::Mat2x2 rotateMat = GameMath::Mat2x2(
+	Mat2x2 rotateMat = Mat2x2(
 		+GameMath::Cos(rotate), -GameMath::Sin(rotate),
 		+GameMath::Sin(rotate), +GameMath::Cos(rotate)
 	);
@@ -1410,7 +1410,7 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 				{
 					vertices_[startVertexIndex + index].position = vertices[index];
 					vertices_[startVertexIndex + index].uv = uvs[index];
-					vertices_[startVertexIndex + index].color = GameMath::Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
+					vertices_[startVertexIndex + index].color = Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
 					vertices_[startVertexIndex + index].unit = textureUnit;
 				}
 
@@ -1436,7 +1436,7 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 				{
 					vertices_[startVertexIndex + index].position = vertices[index];
 					vertices_[startVertexIndex + index].uv = uvs[index];
-					vertices_[startVertexIndex + index].color = GameMath::Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
+					vertices_[startVertexIndex + index].color = Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
 					vertices_[startVertexIndex + index].unit = textureUnit;
 				}
 
@@ -1465,14 +1465,14 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 	{
 		vertices_[command.startVertexIndex + index].position = vertices[index];
 		vertices_[command.startVertexIndex + index].uv = uvs[index];
-		vertices_[command.startVertexIndex + index].color = GameMath::Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
+		vertices_[command.startVertexIndex + index].color = Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
 		vertices_[command.startVertexIndex + index].unit = textureUnit;
 	}
 
 	commandQueue_.push(command);
 }
 
-void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const GameMath::Vec2f& center, float w, float h, const GameMath::Vec3f& blend, float factor, float rotate, bool bFlipH, bool bFlipV)
+void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const Vec2f& center, float w, float h, const Vec3f& blend, float factor, float rotate, bool bFlipH, bool bFlipV)
 {	
 	static const uint32_t MAX_VERTEX_SIZE = 6;
 	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
@@ -1483,14 +1483,14 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 	float w2 = w * 0.5f;
 	float h2 = h * 0.5f;
 
-	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> vertices =
+	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
 	{
-		GameMath::Vec2f(-w2, -h2),
-		GameMath::Vec2f(+w2, +h2),
-		GameMath::Vec2f(-w2, +h2),
-		GameMath::Vec2f(-w2, -h2),
-		GameMath::Vec2f(+w2, -h2),
-		GameMath::Vec2f(+w2, +h2),
+		Vec2f(-w2, -h2),
+		Vec2f(+w2, +h2),
+		Vec2f(-w2, +h2),
+		Vec2f(-w2, -h2),
+		Vec2f(+w2, -h2),
+		Vec2f(+w2, +h2),
 	};
 
 	const Atlas2D::Block& block = atlas->GetByName(name);
@@ -1501,17 +1501,17 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 	float atlasWidth = static_cast<float>(atlas->GetWidth());
 	float atlasHeight = static_cast<float>(atlas->GetHeight());
 
-	std::array<GameMath::Vec2f, MAX_VERTEX_SIZE> uvs =
+	std::array<Vec2f, MAX_VERTEX_SIZE> uvs =
 	{
-		GameMath::Vec2f(x0 / atlasWidth, y1 / atlasHeight),
-		GameMath::Vec2f(x1 / atlasWidth, y0 / atlasHeight),
-		GameMath::Vec2f(x0 / atlasWidth, y0 / atlasHeight),
-		GameMath::Vec2f(x0 / atlasWidth, y1 / atlasHeight),
-		GameMath::Vec2f(x1 / atlasWidth, y1 / atlasHeight),
-		GameMath::Vec2f(x1 / atlasWidth, y0 / atlasHeight),
+		Vec2f(x0 / atlasWidth, y1 / atlasHeight),
+		Vec2f(x1 / atlasWidth, y0 / atlasHeight),
+		Vec2f(x0 / atlasWidth, y0 / atlasHeight),
+		Vec2f(x0 / atlasWidth, y1 / atlasHeight),
+		Vec2f(x1 / atlasWidth, y1 / atlasHeight),
+		Vec2f(x1 / atlasWidth, y0 / atlasHeight),
 	};
 
-	GameMath::Mat2x2 rotateMat = GameMath::Mat2x2(
+	Mat2x2 rotateMat = Mat2x2(
 		+GameMath::Cos(rotate), -GameMath::Sin(rotate),
 		+GameMath::Sin(rotate), +GameMath::Cos(rotate)
 	);
@@ -1548,7 +1548,7 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 				{
 					vertices_[startVertexIndex + index].position = vertices[index];
 					vertices_[startVertexIndex + index].uv = uvs[index];
-					vertices_[startVertexIndex + index].color = GameMath::Vec4f(blend.x, blend.y, blend.z, factor);
+					vertices_[startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
 					vertices_[startVertexIndex + index].unit = textureUnit;
 				}
 
@@ -1574,7 +1574,7 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 				{
 					vertices_[startVertexIndex + index].position = vertices[index];
 					vertices_[startVertexIndex + index].uv = uvs[index];
-					vertices_[startVertexIndex + index].color = GameMath::Vec4f(blend.x, blend.y, blend.z, factor);
+					vertices_[startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
 					vertices_[startVertexIndex + index].unit = textureUnit;
 				}
 
@@ -1603,14 +1603,14 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 	{
 		vertices_[command.startVertexIndex + index].position = vertices[index];
 		vertices_[command.startVertexIndex + index].uv = uvs[index];
-		vertices_[command.startVertexIndex + index].color = GameMath::Vec4f(blend.x, blend.y, blend.z, factor);
+		vertices_[command.startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
 		vertices_[command.startVertexIndex + index].unit = textureUnit;
 	}
 
 	commandQueue_.push(command);
 }
 
-void RenderManager2D::DrawString(TTFont* font, const std::wstring& text, const GameMath::Vec2f& pos, const GameMath::Vec4f& color)
+void RenderManager2D::DrawString(TTFont* font, const std::wstring& text, const Vec2f& pos, const Vec4f& color)
 {	
 	/** 문자 하나당 정점 6개. */
 	uint32_t vertexCount = 6 * static_cast<uint32_t>(text.size());
@@ -1625,7 +1625,7 @@ void RenderManager2D::DrawString(TTFont* font, const std::wstring& text, const G
 
 	float atlasWidth = static_cast<float>(font->GetAtlasWidth());
 	float atlasHeight = static_cast<float>(font->GetAtlasHeight());
-	GameMath::Vec2f currPos = GameMath::Vec2f(pos.x, pos.y - h);
+	Vec2f currPos = Vec2f(pos.x, pos.y - h);
 
 	auto composeVertexData = [&](uint32_t vertexIndex, uint32_t unit)
 		{
@@ -1636,33 +1636,33 @@ void RenderManager2D::DrawString(TTFont* font, const std::wstring& text, const G
 				float uw = static_cast<float>(glyph.pos1.x - glyph.pos0.x);
 				float uh = static_cast<float>(glyph.pos1.y - glyph.pos0.y);
 
-				vertices_[vertexIndex + 0].position = GameMath::Vec2f(currPos.x, currPos.y - glyph.yoff);
-				vertices_[vertexIndex + 0].uv = GameMath::Vec2f(static_cast<float>(glyph.pos0.x) / atlasWidth, static_cast<float>(glyph.pos0.y) / atlasHeight);
+				vertices_[vertexIndex + 0].position = Vec2f(currPos.x, currPos.y - glyph.yoff);
+				vertices_[vertexIndex + 0].uv = Vec2f(static_cast<float>(glyph.pos0.x) / atlasWidth, static_cast<float>(glyph.pos0.y) / atlasHeight);
 				vertices_[vertexIndex + 0].color = color;
 				vertices_[vertexIndex + 0].unit = unit;
 
-				vertices_[vertexIndex + 1].position = GameMath::Vec2f(currPos.x, currPos.y - uh - glyph.yoff);
-				vertices_[vertexIndex + 1].uv = GameMath::Vec2f(static_cast<float>(glyph.pos0.x) / atlasWidth, static_cast<float>(glyph.pos1.y) / atlasHeight);
+				vertices_[vertexIndex + 1].position = Vec2f(currPos.x, currPos.y - uh - glyph.yoff);
+				vertices_[vertexIndex + 1].uv = Vec2f(static_cast<float>(glyph.pos0.x) / atlasWidth, static_cast<float>(glyph.pos1.y) / atlasHeight);
 				vertices_[vertexIndex + 1].color = color;
 				vertices_[vertexIndex + 1].unit = unit;
 
-				vertices_[vertexIndex + 2].position = GameMath::Vec2f(currPos.x + uw, currPos.y - glyph.yoff);
-				vertices_[vertexIndex + 2].uv = GameMath::Vec2f(static_cast<float>(glyph.pos1.x) / atlasWidth, static_cast<float>(glyph.pos0.y) / atlasHeight);
+				vertices_[vertexIndex + 2].position = Vec2f(currPos.x + uw, currPos.y - glyph.yoff);
+				vertices_[vertexIndex + 2].uv = Vec2f(static_cast<float>(glyph.pos1.x) / atlasWidth, static_cast<float>(glyph.pos0.y) / atlasHeight);
 				vertices_[vertexIndex + 2].color = color;
 				vertices_[vertexIndex + 2].unit = unit;
 
-				vertices_[vertexIndex + 3].position = GameMath::Vec2f(currPos.x + uw, currPos.y - glyph.yoff);
-				vertices_[vertexIndex + 3].uv = GameMath::Vec2f(static_cast<float>(glyph.pos1.x) / atlasWidth, static_cast<float>(glyph.pos0.y) / atlasHeight);
+				vertices_[vertexIndex + 3].position = Vec2f(currPos.x + uw, currPos.y - glyph.yoff);
+				vertices_[vertexIndex + 3].uv = Vec2f(static_cast<float>(glyph.pos1.x) / atlasWidth, static_cast<float>(glyph.pos0.y) / atlasHeight);
 				vertices_[vertexIndex + 3].color = color;
 				vertices_[vertexIndex + 3].unit = unit;
 
-				vertices_[vertexIndex + 4].position = GameMath::Vec2f(currPos.x, currPos.y - uh - glyph.yoff);
-				vertices_[vertexIndex + 4].uv = GameMath::Vec2f(static_cast<float>(glyph.pos0.x) / atlasWidth, static_cast<float>(glyph.pos1.y) / atlasHeight);
+				vertices_[vertexIndex + 4].position = Vec2f(currPos.x, currPos.y - uh - glyph.yoff);
+				vertices_[vertexIndex + 4].uv = Vec2f(static_cast<float>(glyph.pos0.x) / atlasWidth, static_cast<float>(glyph.pos1.y) / atlasHeight);
 				vertices_[vertexIndex + 4].color = color;
 				vertices_[vertexIndex + 4].unit = unit;
 
-				vertices_[vertexIndex + 5].position = GameMath::Vec2f(currPos.x + uw, currPos.y - uh - glyph.yoff);
-				vertices_[vertexIndex + 5].uv = GameMath::Vec2f(static_cast<float>(glyph.pos1.x) / atlasWidth, static_cast<float>(glyph.pos1.y) / atlasHeight);
+				vertices_[vertexIndex + 5].position = Vec2f(currPos.x + uw, currPos.y - uh - glyph.yoff);
+				vertices_[vertexIndex + 5].uv = Vec2f(static_cast<float>(glyph.pos1.x) / atlasWidth, static_cast<float>(glyph.pos1.y) / atlasHeight);
 				vertices_[vertexIndex + 5].color = color;
 				vertices_[vertexIndex + 5].unit = unit;
 

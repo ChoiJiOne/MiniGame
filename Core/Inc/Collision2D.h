@@ -24,7 +24,7 @@ struct ICollision2D
 struct Point2D : public ICollision2D
 {
 	Point2D() = default;
-	Point2D(const GameMath::Vec2f& c) : center(c) {}
+	Point2D(const Vec2f& c) : center(c) {}
 	Point2D(Point2D&& instance) noexcept : center(instance.center) {}
 	Point2D(const Point2D& instance) noexcept : center(instance.center) {}
 	virtual ~Point2D() {}
@@ -50,13 +50,13 @@ struct Point2D : public ICollision2D
 	virtual Type GetType() const override { return Type::POINT; }
 	virtual bool Intersect(const ICollision2D* target) const override;
 
-	GameMath::Vec2f center;
+	Vec2f center;
 };
 
 struct Line2D : public ICollision2D
 {
 	Line2D() = default;
-	Line2D(const GameMath::Vec2f& s, const GameMath::Vec2f& e) : start(s), end(e) {}
+	Line2D(const Vec2f& s, const Vec2f& e) : start(s), end(e) {}
 	Line2D(Line2D&& instance) noexcept : start(instance.start), end(instance.end) {}
 	Line2D(const Line2D& instance) noexcept : start(instance.start), end(instance.end) {}
 	virtual ~Line2D() {}
@@ -84,14 +84,14 @@ struct Line2D : public ICollision2D
 	virtual Type GetType() const override { return Type::LINE; }
 	virtual bool Intersect(const ICollision2D* target) const override;
 
-	GameMath::Vec2f start;
-	GameMath::Vec2f end;
+	Vec2f start;
+	Vec2f end;
 };
 
 struct Circle2D : public ICollision2D
 {
 	Circle2D() = default;
-	Circle2D(const GameMath::Vec2f& c, float r) : center(c), radius(r) {}
+	Circle2D(const Vec2f& c, float r) : center(c), radius(r) {}
 	Circle2D(Circle2D&& instance) noexcept : center(instance.center), radius(instance.radius) {}
 	Circle2D(const Circle2D& instance) noexcept : center(instance.center), radius(instance.radius) {}
 	virtual ~Circle2D() {}
@@ -119,14 +119,14 @@ struct Circle2D : public ICollision2D
 	virtual Type GetType() const override { return Type::CIRCLE; }
 	virtual bool Intersect(const ICollision2D* target) const override;
 
-	GameMath::Vec2f center;
+	Vec2f center;
 	float radius;
 };
 
 struct Rect2D : public ICollision2D /** 이 사각형은 AABB(Axis-Aligned Bounding Box)입니다. */
 {
 	Rect2D() = default;
-	Rect2D(const GameMath::Vec2f& c, const GameMath::Vec2f& s) : center(c), size(s) {}
+	Rect2D(const Vec2f& c, const Vec2f& s) : center(c), size(s) {}
 	Rect2D(Rect2D&& instance) noexcept : center(instance.center), size(instance.size) {}
 	Rect2D(const Rect2D& instance) noexcept : center(instance.center), size(instance.size) {}
 	virtual ~Rect2D() {}
@@ -151,22 +151,22 @@ struct Rect2D : public ICollision2D /** 이 사각형은 AABB(Axis-Aligned Bounding B
 		return *this;
 	}
 
-	GameMath::Vec2f GetMin() const { return center - size * 0.5f; }
-	GameMath::Vec2f GetMax() const { return center + size * 0.5f; }
+	Vec2f GetMin() const { return center - size * 0.5f; }
+	Vec2f GetMax() const { return center + size * 0.5f; }
 
 	virtual Type GetType() const override { return Type::RECT; }
 	virtual bool Intersect(const ICollision2D* target) const override;
 
-	void GetInterval(const GameMath::Vec2f& axis, float& outMin, float& outMax) const;
+	void GetInterval(const Vec2f& axis, float& outMin, float& outMax) const;
 
-	GameMath::Vec2f center;
-	GameMath::Vec2f size;
+	Vec2f center;
+	Vec2f size;
 };
 
 struct OrientedRect2D : public ICollision2D /** 이 사각형은 OBB(Oriented Bounding Box)입니다. */
 {
 	OrientedRect2D() = default;
-	OrientedRect2D(const GameMath::Vec2f& c, const GameMath::Vec2f& s, float r) : center(c), size(s), rotate(r) {}
+	OrientedRect2D(const Vec2f& c, const Vec2f& s, float r) : center(c), size(s), rotate(r) {}
 	OrientedRect2D(OrientedRect2D&& instance) noexcept : center(instance.center), size(instance.size), rotate(instance.rotate) {}
 	OrientedRect2D(const OrientedRect2D& instance) noexcept : center(instance.center), size(instance.size), rotate(instance.rotate) {}
 	virtual ~OrientedRect2D() {}
@@ -196,9 +196,9 @@ struct OrientedRect2D : public ICollision2D /** 이 사각형은 OBB(Oriented Boundin
 	virtual Type GetType() const override { return Type::ORIENTED_RECT; }
 	virtual bool Intersect(const ICollision2D* target) const override;
 
-	void GetInterval(const GameMath::Vec2f& axis, float& outMin, float& outMax) const;
+	void GetInterval(const Vec2f& axis, float& outMin, float& outMax) const;
 
-	GameMath::Vec2f center;
-	GameMath::Vec2f size;
+	Vec2f center;
+	Vec2f size;
 	float rotate; /** 라디안 각도 기준 */
 };

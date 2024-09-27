@@ -138,8 +138,8 @@ std::shared_ptr<uint8_t[]> TTFont::CreateGlyphAtlasBitmap(const std::vector<uint
 	for (std::size_t index = 0; index < packedchars.size(); ++index)
 	{
 		glyphs_[index].codePoint = static_cast<int32_t>(index + beginCodePoint_);
-		glyphs_[index].pos0 = GameMath::Vec2i(packedchars[index].x0, packedchars[index].y0);
-		glyphs_[index].pos1 = GameMath::Vec2i(packedchars[index].x1, packedchars[index].y1);
+		glyphs_[index].pos0 = Vec2i(packedchars[index].x0, packedchars[index].y0);
+		glyphs_[index].pos1 = Vec2i(packedchars[index].x1, packedchars[index].y1);
 		glyphs_[index].xoff = packedchars[index].xoff;
 		glyphs_[index].yoff = packedchars[index].yoff;
 		glyphs_[index].xoff2 = packedchars[index].xoff2;

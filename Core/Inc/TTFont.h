@@ -10,8 +10,8 @@
 struct Glyph
 {
 	int32_t codePoint;
-	GameMath::Vec2i pos0;
-	GameMath::Vec2i pos1;
+	Vec2i pos0;
+	Vec2i pos1;
 	float xoff;
 	float yoff;
 	float xoff2;

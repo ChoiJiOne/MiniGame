@@ -3,7 +3,7 @@
 #include "EntityManager.h"
 #include "IApp.h"
 
-Camera2D::Camera2D(const GameMath::Vec2f& center, const GameMath::Vec2f& size)
+Camera2D::Camera2D(const Vec2f& center, const Vec2f& size)
 	: center_(center)
 	, size_(size)
 {
@@ -35,8 +35,8 @@ void Camera2D::Release()
 
 Camera2D* Camera2D::CreateScreenCamera()
 {
-	GameMath::Vec2f center;
-	GameMath::Vec2f size;
+	Vec2f center;
+	Vec2f size;
 	IApp::Get()->GetScreenSize<float>(size.x, size.y);
 
 	return EntityManager::Get().Create<Camera2D>(center, size);

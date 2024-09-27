@@ -154,7 +154,7 @@ int32_t IApp::GetNumVideoDisplay()
 	return numVideoDisplay_;
 }
 
-void IApp::GetVideoDisplaySize(int32_t index, GameMath::Vec2i& outSize)
+void IApp::GetVideoDisplaySize(int32_t index, Vec2i& outSize)
 {
 	CHECK(index >= 0 && index < displaySizes_.size());
 	outSize = displaySizes_[index];

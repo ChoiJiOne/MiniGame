@@ -16,8 +16,8 @@ public:
 
 public:
 	/** 모든 각도는 라디안 각도 기준입니다. */
-	FreeEulerCamera3D(const GameMath::Vec3f& position, float yaw, float pitch, float fov, float nearZ, float farZ);
-	FreeEulerCamera3D(const GameMath::Vec3f& position, float yaw, float pitch, float aspectRatio, float fov, float nearZ, float farZ);
+	FreeEulerCamera3D(const Vec3f& position, float yaw, float pitch, float fov, float nearZ, float farZ);
+	FreeEulerCamera3D(const Vec3f& position, float yaw, float pitch, float aspectRatio, float fov, float nearZ, float farZ);
 	virtual ~FreeEulerCamera3D();
 
 	DISALLOW_COPY_AND_ASSIGN(FreeEulerCamera3D);

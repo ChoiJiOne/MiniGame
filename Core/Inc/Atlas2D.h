@@ -10,8 +10,8 @@ class Atlas2D : public Texture2D
 public:
 	struct Block /** 텍스처 내의 블럭입니다. */
 	{
-		GameMath::Vec2i pos;
-		GameMath::Vec2i size;
+		Vec2i pos;
+		Vec2i size;
 	};
 
 public:
