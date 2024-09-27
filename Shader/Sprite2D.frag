@@ -3,6 +3,7 @@
 layout(location = 0) in vec2 inTexCoords;
 layout(location = 1) in vec4 inColor;
 layout(location = 2) flat in int inUnit;
+layout(location = 3) in float inTransparent;
 
 layout(location = 0) out vec4 outFragColor;
 
@@ -86,5 +87,5 @@ void main()
 	}
 
 	fragColor = mix(fragColor, inColor.rgb, inColor.a); /** Color Blending. */
-	outFragColor = vec4(fragColor, alpha);
+	outFragColor = vec4(fragColor, alpha * inTransparent);
 }
