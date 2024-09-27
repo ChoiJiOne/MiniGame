@@ -30,6 +30,7 @@ public:
 	{
 		Vec3f blend = Vec3f(0.0f, 0.0f, 0.0f); /** 스프라이트와 혼합할 색상 입니다. */
 		float factor = 0.0f; /** 스프라이트와 혼합할 색상의 비율입니다. factor의 값이 0이라면 색상이 혼합되지 않습니다. */
+		float transparent = 1.0f; /** 스프라이트의 투명도입니다. 1.0 이면 불투명, 0.0 이면 완전 투명입니다. */
 		bool bIsFlipH = false; /** 스프라이트를 가로로 뒤집을 지 여부입니다. */
 		bool bIsFlipV = false; /** 스프라이트를 세로로 뒤집을 지 여부입니다. */
 	};
@@ -78,6 +79,7 @@ private:
 		Vec2f uv;
 		Vec4f color;
 		uint32_t unit; /** 텍스처 유닛입니다. */
+		float transparent = 1.0f;
 	};
 
 	struct RenderCommand
