@@ -5,191 +5,192 @@
 #include <limits>
 #include <random>
 
+const float PI          = 3.141592654f;
+const float TWO_PI      = 6.283185307f;
+const float ONE_DIV_PI  = 0.318309886f;
+const float ONE_DIV_2PI = 0.159154943f;
+const float PI_DIV_2    = 1.570796327f;
+const float PI_DIV_4    = 0.785398163f;
+const float EPSILON     = 1.192092896e-07F;
+
 namespace GameMath
 {
-const float PI = 3.141592654f;
-const float TWO_PI = 6.283185307f;
-const float ONE_DIV_PI = 0.318309886f;
-const float ONE_DIV_2PI = 0.159154943f;
-const float PI_DIV_2 = 1.570796327f;
-const float PI_DIV_4 = 0.785398163f;
-const float EPSILON = 1.192092896e-07F;
-
-__forceinline float ToDegree(float radian)
-{
-	return (radian * 180.0f) / PI;
-}
-
-__forceinline float ToRadian(float degree)
-{
-	return (degree * PI) / 180.0f;
-}
-
-__forceinline bool NearZero(float value, float epsilon = EPSILON)
-{
-	return (std::fabsf(value) <= epsilon);
-}
-
-template <typename T>
-__forceinline T Max(const T& lhs, const T& rhs)
-{
-	return (lhs < rhs ? rhs : lhs);
-}
-
-template <typename T>
-__forceinline T Min(const T& lhs, const T& rhs)
-{
-	return (lhs < rhs ? lhs : rhs);
-}
-
-__forceinline float Sqrt(float x)
-{
-	return std::sqrtf(x);
-}
-
-__forceinline float Abs(float x)
-{
-	return std::fabsf(x);
-}
-
-__forceinline float Fmod(float x, float y)
-{
-	return std::fmodf(x, y);
-}
-
-template <typename T>
-__forceinline T Clamp(const T& value, const T& lower, const T& upper)
-{
-	return Min<T>(upper, Max<T>(lower, value));
-}
-
-/** https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91 */
-__forceinline float Sin(float radian)
-{
-	float quotient = ONE_DIV_2PI * radian;
-	if (radian >= 0.0f)
+	__forceinline float ToDegree(float radian)
 	{
-		quotient = static_cast<float>(static_cast<int>(quotient + 0.5f));
-	}
-	else
-	{
-		quotient = static_cast<float>(static_cast<int>(quotient - 0.5f));
+		return (radian * 180.0f) / PI;
 	}
 
-	float y = radian - TWO_PI * quotient;
-
-	if (y > PI_DIV_2)
+	__forceinline float ToRadian(float degree)
 	{
-		y = PI - y;
-	}
-	else if (y < -PI_DIV_2)
-	{
-		y = -PI - y;
+		return (degree * PI) / 180.0f;
 	}
 
-	float y2 = y * y;
-	return (((((-2.3889859e-08f * y2 + 2.7525562e-06f) * y2 - 0.00019840874f) * y2 + 0.0083333310f) * y2 - 0.16666667f) * y2 + 1.0f) * y;
-}
-
-/** https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91 */
-__forceinline float Cos(float radian)
-{
-	float quotient = ONE_DIV_2PI * radian;
-	if (radian >= 0.0f)
+	__forceinline bool NearZero(float value, float epsilon = EPSILON)
 	{
-		quotient = static_cast<float>(static_cast<int>(quotient + 0.5f));
-	}
-	else
-	{
-		quotient = static_cast<float>(static_cast<int>(quotient - 0.5f));
+		return (std::fabsf(value) <= epsilon);
 	}
 
-	float y = radian - TWO_PI * quotient;
-	float sign = 1.0f;
-
-	if (y > PI_DIV_2)
+	template <typename T>
+	__forceinline T Max(const T& lhs, const T& rhs)
 	{
-		y = PI - y;
-		sign = -1.0f;
-	}
-	else if (y < -PI_DIV_2)
-	{
-		y = -PI - y;
-		sign = -1.0f;
+		return (lhs < rhs ? rhs : lhs);
 	}
 
-	float y2 = y * y;
-	float p = ((((-2.6051615e-07f * y2 + 2.4760495e-05f) * y2 - 0.0013888378f) * y2 + 0.041666638f) * y2 - 0.5f) * y2 + 1.0f;
-
-	return sign * p;
-}
-
-/** https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91 */
-__forceinline float ASin(float value)
-{
-	float x = std::fabsf(value);
-	float omx = 1.0f - x;
-	if (omx < 0.0f)
+	template <typename T>
+	__forceinline T Min(const T& lhs, const T& rhs)
 	{
-		omx = 0.0f;
+		return (lhs < rhs ? lhs : rhs);
 	}
 
-	float root = sqrtf(omx);
-	float result = ((((((-0.0012624911f * x + 0.0066700901f) * x - 0.0170881256f) * x + 0.0308918810f) * x - 0.0501743046f) * x + 0.0889789874f) * x - 0.2145988016f) * x + 1.5707963050f;
-	result *= root;
-
-	if (value >= 0.0f)
+	__forceinline float Sqrt(float x)
 	{
-		return (PI_DIV_2 - result);
-	}
-	else
-	{
-		return (result - PI_DIV_2);
-	}
-}
-
-/** https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91 */
-__forceinline float ACos(float value)
-{
-	float x = std::fabsf(value);
-	float omx = 1.0f - x;
-	if (omx < 0.0f)
-	{
-		omx = 0.0f;
+		return std::sqrtf(x);
 	}
 
-	float root = sqrtf(omx);
-	float result = ((((((-0.0012624911f * x + 0.0066700901f) * x - 0.0170881256f) * x + 0.0308918810f) * x - 0.0501743046f) * x + 0.0889789874f) * x - 0.2145988016f) * x + 1.5707963050f;
-	result *= root;
-
-	if (value >= 0.0f)
+	__forceinline float Abs(float x)
 	{
-		return result;
+		return std::fabsf(x);
 	}
-	else
+
+	__forceinline float Fmod(float x, float y)
 	{
-		return PI - result;
+		return std::fmodf(x, y);
 	}
-}
 
-/** 값의 범위는 [minValue, maxValue] 입니다. */
-__forceinline int32_t GenerateRandomInt(int32_t minValue, int32_t maxValue)
-{
-	std::random_device randomDevice;
-	std::mt19937 generator(randomDevice());
-	std::uniform_int_distribution<int32_t> distribution(Min<int32_t>(minValue, maxValue), Max<int32_t>(minValue, maxValue));
+	template <typename T>
+	__forceinline T Clamp(const T& value, const T& lower, const T& upper)
+	{
+		return Min<T>(upper, Max<T>(lower, value));
+	}
 
-	return distribution(generator);
-}
+	/** https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91 */
+	__forceinline float Sin(float radian)
+	{
+		float quotient = ONE_DIV_2PI * radian;
+		if (radian >= 0.0f)
+		{
+			quotient = static_cast<float>(static_cast<int>(quotient + 0.5f));
+		}
+		else
+		{
+			quotient = static_cast<float>(static_cast<int>(quotient - 0.5f));
+		}
 
-/** 값의 범위는 [minValue, maxValue] 입니다. */
-__forceinline float GenerateRandomFloat(float minValue, float maxValue)
-{
-	std::random_device randomDevice;
-	std::mt19937 generator(randomDevice());
-	std::uniform_real_distribution<float> distribution(Min<float>(minValue, maxValue), Max<float>(minValue, maxValue));
+		float y = radian - TWO_PI * quotient;
 
-	return distribution(generator);
+		if (y > PI_DIV_2)
+		{
+			y = PI - y;
+		}
+		else if (y < -PI_DIV_2)
+		{
+			y = -PI - y;
+		}
+
+		float y2 = y * y;
+		return (((((-2.3889859e-08f * y2 + 2.7525562e-06f) * y2 - 0.00019840874f) * y2 + 0.0083333310f) * y2 - 0.16666667f) * y2 + 1.0f) * y;
+	}
+
+	/** https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91 */
+	__forceinline float Cos(float radian)
+	{
+		float quotient = ONE_DIV_2PI * radian;
+		if (radian >= 0.0f)
+		{
+			quotient = static_cast<float>(static_cast<int>(quotient + 0.5f));
+		}
+		else
+		{
+			quotient = static_cast<float>(static_cast<int>(quotient - 0.5f));
+		}
+
+		float y = radian - TWO_PI * quotient;
+		float sign = 1.0f;
+
+		if (y > PI_DIV_2)
+		{
+			y = PI - y;
+			sign = -1.0f;
+		}
+		else if (y < -PI_DIV_2)
+		{
+			y = -PI - y;
+			sign = -1.0f;
+		}
+
+		float y2 = y * y;
+		float p = ((((-2.6051615e-07f * y2 + 2.4760495e-05f) * y2 - 0.0013888378f) * y2 + 0.041666638f) * y2 - 0.5f) * y2 + 1.0f;
+
+		return sign * p;
+	}
+
+	/** https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91 */
+	__forceinline float ASin(float value)
+	{
+		float x = std::fabsf(value);
+		float omx = 1.0f - x;
+		if (omx < 0.0f)
+		{
+			omx = 0.0f;
+		}
+
+		float root = sqrtf(omx);
+		float result = ((((((-0.0012624911f * x + 0.0066700901f) * x - 0.0170881256f) * x + 0.0308918810f) * x - 0.0501743046f) * x + 0.0889789874f) * x - 0.2145988016f) * x + 1.5707963050f;
+		result *= root;
+
+		if (value >= 0.0f)
+		{
+			return (PI_DIV_2 - result);
+		}
+		else
+		{
+			return (result - PI_DIV_2);
+		}
+	}
+
+	/** https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91 */
+	__forceinline float ACos(float value)
+	{
+		float x = std::fabsf(value);
+		float omx = 1.0f - x;
+		if (omx < 0.0f)
+		{
+			omx = 0.0f;
+		}
+
+		float root = sqrtf(omx);
+		float result = ((((((-0.0012624911f * x + 0.0066700901f) * x - 0.0170881256f) * x + 0.0308918810f) * x - 0.0501743046f) * x + 0.0889789874f) * x - 0.2145988016f) * x + 1.5707963050f;
+		result *= root;
+
+		if (value >= 0.0f)
+		{
+			return result;
+		}
+		else
+		{
+			return PI - result;
+		}
+	}
+
+	/** 값의 범위는 [minValue, maxValue] 입니다. */
+	__forceinline int32_t GenerateRandomInt(int32_t minValue, int32_t maxValue)
+	{
+		std::random_device randomDevice;
+		std::mt19937 generator(randomDevice());
+		std::uniform_int_distribution<int32_t> distribution(Min<int32_t>(minValue, maxValue), Max<int32_t>(minValue, maxValue));
+
+		return distribution(generator);
+	}
+
+	/** 값의 범위는 [minValue, maxValue] 입니다. */
+	__forceinline float GenerateRandomFloat(float minValue, float maxValue)
+	{
+		std::random_device randomDevice;
+		std::mt19937 generator(randomDevice());
+		std::uniform_real_distribution<float> distribution(Min<float>(minValue, maxValue), Max<float>(minValue, maxValue));
+
+		return distribution(generator);
+	}
 }
 
 struct Vec2i
@@ -330,7 +331,7 @@ struct Vec2i
 	static inline float Length(const Vec2i& v)
 	{
 		float lengthSq = static_cast<float>(LengthSq(v));
-		return Sqrt(lengthSq);
+		return GameMath::Sqrt(lengthSq);
 	}
 
 	static inline float Radian(const Vec2i& lhs, const Vec2i& rhs)
@@ -339,13 +340,13 @@ struct Vec2i
 		float lengthR = Length(rhs);
 		float dot = Dot(lhs, rhs);
 
-		return ACos(dot / (lengthL * lengthR));
+		return GameMath::ACos(dot / (lengthL * lengthR));
 	}
 
 	static inline float Degree(const Vec2i& lhs, const Vec2i& rhs)
 	{
 		float radian = Radian(lhs, rhs);
-		return ToDegree(radian);
+		return GameMath::ToDegree(radian);
 	}
 
 	union
@@ -458,22 +459,22 @@ struct Vec2f
 
 	bool operator==(Vec2f&& v) const noexcept
 	{
-		return Abs(x - v.x) <= EPSILON && Abs(y - v.y) <= EPSILON;
+		return GameMath::Abs(x - v.x) <= EPSILON && GameMath::Abs(y - v.y) <= EPSILON;
 	}
 
 	bool operator==(const Vec2f& v) const noexcept
 	{
-		return Abs(x - v.x) <= EPSILON && Abs(y - v.y) <= EPSILON;
+		return GameMath::Abs(x - v.x) <= EPSILON && GameMath::Abs(y - v.y) <= EPSILON;
 	}
 
 	bool operator!=(Vec2f&& v) const noexcept
 	{
-		return Abs(x - v.x) > EPSILON || Abs(y - v.y) > EPSILON;
+		return GameMath::Abs(x - v.x) > EPSILON || GameMath::Abs(y - v.y) > EPSILON;
 	}
 
 	bool operator!=(const Vec2f& v) const noexcept
 	{
-		return Abs(x - v.x) > EPSILON || Abs(y - v.y) > EPSILON;
+		return GameMath::Abs(x - v.x) > EPSILON || GameMath::Abs(y - v.y) > EPSILON;
 	}
 
 	const float* GetPtr() const { return &data[0]; }
@@ -497,14 +498,14 @@ struct Vec2f
 	static inline float Length(const Vec2f& v)
 	{
 		float lengthSq = LengthSq(v);
-		return Sqrt(lengthSq);
+		return GameMath::Sqrt(lengthSq);
 	}
 
 	static inline Vec2f Normalize(const Vec2f& v)
 	{
 		float length = Length(v);
 
-		if (NearZero(length))
+		if (GameMath::NearZero(length))
 		{
 			return v;
 		}
@@ -519,13 +520,13 @@ struct Vec2f
 		float lengthR = Length(rhs);
 		float dot = Dot(lhs, rhs);
 
-		return ACos(dot / (lengthL * lengthR));
+		return GameMath::ACos(dot / (lengthL * lengthR));
 	}
 
 	static inline float Degree(const Vec2f& lhs, const Vec2f& rhs)
 	{
 		float radian = Radian(lhs, rhs);
-		return ToDegree(radian);
+		return GameMath::ToDegree(radian);
 	}
 
 	static inline Vec2f Project(const Vec2f& target, const Vec2f& base)
@@ -554,10 +555,10 @@ struct Vec2f
 		Vec2f end = Normalize(e);
 
 		float theta = Radian(start, end);
-		float sinTheta = Sin(theta);
+		float sinTheta = GameMath::Sin(theta);
 
-		float a = Sin((1.0f - t) * theta) / sinTheta;
-		float b = Sin(t * theta) / sinTheta;
+		float a = GameMath::Sin((1.0f - t) * theta) / sinTheta;
+		float b = GameMath::Sin(t * theta) / sinTheta;
 
 		return s * a + e * b;
 	}
@@ -566,10 +567,10 @@ struct Vec2f
 	{
 		Vec2f p = s * (1.0f - t) + c * t;
 		Vec2f q = c * (1.0f - t) + e * t;
-		
+
 		return p * (1.0f - t) + q * t;
 	}
-	
+
 	union
 	{
 		struct
@@ -601,7 +602,7 @@ struct Vec3i
 
 		return *this;
 	}
-	
+
 	Vec3i& operator=(const Vec3i& v) noexcept
 	{
 		if (this == &v) return *this;
@@ -729,7 +730,7 @@ struct Vec3i
 	static inline float Length(const Vec3i& v)
 	{
 		float lengthSq = static_cast<float>(LengthSq(v));
-		return Sqrt(lengthSq);
+		return GameMath::Sqrt(lengthSq);
 	}
 
 	static inline float Radian(const Vec3i& lhs, const Vec3i& rhs)
@@ -738,13 +739,13 @@ struct Vec3i
 		float lengthR = Length(rhs);
 		float dot = Dot(lhs, rhs);
 
-		return ACos(dot / (lengthL * lengthR));
+		return GameMath::ACos(dot / (lengthL * lengthR));
 	}
 
 	static inline float Degree(const Vec3i& lhs, const Vec3i& rhs)
 	{
 		float radian = Radian(lhs, rhs);
-		return ToDegree(radian);
+		return GameMath::ToDegree(radian);
 	}
 
 	union
@@ -864,22 +865,22 @@ struct Vec3f
 
 	bool operator==(Vec3f&& v) const
 	{
-		return Abs(x - v.x) <= EPSILON && Abs(y - v.y) <= EPSILON && Abs(z - v.z) <= EPSILON;
+		return GameMath::Abs(x - v.x) <= EPSILON && GameMath::Abs(y - v.y) <= EPSILON && GameMath::Abs(z - v.z) <= EPSILON;
 	}
 
 	bool operator==(const Vec3f& v) const
 	{
-		return Abs(x - v.x) <= EPSILON && Abs(y - v.y) <= EPSILON && Abs(z - v.z) <= EPSILON;
+		return GameMath::Abs(x - v.x) <= EPSILON && GameMath::Abs(y - v.y) <= EPSILON && GameMath::Abs(z - v.z) <= EPSILON;
 	}
 
 	bool operator!=(Vec3f&& v) const
 	{
-		return Abs(x - v.x) > EPSILON || Abs(y - v.y) > EPSILON || Abs(z - v.z) > EPSILON;
+		return GameMath::Abs(x - v.x) > EPSILON || GameMath::Abs(y - v.y) > EPSILON || GameMath::Abs(z - v.z) > EPSILON;
 	}
 
 	bool operator!=(const Vec3f& v) const
 	{
-		return Abs(x - v.x) > EPSILON || Abs(y - v.y) > EPSILON || Abs(z - v.z) > EPSILON;
+		return GameMath::Abs(x - v.x) > EPSILON || GameMath::Abs(y - v.y) > EPSILON || GameMath::Abs(z - v.z) > EPSILON;
 	}
 
 	const float* GetPtr() const { return &data[0]; }
@@ -907,14 +908,14 @@ struct Vec3f
 	static inline float Length(const Vec3f& v)
 	{
 		float lengthSq = LengthSq(v);
-		return Sqrt(lengthSq);
+		return GameMath::Sqrt(lengthSq);
 	}
 
 	static inline Vec3f Normalize(const Vec3f& v)
 	{
 		float length = Length(v);
 
-		if (NearZero(length))
+		if (GameMath::NearZero(length))
 		{
 			return v;
 		}
@@ -929,13 +930,13 @@ struct Vec3f
 		float lengthR = Length(rhs);
 		float dot = Dot(lhs, rhs);
 
-		return ACos(dot / (lengthL * lengthR));
+		return GameMath::ACos(dot / (lengthL * lengthR));
 	}
 
 	static inline float Degree(const Vec3f& lhs, const Vec3f& rhs)
 	{
 		float radian = Radian(lhs, rhs);
-		return ToDegree(radian);
+		return GameMath::ToDegree(radian);
 	}
 
 	static inline Vec3f Project(const Vec3f& target, const Vec3f& base)
@@ -964,14 +965,14 @@ struct Vec3f
 		Vec3f end = Normalize(e);
 
 		float theta = Radian(start, end);
-		float sinTheta = Sin(theta);
+		float sinTheta = GameMath::Sin(theta);
 
-		float a = Sin((1.0f - t) * theta) / sinTheta;
-		float b = Sin(t * theta) / sinTheta;
+		float a = GameMath::Sin((1.0f - t) * theta) / sinTheta;
+		float b = GameMath::Sin(t * theta) / sinTheta;
 
 		return s * a + e * b;
 	}
-	
+
 	union
 	{
 		struct
@@ -1129,7 +1130,7 @@ struct Vec4i
 	static inline float Length(const Vec4i& v)
 	{
 		float lengthSq = static_cast<float>(LengthSq(v));
-		return Sqrt(lengthSq);
+		return GameMath::Sqrt(lengthSq);
 	}
 
 	static inline float Radian(const Vec4i& lhs, const Vec4i& rhs)
@@ -1138,13 +1139,13 @@ struct Vec4i
 		float lengthR = Length(rhs);
 		float dot = Dot(lhs, rhs);
 
-		return ACos(dot / (lengthL * lengthR));
+		return GameMath::ACos(dot / (lengthL * lengthR));
 	}
 
 	static inline float Degree(const Vec4i& lhs, const Vec4i& rhs)
 	{
 		float radian = Radian(lhs, rhs);
-		return ToDegree(radian);
+		return GameMath::ToDegree(radian);
 	}
 
 	union
@@ -1271,22 +1272,22 @@ struct Vec4f
 
 	bool operator==(Vec4f&& v) const
 	{
-		return Abs(x - v.x) <= EPSILON && Abs(y - v.y) <= EPSILON && Abs(z - v.z) <= EPSILON && Abs(w - v.w) <= EPSILON;
+		return GameMath::Abs(x - v.x) <= EPSILON && GameMath::Abs(y - v.y) <= EPSILON && GameMath::Abs(z - v.z) <= EPSILON && GameMath::Abs(w - v.w) <= EPSILON;
 	}
 
 	bool operator==(const Vec4f& v) const
 	{
-		return Abs(x - v.x) <= EPSILON && Abs(y - v.y) <= EPSILON && Abs(z - v.z) <= EPSILON && Abs(w - v.w) <= EPSILON;
+		return GameMath::Abs(x - v.x) <= EPSILON && GameMath::Abs(y - v.y) <= EPSILON && GameMath::Abs(z - v.z) <= EPSILON && GameMath::Abs(w - v.w) <= EPSILON;
 	}
 
 	bool operator!=(Vec4f&& v) const
 	{
-		return Abs(x - v.x) > EPSILON || Abs(y - v.y) > EPSILON || Abs(z - v.z) > EPSILON || Abs(w - v.w) > EPSILON;
+		return GameMath::Abs(x - v.x) > EPSILON || GameMath::Abs(y - v.y) > EPSILON || GameMath::Abs(z - v.z) > EPSILON || GameMath::Abs(w - v.w) > EPSILON;
 	}
 
 	bool operator!=(const Vec4f& v) const
 	{
-		return Abs(x - v.x) > EPSILON || Abs(y - v.y) > EPSILON || Abs(z - v.z) > EPSILON || Abs(w - v.w) > EPSILON;
+		return GameMath::Abs(x - v.x) > EPSILON || GameMath::Abs(y - v.y) > EPSILON || GameMath::Abs(z - v.z) > EPSILON || GameMath::Abs(w - v.w) > EPSILON;
 	}
 
 	const float* GetPtr() const { return &data[0]; }
@@ -1305,14 +1306,14 @@ struct Vec4f
 	static inline float Length(const Vec4f& v)
 	{
 		float lengthSq = LengthSq(v);
-		return Sqrt(lengthSq);
+		return GameMath::Sqrt(lengthSq);
 	}
 
 	static inline Vec4f Normalize(const Vec4f& v)
 	{
 		float length = Length(v);
 
-		if (NearZero(length))
+		if (GameMath::NearZero(length))
 		{
 			return v;
 		}
@@ -1327,13 +1328,13 @@ struct Vec4f
 		float lengthR = Length(rhs);
 		float dot = Dot(lhs, rhs);
 
-		return ACos(dot / (lengthL * lengthR));
+		return GameMath::ACos(dot / (lengthL * lengthR));
 	}
 
 	static inline float Degree(const Vec4f& lhs, const Vec4f& rhs)
 	{
 		float radian = Radian(lhs, rhs);
-		return ToDegree(radian);
+		return GameMath::ToDegree(radian);
 	}
 
 	static inline Vec4f Project(const Vec4f& target, const Vec4f& base)
@@ -1362,10 +1363,10 @@ struct Vec4f
 		Vec4f end = Normalize(e);
 
 		float theta = Radian(start, end);
-		float sinTheta = Sin(theta);
+		float sinTheta = GameMath::Sin(theta);
 
-		float a = Sin((1.0f - t) * theta) / sinTheta;
-		float b = Sin(t * theta) / sinTheta;
+		float a = GameMath::Sin((1.0f - t) * theta) / sinTheta;
+		float b = GameMath::Sin(t * theta) / sinTheta;
 
 		return s * a + e * b;
 	}
@@ -1563,34 +1564,34 @@ struct Mat2x2
 
 	bool operator==(Mat2x2&& m) const
 	{
-		return Abs(e00 - m.e00) <= EPSILON
-			&& Abs(e01 - m.e01) <= EPSILON
-			&& Abs(e10 - m.e10) <= EPSILON
-			&& Abs(e11 - m.e11) <= EPSILON;
+		return GameMath::Abs(e00 - m.e00) <= EPSILON
+			&& GameMath::Abs(e01 - m.e01) <= EPSILON
+			&& GameMath::Abs(e10 - m.e10) <= EPSILON
+			&& GameMath::Abs(e11 - m.e11) <= EPSILON;
 	}
 
 	bool operator==(const Mat2x2& m) const
 	{
-		return Abs(e00 - m.e00) <= EPSILON
-			&& Abs(e01 - m.e01) <= EPSILON
-			&& Abs(e10 - m.e10) <= EPSILON
-			&& Abs(e11 - m.e11) <= EPSILON;
+		return GameMath::Abs(e00 - m.e00) <= EPSILON
+			&& GameMath::Abs(e01 - m.e01) <= EPSILON
+			&& GameMath::Abs(e10 - m.e10) <= EPSILON
+			&& GameMath::Abs(e11 - m.e11) <= EPSILON;
 	}
 
 	bool operator!=(Mat2x2&& m) const
 	{
-		return Abs(e00 - m.e00) > EPSILON
-			|| Abs(e01 - m.e01) > EPSILON
-			|| Abs(e10 - m.e10) > EPSILON
-			|| Abs(e11 - m.e11) > EPSILON;
+		return GameMath::Abs(e00 - m.e00) > EPSILON
+			|| GameMath::Abs(e01 - m.e01) > EPSILON
+			|| GameMath::Abs(e10 - m.e10) > EPSILON
+			|| GameMath::Abs(e11 - m.e11) > EPSILON;
 	}
 
 	bool operator!=(const Mat2x2& m) const
 	{
-		return Abs(e00 - m.e00) > EPSILON
-			|| Abs(e01 - m.e01) > EPSILON
-			|| Abs(e10 - m.e10) > EPSILON
-			|| Abs(e11 - m.e11) > EPSILON;
+		return GameMath::Abs(e00 - m.e00) > EPSILON
+			|| GameMath::Abs(e01 - m.e01) > EPSILON
+			|| GameMath::Abs(e10 - m.e10) > EPSILON
+			|| GameMath::Abs(e11 - m.e11) > EPSILON;
 	}
 
 	const float* GetPtr() const { return &data[0]; }
@@ -1860,54 +1861,54 @@ struct Mat3x3
 
 	bool operator==(Mat3x3&& m) const
 	{
-		return Abs(e00 - m.e00) <= EPSILON
-			&& Abs(e01 - m.e01) <= EPSILON
-			&& Abs(e02 - m.e02) <= EPSILON
-			&& Abs(e10 - m.e10) <= EPSILON
-			&& Abs(e11 - m.e11) <= EPSILON
-			&& Abs(e12 - m.e12) <= EPSILON
-			&& Abs(e20 - m.e20) <= EPSILON
-			&& Abs(e21 - m.e21) <= EPSILON
-			&& Abs(e22 - m.e22) <= EPSILON;
+		return GameMath::Abs(e00 - m.e00) <= EPSILON
+			&& GameMath::Abs(e01 - m.e01) <= EPSILON
+			&& GameMath::Abs(e02 - m.e02) <= EPSILON
+			&& GameMath::Abs(e10 - m.e10) <= EPSILON
+			&& GameMath::Abs(e11 - m.e11) <= EPSILON
+			&& GameMath::Abs(e12 - m.e12) <= EPSILON
+			&& GameMath::Abs(e20 - m.e20) <= EPSILON
+			&& GameMath::Abs(e21 - m.e21) <= EPSILON
+			&& GameMath::Abs(e22 - m.e22) <= EPSILON;
 	}
 
 	bool operator==(const Mat3x3& m) const
 	{
-		return Abs(e00 - m.e00) <= EPSILON
-			&& Abs(e01 - m.e01) <= EPSILON
-			&& Abs(e02 - m.e02) <= EPSILON
-			&& Abs(e10 - m.e10) <= EPSILON
-			&& Abs(e11 - m.e11) <= EPSILON
-			&& Abs(e12 - m.e12) <= EPSILON
-			&& Abs(e20 - m.e20) <= EPSILON
-			&& Abs(e21 - m.e21) <= EPSILON
-			&& Abs(e22 - m.e22) <= EPSILON;
+		return GameMath::Abs(e00 - m.e00) <= EPSILON
+			&& GameMath::Abs(e01 - m.e01) <= EPSILON
+			&& GameMath::Abs(e02 - m.e02) <= EPSILON
+			&& GameMath::Abs(e10 - m.e10) <= EPSILON
+			&& GameMath::Abs(e11 - m.e11) <= EPSILON
+			&& GameMath::Abs(e12 - m.e12) <= EPSILON
+			&& GameMath::Abs(e20 - m.e20) <= EPSILON
+			&& GameMath::Abs(e21 - m.e21) <= EPSILON
+			&& GameMath::Abs(e22 - m.e22) <= EPSILON;
 	}
 
 	bool operator!=(Mat3x3&& m) const
 	{
-		return Abs(e00 - m.e00) > EPSILON
-			|| Abs(e01 - m.e01) > EPSILON
-			|| Abs(e02 - m.e02) > EPSILON
-			|| Abs(e10 - m.e10) > EPSILON
-			|| Abs(e11 - m.e11) > EPSILON
-			|| Abs(e12 - m.e12) > EPSILON
-			|| Abs(e20 - m.e20) > EPSILON
-			|| Abs(e21 - m.e21) > EPSILON
-			|| Abs(e22 - m.e22) > EPSILON;
+		return GameMath::Abs(e00 - m.e00) > EPSILON
+			|| GameMath::Abs(e01 - m.e01) > EPSILON
+			|| GameMath::Abs(e02 - m.e02) > EPSILON
+			|| GameMath::Abs(e10 - m.e10) > EPSILON
+			|| GameMath::Abs(e11 - m.e11) > EPSILON
+			|| GameMath::Abs(e12 - m.e12) > EPSILON
+			|| GameMath::Abs(e20 - m.e20) > EPSILON
+			|| GameMath::Abs(e21 - m.e21) > EPSILON
+			|| GameMath::Abs(e22 - m.e22) > EPSILON;
 	}
 
 	bool operator!=(const Mat3x3& m) const
 	{
-		return Abs(e00 - m.e00) > EPSILON
-			|| Abs(e01 - m.e01) > EPSILON
-			|| Abs(e02 - m.e02) > EPSILON
-			|| Abs(e10 - m.e10) > EPSILON
-			|| Abs(e11 - m.e11) > EPSILON
-			|| Abs(e12 - m.e12) > EPSILON
-			|| Abs(e20 - m.e20) > EPSILON
-			|| Abs(e21 - m.e21) > EPSILON
-			|| Abs(e22 - m.e22) > EPSILON;
+		return GameMath::Abs(e00 - m.e00) > EPSILON
+			|| GameMath::Abs(e01 - m.e01) > EPSILON
+			|| GameMath::Abs(e02 - m.e02) > EPSILON
+			|| GameMath::Abs(e10 - m.e10) > EPSILON
+			|| GameMath::Abs(e11 - m.e11) > EPSILON
+			|| GameMath::Abs(e12 - m.e12) > EPSILON
+			|| GameMath::Abs(e20 - m.e20) > EPSILON
+			|| GameMath::Abs(e21 - m.e21) > EPSILON
+			|| GameMath::Abs(e22 - m.e22) > EPSILON;
 	}
 
 	const float* GetPtr() const { return &data[0]; }
@@ -2222,82 +2223,82 @@ struct Mat4x4
 
 	bool operator==(Mat4x4&& m) const
 	{
-		return Abs(e00 - m.e00) <= EPSILON
-			&& Abs(e01 - m.e01) <= EPSILON
-			&& Abs(e02 - m.e02) <= EPSILON
-			&& Abs(e03 - m.e03) <= EPSILON
-			&& Abs(e10 - m.e10) <= EPSILON
-			&& Abs(e11 - m.e11) <= EPSILON
-			&& Abs(e12 - m.e12) <= EPSILON
-			&& Abs(e13 - m.e13) <= EPSILON
-			&& Abs(e20 - m.e20) <= EPSILON
-			&& Abs(e21 - m.e21) <= EPSILON
-			&& Abs(e22 - m.e22) <= EPSILON
-			&& Abs(e23 - m.e23) <= EPSILON
-			&& Abs(e30 - m.e30) <= EPSILON
-			&& Abs(e31 - m.e31) <= EPSILON
-			&& Abs(e32 - m.e32) <= EPSILON
-			&& Abs(e33 - m.e33) <= EPSILON;
+		return GameMath::Abs(e00 - m.e00) <= EPSILON
+			&& GameMath::Abs(e01 - m.e01) <= EPSILON
+			&& GameMath::Abs(e02 - m.e02) <= EPSILON
+			&& GameMath::Abs(e03 - m.e03) <= EPSILON
+			&& GameMath::Abs(e10 - m.e10) <= EPSILON
+			&& GameMath::Abs(e11 - m.e11) <= EPSILON
+			&& GameMath::Abs(e12 - m.e12) <= EPSILON
+			&& GameMath::Abs(e13 - m.e13) <= EPSILON
+			&& GameMath::Abs(e20 - m.e20) <= EPSILON
+			&& GameMath::Abs(e21 - m.e21) <= EPSILON
+			&& GameMath::Abs(e22 - m.e22) <= EPSILON
+			&& GameMath::Abs(e23 - m.e23) <= EPSILON
+			&& GameMath::Abs(e30 - m.e30) <= EPSILON
+			&& GameMath::Abs(e31 - m.e31) <= EPSILON
+			&& GameMath::Abs(e32 - m.e32) <= EPSILON
+			&& GameMath::Abs(e33 - m.e33) <= EPSILON;
 	}
 
 	bool operator==(const Mat4x4& m) const
 	{
-		return Abs(e00 - m.e00) <= EPSILON
-			&& Abs(e01 - m.e01) <= EPSILON
-			&& Abs(e02 - m.e02) <= EPSILON
-			&& Abs(e03 - m.e03) <= EPSILON
-			&& Abs(e10 - m.e10) <= EPSILON
-			&& Abs(e11 - m.e11) <= EPSILON
-			&& Abs(e12 - m.e12) <= EPSILON
-			&& Abs(e13 - m.e13) <= EPSILON
-			&& Abs(e20 - m.e20) <= EPSILON
-			&& Abs(e21 - m.e21) <= EPSILON
-			&& Abs(e22 - m.e22) <= EPSILON
-			&& Abs(e23 - m.e23) <= EPSILON
-			&& Abs(e30 - m.e30) <= EPSILON
-			&& Abs(e31 - m.e31) <= EPSILON
-			&& Abs(e32 - m.e32) <= EPSILON
-			&& Abs(e33 - m.e33) <= EPSILON;
+		return GameMath::Abs(e00 - m.e00) <= EPSILON
+			&& GameMath::Abs(e01 - m.e01) <= EPSILON
+			&& GameMath::Abs(e02 - m.e02) <= EPSILON
+			&& GameMath::Abs(e03 - m.e03) <= EPSILON
+			&& GameMath::Abs(e10 - m.e10) <= EPSILON
+			&& GameMath::Abs(e11 - m.e11) <= EPSILON
+			&& GameMath::Abs(e12 - m.e12) <= EPSILON
+			&& GameMath::Abs(e13 - m.e13) <= EPSILON
+			&& GameMath::Abs(e20 - m.e20) <= EPSILON
+			&& GameMath::Abs(e21 - m.e21) <= EPSILON
+			&& GameMath::Abs(e22 - m.e22) <= EPSILON
+			&& GameMath::Abs(e23 - m.e23) <= EPSILON
+			&& GameMath::Abs(e30 - m.e30) <= EPSILON
+			&& GameMath::Abs(e31 - m.e31) <= EPSILON
+			&& GameMath::Abs(e32 - m.e32) <= EPSILON
+			&& GameMath::Abs(e33 - m.e33) <= EPSILON;
 	}
 
 	bool operator!=(Mat4x4&& m) const
 	{
-		return Abs(e00 - m.e00) > EPSILON
-			|| Abs(e01 - m.e01) > EPSILON
-			|| Abs(e02 - m.e02) > EPSILON
-			|| Abs(e03 - m.e03) > EPSILON
-			|| Abs(e10 - m.e10) > EPSILON
-			|| Abs(e11 - m.e11) > EPSILON
-			|| Abs(e12 - m.e12) > EPSILON
-			|| Abs(e13 - m.e13) > EPSILON
-			|| Abs(e20 - m.e20) > EPSILON
-			|| Abs(e21 - m.e21) > EPSILON
-			|| Abs(e22 - m.e22) > EPSILON
-			|| Abs(e23 - m.e23) > EPSILON
-			|| Abs(e30 - m.e30) > EPSILON
-			|| Abs(e31 - m.e31) > EPSILON
-			|| Abs(e32 - m.e32) > EPSILON
-			|| Abs(e33 - m.e33) > EPSILON;
+		return GameMath::Abs(e00 - m.e00) > EPSILON
+			|| GameMath::Abs(e01 - m.e01) > EPSILON
+			|| GameMath::Abs(e02 - m.e02) > EPSILON
+			|| GameMath::Abs(e03 - m.e03) > EPSILON
+			|| GameMath::Abs(e10 - m.e10) > EPSILON
+			|| GameMath::Abs(e11 - m.e11) > EPSILON
+			|| GameMath::Abs(e12 - m.e12) > EPSILON
+			|| GameMath::Abs(e13 - m.e13) > EPSILON
+			|| GameMath::Abs(e20 - m.e20) > EPSILON
+			|| GameMath::Abs(e21 - m.e21) > EPSILON
+			|| GameMath::Abs(e22 - m.e22) > EPSILON
+			|| GameMath::Abs(e23 - m.e23) > EPSILON
+			|| GameMath::Abs(e30 - m.e30) > EPSILON
+			|| GameMath::Abs(e31 - m.e31) > EPSILON
+			|| GameMath::Abs(e32 - m.e32) > EPSILON
+			|| GameMath::Abs(e33 - m.e33) > EPSILON;
 	}
 
 	bool operator!=(const Mat4x4& m) const
 	{
-		return Abs(e00 - m.e00) > EPSILON
-			|| Abs(e01 - m.e01) > EPSILON
-			|| Abs(e02 - m.e02) > EPSILON
-			|| Abs(e03 - m.e03) > EPSILON
-			|| Abs(e10 - m.e10) > EPSILON
-			|| Abs(e11 - m.e11) > EPSILON
-			|| Abs(e12 - m.e12) > EPSILON
-			|| Abs(e13 - m.e13) > EPSILON
-			|| Abs(e20 - m.e20) > EPSILON
-			|| Abs(e21 - m.e21) > EPSILON
-			|| Abs(e22 - m.e22) > EPSILON
-			|| Abs(e23 - m.e23) > EPSILON
-			|| Abs(e30 - m.e30) > EPSILON
-			|| Abs(e31 - m.e31) > EPSILON
-			|| Abs(e32 - m.e32) > EPSILON
-			|| Abs(e33 - m.e33) > EPSILON;
+		return GameMath::Abs(e00 - m.e00) > EPSILON
+			|| GameMath::Abs(e01 - m.e01) > EPSILON
+			|| GameMath::Abs(e02 - m.e02) > EPSILON
+			|| GameMath::Abs(e03 - m.e03) > EPSILON
+			|| GameMath::Abs(e10 - m.e10) > EPSILON
+			|| GameMath::Abs(e11 - m.e11) > EPSILON
+			|| GameMath::Abs(e12 - m.e12) > EPSILON
+			|| GameMath::Abs(e13 - m.e13) > EPSILON
+			|| GameMath::Abs(e20 - m.e20) > EPSILON
+			|| GameMath::Abs(e21 - m.e21) > EPSILON
+			|| GameMath::Abs(e22 - m.e22) > EPSILON
+			|| GameMath::Abs(e23 - m.e23) > EPSILON
+			|| GameMath::Abs(e30 - m.e30) > EPSILON
+			|| GameMath::Abs(e31 - m.e31) > EPSILON
+			|| GameMath::Abs(e32 - m.e32) > EPSILON
+			|| GameMath::Abs(e33 - m.e33) > EPSILON;
 	}
 
 	const float* GetPtr() const { return &e00; }
@@ -2427,34 +2428,34 @@ struct Mat4x4
 			1.0f, 0.0f, 0.0f, 0.0f,
 			0.0f, 1.0f, 0.0f, 0.0f,
 			0.0f, 0.0f, 1.0f, 0.0f,
-			 p.x,  p.y,  p.z, 1.0f
+			p.x, p.y, p.z, 1.0f
 		);
 	}
 
 	static inline Mat4x4 Scale(float xScale, float yScale, float zScale)
 	{
 		return Mat4x4(
-			xScale,   0.0f,   0.0f, 0.0f,
-			  0.0f, yScale,   0.0f, 0.0f,
-			  0.0f,   0.0f, zScale, 0.0f,
-			  0.0f,   0.0f,   0.0f, 1.0f
+			xScale, 0.0f, 0.0f, 0.0f,
+			0.0f, yScale, 0.0f, 0.0f,
+			0.0f, 0.0f, zScale, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f
 		);
 	}
 
 	static inline Mat4x4 Scale(const Vec3f& scale)
 	{
 		return Mat4x4(
-			scale.x,    0.0f,    0.0f, 0.0f,
-			   0.0f, scale.y,    0.0f, 0.0f,
-			   0.0f,    0.0f, scale.z, 0.0f,
-			   0.0f,    0.0f,    0.0f, 1.0f
+			scale.x, 0.0f, 0.0f, 0.0f,
+			0.0f, scale.y, 0.0f, 0.0f,
+			0.0f, 0.0f, scale.z, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f
 		);
 	}
 
 	static inline Mat4x4 RotateX(float radian)
 	{
-		float c = Cos(radian);
-		float s = Sin(radian);
+		float c = GameMath::Cos(radian);
+		float s = GameMath::Sin(radian);
 
 		return Mat4x4(
 			1.0f, 0.0f, 0.0f, 0.0f,
@@ -2466,8 +2467,8 @@ struct Mat4x4
 
 	static inline Mat4x4 RotateY(float radian)
 	{
-		float c = Cos(radian);
-		float s = Sin(radian);
+		float c = GameMath::Cos(radian);
+		float s = GameMath::Sin(radian);
 
 		return Mat4x4(
 			c, 0.0f, -s, 0.0f,
@@ -2479,8 +2480,8 @@ struct Mat4x4
 
 	static inline Mat4x4 RotateZ(float radian)
 	{
-		float c = Cos(radian);
-		float s = Sin(radian);
+		float c = GameMath::Cos(radian);
+		float s = GameMath::Sin(radian);
 
 		return Mat4x4(
 			c, s, 0.0f, 0.0f,
@@ -2489,12 +2490,12 @@ struct Mat4x4
 			0.0f, 0.0f, 0.0f, 1.0f
 		);
 	}
-	
+
 	/** 로드리게스 회전 공식 https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula */
 	static inline Mat4x4 Rotate(float radian, const Vec3f& axis)
 	{
-		float c = Cos(radian);
-		float s = Sin(radian);
+		float c = GameMath::Cos(radian);
+		float s = GameMath::Sin(radian);
 		Vec3f r = Vec3f::Normalize(axis);
 
 		return Mat4x4(
@@ -2525,7 +2526,7 @@ struct Mat4x4
 	static inline Mat4x4 Perspective(float fov, float aspect, float nearZ, float farZ)
 	{
 		float halfFov = fov / 2.0f;
-		float tanHalfFovy = Sin(halfFov) / Cos(halfFov);
+		float tanHalfFovy = GameMath::Sin(halfFov) / GameMath::Cos(halfFov);
 
 		return Mat4x4(
 			1.0f / (aspect * tanHalfFovy), 0.0f, 0.0f, 0.0f,
@@ -2762,28 +2763,28 @@ struct Quat
 
 	bool operator==(Quat&& q) const
 	{
-		return Abs(x - q.x) <= EPSILON && Abs(y - q.y) <= EPSILON && Abs(z - q.z) <= EPSILON && Abs(w - q.w) <= EPSILON;
+		return GameMath::Abs(x - q.x) <= EPSILON && GameMath::Abs(y - q.y) <= EPSILON && GameMath::Abs(z - q.z) <= EPSILON && GameMath::Abs(w - q.w) <= EPSILON;
 	}
 
 	bool operator==(const Quat& q) const
 	{
-		return Abs(x - q.x) <= EPSILON && Abs(y - q.y) <= EPSILON && Abs(z - q.z) <= EPSILON && Abs(w - q.w) <= EPSILON;
+		return GameMath::Abs(x - q.x) <= EPSILON && GameMath::Abs(y - q.y) <= EPSILON && GameMath::Abs(z - q.z) <= EPSILON && GameMath::Abs(w - q.w) <= EPSILON;
 	}
 
 	bool operator!=(Quat&& q) const
 	{
-		return Abs(x - q.x) > EPSILON || Abs(y - q.y) > EPSILON || Abs(z - q.z) > EPSILON || Abs(w - q.w) > EPSILON;
+		return GameMath::Abs(x - q.x) > EPSILON || GameMath::Abs(y - q.y) > EPSILON || GameMath::Abs(z - q.z) > EPSILON || GameMath::Abs(w - q.w) > EPSILON;
 	}
 
 	bool operator!=(const Quat& q) const
 	{
-		return Abs(x - q.x) > EPSILON || Abs(y - q.y) > EPSILON || Abs(z - q.z) > EPSILON || Abs(w - q.w) > EPSILON;
+		return GameMath::Abs(x - q.x) > EPSILON || GameMath::Abs(y - q.y) > EPSILON || GameMath::Abs(z - q.z) > EPSILON || GameMath::Abs(w - q.w) > EPSILON;
 	}
 
 	static inline Quat AxisRadian(const Vec3f& axis, float radian)
 	{
-		float s = Sin(radian * 0.5f);
-		float c = Cos(radian * 0.5f);
+		float s = GameMath::Sin(radian * 0.5f);
+		float c = GameMath::Cos(radian * 0.5f);
 		Vec3f norm = Vec3f::Normalize(axis);
 
 		return Quat(norm.x * s, norm.y * s, norm.z * s, c);
@@ -2791,10 +2792,10 @@ struct Quat
 
 	static inline Quat AxisAngle(const Vec3f& axis, float angle)
 	{
-		float radian = ToRadian(angle);
+		float radian = GameMath::ToRadian(angle);
 
-		float s = Sin(radian * 0.5f);
-		float c = Cos(radian * 0.5f);
+		float s = GameMath::Sin(radian * 0.5f);
+		float c = GameMath::Cos(radian * 0.5f);
 		Vec3f norm = Vec3f::Normalize(axis);
 
 		return Quat(norm.x * s, norm.y * s, norm.z * s, c);
@@ -2807,12 +2808,12 @@ struct Quat
 
 	static inline float Radian(const Quat& q)
 	{
-		return 2.0f * ACos(q.w);
+		return 2.0f * GameMath::ACos(q.w);
 	}
 
 	static inline float Angle(const Quat& q)
 	{
-		return ToDegree(2.0f * ACos(q.w));
+		return GameMath::ToDegree(2.0f * GameMath::ACos(q.w));
 	}
 
 	static inline float Dot(const Quat& lhs, const Quat& rhs)
@@ -2828,14 +2829,14 @@ struct Quat
 	static inline float Length(const Quat& q)
 	{
 		float lengthSq = Quat::LengthSq(q);
-		return Sqrt(lengthSq);
+		return GameMath::Sqrt(lengthSq);
 	}
 
 	static inline Quat Normalize(const Quat& q)
 	{
 		float length = Quat::Length(q);
 
-		if (NearZero(length))
+		if (GameMath::NearZero(length))
 		{
 			return Quat();
 		}
@@ -2880,11 +2881,11 @@ struct Quat
 		{
 			Vec3f ortho;
 
-			if (Abs(start.y) < Abs(start.x))
+			if (GameMath::Abs(start.y) < GameMath::Abs(start.x))
 			{
 				ortho = Vec3f(0.0f, 1.0f, 0.0f);
 			}
-			else if (Abs(start.z) < Abs(start.y) && Abs(start.z) < Abs(start.x))
+			else if (GameMath::Abs(start.z) < GameMath::Abs(start.y) && GameMath::Abs(start.z) < GameMath::Abs(start.x))
 			{
 				ortho = Vec3f(0.0f, 0.0f, 1.0f);
 			}
@@ -2927,8 +2928,8 @@ struct Quat
 		float radian = Quat::Radian(q);
 		Vec3f axis = Quat::Axis(q);
 
-		float c = Cos(power * radian * 0.5f);
-		float s = Sin(power * radian * 0.5f);
+		float c = GameMath::Cos(power * radian * 0.5f);
+		float s = GameMath::Sin(power * radian * 0.5f);
 
 		return Quat(axis.x * s, axis.y * s, axis.z * s, c);
 	}
@@ -2974,10 +2975,10 @@ struct Quat
 
 	bool IsSameOrientation(const Quat& lhs, const Quat& rhs)
 	{
-		return (Abs(lhs.x - rhs.x) <= EPSILON && Abs(lhs.y - rhs.y) <= EPSILON && Abs(lhs.z - rhs.z) <= EPSILON && Abs(lhs.w - rhs.w) <= EPSILON)
-			|| (Abs(lhs.x + rhs.x) <= EPSILON && Abs(lhs.y + rhs.y) <= EPSILON && Abs(lhs.z + rhs.z) <= EPSILON && Abs(lhs.w + rhs.w) <= EPSILON);
+		return (GameMath::Abs(lhs.x - rhs.x) <= EPSILON && GameMath::Abs(lhs.y - rhs.y) <= EPSILON && GameMath::Abs(lhs.z - rhs.z) <= EPSILON && GameMath::Abs(lhs.w - rhs.w) <= EPSILON)
+			|| (GameMath::Abs(lhs.x + rhs.x) <= EPSILON && GameMath::Abs(lhs.y + rhs.y) <= EPSILON && GameMath::Abs(lhs.z + rhs.z) <= EPSILON && GameMath::Abs(lhs.w + rhs.w) <= EPSILON);
 	}
-	
+
 	union
 	{
 		struct
@@ -3126,9 +3127,9 @@ struct Transform
 
 		inv.rotate = Quat::Inverse(transform.rotate);
 
-		inv.scale.x = Abs(transform.scale.x) < EPSILON ? 0.0f : 1.0f / transform.scale.x;
-		inv.scale.y = Abs(transform.scale.y) < EPSILON ? 0.0f : 1.0f / transform.scale.y;
-		inv.scale.z = Abs(transform.scale.z) < EPSILON ? 0.0f : 1.0f / transform.scale.z;
+		inv.scale.x = GameMath::Abs(transform.scale.x) < EPSILON ? 0.0f : 1.0f / transform.scale.x;
+		inv.scale.y = GameMath::Abs(transform.scale.y) < EPSILON ? 0.0f : 1.0f / transform.scale.y;
+		inv.scale.z = GameMath::Abs(transform.scale.z) < EPSILON ? 0.0f : 1.0f / transform.scale.z;
 
 		Vec3f invTranslation = -transform.position;
 		inv.position = inv.rotate * (inv.scale * invTranslation);
@@ -3156,5 +3157,3 @@ struct Transform
 	Quat rotate;
 	Vec3f scale;
 };
-
-}
