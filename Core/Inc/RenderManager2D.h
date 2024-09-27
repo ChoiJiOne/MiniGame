@@ -28,8 +28,8 @@ class RenderManager2D
 public:
 	struct SpriteRenderOptions
 	{
-		Vec3f blend; /** 스프라이트와 혼합할 색상 입니다. */
-		float factor; /** 스프라이트와 혼합할 색상의 비율입니다. factor의 값이 0이라면 색상이 혼합되지 않습니다. */
+		Vec3f blend = Vec3f(0.0f, 0.0f, 0.0f); /** 스프라이트와 혼합할 색상 입니다. */
+		float factor = 0.0f; /** 스프라이트와 혼합할 색상의 비율입니다. factor의 값이 0이라면 색상이 혼합되지 않습니다. */
 		bool bIsFlipH = false; /** 스프라이트를 가로로 뒤집을 지 여부입니다. */
 		bool bIsFlipV = false; /** 스프라이트를 세로로 뒤집을 지 여부입니다. */
 	};
