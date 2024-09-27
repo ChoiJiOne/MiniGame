@@ -54,6 +54,9 @@ void RenderManager2D::Startup()
 		GL_CHECK(glVertexAttribIPointer(3, 1, GL_INT, Vertex::GetStride(), (void*)(offsetof(Vertex, unit))));
 		GL_CHECK(glEnableVertexAttribArray(3));
 
+		GL_CHECK(glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, Vertex::GetStride(), (void*)(offsetof(Vertex, transparent))));
+		GL_CHECK(glEnableVertexAttribArray(4));
+
 		vertexBuffer_->Unbind();
 	}
 	GL_CHECK(glBindVertexArray(0));
@@ -1144,6 +1147,7 @@ void RenderManager2D::DrawSprite(ITexture* texture, const Vec2f& center, float w
 					vertices_[startVertexIndex + index].uv = uvs[index];
 					vertices_[startVertexIndex + index].color = Vec4f(options.blend.x, options.blend.y, options.blend.z, options.factor);
 					vertices_[startVertexIndex + index].unit = textureUnit;
+					vertices_[startVertexIndex + index].transparent = options.transparent;
 				}
 
 				return;
@@ -1170,6 +1174,7 @@ void RenderManager2D::DrawSprite(ITexture* texture, const Vec2f& center, float w
 					vertices_[startVertexIndex + index].uv = uvs[index];
 					vertices_[startVertexIndex + index].color = Vec4f(options.blend.x, options.blend.y, options.blend.z, options.factor);
 					vertices_[startVertexIndex + index].unit = textureUnit;
+					vertices_[startVertexIndex + index].transparent = options.transparent;
 				}
 
 				return;
@@ -1199,6 +1204,7 @@ void RenderManager2D::DrawSprite(ITexture* texture, const Vec2f& center, float w
 		vertices_[command.startVertexIndex + index].uv = uvs[index];
 		vertices_[command.startVertexIndex + index].color = Vec4f(options.blend.x, options.blend.y, options.blend.z, options.factor);
 		vertices_[command.startVertexIndex + index].unit = textureUnit;
+		vertices_[command.startVertexIndex + index].transparent = options.transparent;
 	}
 
 	commandQueue_.push(command);
@@ -1282,6 +1288,7 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 					vertices_[startVertexIndex + index].uv = uvs[index];
 					vertices_[startVertexIndex + index].color = Vec4f(options.blend.x, options.blend.y, options.blend.z, options.factor);
 					vertices_[startVertexIndex + index].unit = textureUnit;
+					vertices_[startVertexIndex + index].transparent = options.transparent;
 				}
 
 				return;
@@ -1308,6 +1315,7 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 					vertices_[startVertexIndex + index].uv = uvs[index];
 					vertices_[startVertexIndex + index].color = Vec4f(options.blend.x, options.blend.y, options.blend.z, options.factor);
 					vertices_[startVertexIndex + index].unit = textureUnit;
+					vertices_[startVertexIndex + index].transparent = options.transparent;
 				}
 
 				return;
@@ -1337,6 +1345,7 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 		vertices_[command.startVertexIndex + index].uv = uvs[index];
 		vertices_[command.startVertexIndex + index].color = Vec4f(options.blend.x, options.blend.y, options.blend.z, options.factor);
 		vertices_[command.startVertexIndex + index].unit = textureUnit;
+		vertices_[command.startVertexIndex + index].transparent = options.transparent;
 	}
 
 	commandQueue_.push(command);
