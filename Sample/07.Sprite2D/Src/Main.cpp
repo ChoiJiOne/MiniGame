@@ -51,7 +51,7 @@ public:
 
 		float sizeX = 66.0f;
 		float sizeY = 92.0f;
-
+		
 		RunLoop(
 			[&](float deltaSeconds)
 			{
@@ -81,7 +81,7 @@ public:
 					{
 						for (float y = maxY; y >= minY; y -= sizeY * 0.5f)
 						{
-							RenderManager2D::Get().DrawSprite(textures_[current], Vec2f(x, y), sizeX * 0.5f, sizeY * 0.5f, 0.0f);
+							RenderManager2D::Get().DrawSprite(textures_[current], Vec2f(x, y), sizeX * 0.5f, sizeY * 0.5f, 0.0f, options_);
 							current = (current + 1) % textures_.size();
 						}
 					}
@@ -95,6 +95,7 @@ public:
 
 private:
 	std::array<Texture2D*, 5> textures_;
+	RenderManager2D::SpriteRenderOptions options_;
 };
 
 int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR pCmdLine, _In_ int32_t nCmdShow)

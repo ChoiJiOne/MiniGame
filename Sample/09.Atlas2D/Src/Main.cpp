@@ -64,17 +64,17 @@ public:
 				ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 				if (ImGui::Button("FLIP-V"))
 				{
-					bIsFlipV_ = !bIsFlipV_;
+					options_.bIsFlipV = !options_.bIsFlipV;
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("FLIP-H"))
 				{
-					bIsFlipH_ = !bIsFlipH_;
+					options_.bIsFlipH = !options_.bIsFlipH;
 				}
 				ImGui::SameLine();
-				ImGui::Text("FLIP-V [%s]", bIsFlipV_ ? "ON" : "OFF");
+				ImGui::Text("FLIP-V [%s]", options_.bIsFlipV ? "ON" : "OFF");
 				ImGui::SameLine();
-				ImGui::Text("FLIP-H [%s]", bIsFlipH_ ? "ON" : "OFF");
+				ImGui::Text("FLIP-H [%s]", options_.bIsFlipH ? "ON" : "OFF");
 				ImGui::End();
 
 				BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
@@ -93,7 +93,7 @@ public:
 						RenderManager2D::Get().DrawLine(Vec2f(minX, y), Vec2f(maxX, y), color);
 					}
 
-					RenderManager2D::Get().DrawSprite(bird_, keys[current_], Vec2f(0.0f, 0.0f), 128.0f, 128.0f, 0.0f, bIsFlipH_, bIsFlipV_);
+					RenderManager2D::Get().DrawSprite(bird_, keys[current_], Vec2f(0.0f, 0.0f), 128.0f, 128.0f, 0.0f, options_);
 				}
 				RenderManager2D::Get().End();
 
@@ -106,9 +106,7 @@ private:
 	float stepTime_ = 0.0f;
 	int32_t current_ = 0;
 	Atlas2D* bird_ = nullptr;
-
-	bool bIsFlipH_ = false;
-	bool bIsFlipV_ = false;
+	RenderManager2D::SpriteRenderOptions options_;
 };
 
 int32_t WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR pCmdLine, _In_ int32_t nCmdShow)
