@@ -85,6 +85,6 @@ void main()
 		break;
 	}
 
-	fragColor = mix(fragColor, inColor.rgb, inColor.a);
+	fragColor = mix(fragColor, inColor.rgb, inColor.a); /** Color Blending. */
 	outFragColor = vec4(fragColor, alpha);
 }
