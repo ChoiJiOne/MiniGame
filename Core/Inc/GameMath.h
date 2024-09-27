@@ -3157,3 +3157,6 @@ struct Transform
 	Quat rotate;
 	Vec3f scale;
 };
+
+using Color3f = Vec3f;
+using Color4f = Vec4f;
