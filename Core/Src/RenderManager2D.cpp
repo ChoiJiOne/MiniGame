@@ -1074,7 +1074,7 @@ void RenderManager2D::DrawCircleWireframe(const Vec2f& center, float radius, con
 	commandQueue_.push(command);
 }
 
-void RenderManager2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, float h, float rotate, bool bFlipH, bool bFlipV)
+void RenderManager2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, float h, float rotate, const SpriteRenderOptions& options)
 {
 	static const uint32_t MAX_VERTEX_SIZE = 6;
 	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
@@ -1111,138 +1111,8 @@ void RenderManager2D::DrawSprite(ITexture* texture, const Vec2f& center, float w
 	);
 	for (auto& vertex : vertices)
 	{
-		vertex.x = bFlipH ? -vertex.x : vertex.x;
-		vertex.y = bFlipV ? -vertex.y : vertex.y;
-		
-		vertex = rotateMat * vertex;
-		vertex += (center + PIXEL_OFFSET);
-	}
-
-	if (!commandQueue_.empty())
-	{
-		RenderCommand& prevCommand = commandQueue_.back();
-		if (prevCommand.drawMode == DrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::SPRITE)
-		{
-			int32_t textureUnit = -1;
-			for (uint32_t unit = 0; unit < RenderCommand::MAX_TEXTURE_UNIT; ++unit)
-			{
-				if (prevCommand.texture[unit] == texture)
-				{
-					textureUnit = unit;
-					break;
-				}
-			}
-
-			if (textureUnit != -1)
-			{
-				uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-				prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
-
-				for (uint32_t index = 0; index < vertices.size(); ++index)
-				{
-					vertices_[startVertexIndex + index].position = vertices[index];
-					vertices_[startVertexIndex + index].uv = uvs[index];
-					vertices_[startVertexIndex + index].color = Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
-					vertices_[startVertexIndex + index].unit = textureUnit;
-				}
-
-				return;
-			}
-
-			for (uint32_t unit = 0; unit < RenderCommand::MAX_TEXTURE_UNIT; ++unit)
-			{
-				if (prevCommand.texture[unit] == nullptr)
-				{
-					textureUnit = unit;
-					break;
-				}
-			}
-
-			if (textureUnit != -1)
-			{
-				uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-				prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
-				prevCommand.texture[textureUnit] = texture;
-
-				for (uint32_t index = 0; index < vertices.size(); ++index)
-				{
-					vertices_[startVertexIndex + index].position = vertices[index];
-					vertices_[startVertexIndex + index].uv = uvs[index];
-					vertices_[startVertexIndex + index].color = Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
-					vertices_[startVertexIndex + index].unit = textureUnit;
-				}
-
-				return;
-			}
-		}
-	}
-
-	uint32_t startVertexIndex = 0;
-	if (!commandQueue_.empty())
-	{
-		RenderCommand& prevCommand = commandQueue_.back();
-		startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-	}
-
-	uint32_t textureUnit = 0;
-
-	RenderCommand command;
-	command.drawMode = DrawMode::TRIANGLES;
-	command.startVertexIndex = startVertexIndex;
-	command.vertexCount = static_cast<uint32_t>(vertices.size());
-	command.type = RenderCommand::Type::SPRITE;
-	command.texture[textureUnit] = texture;
-
-	for (uint32_t index = 0; index < command.vertexCount; ++index)
-	{
-		vertices_[command.startVertexIndex + index].position = vertices[index];
-		vertices_[command.startVertexIndex + index].uv = uvs[index];
-		vertices_[command.startVertexIndex + index].color = Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
-		vertices_[command.startVertexIndex + index].unit = textureUnit;
-	}
-
-	commandQueue_.push(command);
-}
-
-void RenderManager2D::DrawSprite(ITexture* texture, const Vec2f& center, float w, float h, const Vec3f& blend, float factor, float rotate, bool bFlipH, bool bFlipV)
-{
-	static const uint32_t MAX_VERTEX_SIZE = 6;
-	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
-	{
-		Flush();
-	}
-
-	float w2 = w * 0.5f;
-	float h2 = h * 0.5f;
-
-	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
-	{
-		Vec2f(-w2, -h2),
-		Vec2f(+w2, +h2),
-		Vec2f(-w2, +h2),
-		Vec2f(-w2, -h2),
-		Vec2f(+w2, -h2),
-		Vec2f(+w2, +h2),
-	};
-
-	std::array<Vec2f, MAX_VERTEX_SIZE> uvs =
-	{
-		Vec2f(0.0f, 1.0f),
-		Vec2f(1.0f, 0.0f),
-		Vec2f(0.0f, 0.0f),
-		Vec2f(0.0f, 1.0f),
-		Vec2f(1.0f, 1.0f),
-		Vec2f(1.0f, 0.0f),
-	};
-
-	Mat2x2 rotateMat = Mat2x2(
-		+GameMath::Cos(rotate), -GameMath::Sin(rotate),
-		+GameMath::Sin(rotate), +GameMath::Cos(rotate)
-	);
-	for (auto& vertex : vertices)
-	{
-		vertex.x = bFlipH ? -vertex.x : vertex.x;
-		vertex.y = bFlipV ? -vertex.y : vertex.y;
+		vertex.x = options.bIsFlipH ? -vertex.x : vertex.x;
+		vertex.y = options.bIsFlipV ? -vertex.y : vertex.y;
 
 		vertex = rotateMat * vertex;
 		vertex += (center + PIXEL_OFFSET);
@@ -1272,7 +1142,7 @@ void RenderManager2D::DrawSprite(ITexture* texture, const Vec2f& center, float w
 				{
 					vertices_[startVertexIndex + index].position = vertices[index];
 					vertices_[startVertexIndex + index].uv = uvs[index];
-					vertices_[startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
+					vertices_[startVertexIndex + index].color = Vec4f(options.blend.x, options.blend.y, options.blend.z, options.factor);
 					vertices_[startVertexIndex + index].unit = textureUnit;
 				}
 
@@ -1298,7 +1168,7 @@ void RenderManager2D::DrawSprite(ITexture* texture, const Vec2f& center, float w
 				{
 					vertices_[startVertexIndex + index].position = vertices[index];
 					vertices_[startVertexIndex + index].uv = uvs[index];
-					vertices_[startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
+					vertices_[startVertexIndex + index].color = Vec4f(options.blend.x, options.blend.y, options.blend.z, options.factor);
 					vertices_[startVertexIndex + index].unit = textureUnit;
 				}
 
@@ -1327,152 +1197,14 @@ void RenderManager2D::DrawSprite(ITexture* texture, const Vec2f& center, float w
 	{
 		vertices_[command.startVertexIndex + index].position = vertices[index];
 		vertices_[command.startVertexIndex + index].uv = uvs[index];
-		vertices_[command.startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
+		vertices_[command.startVertexIndex + index].color = Vec4f(options.blend.x, options.blend.y, options.blend.z, options.factor);
 		vertices_[command.startVertexIndex + index].unit = textureUnit;
 	}
 
 	commandQueue_.push(command);
 }
 
-void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const Vec2f& center, float w, float h, float rotate, bool bFlipH, bool bFlipV)
-{
-	static const uint32_t MAX_VERTEX_SIZE = 6;
-	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
-	{
-		Flush();
-	}
-
-	float w2 = w * 0.5f;
-	float h2 = h * 0.5f;
-
-	std::array<Vec2f, MAX_VERTEX_SIZE> vertices =
-	{
-		Vec2f(-w2, -h2),
-		Vec2f(+w2, +h2),
-		Vec2f(-w2, +h2),
-		Vec2f(-w2, -h2),
-		Vec2f(+w2, -h2),
-		Vec2f(+w2, +h2),
-	};
-
-	const Atlas2D::Block& block = atlas->GetByName(name);
-	float x0 = static_cast<float>(block.pos.x);
-	float y0 = static_cast<float>(block.pos.y);
-	float x1 = static_cast<float>(block.pos.x + block.size.x);
-	float y1 = static_cast<float>(block.pos.y + block.size.y);
-	float atlasWidth = static_cast<float>(atlas->GetWidth());
-	float atlasHeight = static_cast<float>(atlas->GetHeight());
-
-	std::array<Vec2f, MAX_VERTEX_SIZE> uvs =
-	{
-		Vec2f(x0 / atlasWidth, y1 / atlasHeight),
-		Vec2f(x1 / atlasWidth, y0 / atlasHeight),
-		Vec2f(x0 / atlasWidth, y0 / atlasHeight),
-		Vec2f(x0 / atlasWidth, y1 / atlasHeight),
-		Vec2f(x1 / atlasWidth, y1 / atlasHeight),
-		Vec2f(x1 / atlasWidth, y0 / atlasHeight),
-	};
-
-	Mat2x2 rotateMat = Mat2x2(
-		+GameMath::Cos(rotate), -GameMath::Sin(rotate),
-		+GameMath::Sin(rotate), +GameMath::Cos(rotate)
-	);
-	for (auto& vertex : vertices)
-	{
-		vertex.x = bFlipH ? -vertex.x : vertex.x;
-		vertex.y = bFlipV ? -vertex.y : vertex.y;
-
-		vertex = rotateMat * vertex;
-		vertex += (center + PIXEL_OFFSET);
-	}
-	
-	if (!commandQueue_.empty())
-	{
-		RenderCommand& prevCommand = commandQueue_.back();
-		if (prevCommand.drawMode == DrawMode::TRIANGLES && prevCommand.type == RenderCommand::Type::SPRITE)
-		{
-			int32_t textureUnit = -1;
-			for (uint32_t unit = 0; unit < RenderCommand::MAX_TEXTURE_UNIT; ++unit)
-			{
-				if (prevCommand.texture[unit] == atlas)
-				{
-					textureUnit = unit;
-					break;
-				}
-			}
-
-			if (textureUnit != -1)
-			{
-				uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-				prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
-
-				for (uint32_t index = 0; index < vertices.size(); ++index)
-				{
-					vertices_[startVertexIndex + index].position = vertices[index];
-					vertices_[startVertexIndex + index].uv = uvs[index];
-					vertices_[startVertexIndex + index].color = Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
-					vertices_[startVertexIndex + index].unit = textureUnit;
-				}
-
-				return;
-			}
-
-			for (uint32_t unit = 0; unit < RenderCommand::MAX_TEXTURE_UNIT; ++unit)
-			{
-				if (prevCommand.texture[unit] == nullptr)
-				{
-					textureUnit = unit;
-					break;
-				}
-			}
-
-			if (textureUnit != -1)
-			{
-				uint32_t startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-				prevCommand.vertexCount += static_cast<uint32_t>(vertices.size());
-				prevCommand.texture[textureUnit] = atlas;
-
-				for (uint32_t index = 0; index < vertices.size(); ++index)
-				{
-					vertices_[startVertexIndex + index].position = vertices[index];
-					vertices_[startVertexIndex + index].uv = uvs[index];
-					vertices_[startVertexIndex + index].color = Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
-					vertices_[startVertexIndex + index].unit = textureUnit;
-				}
-
-				return;
-			}
-		}
-	}
-
-	uint32_t startVertexIndex = 0;
-	if (!commandQueue_.empty())
-	{
-		RenderCommand& prevCommand = commandQueue_.back();
-		startVertexIndex = prevCommand.startVertexIndex + prevCommand.vertexCount;
-	}
-
-	uint32_t textureUnit = 0;
-
-	RenderCommand command;
-	command.drawMode = DrawMode::TRIANGLES;
-	command.startVertexIndex = startVertexIndex;
-	command.vertexCount = static_cast<uint32_t>(vertices.size());
-	command.type = RenderCommand::Type::SPRITE;
-	command.texture[textureUnit] = atlas;
-
-	for (uint32_t index = 0; index < command.vertexCount; ++index)
-	{
-		vertices_[command.startVertexIndex + index].position = vertices[index];
-		vertices_[command.startVertexIndex + index].uv = uvs[index];
-		vertices_[command.startVertexIndex + index].color = Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
-		vertices_[command.startVertexIndex + index].unit = textureUnit;
-	}
-
-	commandQueue_.push(command);
-}
-
-void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const Vec2f& center, float w, float h, const Vec3f& blend, float factor, float rotate, bool bFlipH, bool bFlipV)
+void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const Vec2f& center, float w, float h, float rotate, const SpriteRenderOptions& options)
 {	
 	static const uint32_t MAX_VERTEX_SIZE = 6;
 	if (IsFullCommandQueue(MAX_VERTEX_SIZE))
@@ -1517,8 +1249,8 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 	);
 	for (auto& vertex : vertices)
 	{
-		vertex.x = bFlipH ? -vertex.x : vertex.x;
-		vertex.y = bFlipV ? -vertex.y : vertex.y;
+		vertex.x = options.bIsFlipH ? -vertex.x : vertex.x;
+		vertex.y = options.bIsFlipV ? -vertex.y : vertex.y;
 
 		vertex = rotateMat * vertex;
 		vertex += (center + PIXEL_OFFSET);
@@ -1548,7 +1280,7 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 				{
 					vertices_[startVertexIndex + index].position = vertices[index];
 					vertices_[startVertexIndex + index].uv = uvs[index];
-					vertices_[startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
+					vertices_[startVertexIndex + index].color = Vec4f(options.blend.x, options.blend.y, options.blend.z, options.factor);
 					vertices_[startVertexIndex + index].unit = textureUnit;
 				}
 
@@ -1574,7 +1306,7 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 				{
 					vertices_[startVertexIndex + index].position = vertices[index];
 					vertices_[startVertexIndex + index].uv = uvs[index];
-					vertices_[startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
+					vertices_[startVertexIndex + index].color = Vec4f(options.blend.x, options.blend.y, options.blend.z, options.factor);
 					vertices_[startVertexIndex + index].unit = textureUnit;
 				}
 
@@ -1603,7 +1335,7 @@ void RenderManager2D::DrawSprite(Atlas2D* atlas, const std::string& name, const 
 	{
 		vertices_[command.startVertexIndex + index].position = vertices[index];
 		vertices_[command.startVertexIndex + index].uv = uvs[index];
-		vertices_[command.startVertexIndex + index].color = Vec4f(blend.x, blend.y, blend.z, factor);
+		vertices_[command.startVertexIndex + index].color = Vec4f(options.blend.x, options.blend.y, options.blend.z, options.factor);
 		vertices_[command.startVertexIndex + index].unit = textureUnit;
 	}
 

@@ -42,24 +42,22 @@ public:
 	void Begin(const Camera2D* camera2D = nullptr);
 	void End();
 
-	void DrawPoint(const Vec2f& point, const Vec4f& color, float pointSize = 1.0f);
+	void DrawPoint(const Vec2f& point, const Vec4f& color, float pointSize);
 	void DrawLine(const Vec2f& startPos, const Vec2f& endPos, const Vec4f& color);
 	void DrawLine(const Vec2f& startPos, const Vec4f& startColor, const Vec2f& endPos, const Vec4f& endColor);
 	void DrawTriangle(const Vec2f& fromPos, const Vec2f& byPos, const Vec2f& toPos, const Vec4f& color);
 	void DrawTriangle(const Vec2f& fromPos, const Vec4f& fromColor, const Vec2f& byPos, const Vec4f& byColor, const Vec2f& toPos, const Vec4f& toColor);
 	void DrawTriangleWireframe(const Vec2f& fromPos, const Vec2f& byPos, const Vec2f& toPos, const Vec4f& color);
 	void DrawTriangleWireframe(const Vec2f& fromPos, const Vec4f& fromColor, const Vec2f& byPos, const Vec4f& byColor, const Vec2f& toPos, const Vec4f& toColor);
-	void DrawRect(const Vec2f& center, float w, float h, const Vec4f& color, float rotate = 0.0f);
-	void DrawRectWireframe(const Vec2f& center, float w, float h, const Vec4f& color, float rotate = 0.0f);
-	void DrawRoundRect(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate = 0.0f);
-	void DrawRoundRectWireframe(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate = 0.0f);
+	void DrawRect(const Vec2f& center, float w, float h, const Vec4f& color, float rotate);
+	void DrawRectWireframe(const Vec2f& center, float w, float h, const Vec4f& color, float rotate);
+	void DrawRoundRect(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate);
+	void DrawRoundRectWireframe(const Vec2f& center, float w, float h, float side, const Vec4f& color, float rotate);
 	void DrawCircle(const Vec2f& center, float radius, const Vec4f& color);
 	void DrawCircleWireframe(const Vec2f& center, float radius, const Vec4f& color);
 
-	void DrawSprite(ITexture* texture, const Vec2f& center, float w, float h, float rotate = 0.0f, bool bFlipH = false, bool bFlipV = false);
-	void DrawSprite(ITexture* texture, const Vec2f& center, float w, float h, const Vec3f& blend, float factor = 0.0f, float rotate = 0.0f, bool bFlipH = false, bool bFlipV = false);
-	void DrawSprite(Atlas2D* atlas, const std::string& name, const Vec2f& center, float w, float h, float rotate = 0.0f, bool bFlipH = false, bool bFlipV = false);
-	void DrawSprite(Atlas2D* atlas, const std::string& name, const Vec2f& center, float w, float h, const Vec3f& blend, float factor = 0.0f, float rotate = 0.0f, bool bFlipH = false, bool bFlipV = false);
+	void DrawSprite(ITexture* texture, const Vec2f& center, float w, float h, float rotate, const SpriteRenderOptions& options);
+	void DrawSprite(Atlas2D* atlas, const std::string& name, const Vec2f& center, float w, float h, float rotate, const SpriteRenderOptions& options);
 	
 	void DrawString(TTFont* font, const std::wstring& text, const Vec2f& pos, const Vec4f& color);
 	
