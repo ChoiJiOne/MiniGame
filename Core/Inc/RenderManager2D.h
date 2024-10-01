@@ -64,7 +64,7 @@ public:
 	void DrawString(TTFont* font, const std::wstring& text, const Vec2f& pos, const Vec4f& color);
 
 	/** The Begin/End call structure should not be used*/
-	void DrawEntities(const Camera2D* camera, IEntity2D** entites, uint32_t count);
+	void BatchRenderEntities(const Camera2D* camera, IEntity2D** entites, uint32_t count);
 
 private:
 	friend class IApp;

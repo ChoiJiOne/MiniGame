@@ -1467,7 +1467,7 @@ void RenderManager2D::DrawString(TTFont* font, const std::wstring& text, const V
 	commandQueue_.push(command);
 }
 
-void RenderManager2D::DrawEntities(const Camera2D* camera, IEntity2D** entites, uint32_t count)
+void RenderManager2D::BatchRenderEntities(const Camera2D* camera, IEntity2D** entites, uint32_t count)
 {
 	Begin(camera);
 	{
