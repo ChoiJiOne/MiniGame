@@ -9,6 +9,7 @@
 #include "Assertion.h"
 #include "Atlas2D.h"
 #include "Camera2D.h"
+#include "IEntity2D.h"
 #include "ITexture.h"
 #include "RenderManager2D.h"
 #include "ResourceManager.h"
@@ -1464,6 +1465,18 @@ void RenderManager2D::DrawString(TTFont* font, const std::wstring& text, const V
 	composeVertexData(command.startVertexIndex, atlasUnit);
 
 	commandQueue_.push(command);
+}
+
+void RenderManager2D::DrawEntities(const Camera2D* camera, IEntity2D** entites, uint32_t count)
+{
+	Begin(camera);
+	{
+		for (uint32_t index = 0; index < count; ++index)
+		{
+			entites[index]->Render();
+		}
+	}
+	End();
 }
 
 void RenderManager2D::Flush()

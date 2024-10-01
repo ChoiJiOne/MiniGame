@@ -62,7 +62,10 @@ public:
 	void DrawSprite(Atlas2D* atlas, const std::string& name, const Vec2f& center, float w, float h, float rotate, const SpriteRenderOptions& options);
 	
 	void DrawString(TTFont* font, const std::wstring& text, const Vec2f& pos, const Vec4f& color);
-	
+
+	/** The Begin/End call structure should not be used*/
+	void DrawEntities(const Camera2D* camera, IEntity2D** entites, uint32_t count);
+
 private:
 	friend class IApp;
 
