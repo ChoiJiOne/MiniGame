@@ -88,23 +88,9 @@ void RenderManager2D::Shutdown()
 void RenderManager2D::Begin(const Camera2D* camera2D)
 {
 	CHECK(!bIsBegin_);
+	CHECK(camera2D);
 
-	Mat4x4 ortho;
-	if (!camera2D)
-	{
-		float w = 0.0f;
-		float h = 0.0f;
-		static const float nearZ = -1.0f;
-		static const float farZ = 1.0f;
-		app_->GetScreenSize<float>(w, h);
-
-		ortho = Mat4x4::Ortho(-w * 0.5f, +w * 0.5f, -h * 0.5f, +h * 0.5f, nearZ, farZ);
-	}
-	else
-	{
-		ortho = camera2D->GetOrtho();
-	}
-
+	Mat4x4 ortho = camera2D->GetOrtho();
 	for (auto& shader : shaders_)
 	{
 		Shader* shaderPtr = shader.second;

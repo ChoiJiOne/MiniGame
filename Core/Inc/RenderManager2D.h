@@ -10,6 +10,7 @@
 
 class Atlas2D;
 class Camera2D;
+class IEntity2D;
 class ITexture;
 class Shader;
 class TTFont;
@@ -40,7 +41,7 @@ public:
 
 	static RenderManager2D& Get();
 
-	void Begin(const Camera2D* camera2D = nullptr);
+	void Begin(const Camera2D* camera2D);
 	void End();
 
 	void DrawPoint(const Vec2f& point, const Vec4f& color, float pointSize);
