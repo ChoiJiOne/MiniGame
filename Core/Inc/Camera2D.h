@@ -7,6 +7,7 @@
 class Camera2D : public IEntity
 {
 public:
+	Camera2D() = default;
 	Camera2D(const Vec2f& center, const Vec2f& size);
 	virtual ~Camera2D();
 
