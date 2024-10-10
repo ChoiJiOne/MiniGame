@@ -22,7 +22,7 @@ file(GLOB_RECURSE PROJECT_SOURCE_FILE "${PROJECT_SOURCE_PATH}/**")
 add_executable(${PROJECT_NAME} WIN32 ${PROJECT_INCLUDE_FILE} ${PROJECT_SOURCE_FILE} ${PROJECT_RESOURCE_FILE})
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE_PATH})
-target_link_libraries(${PROJECT_NAME} PUBLIC GameMaker)
+target_link_libraries(${PROJECT_NAME} PUBLIC MiniGame)
 
 target_compile_definitions(
     ${PROJECT_NAME}
