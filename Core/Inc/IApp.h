@@ -372,8 +372,6 @@ public:
 	void DeleteWindowEventAction(const WindowEventID& windowEventID);
 	void SetActiveWindowEventAction(const WindowEventID& windowEventID, bool bIsActive);
 
-	Camera2D* GetScreenUICamera() { return screenUICamera_; }
-
 protected:
 	struct WindowEventAction
 	{
@@ -427,8 +425,6 @@ protected:
 	KeyboardState currKeyboardState_;
 	MouseState prevMouseState_;
 	MouseState currMouseState_;
-
-	Camera2D* screenUICamera_ = nullptr;
 
 	static const uint32_t MAX_EVENT_ACTION_SIZE = 200;
 	uint32_t windowEventActionSize_ = 0;

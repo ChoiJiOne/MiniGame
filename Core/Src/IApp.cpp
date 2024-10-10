@@ -116,8 +116,6 @@ IApp::IApp(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool b
 	RenderManager3D::Get().Startup();
 	DebugDrawManager3D::Get().Startup();
 
-	screenUICamera_ = Camera2D::CreateScreenCamera();
-
 	RegisterAppWindowEvent();
 	SetAlphaBlendMode(true);
 }
