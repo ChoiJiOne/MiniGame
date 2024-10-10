@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.27)
 
-project(GameMaker)
+project(MiniGame)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -12,7 +12,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 add_subdirectory(ThirdParty)
 
-set(PROJECT_NAME "GameMaker")
+set(PROJECT_NAME "MiniGame")
 
 include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/Config.cmake")
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/Config.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/Config.h")
