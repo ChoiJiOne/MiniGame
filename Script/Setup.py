@@ -47,7 +47,7 @@ def is_already_setup(root_path, project_name):
     return False
 
 def generate_files(root_path, project_name):
-    path = root_path + "\\GameMaker\\"
+    path = root_path + "\\MiniGame\\"
     project_path = root_path + "\\" + project_name
 
     modes = [ "Debug", "MinSizeRel", "Release", "RelWithDebInfo", ]
