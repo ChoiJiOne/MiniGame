@@ -62,9 +62,9 @@ void RenderManager2D::Startup()
 	}
 	GL_CHECK(glBindVertexArray(0));
 
-	Shader* geometry2D = ResourceManager::Get().Create<Shader>("GameMaker/Shader/Geometry2D.vert", "GameMaker/Shader/Geometry2D.frag");
-	Shader* sprite2D = ResourceManager::Get().Create<Shader>("GameMaker/Shader/Sprite2D.vert", "GameMaker/Shader/Sprite2D.frag");
-	Shader* string2D = ResourceManager::Get().Create<Shader>("GameMaker/Shader/String2D.vert", "GameMaker/Shader/String2D.frag");
+	Shader* geometry2D = ResourceManager::Get().Create<Shader>("MiniGame/Shader/Geometry2D.vert", "MiniGame/Shader/Geometry2D.frag");
+	Shader* sprite2D = ResourceManager::Get().Create<Shader>("MiniGame/Shader/Sprite2D.vert", "MiniGame/Shader/Sprite2D.frag");
+	Shader* string2D = ResourceManager::Get().Create<Shader>("MiniGame/Shader/String2D.vert", "MiniGame/Shader/String2D.frag");
 
 	shaders_.insert({ RenderCommand::Type::GEOMETRY, geometry2D });
 	shaders_.insert({ RenderCommand::Type::SPRITE,   sprite2D });

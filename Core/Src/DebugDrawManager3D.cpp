@@ -42,7 +42,7 @@ void DebugDrawManager3D::Startup()
 	}
 	GL_CHECK(glBindVertexArray(0));
 
-	shader_ = ResourceManager::Get().Create<Shader>("GameMaker/Shader/DebugDraw3D.vert", "GameMaker/Shader/DebugDraw3D.frag");
+	shader_ = ResourceManager::Get().Create<Shader>("MiniGame/Shader/DebugDraw3D.vert", "MiniGame/Shader/DebugDraw3D.frag");
 }
 
 void DebugDrawManager3D::Shutdown()
