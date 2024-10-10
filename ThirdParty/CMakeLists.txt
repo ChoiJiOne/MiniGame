@@ -5,7 +5,6 @@ add_subdirectory(cgltf)
 add_subdirectory(glad)
 add_subdirectory(imgui)
 add_subdirectory(jsoncpp)
-add_subdirectory(lua)
 add_subdirectory(mimalloc)
 add_subdirectory(miniaudio)
 add_subdirectory(SDL)
@@ -16,7 +15,6 @@ set_target_properties(
     glad 
     imgui 
     jsoncpp 
-    lua
     miniaudio 
     SDL2 
     SDL2main 
