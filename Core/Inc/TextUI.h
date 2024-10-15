@@ -26,6 +26,8 @@ public:
 	virtual void Release() override;
 	virtual Type GetType() const override { return Type::TEXT; }
 
+	void SetText(const std::wstring& text);
+
 private:
 	friend class UIManager;
 

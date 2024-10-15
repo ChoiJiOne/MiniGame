@@ -29,3 +29,11 @@ void TextUI::Release()
 
 	bIsInitialized_ = false;
 }
+
+void TextUI::SetText(const std::wstring& text)
+{
+	layout_.text = text;
+
+	layout_.font->MeasureText(layout_.text, textSize_.x, textSize_.y);
+	textPos_ = layout_.textCenterPos + Vec2f(-textSize_.x * 0.5f, +textSize_.y * 0.5f);
+}
