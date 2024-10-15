@@ -91,6 +91,11 @@ void UIManager::BatchTickUIEntity(IEntityUI** entities, uint32_t count, float de
 
 void UIManager::BatchRenderUIEntity(IEntityUI** entities, uint32_t count)
 {
+	if (count == 0)
+	{
+		return;
+	}
+
 	RenderManager2D& renderMgr = RenderManager2D::Get();
 
 	renderMgr.Begin(uiCamera_);
