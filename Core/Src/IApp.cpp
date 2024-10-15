@@ -24,6 +24,7 @@
 #include "RenderManager2D.h"
 #include "RenderManager3D.h"
 #include "ResourceManager.h"
+#include "UIManager.h"
 
 static LPTOP_LEVEL_EXCEPTION_FILTER topLevelExceptionFilter_;
 extern LONG WINAPI DetectApplicationCrash(EXCEPTION_POINTERS* ep);
@@ -115,6 +116,7 @@ IApp::IApp(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool b
 	RenderManager2D::Get().Startup();
 	RenderManager3D::Get().Startup();
 	DebugDrawManager3D::Get().Startup();
+	UIManager::Get().Startup();
 
 	RegisterAppWindowEvent();
 	SetAlphaBlendMode(true);
@@ -122,6 +124,7 @@ IApp::IApp(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool b
 
 IApp::~IApp()
 {
+	UIManager::Get().Shutdown();
 	EntityManager::Get().Cleanup();
 	DebugDrawManager3D::Get().Shutdown();
 	RenderManager3D::Get().Shutdown();
