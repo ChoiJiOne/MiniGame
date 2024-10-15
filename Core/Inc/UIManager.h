@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Macro.h"
+#include "IEntityUI.h"
 
 class Camera2D;
 
