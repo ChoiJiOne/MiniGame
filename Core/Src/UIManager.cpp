@@ -4,6 +4,7 @@
 #include "ButtonUI.h"
 #include "Camera2D.h"
 #include "EntityManager.h"
+#include "RenderManager2D.h"
 #include "UIManager.h"
 
 UIManager& UIManager::Get()
@@ -73,6 +74,47 @@ ButtonUI* UIManager::Create(const std::string& path, const Mouse& mouse, TTFont*
 	layout.side = side;
 
 	return EntityManager::Get().Create<ButtonUI>(layout, clickEvent);
+}
+
+void UIManager::BatchTickUIEntity(IEntityUI** entities, uint32_t count, float deltaSeconds)
+{
+	if (count == 0)
+	{
+		return;
+	}
+
+	for (uint32_t index = 0; index < count; ++index)
+	{
+		entities[index]->Tick(deltaSeconds);
+	}
+}
+
+void UIManager::BatchRenderUIEntity(IEntityUI** entities, uint32_t count)
+{
+	RenderManager2D& renderMgr = RenderManager2D::Get();
+
+	renderMgr.Begin(uiCamera_);
+	{
+		for (uint32_t index = 0; index < count; ++index)
+		{
+			const IEntityUI::Type& type = entities[index]->GetType();
+			switch (type)
+			{
+			case IEntityUI::Type::BUTTON:
+			{
+				ButtonUI* button = reinterpret_cast<ButtonUI*>(entities[index]);
+				const Rect2D& bound = button->bound_;
+				const ButtonUI::Layout& layout = button->layout_;
+				const Vec4f& color = button->stateColors_.at(button->state_);
+
+				renderMgr.DrawRoundRect(bound.center, bound.size.x, bound.size.y, layout.side, color, 0.0f);
+				renderMgr.DrawString(layout.font, layout.text, button->textPos_, layout.textColor);
+			}
+			break;
+			}
+		}
+	}
+	renderMgr.End();
 }
 
 void UIManager::Startup()
