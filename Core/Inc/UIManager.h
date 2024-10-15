@@ -6,6 +6,7 @@
 class ButtonUI;
 class Camera2D;
 class TTFont;
+class TextUI;
 
 /** UI 매니저는 싱글턴입니다. */
 class UIManager
@@ -16,6 +17,7 @@ public:
 	static UIManager& Get();
 
 	ButtonUI* Create(const std::string& path, const Mouse& mouse, TTFont* font, const std::function<void()>& clickEvent);
+	TextUI* Create(const std::wstring& text, TTFont* font, const Vec2f& textCenterPos, const Vec4f& textColor);
 
 	void BatchTickUIEntity(IEntityUI** entities, uint32_t count, float deltaSeconds);
 	void BatchRenderUIEntity(IEntityUI** entities, uint32_t count);

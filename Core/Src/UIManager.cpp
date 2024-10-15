@@ -5,6 +5,7 @@
 #include "Camera2D.h"
 #include "EntityManager.h"
 #include "RenderManager2D.h"
+#include "TextUI.h"
 #include "UIManager.h"
 
 UIManager& UIManager::Get()
@@ -76,6 +77,17 @@ ButtonUI* UIManager::Create(const std::string& path, const Mouse& mouse, TTFont*
 	return EntityManager::Get().Create<ButtonUI>(layout, clickEvent);
 }
 
+TextUI* UIManager::Create(const std::wstring& text, TTFont* font, const Vec2f& textCenterPos, const Vec4f& textColor)
+{
+	TextUI::Layout layout;
+	layout.textColor = textColor;
+	layout.textCenterPos = textCenterPos;
+	layout.font = font;
+	layout.text = text;
+	
+	return EntityManager::Get().Create<TextUI>(layout);
+}
+
 void UIManager::BatchTickUIEntity(IEntityUI** entities, uint32_t count, float deltaSeconds)
 {
 	if (count == 0)
@@ -105,6 +117,13 @@ void UIManager::BatchRenderUIEntity(IEntityUI** entities, uint32_t count)
 			const IEntityUI::Type& type = entities[index]->GetType();
 			switch (type)
 			{
+			case IEntityUI::Type::TEXT:
+			{
+				TextUI* text = reinterpret_cast<TextUI*>(entities[index]);
+				renderMgr.DrawString(text->layout_.font, text->layout_.text, text->textPos_, text->layout_.textColor);
+			}
+			break;
+
 			case IEntityUI::Type::BUTTON:
 			{
 				ButtonUI* button = reinterpret_cast<ButtonUI*>(entities[index]);
