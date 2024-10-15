@@ -38,6 +38,7 @@ public:
 
 	virtual void Tick(float deltaSeconds) override;
 	virtual void Release() override;
+	virtual Type GetType() const override { return Type::BUTTON; }
 
 private:
 	friend class UIManager;
