@@ -40,6 +40,8 @@ public:
 	virtual void Release() override;
 
 private:
+	friend class UIManager;
+
 	enum class State : int32_t
 	{
 		DISABLED = 0x00,
