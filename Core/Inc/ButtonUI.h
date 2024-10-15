@@ -5,7 +5,6 @@
 
 #include "Collision2D.h"
 #include "IApp.h"
-
 #include "IEntityUI.h"
 
 class TTFont;
