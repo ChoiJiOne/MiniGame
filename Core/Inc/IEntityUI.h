@@ -22,6 +22,7 @@ public:
 
 	virtual void Tick(float deltaSeconds) = 0;
 	virtual void Release() = 0;
+	virtual const Type& GetType() const = 0;
 
 protected:
 	Type type_ = Type::NONE;
