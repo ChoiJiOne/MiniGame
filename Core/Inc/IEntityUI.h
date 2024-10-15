@@ -6,6 +6,15 @@
 class IEntityUI : public IEntity
 {
 public:
+	enum class Type
+	{
+		NONE   = 0x00,
+		TEXT   = 0x01,
+		PANEL  = 0x02,
+		BUTTON = 0x03,
+	};
+
+public:
 	IEntityUI() {}
 	virtual ~IEntityUI() {}
 
@@ -13,4 +22,7 @@ public:
 
 	virtual void Tick(float deltaSeconds) = 0;
 	virtual void Release() = 0;
+
+protected:
+	Type type_ = Type::NONE;
 };
