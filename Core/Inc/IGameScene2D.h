@@ -22,6 +22,7 @@ public:
 	virtual IGameScene* GetSwitchScene() = 0;
 
 protected:
+	class EntityManager* entityMgr_ = nullptr;
 	class RenderManager2D* render2dMgr_ = nullptr;
 	class UIManager* uiMgr_ = nullptr;
 
