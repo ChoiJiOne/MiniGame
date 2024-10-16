@@ -54,6 +54,19 @@ bool GetColorFromJson(const Json::Value& root, const std::string& name, Vec4f& o
 	return true;
 }
 
+bool GetFloatFromJson(const Json::Value& root, const std::string& name, float& outFloat)
+{
+	bool bIsInvalid = root[name].isNull();
+	bool bIsFloatInvalid = !root[name].isDouble();
+	if (bIsInvalid || bIsFloatInvalid)
+	{
+		return false;
+	}
+	
+	outFloat = root[name].asFloat();
+	return true;
+}
+
 UIManager& UIManager::Get()
 {
 	static UIManager instance;
