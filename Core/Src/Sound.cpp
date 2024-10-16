@@ -70,7 +70,6 @@ bool Sound::IsPlaying()
 
 bool Sound::IsDone()
 {
-
 	return ma_sound_at_end(reinterpret_cast<ma_sound*>(audioSourcePtr_)) == MA_TRUE;
 }
 
