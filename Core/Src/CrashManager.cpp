@@ -7,6 +7,8 @@
 #include "CrashManager.h"
 #include "GameUtils.h"
 
+CrashManager CrashManager::instance_;
+
 static std::function<void()> crashCallbackEvent_ = nullptr;
 static std::wstring crashDumpFile_;
 
@@ -70,8 +72,12 @@ LONG WINAPI DetectApplicationCrash(EXCEPTION_POINTERS* ep)
 
 CrashManager& CrashManager::Get()
 {
-	static CrashManager instance;
-	return instance;
+	return instance_;
+}
+
+CrashManager* CrashManager::GetPtr()
+{
+	return &instance_;
 }
 
 void CrashManager::SetCrashCallbackEvent(const std::function<void()>& callback)

@@ -12,6 +12,7 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(CrashManager);
 
 	static CrashManager& Get();
+	static CrashManager* GetPtr();
 
 	void SetCrashCallbackEvent(const std::function<void()>& callback);
 	const wchar_t* GetCrashDumpFileNamePtr();
@@ -20,4 +21,7 @@ public:
 private:
 	CrashManager() = default;
 	virtual ~CrashManager() {}
+
+private:
+	static CrashManager instance_;
 };
