@@ -33,6 +33,10 @@ private:
 	void Startup(); /** IApp 내부에서만 호출해야 합니다. */
 	void Shutdown(); /** IApp 내부에서만 호출해야 합니다. */
 
+	void PassRoundRect(IEntityUI** entities, uint32_t count);
+	void PassRoundRectWireframe(IEntityUI** entities, uint32_t count);
+	void PassString(IEntityUI** entities, uint32_t count);
+
 private:
 	Camera2D* uiCamera_ = nullptr;
 };

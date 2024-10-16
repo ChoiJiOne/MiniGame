@@ -63,7 +63,7 @@ bool GetColorFromJson(const Json::Value& root, const std::string& name, Vec4f& o
 	float b = root[name]["b"].asFloat();
 	float a = root[name]["a"].asFloat();
 	outColor = Vec4f(r, g, b, a);
-	
+
 	return true;
 }
 
@@ -91,7 +91,7 @@ bool GetFloatFromJson(const Json::Value& root, const std::string& name, float& o
 	{
 		return false;
 	}
-	
+
 	outFloat = root[name].asFloat();
 	return true;
 }
@@ -138,7 +138,7 @@ PanelUI* UIManager::CreatePanelUI(const std::string& path, TTFont* font)
 
 	std::string type;
 	CHECK(GetStringFromJson(root, "type", type) && type == "panel");
-	
+
 	PanelUI::Layout layout;
 	layout.font = font;
 
@@ -149,7 +149,7 @@ PanelUI* UIManager::CreatePanelUI(const std::string& path, TTFont* font)
 	CHECK(GetVec2FromJson(root, "size", layout.size));
 	CHECK(GetWStringFromJson(root, "text", layout.text));
 	CHECK(GetFloatFromJson(root, "side", layout.side));
-	
+
 	return EntityManager::Get().Create<PanelUI>(layout);
 }
 
@@ -196,40 +196,9 @@ void UIManager::BatchRenderUIEntity(IEntityUI** entities, uint32_t count)
 	RenderManager2D& renderMgr = RenderManager2D::Get();
 	renderMgr.Begin(uiCamera_);
 	{
-		for (uint32_t index = 0; index < count; ++index)
-		{
-			const IEntityUI::Type& type = entities[index]->GetType();
-			switch (type)
-			{
-			case IEntityUI::Type::TEXT:
-			{
-				TextUI* text = reinterpret_cast<TextUI*>(entities[index]);
-				renderMgr.DrawString(text->layout_.font, text->layout_.text, text->textPos_, text->layout_.textColor);
-			}
-			break;
-
-			case IEntityUI::Type::PANEL:
-			{
-				PanelUI* panel = reinterpret_cast<PanelUI*>(entities[index]);
-				renderMgr.DrawRoundRect(panel->layout_.center, panel->layout_.size.x, panel->layout_.size.y, panel->layout_.side, panel->layout_.backgroundColor, 0.0f);
-				renderMgr.DrawRoundRectWireframe(panel->layout_.center, panel->layout_.size.x, panel->layout_.size.y, panel->layout_.side, panel->layout_.outlineColor, 0.0f);
-				renderMgr.DrawString(panel->layout_.font, panel->layout_.text, panel->textPos_, panel->layout_.textColor);
-			}
-			break;
-
-			case IEntityUI::Type::BUTTON:
-			{
-				ButtonUI* button = reinterpret_cast<ButtonUI*>(entities[index]);
-				const Rect2D& bound = button->bound_;
-				const ButtonUI::Layout& layout = button->layout_;
-				const Vec4f& color = button->stateColors_.at(button->state_);
-
-				renderMgr.DrawRoundRect(bound.center, bound.size.x, bound.size.y, layout.side, color, 0.0f);
-				renderMgr.DrawString(layout.font, layout.text, button->textPos_, layout.textColor);
-			}
-			break;
-			}
-		}
+		PassRoundRect(entities, count);
+		PassRoundRectWireframe(entities, count);
+		PassString(entities, count);
 	}
 	renderMgr.End();
 }
@@ -243,4 +212,95 @@ void UIManager::Shutdown()
 {
 	EntityManager::Get().Destroy(uiCamera_);
 	uiCamera_ = nullptr;
+}
+
+void UIManager::PassRoundRect(IEntityUI** entities, uint32_t count)
+{
+	RenderManager2D& renderMgr = RenderManager2D::Get();
+	for (uint32_t index = 0; index < count; ++index)
+	{
+		const IEntityUI::Type& type = entities[index]->GetType();
+		switch (type)
+		{
+		case IEntityUI::Type::TEXT:
+			// Nothing...
+			break;
+
+		case IEntityUI::Type::PANEL:
+		{
+			PanelUI* panel = reinterpret_cast<PanelUI*>(entities[index]);
+			renderMgr.DrawRoundRect(panel->layout_.center, panel->layout_.size.x, panel->layout_.size.y, panel->layout_.side, panel->layout_.backgroundColor, 0.0f);
+		}
+		break;
+
+		case IEntityUI::Type::BUTTON:
+		{
+			ButtonUI* button = reinterpret_cast<ButtonUI*>(entities[index]);
+			const Rect2D& bound = button->bound_;
+			const ButtonUI::Layout& layout = button->layout_;
+			const Vec4f& color = button->stateColors_.at(button->state_);
+
+			renderMgr.DrawRoundRect(bound.center, bound.size.x, bound.size.y, layout.side, color, 0.0f);
+		}
+		break;
+		}
+	}
+}
+
+void UIManager::PassRoundRectWireframe(IEntityUI** entities, uint32_t count)
+{
+	RenderManager2D& renderMgr = RenderManager2D::Get();
+	for (uint32_t index = 0; index < count; ++index)
+	{
+		const IEntityUI::Type& type = entities[index]->GetType();
+		switch (type)
+		{
+		case IEntityUI::Type::TEXT:
+			// Nothing...
+			break;
+
+		case IEntityUI::Type::PANEL:
+		{
+			PanelUI* panel = reinterpret_cast<PanelUI*>(entities[index]);
+			renderMgr.DrawRoundRectWireframe(panel->layout_.center, panel->layout_.size.x, panel->layout_.size.y, panel->layout_.side, panel->layout_.outlineColor, 0.0f);
+		}
+		break;
+
+		case IEntityUI::Type::BUTTON:
+			// Nothing...
+			break;
+		}
+	}
+}
+
+void UIManager::PassString(IEntityUI** entities, uint32_t count)
+{
+	RenderManager2D& renderMgr = RenderManager2D::Get();
+	for (uint32_t index = 0; index < count; ++index)
+	{
+		const IEntityUI::Type& type = entities[index]->GetType();
+		switch (type)
+		{
+		case IEntityUI::Type::TEXT:
+		{
+			TextUI* text = reinterpret_cast<TextUI*>(entities[index]);
+			renderMgr.DrawString(text->layout_.font, text->layout_.text, text->textPos_, text->layout_.textColor);
+		}
+		break;
+
+		case IEntityUI::Type::PANEL:
+		{
+			PanelUI* panel = reinterpret_cast<PanelUI*>(entities[index]);
+			renderMgr.DrawString(panel->layout_.font, panel->layout_.text, panel->textPos_, panel->layout_.textColor);
+		}
+		break;
+
+		case IEntityUI::Type::BUTTON:
+		{
+			ButtonUI* button = reinterpret_cast<ButtonUI*>(entities[index]);
+			renderMgr.DrawString(button->layout_.font, button->layout_.text, button->textPos_, button->layout_.textColor);
+		}
+		break;
+		}
+	}
 }
