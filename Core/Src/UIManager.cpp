@@ -23,6 +23,19 @@ bool ReadJsonFile(const std::string& path, Json::Value& outRoot, std::string& ou
 	return bSucceed;
 }
 
+bool GetStringFromJson(const Json::Value& root, const std::string& name, std::string& outName)
+{
+	bool bIsInValid = root["type"].isNull();
+	bool bIsStringInvalid = !root["type"].isString();
+	if (bIsInValid || bIsStringInvalid)
+	{
+		return false;
+	}
+
+	outName = root[name].asString();
+	return true;
+}
+
 bool GetColorFromJson(const Json::Value& root, const std::string& name, Vec4f& outColor)
 {
 	bool bIsInvalid = root[name].isNull() || root[name]["r"].isNull() || root[name]["g"].isNull() || root[name]["b"].isNull() || root[name]["a"].isNull();
