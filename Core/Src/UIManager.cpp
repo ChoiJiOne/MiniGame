@@ -36,6 +36,19 @@ bool GetStringFromJson(const Json::Value& root, const std::string& name, std::st
 	return true;
 }
 
+bool GetWStringFromJson(const Json::Value& root, const std::string& name, std::wstring& outName)
+{
+	bool bIsInValid = root["type"].isNull();
+	bool bIsStringInvalid = !root["type"].isString();
+	if (bIsInValid || bIsStringInvalid)
+	{
+		return false;
+	}
+
+	outName = GameUtils::Convert(root[name].asString());
+	return true;
+}
+
 bool GetColorFromJson(const Json::Value& root, const std::string& name, Vec4f& outColor)
 {
 	bool bIsInvalid = root[name].isNull() || root[name]["r"].isNull() || root[name]["g"].isNull() || root[name]["b"].isNull() || root[name]["a"].isNull();
@@ -97,50 +110,21 @@ ButtonUI* UIManager::CreateButtonUI(const std::string& path, const Mouse& mouse,
 	ASSERT(bSucceed, "%s", message.c_str());
 
 	std::string type;
-	GetStringFromJson(root, "type", type);
-	CHECK(type == "button");
-
-	Vec4f textColor;
-	GetColorFromJson(root, "textColor", textColor);
-
-	Vec4f disableColor;
-	GetColorFromJson(root, "disableColor", disableColor);
-
-	Vec4f enableColor;
-	GetColorFromJson(root, "enableColor", enableColor);
-
-	Vec4f pressColor;
-	GetColorFromJson(root, "pressColor", pressColor);
-
-	Vec4f releaseColor;
-	GetColorFromJson(root, "releaseColor", releaseColor);
-
-	CHECK(!root["center"].isNull() && !root["center"]["x"].isNull() && !root["center"]["y"].isNull());
-	CHECK(root["center"]["x"].isDouble() && root["center"]["y"].isDouble());
-	Vec2f center(root["center"]["x"].asFloat(), root["center"]["y"].asFloat());
-
-	CHECK(!root["size"].isNull() && !root["size"]["w"].isNull() && !root["size"]["h"].isNull());
-	CHECK(root["size"]["w"].isDouble() && root["size"]["h"].isDouble());
-	Vec2f size(root["size"]["w"].asFloat(), root["size"]["h"].asFloat());
-
-	CHECK(!root["text"].isNull() && root["text"].isString());
-	std::string text = root["text"].asString();
-
-	CHECK(!root["side"].isNull() && root["side"].isDouble());
-	float side = root["side"].asFloat();
+	CHECK(GetStringFromJson(root, "type", type) && type == "button");
 
 	ButtonUI::Layout layout;
-	layout.textColor = textColor;
-	layout.disableColor = disableColor;
-	layout.enableColor = enableColor;
-	layout.pressColor = pressColor;
-	layout.releaseColor = releaseColor;
-	layout.center = center;
-	layout.size = size;
 	layout.mouse = mouse;
 	layout.font = font;
-	layout.text = GameUtils::Convert(text);
-	layout.side = side;
+
+	CHECK(GetColorFromJson(root, "textColor", layout.textColor));
+	CHECK(GetColorFromJson(root, "disableColor", layout.disableColor));
+	CHECK(GetColorFromJson(root, "enableColor", layout.enableColor));
+	CHECK(GetColorFromJson(root, "pressColor", layout.pressColor));
+	CHECK(GetColorFromJson(root, "releaseColor", layout.releaseColor));
+	CHECK(GetVec2FromJson(root, "center", layout.center));
+	CHECK(GetVec2FromJson(root, "size", layout.size));
+	CHECK(GetWStringFromJson(root, "text", layout.text));
+	CHECK(GetFloatFromJson(root, "side", layout.side));
 
 	return EntityManager::Get().Create<ButtonUI>(layout, clickEvent);
 }
@@ -153,42 +137,19 @@ PanelUI* UIManager::CreatePanelUI(const std::string& path, TTFont* font)
 	ASSERT(bSucceed, "%s", message.c_str());
 
 	std::string type;
-	GetStringFromJson(root, "type", type);
-	CHECK(type == "panel");
-
-	Vec4f backgroundColor;
-	GetColorFromJson(root, "backgroundColor", backgroundColor);
-
-	Vec4f outlineColor;
-	GetColorFromJson(root, "outlineColor", outlineColor);
-
-	Vec4f textColor;
-	GetColorFromJson(root, "textColor", textColor);
+	CHECK(GetStringFromJson(root, "type", type) && type == "panel");
 	
-	CHECK(!root["center"].isNull() && !root["center"]["x"].isNull() && !root["center"]["y"].isNull());
-	CHECK(root["center"]["x"].isDouble() && root["center"]["y"].isDouble());
-	Vec2f center(root["center"]["x"].asFloat(), root["center"]["y"].asFloat());
-
-	CHECK(!root["size"].isNull() && !root["size"]["w"].isNull() && !root["size"]["h"].isNull());
-	CHECK(root["size"]["w"].isDouble() && root["size"]["h"].isDouble());
-	Vec2f size(root["size"]["w"].asFloat(), root["size"]["h"].asFloat());
-
-	CHECK(!root["text"].isNull() && root["text"].isString());
-	std::string text = root["text"].asString();
-
-	CHECK(!root["side"].isNull() && root["side"].isDouble());
-	float side = root["side"].asFloat();
-
 	PanelUI::Layout layout;
-	layout.backgroundColor = backgroundColor;
-	layout.outlineColor = outlineColor;
-	layout.textColor = textColor;
-	layout.center = center;
-	layout.size = size;
 	layout.font = font;
-	layout.text = GameUtils::Convert(text);
-	layout.side = side;
 
+	CHECK(GetColorFromJson(root, "backgroundColor", layout.backgroundColor));
+	CHECK(GetColorFromJson(root, "outlineColor", layout.outlineColor));
+	CHECK(GetColorFromJson(root, "textColor", layout.textColor));
+	CHECK(GetVec2FromJson(root, "center", layout.center));
+	CHECK(GetVec2FromJson(root, "size", layout.size));
+	CHECK(GetWStringFromJson(root, "text", layout.text));
+	CHECK(GetFloatFromJson(root, "side", layout.side));
+	
 	return EntityManager::Get().Create<PanelUI>(layout);
 }
 
@@ -200,24 +161,14 @@ TextUI* UIManager::CreateTextUI(const std::string& path, TTFont* font)
 	ASSERT(bSucceed, "%s", message.c_str());
 
 	std::string type;
-	GetStringFromJson(root, "type", type);
-	CHECK(type == "text");
-
-	CHECK(!root["text"].isNull() && root["text"].isString());
-	std::string text = root["text"].asString();
-
-	Vec4f textColor;
-	GetColorFromJson(root, "textColor", textColor);
-
-	CHECK(!root["center"].isNull() && !root["center"]["x"].isNull() && !root["center"]["y"].isNull());
-	CHECK(root["center"]["x"].isDouble() && root["center"]["y"].isDouble());
-	Vec2f center(root["center"]["x"].asFloat(), root["center"]["y"].asFloat());
+	CHECK(GetStringFromJson(root, "type", type) && type == "text");
 
 	TextUI::Layout layout;
-	layout.textColor = textColor;
-	layout.textCenterPos = center;
 	layout.font = font;
-	layout.text = GameUtils::Convert(text);
+
+	CHECK(GetColorFromJson(root, "textColor", layout.textColor));
+	CHECK(GetVec2FromJson(root, "center", layout.textCenterPos));
+	CHECK(GetWStringFromJson(root, "text", layout.text));
 
 	return EntityManager::Get().Create<TextUI>(layout);
 }
