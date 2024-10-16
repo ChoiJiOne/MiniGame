@@ -4,6 +4,7 @@
 #include "ButtonUI.h"
 #include "Camera2D.h"
 #include "EntityManager.h"
+#include "PanelUI.h"
 #include "RenderManager2D.h"
 #include "TextUI.h"
 #include "UIManager.h"
@@ -109,7 +110,6 @@ void UIManager::BatchRenderUIEntity(IEntityUI** entities, uint32_t count)
 	}
 
 	RenderManager2D& renderMgr = RenderManager2D::Get();
-
 	renderMgr.Begin(uiCamera_);
 	{
 		for (uint32_t index = 0; index < count; ++index)
@@ -121,6 +121,15 @@ void UIManager::BatchRenderUIEntity(IEntityUI** entities, uint32_t count)
 			{
 				TextUI* text = reinterpret_cast<TextUI*>(entities[index]);
 				renderMgr.DrawString(text->layout_.font, text->layout_.text, text->textPos_, text->layout_.textColor);
+			}
+			break;
+
+			case IEntityUI::Type::PANEL:
+			{
+				PanelUI* panel = reinterpret_cast<PanelUI*>(entities[index]);
+				renderMgr.DrawRoundRect(panel->layout_.center, panel->layout_.size.x, panel->layout_.size.y, panel->layout_.side, panel->layout_.backgroundColor, 0.0f);
+				renderMgr.DrawRoundRectWireframe(panel->layout_.center, panel->layout_.size.x, panel->layout_.size.y, panel->layout_.side, panel->layout_.outlineColor, 0.0f);
+				renderMgr.DrawString(panel->layout_.font, panel->layout_.text, panel->textPos_, panel->layout_.textColor);
 			}
 			break;
 
