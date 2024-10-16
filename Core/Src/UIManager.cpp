@@ -23,6 +23,24 @@ bool ReadJsonFile(const std::string& path, Json::Value& outRoot, std::string& ou
 	return bSucceed;
 }
 
+bool GetColorFromJson(const Json::Value& root, const std::string& name, Vec4f& outColor)
+{
+	bool bIsInvalid = root[name].isNull() || root[name]["r"].isNull() || root[name]["g"].isNull() || root[name]["b"].isNull() || root[name]["a"].isNull();
+	bool bIsColorInvalid = !root[name]["r"].isDouble() || !root[name]["g"].isDouble() || !root[name]["b"].isDouble() || !root[name]["a"].isDouble();
+	if (bIsInvalid || bIsColorInvalid)
+	{
+		return false;
+	}
+
+	float r = root[name]["r"].asFloat();
+	float g = root[name]["g"].asFloat();
+	float b = root[name]["b"].asFloat();
+	float a = root[name]["a"].asFloat();
+	outColor = Vec4f(r, g, b, a);
+	
+	return true;
+}
+
 UIManager& UIManager::Get()
 {
 	static UIManager instance;
