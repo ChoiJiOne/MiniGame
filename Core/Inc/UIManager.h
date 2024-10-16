@@ -41,5 +41,7 @@ private:
 private:
 	static UIManager instance_;
 
+	class EntityManager* entityMgr_ = nullptr;
+	class RenderManager2D* render2dMgr_ = nullptr;
 	Camera2D* uiCamera_ = nullptr;
 };

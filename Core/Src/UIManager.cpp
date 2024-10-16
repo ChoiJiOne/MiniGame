@@ -132,7 +132,7 @@ ButtonUI* UIManager::CreateButtonUI(const std::string& path, const Mouse& mouse,
 	CHECK(GetWStringFromJson(root, "text", layout.text));
 	CHECK(GetFloatFromJson(root, "side", layout.side));
 
-	return EntityManager::Get().Create<ButtonUI>(layout, clickEvent);
+	return entityMgr_->Create<ButtonUI>(layout, clickEvent);
 }
 
 PanelUI* UIManager::CreatePanelUI(const std::string& path, TTFont* font)
@@ -156,7 +156,7 @@ PanelUI* UIManager::CreatePanelUI(const std::string& path, TTFont* font)
 	CHECK(GetWStringFromJson(root, "text", layout.text));
 	CHECK(GetFloatFromJson(root, "side", layout.side));
 
-	return EntityManager::Get().Create<PanelUI>(layout);
+	return entityMgr_->Create<PanelUI>(layout);
 }
 
 TextUI* UIManager::CreateTextUI(const std::string& path, TTFont* font)
@@ -176,7 +176,7 @@ TextUI* UIManager::CreateTextUI(const std::string& path, TTFont* font)
 	CHECK(GetVec2FromJson(root, "center", layout.textCenterPos));
 	CHECK(GetWStringFromJson(root, "text", layout.text));
 
-	return EntityManager::Get().Create<TextUI>(layout);
+	return entityMgr_->Create<TextUI>(layout);
 }
 
 void UIManager::BatchTickUIEntity(IEntityUI** entities, uint32_t count, float deltaSeconds)
@@ -199,30 +199,33 @@ void UIManager::BatchRenderUIEntity(IEntityUI** entities, uint32_t count)
 		return;
 	}
 
-	RenderManager2D& renderMgr = RenderManager2D::Get();
-	renderMgr.Begin(uiCamera_);
+	render2dMgr_->Begin(uiCamera_);
 	{
 		PassRoundRect(entities, count);
 		PassRoundRectWireframe(entities, count);
 		PassString(entities, count);
 	}
-	renderMgr.End();
+	render2dMgr_->End();
 }
 
 void UIManager::Startup()
 {
+	entityMgr_ = EntityManager::GetPtr();
+	render2dMgr_ = RenderManager2D::GetPtr();
 	uiCamera_ = Camera2D::CreateScreenCamera();
 }
 
 void UIManager::Shutdown()
 {
-	EntityManager::Get().Destroy(uiCamera_);
+	entityMgr_->Destroy(uiCamera_);
 	uiCamera_ = nullptr;
+
+	render2dMgr_ = nullptr;
+	entityMgr_ = nullptr;
 }
 
 void UIManager::PassRoundRect(IEntityUI** entities, uint32_t count)
 {
-	RenderManager2D& renderMgr = RenderManager2D::Get();
 	for (uint32_t index = 0; index < count; ++index)
 	{
 		const IEntityUI::Type& type = entities[index]->GetType();
@@ -235,7 +238,7 @@ void UIManager::PassRoundRect(IEntityUI** entities, uint32_t count)
 		case IEntityUI::Type::PANEL:
 		{
 			PanelUI* panel = reinterpret_cast<PanelUI*>(entities[index]);
-			renderMgr.DrawRoundRect(panel->layout_.center, panel->layout_.size.x, panel->layout_.size.y, panel->layout_.side, panel->layout_.backgroundColor, 0.0f);
+			render2dMgr_->DrawRoundRect(panel->layout_.center, panel->layout_.size.x, panel->layout_.size.y, panel->layout_.side, panel->layout_.backgroundColor, 0.0f);
 		}
 		break;
 
@@ -246,7 +249,7 @@ void UIManager::PassRoundRect(IEntityUI** entities, uint32_t count)
 			const ButtonUI::Layout& layout = button->layout_;
 			const Vec4f& color = button->stateColors_.at(button->state_);
 
-			renderMgr.DrawRoundRect(bound.center, bound.size.x, bound.size.y, layout.side, color, 0.0f);
+			render2dMgr_->DrawRoundRect(bound.center, bound.size.x, bound.size.y, layout.side, color, 0.0f);
 		}
 		break;
 		}
@@ -255,7 +258,6 @@ void UIManager::PassRoundRect(IEntityUI** entities, uint32_t count)
 
 void UIManager::PassRoundRectWireframe(IEntityUI** entities, uint32_t count)
 {
-	RenderManager2D& renderMgr = RenderManager2D::Get();
 	for (uint32_t index = 0; index < count; ++index)
 	{
 		const IEntityUI::Type& type = entities[index]->GetType();
@@ -268,7 +270,7 @@ void UIManager::PassRoundRectWireframe(IEntityUI** entities, uint32_t count)
 		case IEntityUI::Type::PANEL:
 		{
 			PanelUI* panel = reinterpret_cast<PanelUI*>(entities[index]);
-			renderMgr.DrawRoundRectWireframe(panel->layout_.center, panel->layout_.size.x, panel->layout_.size.y, panel->layout_.side, panel->layout_.outlineColor, 0.0f);
+			render2dMgr_->DrawRoundRectWireframe(panel->layout_.center, panel->layout_.size.x, panel->layout_.size.y, panel->layout_.side, panel->layout_.outlineColor, 0.0f);
 		}
 		break;
 
@@ -281,7 +283,6 @@ void UIManager::PassRoundRectWireframe(IEntityUI** entities, uint32_t count)
 
 void UIManager::PassString(IEntityUI** entities, uint32_t count)
 {
-	RenderManager2D& renderMgr = RenderManager2D::Get();
 	for (uint32_t index = 0; index < count; ++index)
 	{
 		const IEntityUI::Type& type = entities[index]->GetType();
@@ -290,21 +291,21 @@ void UIManager::PassString(IEntityUI** entities, uint32_t count)
 		case IEntityUI::Type::TEXT:
 		{
 			TextUI* text = reinterpret_cast<TextUI*>(entities[index]);
-			renderMgr.DrawString(text->layout_.font, text->layout_.text, text->textPos_, text->layout_.textColor);
+			render2dMgr_->DrawString(text->layout_.font, text->layout_.text, text->textPos_, text->layout_.textColor);
 		}
 		break;
 
 		case IEntityUI::Type::PANEL:
 		{
 			PanelUI* panel = reinterpret_cast<PanelUI*>(entities[index]);
-			renderMgr.DrawString(panel->layout_.font, panel->layout_.text, panel->textPos_, panel->layout_.textColor);
+			render2dMgr_->DrawString(panel->layout_.font, panel->layout_.text, panel->textPos_, panel->layout_.textColor);
 		}
 		break;
 
 		case IEntityUI::Type::BUTTON:
 		{
 			ButtonUI* button = reinterpret_cast<ButtonUI*>(entities[index]);
-			renderMgr.DrawString(button->layout_.font, button->layout_.text, button->textPos_, button->layout_.textColor);
+			render2dMgr_->DrawString(button->layout_.font, button->layout_.text, button->textPos_, button->layout_.textColor);
 		}
 		break;
 		}
