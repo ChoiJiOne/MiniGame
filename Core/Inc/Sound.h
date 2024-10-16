@@ -26,5 +26,7 @@ public:
 	void Reset();
 	
 private:
-	void* resourcePtr_ = nullptr;
+	static class AudioManager* audioMgr_;
+
+	void* audioSourcePtr_ = nullptr;
 };
