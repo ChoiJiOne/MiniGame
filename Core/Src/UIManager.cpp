@@ -54,6 +54,22 @@ bool GetColorFromJson(const Json::Value& root, const std::string& name, Vec4f& o
 	return true;
 }
 
+bool GetVec2FromJson(const Json::Value& root, const std::string& name, Vec2f& outVec2)
+{
+	bool bIsInvalid = root[name].isNull() || root[name]["x"].isNull() || root[name]["y"].isNull();
+	bool bIsVec2Invalid = !root[name]["x"].isDouble() || !root[name]["y"].isDouble();
+	if (bIsInvalid || bIsVec2Invalid)
+	{
+		return false;
+	}
+
+	float x = root[name]["x"].asFloat();
+	float y = root[name]["y"].asFloat();
+	outVec2 = Vec2f(x, y);
+
+	return true;
+}
+
 bool GetFloatFromJson(const Json::Value& root, const std::string& name, float& outFloat)
 {
 	bool bIsInvalid = root[name].isNull();
