@@ -31,13 +31,11 @@ UIManager& UIManager::Get()
 
 ButtonUI* UIManager::CreateButtonUI(const std::string& path, const Mouse& mouse, TTFont* font, const std::function<void()>& clickEvent)
 {
-	std::vector<uint8_t> buffer = GameUtils::ReadFile(path);
-	std::string jsonString(buffer.begin(), buffer.end());
-
 	Json::Value root;
-	Json::Reader reader;
-	ASSERT(reader.parse(jsonString, root), "Failed to parse '%s' file.", path.c_str());
-	
+	std::string message;
+	bool bSucceed = ReadJsonFile(path, root, message);
+	ASSERT(bSucceed, "%s", message.c_str());
+		
 	CHECK(!root["type"].isNull() && root["type"].isString());
 	std::string type = root["type"].asString();
 	CHECK(type == "button");
@@ -98,12 +96,10 @@ ButtonUI* UIManager::CreateButtonUI(const std::string& path, const Mouse& mouse,
 
 PanelUI* UIManager::CreatePanelUI(const std::string& path, TTFont* font)
 {
-	std::vector<uint8_t> buffer = GameUtils::ReadFile(path);
-	std::string jsonString(buffer.begin(), buffer.end());
-
 	Json::Value root;
-	Json::Reader reader;
-	ASSERT(reader.parse(jsonString, root), "Failed to parse '%s' file.", path.c_str());
+	std::string message;
+	bool bSucceed = ReadJsonFile(path, root, message);
+	ASSERT(bSucceed, "%s", message.c_str());
 
 	CHECK(!root["type"].isNull() && root["type"].isString());
 	std::string type = root["type"].asString();
@@ -156,12 +152,10 @@ PanelUI* UIManager::CreatePanelUI(const std::string& path, TTFont* font)
 
 TextUI* UIManager::CreateTextUI(const std::string& path, TTFont* font)
 {
-	std::vector<uint8_t> buffer = GameUtils::ReadFile(path);
-	std::string jsonString(buffer.begin(), buffer.end());
-
 	Json::Value root;
-	Json::Reader reader;
-	ASSERT(reader.parse(jsonString, root), "Failed to parse '%s' file.", path.c_str());
+	std::string message;
+	bool bSucceed = ReadJsonFile(path, root, message);
+	ASSERT(bSucceed, "%s", message.c_str());
 
 	CHECK(!root["type"].isNull() && root["type"].isString());
 	std::string type = root["type"].asString();
