@@ -16,4 +16,10 @@ public:
 	
 	virtual bool IsSceneSwitched() = 0;
 	virtual IGameScene* GetSwitchScene() = 0;
+
+protected:
+	virtual void SetSwitchScene(IGameScene* switchScene) = 0;
+
+protected:
+	IGameScene* switchScene_ = nullptr;
 };
