@@ -9,6 +9,20 @@
 #include "TextUI.h"
 #include "UIManager.h"
 
+bool ReadJsonFile(const std::string& path, Json::Value& outRoot, std::string& outResult)
+{
+	bool bSucceed = false;
+
+	std::vector<uint8_t> buffer = GameUtils::ReadFile(path);
+	std::string jsonString(buffer.begin(), buffer.end());
+
+	Json::Reader reader;
+	bSucceed = reader.parse(jsonString, outRoot);
+	outResult = GameUtils::PrintF("%s to parse '%s' json file.", bSucceed ? "Succeed" : "Failed", path.c_str());
+
+	return bSucceed;
+}
+
 UIManager& UIManager::Get()
 {
 	static UIManager instance;
