@@ -9,6 +9,8 @@
 std::unique_ptr<ma_engine> audioEngine_ = nullptr;
 ma_engine* audioEnginePtr_ = nullptr;
 
+AudioManager AudioManager::instance_;
+
 static const uint32_t MAX_SOUND_RESOURCE_SIZE = 30;
 static int32_t size_ = 0;
 static std::array<ma_sound, MAX_SOUND_RESOURCE_SIZE> sounds_;
@@ -16,8 +18,12 @@ static std::array<bool, MAX_SOUND_RESOURCE_SIZE> usage_;
 
 AudioManager& AudioManager::Get()
 {
-	static AudioManager instance;
-	return instance;
+	return instance_;
+}
+
+AudioManager* AudioManager::GetPtr()
+{
+	return &instance_;
 }
 
 void* AudioMalloc(size_t sz, void* pUserData)

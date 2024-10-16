@@ -13,6 +13,7 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(AudioManager);
 
 	static AudioManager& Get();
+	static AudioManager* GetPtr();
 
 private:
 	friend class IApp;
@@ -26,4 +27,7 @@ private:
 
 	void* CreateSound(const std::string& path);
 	void DestroySound(void* sound);
+
+private:
+	static AudioManager instance_;
 };
