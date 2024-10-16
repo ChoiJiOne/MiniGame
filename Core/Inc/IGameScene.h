@@ -13,14 +13,9 @@ public:
 
 	virtual void Tick(float deltaSeconds) = 0;
 	virtual void Render() = 0;
+	virtual void Enter() = 0;
+	virtual void Exit() = 0;
 	
 	virtual bool IsSceneSwitched() = 0;
 	virtual IGameScene* GetSwitchScene() = 0;
-
-protected:
-	virtual void SetSwitchScene(IGameScene* switchScene) = 0;
-
-protected:
-	class IApp* app_ = nullptr;
-	IGameScene* switchScene_ = nullptr;
 };
