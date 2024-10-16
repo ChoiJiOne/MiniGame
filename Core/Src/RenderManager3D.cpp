@@ -5,10 +5,16 @@
 #include "ResourceManager.h"
 #include "Shader.h"
 
-RenderManager3D& RenderManager3D::Get()
+RenderManager3D RenderManager3D::instance_;
+
+RenderManager3D& RenderManager3D::GetRef()
 {
-	static RenderManager3D instance;
-	return instance;
+	return instance_;
+}
+
+RenderManager3D* RenderManager3D::GetPtr()
+{
+	return &instance_;
 }
 
 void RenderManager3D::Startup()
