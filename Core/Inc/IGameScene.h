@@ -6,8 +6,8 @@
 class IGameScene
 {
 public:
-	IGameScene() = default;
-	virtual ~IGameScene() {}
+	IGameScene();
+	virtual ~IGameScene();
 
 	DISALLOW_COPY_AND_ASSIGN(IGameScene);
 
@@ -21,5 +21,6 @@ protected:
 	virtual void SetSwitchScene(IGameScene* switchScene) = 0;
 
 protected:
+	class IApp* app_ = nullptr;
 	IGameScene* switchScene_ = nullptr;
 };
