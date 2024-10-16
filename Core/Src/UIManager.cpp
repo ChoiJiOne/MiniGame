@@ -58,29 +58,20 @@ ButtonUI* UIManager::CreateButtonUI(const std::string& path, const Mouse& mouse,
 	std::string type = root["type"].asString();
 	CHECK(type == "button");
 
-	auto getColorFromJson = [&](const std::string& color, Vec4f& outColor)
-		{
-			CHECK(!root[color].isNull());
-			CHECK(!root[color]["r"].isNull() && !root[color]["g"].isNull() && !root[color]["b"].isNull() && !root[color]["a"].isNull());
-			CHECK(root[color]["r"].isDouble() && root[color]["g"].isDouble() && root[color]["b"].isDouble() && root[color]["a"].isDouble());
-
-			outColor = Vec4f(root[color]["r"].asFloat(), root[color]["g"].asFloat(), root[color]["b"].asFloat(), root[color]["a"].asFloat());
-		};
-
 	Vec4f textColor;
-	getColorFromJson("textColor", textColor);
+	GetColorFromJson(root, "textColor", textColor);
 
 	Vec4f disableColor;
-	getColorFromJson("disableColor", disableColor);
+	GetColorFromJson(root, "disableColor", disableColor);
 
 	Vec4f enableColor;
-	getColorFromJson("enableColor", enableColor);
+	GetColorFromJson(root, "enableColor", enableColor);
 
 	Vec4f pressColor;
-	getColorFromJson("pressColor", pressColor);
+	GetColorFromJson(root, "pressColor", pressColor);
 
 	Vec4f releaseColor;
-	getColorFromJson("releaseColor", releaseColor);
+	GetColorFromJson(root, "releaseColor", releaseColor);
 
 	CHECK(!root["center"].isNull() && !root["center"]["x"].isNull() && !root["center"]["y"].isNull());
 	CHECK(root["center"]["x"].isDouble() && root["center"]["y"].isDouble());
@@ -123,23 +114,14 @@ PanelUI* UIManager::CreatePanelUI(const std::string& path, TTFont* font)
 	std::string type = root["type"].asString();
 	CHECK(type == "panel");
 
-	auto getColorFromJson = [&](const std::string& color, Vec4f& outColor)
-		{
-			CHECK(!root[color].isNull());
-			CHECK(!root[color]["r"].isNull() && !root[color]["g"].isNull() && !root[color]["b"].isNull() && !root[color]["a"].isNull());
-			CHECK(root[color]["r"].isDouble() && root[color]["g"].isDouble() && root[color]["b"].isDouble() && root[color]["a"].isDouble());
-
-			outColor = Vec4f(root[color]["r"].asFloat(), root[color]["g"].asFloat(), root[color]["b"].asFloat(), root[color]["a"].asFloat());
-		};
-
 	Vec4f backgroundColor;
-	getColorFromJson("backgroundColor", backgroundColor);
+	GetColorFromJson(root, "backgroundColor", backgroundColor);
 
 	Vec4f outlineColor;
-	getColorFromJson("outlineColor", outlineColor);
+	GetColorFromJson(root, "outlineColor", outlineColor);
 
 	Vec4f textColor;
-	getColorFromJson("textColor", textColor);
+	GetColorFromJson(root, "textColor", textColor);
 	
 	CHECK(!root["center"].isNull() && !root["center"]["x"].isNull() && !root["center"]["y"].isNull());
 	CHECK(root["center"]["x"].isDouble() && root["center"]["y"].isDouble());
@@ -179,20 +161,11 @@ TextUI* UIManager::CreateTextUI(const std::string& path, TTFont* font)
 	std::string type = root["type"].asString();
 	CHECK(type == "text");
 
-	auto getColorFromJson = [&](const std::string& color, Vec4f& outColor)
-		{
-			CHECK(!root[color].isNull());
-			CHECK(!root[color]["r"].isNull() && !root[color]["g"].isNull() && !root[color]["b"].isNull() && !root[color]["a"].isNull());
-			CHECK(root[color]["r"].isDouble() && root[color]["g"].isDouble() && root[color]["b"].isDouble() && root[color]["a"].isDouble());
-
-			outColor = Vec4f(root[color]["r"].asFloat(), root[color]["g"].asFloat(), root[color]["b"].asFloat(), root[color]["a"].asFloat());
-		};
-
 	CHECK(!root["text"].isNull() && root["text"].isString());
 	std::string text = root["text"].asString();
 
 	Vec4f textColor;
-	getColorFromJson("textColor", textColor);
+	GetColorFromJson(root, "textColor", textColor);
 
 	CHECK(!root["center"].isNull() && !root["center"]["x"].isNull() && !root["center"]["y"].isNull());
 	CHECK(root["center"]["x"].isDouble() && root["center"]["y"].isDouble());
