@@ -12,7 +12,8 @@ class EntityManager
 public:
 	DISALLOW_COPY_AND_ASSIGN(EntityManager);
 
-	static EntityManager& Get();
+	static EntityManager& GetRef();
+	static EntityManager* GetPtr();
 
 	template <typename TEntity, typename... Args>
 	TEntity* Create(Args&&... args)
@@ -72,6 +73,7 @@ private:
 	void Cleanup();
 
 private:
+	static EntityManager instance_;
 	static const uint32_t MAX_ENTITY_SIZE = 200;
 
 	uint32_t size_ = 0;

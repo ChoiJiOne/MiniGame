@@ -1,10 +1,16 @@
 #include "Assertion.h"
 #include "EntityManager.h"
 
-EntityManager& EntityManager::Get()
+EntityManager EntityManager::instance_;
+
+EntityManager& EntityManager::GetRef()
 {
-	static EntityManager instance;
-	return instance;
+	return instance_;
+}
+
+EntityManager* EntityManager::GetPtr()
+{
+	return &instance_;
 }
 
 void EntityManager::Destroy(const IEntity* entity)
