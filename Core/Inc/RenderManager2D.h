@@ -39,7 +39,8 @@ public:
 public:
 	DISALLOW_COPY_AND_ASSIGN(RenderManager2D);
 
-	static RenderManager2D& Get();
+	static RenderManager2D& GetRef();
+	static RenderManager2D* GetPtr();
 
 	void Begin(const Camera2D* camera2D);
 	void End();
@@ -112,6 +113,7 @@ private:
 	bool IsFullCommandQueue(uint32_t vertexCount);
 
 private:
+	static RenderManager2D instance_;
 	IApp* app_ = nullptr;
 
 	bool bIsBegin_ = false;

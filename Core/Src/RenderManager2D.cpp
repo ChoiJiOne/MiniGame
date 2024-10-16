@@ -23,11 +23,16 @@
  * https://stackoverflow.com/questions/10040961/opengl-pixel-perfect-2d-drawing
  */
 static const Vec2f PIXEL_OFFSET = Vec2f(0.375f, 0.375f);
+RenderManager2D RenderManager2D::instance_;
 
-RenderManager2D& RenderManager2D::Get()
+RenderManager2D& RenderManager2D::GetRef()
 {
-	static RenderManager2D instance;
-	return instance;
+	return instance_;
+}
+
+RenderManager2D* RenderManager2D::GetPtr()
+{
+	return &instance_;
 }
 
 void RenderManager2D::Startup()
