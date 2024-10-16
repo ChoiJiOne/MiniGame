@@ -17,7 +17,7 @@ class DebugDrawManager3D
 public:
 	DISALLOW_COPY_AND_ASSIGN(DebugDrawManager3D);
 
-	static DebugDrawManager3D& Get();
+	static DebugDrawManager3D& GetRef();
 	static DebugDrawManager3D* GetPtr();
 
 	void Begin(const Camera3D* camera3D = nullptr);

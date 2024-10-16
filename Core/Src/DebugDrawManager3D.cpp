@@ -15,7 +15,7 @@
 
 DebugDrawManager3D DebugDrawManager3D::instance_;
 
-DebugDrawManager3D& DebugDrawManager3D::Get()
+DebugDrawManager3D& DebugDrawManager3D::GetRef()
 {
 	return instance_;
 }
