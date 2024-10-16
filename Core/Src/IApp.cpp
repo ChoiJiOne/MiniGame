@@ -112,11 +112,11 @@ IApp::IApp(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool b
 	ASSERT(ImGui_ImplSDL2_InitForOpenGL(window, context), "Failed to initialize ImGui for SDL2.");
 	ASSERT(ImGui_ImplOpenGL3_Init(), "Failed to initialzie ImGui for OpenGL.");
 
-	AudioManager::Get().Startup();
-	RenderManager2D::Get().Startup();
-	RenderManager3D::Get().Startup();
-	DebugDrawManager3D::Get().Startup();
-	UIManager::Get().Startup();
+	AudioManager::GetRef().Startup();
+	RenderManager2D::GetRef().Startup();
+	RenderManager3D::GetRef().Startup();
+	DebugDrawManager3D::GetRef().Startup();
+	UIManager::GetRef().Startup();
 
 	RegisterAppWindowEvent();
 	SetAlphaBlendMode(true);
@@ -124,13 +124,13 @@ IApp::IApp(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool b
 
 IApp::~IApp()
 {
-	UIManager::Get().Shutdown();
-	EntityManager::Get().Cleanup();
-	DebugDrawManager3D::Get().Shutdown();
-	RenderManager3D::Get().Shutdown();
-	RenderManager2D::Get().Shutdown();
-	ResourceManager::Get().Cleanup();
-	AudioManager::Get().Shutdown();
+	UIManager::GetRef().Shutdown();
+	EntityManager::GetRef().Cleanup();
+	DebugDrawManager3D::GetRef().Shutdown();
+	RenderManager3D::GetRef().Shutdown();
+	RenderManager2D::GetRef().Shutdown();
+	ResourceManager::GetRef().Cleanup();
+	AudioManager::GetRef().Shutdown();
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
