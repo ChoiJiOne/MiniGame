@@ -28,10 +28,11 @@ DebugDrawManager3D* DebugDrawManager3D::GetPtr()
 void DebugDrawManager3D::Startup()
 {
 	app_ = IApp::Get();
+	resourceMgr_ = ResourceManager::GetPtr();
 
 	uint32_t byteSize = static_cast<uint32_t>(Vertex::GetStride() * vertices_.size());
 	VertexBuffer::Usage usage = VertexBuffer::Usage::DYNAMIC;
-	vertexBuffer_ = ResourceManager::Get().Create<VertexBuffer>(byteSize, usage);
+	vertexBuffer_ = resourceMgr_->Create<VertexBuffer>(byteSize, usage);
 
 	GL_CHECK(glGenVertexArrays(1, &vertexArrayObject_));
 	GL_CHECK(glBindVertexArray(vertexArrayObject_));
@@ -48,19 +49,20 @@ void DebugDrawManager3D::Startup()
 	}
 	GL_CHECK(glBindVertexArray(0));
 
-	shader_ = ResourceManager::Get().Create<Shader>("MiniGame/Shader/DebugDraw3D.vert", "MiniGame/Shader/DebugDraw3D.frag");
+	shader_ = resourceMgr_->Create<Shader>("MiniGame/Shader/DebugDraw3D.vert", "MiniGame/Shader/DebugDraw3D.frag");
 }
 
 void DebugDrawManager3D::Shutdown()
 {
-	ResourceManager::Get().Destroy(vertexBuffer_);
+	resourceMgr_->Destroy(vertexBuffer_);
 	vertexBuffer_ = nullptr;
 
-	ResourceManager::Get().Destroy(shader_);
+	resourceMgr_->Destroy(shader_);
 	shader_ = nullptr;
 
 	GL_CHECK(glDeleteVertexArrays(1, &vertexArrayObject_));
 
+	resourceMgr_ = nullptr;
 	app_ = nullptr;
 }
 

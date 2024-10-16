@@ -62,6 +62,7 @@ private:
 	static DebugDrawManager3D instance_;
 
 	IApp* app_ = nullptr;
+	class ResourceManager* resourceMgr_ = nullptr;
 
 	bool bIsBegin_ = false;
 
