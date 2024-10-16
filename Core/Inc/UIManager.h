@@ -15,7 +15,8 @@ class UIManager
 public:
 	DISALLOW_COPY_AND_ASSIGN(UIManager);
 
-	static UIManager& Get();
+	static UIManager& GetRef();
+	static UIManager* GetPtr();
 
 	ButtonUI* CreateButtonUI(const std::string& path, const Mouse& mouse, TTFont* font, const std::function<void()>& clickEvent);
 	PanelUI* CreatePanelUI(const std::string& path, TTFont* font);
@@ -38,5 +39,7 @@ private:
 	void PassString(IEntityUI** entities, uint32_t count);
 
 private:
+	static UIManager instance_;
+
 	Camera2D* uiCamera_ = nullptr;
 };

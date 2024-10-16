@@ -9,6 +9,8 @@
 #include "TextUI.h"
 #include "UIManager.h"
 
+UIManager UIManager::instance_;
+
 bool ReadJsonFile(const std::string& path, Json::Value& outRoot, std::string& outResult)
 {
 	bool bSucceed = false;
@@ -96,10 +98,14 @@ bool GetFloatFromJson(const Json::Value& root, const std::string& name, float& o
 	return true;
 }
 
-UIManager& UIManager::Get()
+UIManager& UIManager::GetRef()
 {
-	static UIManager instance;
-	return instance;
+	return instance_;
+}
+
+UIManager* UIManager::GetPtr()
+{
+	return &instance_;
 }
 
 ButtonUI* UIManager::CreateButtonUI(const std::string& path, const Mouse& mouse, TTFont* font, const std::function<void()>& clickEvent)
