@@ -66,9 +66,9 @@ ButtonUI* UIManager::CreateButtonUI(const std::string& path, const Mouse& mouse,
 	std::string message;
 	bool bSucceed = ReadJsonFile(path, root, message);
 	ASSERT(bSucceed, "%s", message.c_str());
-		
-	CHECK(!root["type"].isNull() && root["type"].isString());
-	std::string type = root["type"].asString();
+
+	std::string type;
+	GetStringFromJson(root, "type", type);
 	CHECK(type == "button");
 
 	Vec4f textColor;
@@ -123,8 +123,8 @@ PanelUI* UIManager::CreatePanelUI(const std::string& path, TTFont* font)
 	bool bSucceed = ReadJsonFile(path, root, message);
 	ASSERT(bSucceed, "%s", message.c_str());
 
-	CHECK(!root["type"].isNull() && root["type"].isString());
-	std::string type = root["type"].asString();
+	std::string type;
+	GetStringFromJson(root, "type", type);
 	CHECK(type == "panel");
 
 	Vec4f backgroundColor;
@@ -170,8 +170,8 @@ TextUI* UIManager::CreateTextUI(const std::string& path, TTFont* font)
 	bool bSucceed = ReadJsonFile(path, root, message);
 	ASSERT(bSucceed, "%s", message.c_str());
 
-	CHECK(!root["type"].isNull() && root["type"].isString());
-	std::string type = root["type"].asString();
+	std::string type;
+	GetStringFromJson(root, "type", type);
 	CHECK(type == "text");
 
 	CHECK(!root["text"].isNull() && root["text"].isString());
