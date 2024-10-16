@@ -70,7 +70,7 @@ LONG WINAPI DetectApplicationCrash(EXCEPTION_POINTERS* ep)
 	return EXCEPTION_EXECUTE_HANDLER;
 }
 
-CrashManager& CrashManager::Get()
+CrashManager& CrashManager::GetRef()
 {
 	return instance_;
 }
