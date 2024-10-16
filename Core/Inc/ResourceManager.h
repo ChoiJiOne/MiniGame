@@ -12,7 +12,8 @@ class ResourceManager
 public:
 	DISALLOW_COPY_AND_ASSIGN(ResourceManager);
 
-	static ResourceManager& Get();
+	static ResourceManager& GetRef();
+	static ResourceManager* GetPtr();
 
 	template <typename TResource, typename... Args>
 	TResource* Create(Args&&... args)
@@ -72,6 +73,7 @@ private:
 	void Cleanup(); /** 이 메서드는 IApp에서만 접근해야 합니다. */
 
 private:
+	static ResourceManager instance_;
 	static const uint32_t MAX_RESOURCE_SIZE = 200;
 
 	uint32_t size_ = 0;

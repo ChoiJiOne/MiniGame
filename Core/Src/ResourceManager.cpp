@@ -1,10 +1,16 @@
 #include "Assertion.h"
 #include "ResourceManager.h"
 
-ResourceManager& ResourceManager::Get()
+ResourceManager ResourceManager::instance_;
+
+ResourceManager& ResourceManager::GetRef()
 {
-	static ResourceManager instance;
-	return instance;
+	return instance_;
+}
+
+ResourceManager* ResourceManager::GetPtr()
+{
+	return &instance_;
 }
 
 void ResourceManager::Destroy(const IResource* resource)
