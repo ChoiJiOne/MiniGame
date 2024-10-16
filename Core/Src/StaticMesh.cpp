@@ -6,14 +6,21 @@
 #include "StaticMesh.h"
 #include "VertexBuffer.h"
 
+ResourceManager* StaticMesh::resourceMgr_ = nullptr;
+
 StaticMesh::StaticMesh(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices)
 	: vertices_(vertices)
 	, indices_(indices)
 {
+	if (!resourceMgr_)
+	{
+		resourceMgr_ = ResourceManager::GetPtr();
+	}
+
 	uint32_t stride = static_cast<uint32_t>(sizeof(Vertex));
 	uint32_t byteSize = static_cast<uint32_t>(vertices_.size()) * stride;
-	vertexBuffer_ = ResourceManager::Get().Create<VertexBuffer>(vertices_.data(), byteSize, VertexBuffer::Usage::STATIC);
-	indexBuffer_ = ResourceManager::Get().Create<IndexBuffer>(indices_.data(), static_cast<uint32_t>(indices_.size()));
+	vertexBuffer_ = resourceMgr_->Create<VertexBuffer>(vertices_.data(), byteSize, VertexBuffer::Usage::STATIC);
+	indexBuffer_ = resourceMgr_->Create<IndexBuffer>(indices_.data(), static_cast<uint32_t>(indices_.size()));
 
 	GL_CHECK(glGenVertexArrays(1, &vertexArrayObject_));
 	GL_CHECK(glBindVertexArray(vertexArrayObject_));
@@ -54,13 +61,13 @@ void StaticMesh::Release()
 
 	if (indexBuffer_)
 	{
-		ResourceManager::Get().Destroy(indexBuffer_);
+		resourceMgr_->Destroy(indexBuffer_);
 		indexBuffer_ = nullptr;
 	}
 
 	if (vertexBuffer_)
 	{
-		ResourceManager::Get().Destroy(vertexBuffer_);
+		resourceMgr_->Destroy(vertexBuffer_);
 		vertexBuffer_ = nullptr;
 	}
 
@@ -126,7 +133,7 @@ StaticMesh* StaticMesh::CreateBox(const Vec3f& size)
 		vertices.push_back(Vertex{ (normal + side1 - side2) * size2, normal, Vec3f(0.0f, 0.0f, 0.0f), uvs[3] });
 	}
 
-	return ResourceManager::Get().Create<StaticMesh>(vertices, indices);
+	return resourceMgr_->Create<StaticMesh>(vertices, indices);
 }
 
 /** https://github.com/microsoft/DirectXTK/blob/main/Src/Geometry.cpp#L147 */
@@ -184,5 +191,5 @@ StaticMesh* StaticMesh::CreateSphere(float radius, uint32_t tessellation)
 		}
 	}
 
-	return ResourceManager::Get().Create<StaticMesh>(vertices, indices);
+	return resourceMgr_->Create<StaticMesh>(vertices, indices);
 }

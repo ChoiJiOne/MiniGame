@@ -43,6 +43,8 @@ public:
 	static StaticMesh* CreateSphere(float radius, uint32_t tessellation);
 
 private:
+	static class ResourceManager* resourceMgr_;
+
 	std::vector<Vertex> vertices_;
 	VertexBuffer* vertexBuffer_ = nullptr;
 
