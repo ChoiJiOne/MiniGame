@@ -39,5 +39,5 @@ Camera2D* Camera2D::CreateScreenCamera()
 	Vec2f size;
 	IApp::Get()->GetScreenSize<float>(size.x, size.y);
 
-	return EntityManager::Get().Create<Camera2D>(center, size);
+	return EntityManager::GetRef().Create<Camera2D>(center, size);
 }
