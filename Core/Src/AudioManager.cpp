@@ -16,7 +16,7 @@ static int32_t size_ = 0;
 static std::array<ma_sound, MAX_SOUND_RESOURCE_SIZE> sounds_;
 static std::array<bool, MAX_SOUND_RESOURCE_SIZE> usage_;
 
-AudioManager& AudioManager::Get()
+AudioManager& AudioManager::GetRef()
 {
 	return instance_;
 }

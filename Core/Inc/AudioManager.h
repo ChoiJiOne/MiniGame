@@ -12,7 +12,7 @@ class AudioManager
 public:
 	DISALLOW_COPY_AND_ASSIGN(AudioManager);
 
-	static AudioManager& Get();
+	static AudioManager& GetRef();
 	static AudioManager* GetPtr();
 
 private:
