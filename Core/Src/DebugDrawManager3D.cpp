@@ -13,10 +13,16 @@
 #include "Shader.h"
 #include "VertexBuffer.h"
 
+DebugDrawManager3D DebugDrawManager3D::instance_;
+
 DebugDrawManager3D& DebugDrawManager3D::Get()
 {
-	static DebugDrawManager3D instance;
-	return instance;
+	return instance_;
+}
+
+DebugDrawManager3D* DebugDrawManager3D::GetPtr()
+{
+	return &instance_;
 }
 
 void DebugDrawManager3D::Startup()

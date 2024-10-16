@@ -18,6 +18,7 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(DebugDrawManager3D);
 
 	static DebugDrawManager3D& Get();
+	static DebugDrawManager3D* GetPtr();
 
 	void Begin(const Camera3D* camera3D = nullptr);
 	void End();
@@ -58,6 +59,8 @@ private:
 	bool IsFullCommandQueue(uint32_t vertexCount);
 
 private:
+	static DebugDrawManager3D instance_;
+
 	IApp* app_ = nullptr;
 
 	bool bIsBegin_ = false;
