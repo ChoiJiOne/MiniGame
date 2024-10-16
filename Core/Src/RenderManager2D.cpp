@@ -38,10 +38,11 @@ RenderManager2D* RenderManager2D::GetPtr()
 void RenderManager2D::Startup()
 {
 	app_ = IApp::Get();
+	resourceMgr_ = ResourceManager::GetPtr();
 
 	uint32_t byteSize = static_cast<uint32_t>(Vertex::GetStride() * vertices_.size());
 	VertexBuffer::Usage usage = VertexBuffer::Usage::DYNAMIC;
-	vertexBuffer_ = ResourceManager::Get().Create<VertexBuffer>(byteSize, usage);
+	vertexBuffer_ = resourceMgr_->Create<VertexBuffer>(byteSize, usage);
 
 	GL_CHECK(glGenVertexArrays(1, &vertexArrayObject_));
 	GL_CHECK(glBindVertexArray(vertexArrayObject_));
@@ -67,9 +68,9 @@ void RenderManager2D::Startup()
 	}
 	GL_CHECK(glBindVertexArray(0));
 
-	Shader* geometry2D = ResourceManager::Get().Create<Shader>("MiniGame/Shader/Geometry2D.vert", "MiniGame/Shader/Geometry2D.frag");
-	Shader* sprite2D = ResourceManager::Get().Create<Shader>("MiniGame/Shader/Sprite2D.vert", "MiniGame/Shader/Sprite2D.frag");
-	Shader* string2D = ResourceManager::Get().Create<Shader>("MiniGame/Shader/String2D.vert", "MiniGame/Shader/String2D.frag");
+	Shader* geometry2D = resourceMgr_->Create<Shader>("MiniGame/Shader/Geometry2D.vert", "MiniGame/Shader/Geometry2D.frag");
+	Shader* sprite2D = resourceMgr_->Create<Shader>("MiniGame/Shader/Sprite2D.vert", "MiniGame/Shader/Sprite2D.frag");
+	Shader* string2D = resourceMgr_->Create<Shader>("MiniGame/Shader/String2D.vert", "MiniGame/Shader/String2D.frag");
 
 	shaders_.insert({ RenderCommand::Type::GEOMETRY, geometry2D });
 	shaders_.insert({ RenderCommand::Type::SPRITE,   sprite2D });
@@ -78,16 +79,17 @@ void RenderManager2D::Startup()
 
 void RenderManager2D::Shutdown()
 {
-	ResourceManager::Get().Destroy(vertexBuffer_);
+	resourceMgr_->Destroy(vertexBuffer_);
 	vertexBuffer_ = nullptr;
 
 	for (auto& shader : shaders_)
 	{
-		ResourceManager::Get().Destroy(shader.second);
+		resourceMgr_->Destroy(shader.second);
 	}
 
 	GL_CHECK(glDeleteVertexArrays(1, &vertexArrayObject_));
 
+	resourceMgr_ = nullptr;
 	app_ = nullptr;
 }
 

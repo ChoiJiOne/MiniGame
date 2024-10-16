@@ -114,6 +114,8 @@ private:
 
 private:
 	static RenderManager2D instance_;
+
+	class ResourceManager* resourceMgr_ = nullptr;
 	IApp* app_ = nullptr;
 
 	bool bIsBegin_ = false;
