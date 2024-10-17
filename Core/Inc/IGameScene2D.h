@@ -22,9 +22,6 @@ public:
 	virtual void Enter() = 0;
 	virtual void Exit() = 0;
 
-	virtual bool IsSceneSwitched() = 0;
-	virtual IGameScene* GetSwitchScene() = 0;
-	
 protected:
 	class EntityManager* entityMgr_ = nullptr;
 	class RenderStateManager* renderStateMgr_ = nullptr;
