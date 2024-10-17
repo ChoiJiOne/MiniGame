@@ -1,6 +1,10 @@
 #pragma once
 
-#include "IApp.h"
+#include "GameMath.h"
+#include "IResource.h"
+#include "RenderStateManager.h"
+
+class Shader;
 
 /** 3D 렌더 매니저는 싱글턴입니다. */
 class RenderManager3D
@@ -22,5 +26,6 @@ private:
 
 private:
 	static RenderManager3D instance_;
-	IApp* app_ = nullptr;
+
+	RenderStateManager* renderStateMgr_ = nullptr;
 };

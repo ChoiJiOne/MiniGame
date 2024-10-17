@@ -2,7 +2,6 @@
 
 #include "Assertion.h"
 #include "RenderManager3D.h"
-#include "ResourceManager.h"
 #include "Shader.h"
 
 RenderManager3D RenderManager3D::instance_;
@@ -19,10 +18,10 @@ RenderManager3D* RenderManager3D::GetPtr()
 
 void RenderManager3D::Startup()
 {
-	app_ = IApp::Get();
+	renderStateMgr_ = RenderStateManager::GetPtr();
 }
 
 void RenderManager3D::Shutdown()
 {
-	app_ = nullptr;
+	renderStateMgr_ = nullptr;
 }
