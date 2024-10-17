@@ -6,8 +6,8 @@
 class IGameScene
 {
 public:
-	IGameScene();
-	virtual ~IGameScene();
+	IGameScene() {}
+	virtual ~IGameScene() {}
 
 	DISALLOW_COPY_AND_ASSIGN(IGameScene);
 
