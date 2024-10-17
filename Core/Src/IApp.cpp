@@ -23,7 +23,7 @@
 #include "IApp.h"
 #include "RenderManager2D.h"
 #include "RenderManager3D.h"
-#include "RenderStateManager.h"s
+#include "RenderStateManager.h"
 #include "ResourceManager.h"
 #include "UIManager.h"
 

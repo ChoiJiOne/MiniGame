@@ -29,6 +29,9 @@ private:
 	void UpdateDirectionState();
 
 private:
+	static class IApp* app_;
+	static class RenderStateManager* renderStateMgr_;
+
 	float speed_ = 2.5f;
 	float yaw_ = 0.0f; /** y축 오일러 회전 각도 */
 	float pitch_ = 0.0f; /** x축 오일러 회전 각도 */

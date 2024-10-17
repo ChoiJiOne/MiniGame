@@ -8,7 +8,7 @@
 
 #include "Assertion.h"
 #include "GameUtils.h"
-#include "IApp.h"
+#include "RenderStateManager.h"
 #include "Texture2D.h"
 
 #define PIXEL_FORMAT_R    1
@@ -131,7 +131,7 @@ uint32_t Texture2D::CreateTextureFromImage(const std::string& path, const Filter
 
 uint32_t Texture2D::CreateTextureFromDDS(const std::string& path, const Filter& filter)
 {
-	bool bHasExt = IApp::Get()->HasGLExtension("GL_EXT_texture_compression_s3tc");
+	bool bHasExt = RenderStateManager::GetRef().HasGLExtension("GL_EXT_texture_compression_s3tc");
 	ASSERT(bHasExt, "This hardware does not support 'GL_EXT_texture_compression_s3tc'.");
 
 	std::vector<uint8_t> buffer = GameUtils::ReadFile(path);

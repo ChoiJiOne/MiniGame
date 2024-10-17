@@ -3,17 +3,24 @@
 
 #include "Assertion.h"
 #include "FreeEulerCamera3D.h"
+#include "RenderStateManager.h"
 #include "IApp.h"
 
-static IApp* appPtr = nullptr;
+IApp* FreeEulerCamera3D::app_ = nullptr;
+RenderStateManager* FreeEulerCamera3D::renderStateMgr_ = nullptr;
 
 FreeEulerCamera3D::FreeEulerCamera3D(const Vec3f& position, float yaw, float pitch, float fov, float nearZ, float farZ)
 	: yaw_(yaw)
 	, pitch_(pitch)
 {
-	if (!appPtr)
+	if (!app_)
 	{
-		appPtr = IApp::Get();
+		app_ = IApp::Get();
+	}
+
+	if (!renderStateMgr_)
+	{
+		renderStateMgr_ = RenderStateManager::GetPtr();
 	}
 
 	position_ = position;
@@ -23,7 +30,7 @@ FreeEulerCamera3D::FreeEulerCamera3D(const Vec3f& position, float yaw, float pit
 
 	float width = 0;
 	float height = 0;
-	appPtr->GetScreenSize<float>(width, height);
+	renderStateMgr_->GetScreenSize<float>(width, height);
 	aspectRatio_ = width / height;
 
 	fov_ = fov;
@@ -63,10 +70,10 @@ FreeEulerCamera3D::~FreeEulerCamera3D()
 void FreeEulerCamera3D::Tick(float deltaSeconds)
 {
 	bool bIsUpdateState = false;
-	if (appPtr->GetMousePress(Mouse::LEFT) == Press::HELD)
+	if (app_->GetMousePress(Mouse::LEFT) == Press::HELD)
 	{
-		Vec2i prev = appPtr->GetPrevMousePos();
-		Vec2i curr = appPtr->GetCurrMousePos();
+		Vec2i prev = app_->GetPrevMousePos();
+		Vec2i curr = app_->GetCurrMousePos();
 
 		float xoffset = static_cast<float>(curr.x - prev.x);
 		float yoffset = static_cast<float>(prev.y - curr.y);
@@ -91,7 +98,7 @@ void FreeEulerCamera3D::Tick(float deltaSeconds)
 
 	for (const auto& keyDirection : keyDirections)
 	{
-		if (appPtr->GetKeyPress(keyDirection.first) == Press::HELD)
+		if (app_->GetKeyPress(keyDirection.first) == Press::HELD)
 		{
 			position_ += keyDirection.second * deltaSeconds * speed_;
 			bIsUpdateState = true;

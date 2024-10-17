@@ -1,6 +1,7 @@
 #include "Assertion.h"
 #include "Camera2D.h"
 #include "EntityManager.h"
+#include "RenderStateManager.h"
 #include "IApp.h"
 
 Camera2D::Camera2D(const Vec2f& center, const Vec2f& size)
@@ -37,7 +38,7 @@ Camera2D* Camera2D::CreateScreenCamera()
 {
 	Vec2f center;
 	Vec2f size;
-	IApp::Get()->GetScreenSize<float>(size.x, size.y);
+	RenderStateManager::GetRef().GetScreenSize<float>(size.x, size.y);
 
 	return EntityManager::GetRef().Create<Camera2D>(center, size);
 }

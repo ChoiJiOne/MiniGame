@@ -54,15 +54,14 @@ private:
 	bool IsDetectMouseCursor();
 
 private:
-	IApp* app_ = nullptr;
+	static IApp* app_;
+	static class RenderStateManager* renderStateMgr_;
 
 	Layout layout_;
 	Rect2D bound_;
 	State state_ = State::DISABLED;
-
 	Vec2f textPos_;
+	std::map<State, Vec4f> stateColors_;
 
 	std::function<void()> clickEvent_ = nullptr;
-
-	std::map<State, Vec4f> stateColors_;
 };

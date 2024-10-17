@@ -1,13 +1,26 @@
 #include "Assertion.h"
 #include "ButtonUI.h"
 #include "IApp.h"
+#include "RenderStateManager.h"
 #include "TTFont.h"
+
+IApp* ButtonUI::app_ = nullptr;
+RenderStateManager* ButtonUI::renderStateMgr_ = nullptr;
 
 ButtonUI::ButtonUI(const Layout& layout, const std::function<void()>& clickEvent)
 	: layout_(layout)
 	, clickEvent_(clickEvent)
 {
-	app_ = IApp::Get();
+	if (!app_)
+	{
+		app_ = IApp::Get();
+	}
+
+	if (!renderStateMgr_)
+	{
+		renderStateMgr_ = RenderStateManager::GetPtr();
+	}
+
 	bound_ = Rect2D(layout_.center, layout_.size);
 
 	Vec2f textSize;
@@ -124,7 +137,7 @@ bool ButtonUI::IsDetectMouseCursor()
 	Vec2i currPos = app_->GetCurrMousePos();
 
 	Vec2f screenSize;
-	app_->GetScreenSize<float>(screenSize.x, screenSize.y);
+	renderStateMgr_->GetScreenSize<float>(screenSize.x, screenSize.y);
 
 	Point2D mouseCursor;
 	mouseCursor.center.x = -screenSize.x * 0.5f + static_cast<float>(currPos.x);
