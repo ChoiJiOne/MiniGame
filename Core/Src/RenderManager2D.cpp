@@ -37,7 +37,7 @@ RenderManager2D* RenderManager2D::GetPtr()
 
 void RenderManager2D::Startup()
 {
-	app_ = IApp::Get();
+	renderStateMgr_ = RenderStateManager::GetPtr();
 	resourceMgr_ = ResourceManager::GetPtr();
 
 	uint32_t byteSize = static_cast<uint32_t>(Vertex::GetStride() * vertices_.size());
@@ -90,7 +90,7 @@ void RenderManager2D::Shutdown()
 	GL_CHECK(glDeleteVertexArrays(1, &vertexArrayObject_));
 
 	resourceMgr_ = nullptr;
-	app_ = nullptr;
+	renderStateMgr_ = nullptr;
 }
 
 void RenderManager2D::Begin(const Camera2D* camera2D)
@@ -119,8 +119,8 @@ void RenderManager2D::Begin(const Camera2D* camera2D)
 	originEnableDepth_ = static_cast<bool>(originEnableDepth);
 	originEnableCull_ = static_cast<bool>(originEnableCull);
 
-	app_->SetDepthMode(false);
-	app_->SetCullFaceMode(false);
+	renderStateMgr_->SetDepthMode(false);
+	renderStateMgr_->SetCullFaceMode(false);
 
 	bIsBegin_ = true;
 }
@@ -131,8 +131,8 @@ void RenderManager2D::End()
 
 	Flush();
 
-	app_->SetCullFaceMode(originEnableCull_);
-	app_->SetDepthMode(originEnableDepth_);
+	renderStateMgr_->SetCullFaceMode(originEnableCull_);
+	renderStateMgr_->SetDepthMode(originEnableDepth_);
 
 	bIsBegin_ = false;
 }

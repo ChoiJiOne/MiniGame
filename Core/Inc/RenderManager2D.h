@@ -5,13 +5,14 @@
 #include <queue>
 
 #include "GameMath.h"
-#include "IApp.h"
 #include "IResource.h"
+#include "RenderStateManager.h"
 
 class Atlas2D;
 class Camera2D;
 class IEntity2D;
 class ITexture;
+class ResourceManager;
 class Shader;
 class TTFont;
 class VertexBuffer;
@@ -115,8 +116,8 @@ private:
 private:
 	static RenderManager2D instance_;
 
-	class ResourceManager* resourceMgr_ = nullptr;
-	IApp* app_ = nullptr;
+	RenderStateManager* renderStateMgr_ = nullptr;
+	ResourceManager* resourceMgr_ = nullptr;
 
 	bool bIsBegin_ = false;
 
