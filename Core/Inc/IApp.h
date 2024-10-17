@@ -28,8 +28,6 @@ public:
 protected:
 	void RunLoop(const std::function<void(float)>& frameCallback);
 
-	void RegisterAppWindowEvent();
-
 protected:
 	static IApp* instance_;
 
