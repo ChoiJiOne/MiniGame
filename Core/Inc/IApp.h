@@ -41,6 +41,9 @@ public:
 	}
 
 	static IApp* Get();
+
+protected:
+	void CreateAppWindow(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool bIsResizble, bool bIsFullscreen);
 	
 protected:
 	static IApp* instance_;

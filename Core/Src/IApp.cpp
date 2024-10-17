@@ -42,20 +42,9 @@ IApp::IApp(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool b
 
 	ASSERT(SDL_SetMemoryFunctions(mi_malloc, mi_calloc, mi_realloc, mi_free) == 0, "%s", SDL_GetError());
 	ASSERT(SDL_Init(SDL_INIT_EVERYTHING) == 0, "%s", SDL_GetError());
-	
+
 	RenderStateManager::GetRef().PreStartup();
-
-	uint32_t baseFlags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
-	baseFlags |= (bIsResizble ? SDL_WINDOW_RESIZABLE : 0);
-	baseFlags |= (bIsFullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
-
-	SDL_Window* window = SDL_CreateWindow(title, x, y, w, h, baseFlags);
-	ASSERT(window != nullptr, "%s", SDL_GetError());
-
-	RenderStateManager& renderStateMgr = RenderStateManager::GetRef();
-	window_ = window;
-	renderStateMgr.window_ = window;
-
+	CreateAppWindow(title, x, y, w, h, bIsResizble, bIsFullscreen);
 	RenderStateManager::GetRef().PostStartup();
 
 	AudioManager::GetRef().Startup();
@@ -64,8 +53,6 @@ IApp::IApp(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool b
 	DebugDrawManager3D::GetRef().Startup();
 	UIManager::GetRef().Startup();
 	InputManager::GetRef().Startup();
-
-	RenderStateManager::GetRef().SetAlphaBlendMode(true);
 }
 
 IApp::~IApp()
@@ -145,4 +132,17 @@ void IApp::DeleteScenesByName(const std::string& name)
 IApp* IApp::Get()
 {
 	return instance_;
+}
+
+void IApp::CreateAppWindow(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool bIsResizble, bool bIsFullscreen)
+{
+	uint32_t baseFlags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+	baseFlags |= (bIsResizble ? SDL_WINDOW_RESIZABLE : 0);
+	baseFlags |= (bIsFullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+
+	SDL_Window* window = SDL_CreateWindow(title, x, y, w, h, baseFlags);
+	ASSERT(window != nullptr, "%s", SDL_GetError());
+
+	window_ = window;
+	RenderStateManager::GetRef().window_ = window;
 }
