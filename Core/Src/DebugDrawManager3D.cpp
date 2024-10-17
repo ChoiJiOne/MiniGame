@@ -27,7 +27,7 @@ DebugDrawManager3D* DebugDrawManager3D::GetPtr()
 
 void DebugDrawManager3D::Startup()
 {
-	app_ = IApp::Get();
+	renderStateMgr_ = RenderStateManager::GetPtr();
 	resourceMgr_ = ResourceManager::GetPtr();
 
 	uint32_t byteSize = static_cast<uint32_t>(Vertex::GetStride() * vertices_.size());
@@ -63,7 +63,7 @@ void DebugDrawManager3D::Shutdown()
 	GL_CHECK(glDeleteVertexArrays(1, &vertexArrayObject_));
 
 	resourceMgr_ = nullptr;
-	app_ = nullptr;
+	renderStateMgr_ = nullptr;
 }
 
 void DebugDrawManager3D::Begin(const Camera3D* camera3D)
@@ -86,8 +86,8 @@ void DebugDrawManager3D::Begin(const Camera3D* camera3D)
 	originEnableDepth_ = static_cast<bool>(originEnableDepth);
 	originEnableCull_ = static_cast<bool>(originEnableCull);
 
-	app_->SetDepthMode(true);
-	app_->SetCullFaceMode(false);
+	renderStateMgr_->SetDepthMode(true);
+	renderStateMgr_->SetCullFaceMode(false);
 
 	bIsBegin_ = true;
 }
@@ -98,8 +98,8 @@ void DebugDrawManager3D::End()
 
 	Flush();
 
-	app_->SetCullFaceMode(originEnableCull_);
-	app_->SetDepthMode(originEnableDepth_);
+	renderStateMgr_->SetCullFaceMode(originEnableCull_);
+	renderStateMgr_->SetDepthMode(originEnableDepth_);
 
 	bIsBegin_ = false;
 }

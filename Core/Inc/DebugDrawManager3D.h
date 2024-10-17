@@ -4,10 +4,11 @@
 #include <queue>
 
 #include "GameMath.h"
-#include "IApp.h"
 #include "IResource.h"
+#include "RenderStateManager.h"
 
 class Camera3D;
+class ResourceManager;
 class Shader;
 class VertexBuffer;
 
@@ -61,8 +62,8 @@ private:
 private:
 	static DebugDrawManager3D instance_;
 
-	IApp* app_ = nullptr;
-	class ResourceManager* resourceMgr_ = nullptr;
+	RenderStateManager* renderStateMgr_ = nullptr;
+	ResourceManager* resourceMgr_ = nullptr;
 
 	bool bIsBegin_ = false;
 
