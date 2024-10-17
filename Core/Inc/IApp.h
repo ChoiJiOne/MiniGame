@@ -23,8 +23,10 @@ public:
 	
 	void Run();
 
+	void SetCurrentScene(IGameScene* scene) { currentScene_ = scene; }
 	void AddSceneByName(const std::string& name, IGameScene* scene);
-	
+	void DeleteScenesByName(const std::string& name);
+
 	template <typename TScene>
 	TScene* GetSceneByName(const std::string& name)
 	{
@@ -36,9 +38,6 @@ public:
 
 		return reinterpret_cast<TScene*>(it->second);
 	}
-
-	void DeleteScenesByName(const std::string& name);
-	
 
 	static IApp* Get();
 	
