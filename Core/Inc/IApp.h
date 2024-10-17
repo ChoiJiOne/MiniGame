@@ -4,6 +4,7 @@
 #include <functional>
 #include <memory>
 #include <map>
+#include <string>
 #include <vector>
 
 #include "Macro.h"
