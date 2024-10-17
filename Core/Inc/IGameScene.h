@@ -16,6 +16,12 @@ public:
 	virtual void Enter() = 0;
 	virtual void Exit() = 0;
 	
-	virtual bool IsSceneSwitched() = 0;
-	virtual IGameScene* GetSwitchScene() = 0;
+	bool IsEnter() { return bIsEnter_; }
+	bool IsSceneSwitched() { return bIsSwitched_; }
+	IGameScene* GetSwitchScene() { return switchScene_; }
+
+protected:
+	bool bIsEnter_ = false;
+	bool bIsSwitched_ = false;
+	IGameScene* switchScene_ = nullptr;
 };
