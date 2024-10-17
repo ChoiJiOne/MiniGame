@@ -20,7 +20,9 @@
 #include "Config.h"
 #include "DebugDrawManager3D.h"
 #include "EntityManager.h"
+#include "GameTimer.h"
 #include "IApp.h"
+#include "IGameScene.h"
 #include "InputManager.h"
 #include "RenderManager2D.h"
 #include "RenderManager3D.h"
@@ -85,37 +87,62 @@ IApp::~IApp()
 	::SetUnhandledExceptionFilter(topLevelExceptionFilter_);
 }
 
-IApp* IApp::Get()
+void IApp::Run()
 {
-	return instance_;
-}
+	GameTimer timer;
 
-void IApp::RunLoop(const std::function<void(float)>& frameCallback)
-{
-	timer_.Reset();
-
-	SDL_Event e;
-	while (!InputManager::GetRef().IsQuit())
+	InputManager& inputMgr = InputManager::GetRef();
+	
+	timer.Reset();
+	currentScene_->Enter();
+	while (!inputMgr.IsQuit())
 	{
+		SDL_Event e;
 		if (SDL_PollEvent(&e))
 		{
-			InputManager::GetRef().ProcessPollingEvent(&e);
+			inputMgr.ProcessPollingEvent(&e);
 		}
 		else
 		{
-			InputManager::GetRef().UpdateKeyboardState();
-			InputManager::GetRef().UpdateMouseState();
+			inputMgr.UpdateKeyboardState();
+			inputMgr.UpdateMouseState();
 
-			timer_.Tick();
+			timer.Tick();
 
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplSDL2_NewFrame();
 			ImGui::NewFrame();
 
-			if (frameCallback)
+			currentScene_->Tick(timer.GetDeltaSeconds());
+			currentScene_->Render();
+
+			if (currentScene_->IsSceneSwitched())
 			{
-				frameCallback(timer_.GetDeltaSeconds());
+				currentScene_->Exit();
+				currentScene_ = currentScene_->GetSwitchScene();
+				currentScene_->Enter();
 			}
 		}
 	}
+}
+
+void IApp::AddSceneByName(const std::string& name, IGameScene* scene)
+{
+	auto it = scenes_.find(name);
+	ASSERT(it == scenes_.end(), "Already add '%s'", name.c_str());
+
+	scenes_.insert({ name, scene });
+}
+
+void IApp::DeleteScenesByName(const std::string& name)
+{
+	auto it = scenes_.find(name);
+	ASSERT(it != scenes_.end(), "Can't find '%s'.", name.c_str());
+
+	scenes_.erase(it);
+}
+
+IApp* IApp::Get()
+{
+	return instance_;
 }

@@ -3,13 +3,12 @@
 #include <array>
 #include <functional>
 #include <memory>
+#include <map>
 #include <vector>
 
-#include "Camera2D.h"
-#include "GameMath.h"
-#include "GameTimer.h"
-#include "GameUtils.h"
 #include "Macro.h"
+
+class IGameScene;
 
 class IApp
 {
@@ -21,17 +20,33 @@ public:
 
 	virtual void Startup() = 0;
 	virtual void Shutdown() = 0;
-	virtual void Run() = 0;
+	
+	void Run();
+
+	void AddSceneByName(const std::string& name, IGameScene* scene);
+	
+	template <typename TScene>
+	TScene* GetSceneByName(const std::string& name)
+	{
+		auto it = scenes_.find(name);
+		if (it == scenes_.end())
+		{
+			return nullptr; // can't find.
+		}
+
+		return reinterpret_cast<TScene*>(it->second);
+	}
+
+	void DeleteScenesByName(const std::string& name);
+	
 
 	static IApp* Get();
-
-protected:
-	void RunLoop(const std::function<void(float)>& frameCallback);
-
+	
 protected:
 	static IApp* instance_;
 
 	void* window_ = nullptr;
-
-	GameTimer timer_;
+	
+	IGameScene* currentScene_ = nullptr;
+	std::map<std::string, IGameScene*> scenes_;
 };
