@@ -95,7 +95,7 @@ void IApp::RunLoop(const std::function<void(float)>& frameCallback)
 	timer_.Reset();
 
 	SDL_Event e;
-	while (!bIsQuit_)
+	while (!InputManager::GetRef().IsQuit())
 	{
 		if (SDL_PollEvent(&e))
 		{

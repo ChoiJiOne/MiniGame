@@ -4,23 +4,23 @@
 #include "Assertion.h"
 #include "FreeEulerCamera3D.h"
 #include "RenderStateManager.h"
-#include "IApp.h"
+#include "InputManager.h"
 
-IApp* FreeEulerCamera3D::app_ = nullptr;
 RenderStateManager* FreeEulerCamera3D::renderStateMgr_ = nullptr;
+InputManager* FreeEulerCamera3D::inputMgr_ = nullptr;
 
 FreeEulerCamera3D::FreeEulerCamera3D(const Vec3f& position, float yaw, float pitch, float fov, float nearZ, float farZ)
 	: yaw_(yaw)
 	, pitch_(pitch)
 {
-	if (!app_)
-	{
-		app_ = IApp::Get();
-	}
-
 	if (!renderStateMgr_)
 	{
 		renderStateMgr_ = RenderStateManager::GetPtr();
+	}
+
+	if (!inputMgr_)
+	{
+		inputMgr_ = InputManager::GetPtr();
 	}
 
 	position_ = position;
@@ -70,10 +70,10 @@ FreeEulerCamera3D::~FreeEulerCamera3D()
 void FreeEulerCamera3D::Tick(float deltaSeconds)
 {
 	bool bIsUpdateState = false;
-	if (app_->GetMousePress(Mouse::LEFT) == Press::HELD)
+	if (inputMgr_->GetMousePress(Mouse::LEFT) == Press::HELD)
 	{
-		Vec2i prev = app_->GetPrevMousePos();
-		Vec2i curr = app_->GetCurrMousePos();
+		Vec2i prev = inputMgr_->GetPrevMousePos();
+		Vec2i curr = inputMgr_->GetCurrMousePos();
 
 		float xoffset = static_cast<float>(curr.x - prev.x);
 		float yoffset = static_cast<float>(prev.y - curr.y);
@@ -98,7 +98,7 @@ void FreeEulerCamera3D::Tick(float deltaSeconds)
 
 	for (const auto& keyDirection : keyDirections)
 	{
-		if (app_->GetKeyPress(keyDirection.first) == Press::HELD)
+		if (inputMgr_->GetKeyPress(keyDirection.first) == Press::HELD)
 		{
 			position_ += keyDirection.second * deltaSeconds * speed_;
 			bIsUpdateState = true;

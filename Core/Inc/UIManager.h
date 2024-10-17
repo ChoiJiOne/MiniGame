@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IApp.h"
+#include "InputManager.h"
 #include "IEntityUI.h"
 
 class ButtonUI;

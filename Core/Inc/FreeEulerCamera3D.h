@@ -2,6 +2,9 @@
 
 #include "Camera3D.h"
 
+class RenderStateManager;
+class InputManager;
+
 /** 마우스로 움직이는 것이 가능한 3D 오일러 카메라 */
 class FreeEulerCamera3D : public Camera3D
 {
@@ -29,8 +32,8 @@ private:
 	void UpdateDirectionState();
 
 private:
-	static class IApp* app_;
-	static class RenderStateManager* renderStateMgr_;
+	static RenderStateManager* renderStateMgr_;
+	static InputManager* inputMgr_;
 
 	float speed_ = 2.5f;
 	float yaw_ = 0.0f; /** y축 오일러 회전 각도 */

@@ -4,10 +4,11 @@
 #include <map>
 
 #include "Collision2D.h"
-#include "IApp.h"
+#include "InputManager.h"
 #include "IEntityUI.h"
 
 class TTFont;
+class RenderStateManager;
 
 class ButtonUI : public IEntityUI
 {
@@ -54,8 +55,8 @@ private:
 	bool IsDetectMouseCursor();
 
 private:
-	static IApp* app_;
-	static class RenderStateManager* renderStateMgr_;
+	static InputManager* inputMgr_;
+	static RenderStateManager* renderStateMgr_;
 
 	Layout layout_;
 	Rect2D bound_;

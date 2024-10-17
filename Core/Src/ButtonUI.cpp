@@ -1,19 +1,19 @@
 #include "Assertion.h"
 #include "ButtonUI.h"
-#include "IApp.h"
+#include "InputManager.h"
 #include "RenderStateManager.h"
 #include "TTFont.h"
 
-IApp* ButtonUI::app_ = nullptr;
+InputManager* ButtonUI::inputMgr_ = nullptr;
 RenderStateManager* ButtonUI::renderStateMgr_ = nullptr;
 
 ButtonUI::ButtonUI(const Layout& layout, const std::function<void()>& clickEvent)
 	: layout_(layout)
 	, clickEvent_(clickEvent)
 {
-	if (!app_)
+	if (!inputMgr_)
 	{
-		app_ = IApp::Get();
+		inputMgr_ = InputManager::GetPtr();
 	}
 
 	if (!renderStateMgr_)
@@ -48,7 +48,7 @@ ButtonUI::~ButtonUI()
 
 void ButtonUI::Tick(float deltaSeconds)
 {
-	Press press = app_->GetMousePress(layout_.mouse);
+	Press press = inputMgr_->GetMousePress(layout_.mouse);
 	state_ = GetState(press, state_);
 
 	if (state_ == State::RELEASED && clickEvent_)
@@ -60,8 +60,6 @@ void ButtonUI::Tick(float deltaSeconds)
 void ButtonUI::Release()
 {
 	CHECK(bIsInitialized_);
-
-	app_ = nullptr;
 
 	bIsInitialized_ = false;
 }
@@ -134,7 +132,7 @@ ButtonUI::State ButtonUI::GetState(const Press& press, const State& state)
 
 bool ButtonUI::IsDetectMouseCursor()
 {
-	Vec2i currPos = app_->GetCurrMousePos();
+	Vec2i currPos = inputMgr_->GetCurrMousePos();
 
 	Vec2f screenSize;
 	renderStateMgr_->GetScreenSize<float>(screenSize.x, screenSize.y);
