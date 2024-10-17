@@ -119,6 +119,11 @@ void InputManager::SetActiveWindowEventAction(const WindowEventID& windowEventID
 	windowEventActions_[windowEventID].bIsActive = bIsActive;
 }
 
+void InputManager::RequestQuit()
+{
+	bIsQuit_ = true;
+}
+
 void InputManager::Startup()
 {
 	AddWindowEventAction(WindowEvent::RESIZED, [&]() { bIsResize_ = !bIsResize_; }, true);

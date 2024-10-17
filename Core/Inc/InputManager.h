@@ -334,6 +334,9 @@ public:
 	void DeleteWindowEventAction(const WindowEventID& windowEventID);
 	void SetActiveWindowEventAction(const WindowEventID& windowEventID, bool bIsActive);
 
+	/** 이 메서드를 호출하면 루프를 탈출하고 프로그램이 종료됩니다. */
+	void RequestQuit();
+
 private:
 	friend class IApp;
 
