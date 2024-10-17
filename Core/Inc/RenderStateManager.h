@@ -5,6 +5,16 @@
 #include "GameMath.h"
 #include "Macro.h"
 
+enum class DrawMode : int32_t
+{
+	POINTS       = 0x0000,
+	LINES        = 0x0001,
+	LINE_STRIP   = 0x0003,
+	TRIANGLES    = 0x0004,
+	TRIANGLE_FAN = 0x0006,
+	NONE         = 0xFFFF,
+};
+
 /** 렌더링 상태 매니저는 싱글턴입니다. */
 class RenderStateManager
 {
@@ -46,7 +56,7 @@ private:
 private:
 	static RenderStateManager instance_;
 
-	void* window_ = nullptr; /** 렌더링 대상이 되는 윈도우 */
+	void* window_ = nullptr; /** 렌더링 대상이 되는 윈도우. 렌더 상태 매니저 내부에서 할당 해제를 수행하면 안됨! */
 	void* context_ = nullptr; /** OpenGL 컨텍스트 */
 
 	int32_t numVideoDisplay_ = 0;
