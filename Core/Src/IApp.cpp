@@ -23,6 +23,7 @@
 #include "IApp.h"
 #include "RenderManager2D.h"
 #include "RenderManager3D.h"
+#include "RenderStateManager.h"s
 #include "ResourceManager.h"
 #include "UIManager.h"
 
@@ -34,83 +35,26 @@ IApp* IApp::instance_ = nullptr;
 IApp::IApp(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool bIsResizble, bool bIsFullscreen)
 {
 	topLevelExceptionFilter_ = ::SetUnhandledExceptionFilter(DetectApplicationCrash);
-
 	instance_ = this;
 
 	ASSERT(SDL_SetMemoryFunctions(mi_malloc, mi_calloc, mi_realloc, mi_free) == 0, "%s", SDL_GetError());
 	ASSERT(SDL_Init(SDL_INIT_EVERYTHING) == 0, "%s", SDL_GetError());
 	
-	std::map<SDL_GLattr, int32_t> attributes =
-	{
-		{ SDL_GL_CONTEXT_FLAGS,         SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG },
-		{ SDL_GL_CONTEXT_PROFILE_MASK,  SDL_GL_CONTEXT_PROFILE_CORE            },
-		{ SDL_GL_CONTEXT_MAJOR_VERSION, GL_MAJOR                               },
-		{ SDL_GL_CONTEXT_MINOR_VERSION, GL_MINOR                               },
-		{ SDL_GL_RED_SIZE,              GL_RED_SIZE                            },
-		{ SDL_GL_GREEN_SIZE,            GL_GREEN_SIZE                          },
-		{ SDL_GL_BLUE_SIZE,             GL_BLUE_SIZE                           },
-		{ SDL_GL_ALPHA_SIZE,            GL_ALPHA_SIZE                          },
-		{ SDL_GL_DEPTH_SIZE,            GL_DEPTH_SIZE                          },
-		{ SDL_GL_STENCIL_SIZE,          GL_STENCIL_SIZE                        },
-		{ SDL_GL_DOUBLEBUFFER,          GL_DOUBLE_BUFFER                       },
-		{ SDL_GL_MULTISAMPLEBUFFERS,    GL_MULTISAMPLE_BUFFERS                 },
-		{ SDL_GL_MULTISAMPLESAMPLES,    GL_MULTISAMPLE_SAMPLES                 },
-	};
 
-	for (const auto& attribute : attributes)
-	{
-		ASSERT((SDL_GL_SetAttribute(attribute.first, attribute.second) == 0), "%s", SDL_GetError());
-	}
-
-	numVideoDisplay_ = SDL_GetNumVideoDisplays();
-	ASSERT(numVideoDisplay_ >= 1, "%s", SDL_GetError());
-
-	displaySizes_.resize(numVideoDisplay_);
-	for (uint32_t index = 0; index < displaySizes_.size(); ++index)
-	{
-		SDL_DisplayMode displayMode;
-		ASSERT((SDL_GetDesktopDisplayMode(index, &displayMode) == 0), "%s", SDL_GetError());
-
-		displaySizes_[index].x = displayMode.w;
-		displaySizes_[index].y = displayMode.h;
-	}
+	RenderStateManager::GetRef().PreStartup();
 
 	uint32_t baseFlags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 	baseFlags |= (bIsResizble ? SDL_WINDOW_RESIZABLE : 0);
 	baseFlags |= (bIsFullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
 
-
 	SDL_Window* window = SDL_CreateWindow(title, x, y, w, h, baseFlags);
 	ASSERT(window != nullptr, "%s", SDL_GetError());
 
-	SDL_GLContext context = SDL_GL_CreateContext(window);
-	ASSERT(context != nullptr, "%s", SDL_GetError());
-
-	ASSERT(SDL_GL_MakeCurrent(window, context) == 0, "%s", SDL_GetError());
-
+	RenderStateManager& renderStateMgr = RenderStateManager::GetRef();
 	window_ = window;
-	context_ = context;
+	renderStateMgr.window_ = window;
 
-	ASSERT(gladLoadGLLoader((GLADloadproc)(SDL_GL_GetProcAddress)), "Failed to load OpenGL function.");
-
-	int32_t extensions = 0;
-	GL_CHECK(glGetIntegerv(GL_NUM_EXTENSIONS, &extensions));
-
-	extensions_ = std::vector<std::string>(extensions);
-	for (uint32_t index = 0; index < extensions; ++index)
-	{
-		const char* ext = (const char*)(glGetStringi(GL_EXTENSIONS, index));
-		extensions_[index] = ext;
-	}
-	
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
-	io.IniFilename = nullptr;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;
-
-	ASSERT(ImGui_ImplSDL2_InitForOpenGL(window, context), "Failed to initialize ImGui for SDL2.");
-	ASSERT(ImGui_ImplOpenGL3_Init(), "Failed to initialzie ImGui for OpenGL.");
+	RenderStateManager::GetRef().PostStartup();
 
 	AudioManager::GetRef().Startup();
 	RenderManager2D::GetRef().Startup();
@@ -119,7 +63,8 @@ IApp::IApp(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, bool b
 	UIManager::GetRef().Startup();
 
 	RegisterAppWindowEvent();
-	SetAlphaBlendMode(true);
+
+	RenderStateManager::GetRef().SetAlphaBlendMode(true);
 }
 
 IApp::~IApp()
@@ -131,13 +76,7 @@ IApp::~IApp()
 	RenderManager2D::GetRef().Shutdown();
 	ResourceManager::GetRef().Cleanup();
 	AudioManager::GetRef().Shutdown();
-
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplSDL2_Shutdown();
-	ImGui::DestroyContext();
-
-	SDL_GL_DeleteContext(context_);
-	context_ = nullptr;
+	RenderStateManager::GetRef().Shutdown();
 
 	SDL_DestroyWindow(reinterpret_cast<SDL_Window*>(window_));
 	window_ = nullptr;
@@ -150,34 +89,6 @@ IApp::~IApp()
 IApp* IApp::Get()
 {
 	return instance_;
-}
-
-int32_t IApp::GetNumVideoDisplay()
-{
-	return numVideoDisplay_;
-}
-
-void IApp::GetVideoDisplaySize(int32_t index, Vec2i& outSize)
-{
-	CHECK(index >= 0 && index < displaySizes_.size());
-	outSize = displaySizes_[index];
-}
-
-template <>
-void IApp::GetScreenSize(float& outWidth, float& outHeight)
-{
-	int32_t w = 0;
-	int32_t h = 0;
-	SDL_GetWindowSize(reinterpret_cast<SDL_Window*>(window_), &w, &h);
-
-	outWidth = static_cast<float>(w);
-	outHeight = static_cast<float>(h);
-}
-
-template <>
-void IApp::GetScreenSize(int32_t& outWidth, int32_t& outHeight)
-{
-	SDL_GetWindowSize(reinterpret_cast<SDL_Window*>(window_), &outWidth, &outHeight);
 }
 
 void IApp::RunLoop(const std::function<void(float)>& frameCallback)
@@ -232,25 +143,6 @@ void IApp::RunLoop(const std::function<void(float)>& frameCallback)
 	}
 }
 
-void IApp::BeginFrame(float red, float green, float blue, float alpha, float depth, uint8_t stencil)
-{
-	SetWindowViewport();
-
-	glClearColor(red, green, blue, alpha);
-	glClearDepth(depth);
-	glClearStencil(stencil);
-
-	GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
-}
-
-void IApp::EndFrame()
-{
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-	SDL_GL_SwapWindow(reinterpret_cast<SDL_Window*>(window_));
-}
-
 void IApp::RegisterAppWindowEvent()
 {
 	AddWindowEventAction(WindowEvent::RESIZED, [&]() { bIsResize_ = !bIsResize_; }, true );
@@ -279,91 +171,6 @@ bool IApp::IsPressKey(const KeyboardState& keyboardState, const Key& key)
 bool IApp::IsPressMouse(const MouseState& mouseState, const Mouse& mouse)
 {
 	return (mouseState.state & static_cast<uint32_t>(mouse)) == 0 ? false : true;
-}
-
-void IApp::SetViewport(int32_t x, int32_t y, int32_t width, int32_t height)
-{
-	glViewport(x, y, width, height);
-}
-
-void IApp::SetWindowViewport()
-{
-	int32_t w = 0;
-	int32_t h = 0;
-	GetScreenSize<int32_t>(w, h);
-	SetViewport(0, 0, w, h);
-}
-
-void IApp::SetVsyncMode(bool bIsEnable)
-{
-	ASSERT(SDL_GL_SetSwapInterval(static_cast<int32_t>(bIsEnable)) == 0, "%s", SDL_GetError());
-}
-
-void IApp::SetDepthMode(bool bIsEnable)
-{
-	if (bIsEnable)
-	{
-		GL_CHECK(glEnable(GL_DEPTH_TEST));
-	}
-	else
-	{
-		GL_CHECK(glDisable(GL_DEPTH_TEST));
-	}
-}
-
-void IApp::SetStencilMode(bool bIsEnable)
-{
-	if (bIsEnable)
-	{
-		GL_CHECK(glEnable(GL_STENCIL_TEST));
-	}
-	else
-	{
-		GL_CHECK(glDisable(GL_STENCIL_TEST));
-	}
-}
-
-void IApp::SetAlphaBlendMode(bool bIsEnable)
-{
-	if (bIsEnable)
-	{
-		GL_CHECK(glEnable(GL_BLEND));
-		GL_CHECK(glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO));
-	}
-	else
-	{
-		GL_CHECK(glDisable(GL_BLEND));
-	}
-}
-
-void IApp::SetMultisampleMode(bool bIsEnable)
-{
-	if (bIsEnable)
-	{
-		GL_CHECK(glEnable(GL_MULTISAMPLE));
-	}
-	else
-	{
-		GL_CHECK(glDisable(GL_MULTISAMPLE));
-	}
-}
-
-void IApp::SetCullFaceMode(bool bIsEnable)
-{
-	if (bIsEnable)
-	{
-		GL_CHECK(glEnable(GL_CULL_FACE));
-	}
-	else
-	{
-		GL_CHECK(glDisable(GL_CULL_FACE));
-	}
-}
-
-bool IApp::HasGLExtension(const std::string& extension)
-{
-	auto it = std::find(extensions_.begin(), extensions_.end(), extension);
-	return it != extensions_.end();
 }
 
 Press IApp::GetKeyPress(const Key& key)

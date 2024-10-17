@@ -338,30 +338,13 @@ public:
 	virtual void Run() = 0;
 
 	static IApp* Get();
-
-	int32_t GetNumVideoDisplay();
-	void GetVideoDisplaySize(int32_t index, Vec2i& outSize);
-
-	template <typename T>
-	void GetScreenSize(T& outWidth, T& outHeight);
-
+	
 	bool IsQuit() const { return bIsQuit_; }
 	bool IsResize() const { return bIsResize_; }
 	bool IsMinimize() const { return bIsMinimize_; }
 	bool IsMaximize() const { return bIsMaximize_; }
 	bool IsEnterMouse() const { return bIsEnterMouse_; }
 	bool IsGainFocus() const { return bIsGainFocus_; }
-
-	/** 렌더링 관련 설정 */
-	void SetViewport(int32_t x, int32_t y, int32_t width, int32_t height);
-	void SetWindowViewport();
-	void SetVsyncMode(bool bIsEnable);
-	void SetDepthMode(bool bIsEnable);
-	void SetStencilMode(bool bIsEnable);
-	void SetAlphaBlendMode(bool bIsEnable);
-	void SetMultisampleMode(bool bIsEnable);
-	void SetCullFaceMode(bool bIsEnable);
-	bool HasGLExtension(const std::string& extension);
 
 	/** 입력 관련 설정 */
 	Press GetKeyPress(const Key& key);
@@ -394,9 +377,6 @@ protected:
 
 	void RunLoop(const std::function<void(float)>& frameCallback);
 
-	void BeginFrame(float red, float green, float blue, float alpha, float depth = 1.0f, uint8_t stencil = 0);
-	void EndFrame();
-
 	void RegisterAppWindowEvent();
 	bool IsPressKey(const KeyboardState& keyboardState, const Key& key);
 	bool IsPressMouse(const MouseState& mouseState, const Mouse& mouse);
@@ -405,10 +385,6 @@ protected:
 	static IApp* instance_;
 
 	void* window_ = nullptr;
-	void* context_ = nullptr; /** OpenGL 컨텍스트 */
-
-	int32_t numVideoDisplay_ = 0;
-	std::vector<Vec2i> displaySizes_;
 
 	GameTimer timer_;
 
@@ -418,8 +394,6 @@ protected:
 	bool bIsMinimize_ = false;
 	bool bIsEnterMouse_ = false; /** 마우스가 윈도우 내부에 있는지 확인 */
 	bool bIsGainFocus_ = true;
-
-	std::vector<std::string> extensions_; /** OpenGL 확장자 목록입니다. */
 
 	KeyboardState prevKeyboardState_;
 	KeyboardState currKeyboardState_;
