@@ -27,6 +27,7 @@ public:
 	
 protected:
 	class EntityManager* entityMgr_ = nullptr;
+	class RenderStateManager* renderStateMgr_ = nullptr;
 	class RenderManager2D* render2dMgr_ = nullptr;
 	class ResourceManager* resourceMgr_ = nullptr;
 	class UIManager* uiMgr_ = nullptr;
