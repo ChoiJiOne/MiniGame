@@ -99,34 +99,12 @@ void IApp::RunLoop(const std::function<void(float)>& frameCallback)
 	{
 		if (SDL_PollEvent(&e))
 		{
-			ImGui_ImplSDL2_ProcessEvent(&e);
-
-			if (e.type == SDL_QUIT)
-			{
-				bIsQuit_ = true;
-			}
-
-			WindowEvent windowEvent = static_cast<WindowEvent>(e.window.event);
-			for (std::size_t index = 0; index < windowEventActionSize_; ++index)
-			{
-				if (windowEvent == windowEventActions_[index].windowEvent)
-				{
-					if (windowEventActions_[index].bIsActive && windowEventActions_[index].windowEventAction)
-					{
-						windowEventActions_[index].windowEventAction();
-					}
-				}
-			}
+			InputManager::GetRef().ProcessPollingEvent(&e);
 		}
 		else
 		{
-			const void* currKeyboardState = reinterpret_cast<const void*>(SDL_GetKeyboardState(nullptr));
-
-			std::memcpy(prevKeyboardState_.keybordState.data(), currKeyboardState_.keybordState.data(), KeyboardState::BUFFER_SIZE);
-			std::memcpy(currKeyboardState_.keybordState.data(), currKeyboardState, KeyboardState::BUFFER_SIZE);
-
-			prevMouseState_ = currMouseState_;
-			currMouseState_.state = SDL_GetMouseState(&currMouseState_.position.x, &currMouseState_.position.y);
+			InputManager::GetRef().UpdateKeyboardState();
+			InputManager::GetRef().UpdateMouseState();
 
 			timer_.Tick();
 

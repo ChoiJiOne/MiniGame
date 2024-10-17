@@ -360,6 +360,10 @@ private:
 	virtual ~InputManager() {}
 
 	void Startup(); /** IApp 내부에서만 사용하는 메서드입니다. */
+	void ProcessPollingEvent(void* eventPtr); /** IApp 내부에서만 사용하는 메서드입니다. */
+	void UpdateKeyboardState();
+	void UpdateMouseState();
+
 	bool IsPressKey(const KeyboardState& keyboardState, const Key& key);
 	bool IsPressMouse(const MouseState& mouseState, const Mouse& mouse);
 

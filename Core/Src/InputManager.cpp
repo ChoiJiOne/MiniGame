@@ -1,5 +1,8 @@
 #include <SDL2/SDL.h>
 
+#include <imgui.h>
+#include <imgui_impl_sdl2.h>
+
 #include "Assertion.h"
 #include "InputManager.h"
 
@@ -134,6 +137,44 @@ void InputManager::Startup()
 			bIsMinimize_ = (bIsMinimize_) ? !bIsMinimize_ : bIsMinimize_;
 		}
 	);
+}
+
+void InputManager::ProcessPollingEvent(void* eventPtr)
+{
+	SDL_Event* e = reinterpret_cast<SDL_Event*>(eventPtr);
+
+	ImGui_ImplSDL2_ProcessEvent(e);
+
+	if (e->type == SDL_QUIT)
+	{
+		bIsQuit_ = true;
+	}
+
+	WindowEvent windowEvent = static_cast<WindowEvent>(e->window.event);
+	for (std::size_t index = 0; index < windowEventActionSize_; ++index)
+	{
+		if (windowEvent == windowEventActions_[index].windowEvent)
+		{
+			if (windowEventActions_[index].bIsActive && windowEventActions_[index].windowEventAction)
+			{
+				windowEventActions_[index].windowEventAction();
+			}
+		}
+	}
+}
+
+void InputManager::UpdateKeyboardState()
+{
+	const void* currKeyboardState = reinterpret_cast<const void*>(SDL_GetKeyboardState(nullptr));
+
+	std::memcpy(prevKeyboardState_.keybordState.data(), currKeyboardState_.keybordState.data(), KeyboardState::BUFFER_SIZE);
+	std::memcpy(currKeyboardState_.keybordState.data(), currKeyboardState, KeyboardState::BUFFER_SIZE);
+}
+
+void InputManager::UpdateMouseState()
+{
+	prevMouseState_ = currMouseState_;
+	currMouseState_.state = SDL_GetMouseState(&currMouseState_.position.x, &currMouseState_.position.y);
 }
 
 bool InputManager::IsPressKey(const KeyboardState& keyboardState, const Key& key)
