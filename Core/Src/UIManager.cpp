@@ -179,19 +179,6 @@ TextUI* UIManager::CreateTextUI(const std::string& path, TTFont* font)
 	return entityMgr_->Create<TextUI>(layout);
 }
 
-void UIManager::BatchTickUIEntity(IEntityUI** entities, uint32_t count, float deltaSeconds)
-{
-	if (count == 0)
-	{
-		return;
-	}
-
-	for (uint32_t index = 0; index < count; ++index)
-	{
-		entities[index]->Tick(deltaSeconds);
-	}
-}
-
 void UIManager::BatchRenderUIEntity(IEntityUI** entities, uint32_t count)
 {
 	if (count == 0)
