@@ -17,10 +17,10 @@ public:
 
 	DISALLOW_COPY_AND_ASSIGN(IGameScene2D);
 
-	virtual void Tick(float deltaSeconds) = 0;
-	virtual void Render() = 0;
-	virtual void Enter() = 0;
-	virtual void Exit() = 0;
+	virtual void Tick(float deltaSeconds) override;
+	virtual void Render() override;
+	virtual void Enter() override;
+	virtual void Exit() override;
 
 protected:
 	class EntityManager* entityMgr_ = nullptr;
