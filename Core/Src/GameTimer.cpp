@@ -1,3 +1,5 @@
+#include <sysinfoapi.h>
+
 #include <SDL2/SDL.h>
 
 #include "GameTimer.h"
@@ -109,4 +111,17 @@ void GameTimer::Tick()
 {
 	prevTime_ = currTime_;
 	currTime_ = SDL_GetTicks64();
+}
+
+void GameTimer::GetCurrentSystemTime(int32_t& outYear, int32_t& outMonth, int32_t& outDay, int32_t& outHour, int32_t& outMinute, int32_t& outSecond)
+{
+	SYSTEMTIME systemTime;
+	GetLocalTime(&systemTime);
+
+	outYear = static_cast<int32_t>(systemTime.wYear);
+	outMonth = static_cast<int32_t>(systemTime.wMonth);
+	outDay = static_cast<int32_t>(systemTime.wDay);
+	outHour = static_cast<int32_t>(systemTime.wHour);
+	outMinute = static_cast<int32_t>(systemTime.wMinute);
+	outSecond = static_cast<int32_t>(systemTime.wSecond);
 }

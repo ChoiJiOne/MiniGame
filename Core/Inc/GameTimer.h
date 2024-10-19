@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <cstdint>
 
 class GameTimer
@@ -19,6 +20,8 @@ public:
 	void Start();
 	void Stop();
 	void Tick();
+
+	static void GetCurrentSystemTime(int32_t& outYear, int32_t& outMonth, int32_t& outDay, int32_t& outHour, int32_t& outMinute, int32_t& outSecond);
 
 private:
 	bool bIsStop_ = false;
