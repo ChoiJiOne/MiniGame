@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 
 #include "GameTimer.h"
+#include "GameUtils.h"
 
 GameTimer::GameTimer(GameTimer&& instance) noexcept
 	: bIsStop_(instance.bIsStop_)
@@ -124,4 +125,30 @@ void GameTimer::GetCurrentSystemTime(int32_t& outYear, int32_t& outMonth, int32_
 	outHour = static_cast<int32_t>(systemTime.wHour);
 	outMinute = static_cast<int32_t>(systemTime.wMinute);
 	outSecond = static_cast<int32_t>(systemTime.wSecond);
+}
+
+std::string GameTimer::GetCurrentSystemTimeAsString()
+{
+	int32_t year = 0;
+	int32_t month = 0;
+	int32_t day = 0;
+	int32_t hour = 0;
+	int32_t minute = 0;
+	int32_t second = 0;
+	GetCurrentSystemTime(year, month, day, hour, minute, second);
+
+	return GameUtils::PrintF("%4d-%02d-%02d-%02d-%02d-%02d", year, month, day, hour, minute, second);
+}
+
+std::wstring GameTimer::GetCurrentSystemTimeAsWString()
+{
+	int32_t year = 0;
+	int32_t month = 0;
+	int32_t day = 0;
+	int32_t hour = 0;
+	int32_t minute = 0;
+	int32_t second = 0;
+	GetCurrentSystemTime(year, month, day, hour, minute, second);
+
+	return GameUtils::PrintF(L"%4d-%02d-%02d-%02d-%02d-%02d", year, month, day, hour, minute, second);
 }
