@@ -1,4 +1,4 @@
-#include <sysinfoapi.h>
+#include <windows.h>
 
 #include <SDL2/SDL.h>
 
