@@ -26,12 +26,14 @@ public:
 
 protected:
 	template <typename TGameScene>
-	void Switch(const std::string& name)
+	TGameScene* Switch(const std::string& name)
 	{
 		bIsSwitched_ = true;
 
 		TGameScene* scene = IApp::Get()->GetSceneByName<TGameScene>(name);
 		switchScene_ = scene;
+
+		return scene;
 	}
 
 protected:
