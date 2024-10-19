@@ -5,27 +5,13 @@
 
 #include "Assertion.h"
 #include "CrashManager.h"
+#include "GameTimer.h"
 #include "GameUtils.h"
 
 CrashManager CrashManager::instance_;
 
 static std::function<void()> crashCallbackEvent_ = nullptr;
 static std::wstring crashDumpFile_;
-
-std::wstring GetCurrentSystemTimeAsString()
-{
-	SYSTEMTIME systemTime;
-	GetLocalTime(&systemTime);
-
-	int32_t year = static_cast<int32_t>(systemTime.wYear);
-	int32_t month = static_cast<int32_t>(systemTime.wMonth);
-	int32_t day = static_cast<int32_t>(systemTime.wDay);
-	int32_t hour = static_cast<int32_t>(systemTime.wHour);
-	int32_t minute = static_cast<int32_t>(systemTime.wMinute);
-	int32_t second = static_cast<int32_t>(systemTime.wSecond);
-
-	return GameUtils::PrintF(L"%4d-%02d-%02d-%02d-%02d-%02d", year, month, day, hour, minute, second);
-}
 
 std::wstring GetCrashDumpPath()
 {
@@ -40,7 +26,7 @@ std::wstring GetCrashDumpPath()
 
 LONG WINAPI DetectApplicationCrash(EXCEPTION_POINTERS* ep)
 {
-	std::wstring currSystemTime = GetCurrentSystemTimeAsString();
+	std::wstring currSystemTime = GameTimer::GetCurrentSystemTimeAsWString();
 	std::wstring crashDumpPath = GetCrashDumpPath();
 
 	if (!GameUtils::IsValidPath(crashDumpPath))
